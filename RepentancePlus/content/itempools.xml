@@ -1,0 +1,95 @@
+<ItemPools>
+	<!--Here are all item pools with an example of how to put an item here-->
+	<Pool Name="treasure">
+		<!--The Sad Onion-->
+		<!--Item Id="1" Weight="1" DecreaseBy="1" RemoveOn="0.1"/-->
+		
+	</Pool>
+	<Pool Name="shop">
+		
+	</Pool>
+	<Pool Name="boss">
+		
+	</Pool>
+	<Pool Name="devil">
+		
+	</Pool>
+	<Pool Name="angel">
+		
+	</Pool>
+	<Pool Name="secret">
+		
+	</Pool>
+	<Pool Name="library">
+		
+	</Pool>
+	<Pool Name="shellGame">
+		
+	</Pool>
+	<Pool Name="goldenChest">
+		
+	</Pool>
+	<Pool Name="redChest">
+		
+	</Pool>
+	<Pool Name="beggar">
+		
+	</Pool>
+	<Pool Name="demonBeggar">
+		
+	</Pool>
+	<Pool Name="curse">
+		
+	</Pool>
+	<Pool Name="keyMaster">
+		
+	</Pool>
+	<Pool Name="batteryBum">
+		
+	</Pool>
+	<Pool Name="momsChest">
+		
+	</Pool>
+	<Pool Name="greedTreasure">
+		
+	</Pool>
+	<Pool Name="greedBoss">
+		
+	</Pool>
+	<Pool Name="greedShop">
+		
+	</Pool>
+	<Pool Name="greedCurse">
+		
+	</Pool>
+	<Pool Name="greedDevil">
+		
+	</Pool>
+	<Pool Name="greedAngel">
+		
+	</Pool>
+	<Pool Name="greedSecret">
+		
+	</Pool>
+	<Pool Name="craneGame">
+		
+	</Pool>
+	<Pool Name="bombBum">
+		
+	</Pool>
+	<Pool Name="planetarium">
+		
+	</Pool>
+	<Pool Name="oldChest">
+		
+	</Pool>
+	<Pool Name="babyShop">
+		
+	</Pool>
+	<Pool Name="woodenChest">
+		
+	</Pool>
+	<Pool Name="rottenBeggar">
+		
+	</Pool>
+</ItemPools>
