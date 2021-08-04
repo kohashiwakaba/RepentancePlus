@@ -12,8 +12,6 @@ local BASEMENTKEY_CHANCE = 5
 local HEARTKEY_CHANCE = 25
 local CARDRUNE_REPLACE_CHANCE = 2
 
-local reverseCardBuffer = 0 --don't know any elegant solution
-
 Collectibles = {
 	ORDLIFE = Isaac.GetItemIdByName("Ordinary Life"),
 	MISSINGMEMORY = Isaac.GetItemIdByName("Missing Memory"),
@@ -69,9 +67,24 @@ function rplus:OnGameStart(continued)
 	if not continued then
 		ORDLIFE_DATA = nil
 		MISSINGMEMORY_DATA = nil
+		REVERSECARD_DATA = nil
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
+
+-- EVERY NEW LEVEL 
+function rplus:OnNewLevel()
+	local player = Isaac.GetPlayer(0)
+	local level = game:GetLevel()
+	
+	if player:HasCollectible(Collectibles.ORDLIFE) and ORDLIFE_DATA == "used" then
+		level:RemoveCurses(LevelCurse.CURSE_OF_DARKNESS)
+		music:Enable()
+		player:DischargeActiveItem(ActiveSlot.SLOT_PRIMARY)
+		ORDLIFE_DATA = nil
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 
 -- ACTIVE ITEM USED --
 function rplus:OnItemUse(itemused, rng, player, flags, slot, customdata)
@@ -81,7 +94,6 @@ function rplus:OnItemUse(itemused, rng, player, flags, slot, customdata)
 	if itemused == Collectibles.ORDLIFE then
 		if not ORDLIFE_DATA then
 			ORDLIFE_DATA = "used"
-			ORDLIFE_STAGE = level:GetStage()
 			music:Disable()
 			level:AddCurse(LevelCurse.CURSE_OF_DARKNESS, false)
 			PlayerSprite = player:GetSprite()
@@ -119,16 +131,15 @@ function rplus:OnFrame()
 				entity:Remove()
 			end
 		end
-		if ORDLIFE_STAGE ~= level:GetStage() then
-			player:DischargeActiveItem(ActiveSlot.SLOT_PRIMARY)
-			player:UseActiveItem(Collectibles.ORDLIFE, false, false, true, false, -1)
-			ORDLIFE_DATA = "notused"
+		if sfx:IsPlaying(SoundEffect.SOUND_DOOR_HEAVY_CLOSE) or sfx:IsPlaying(SoundEffect.SOUND_DOOR_HEAVY_OPEN) then
+			sfx:Stop(SoundEffect.SOUND_DOOR_HEAVY_CLOSE)
+			sfx:Stop(SoundEffect.SOUND_DOOR_HEAVY_OPEN)
 		end
 		if player:GetSprite():IsFinished("PickupWalkDown") then
 			level:RemoveCurses(LevelCurse.CURSE_OF_DARKNESS)
-			ORDLIFE_DATA = nil
 			music:Enable()
 			player:DischargeActiveItem(ActiveSlot.SLOT_PRIMARY)
+			ORDLIFE_DATA = nil
 		end
 	end
 	
@@ -140,6 +151,14 @@ function rplus:OnFrame()
 			level:SetStage(LevelStage.STAGE4_2, StageType.STAGETYPE_ORIGINAL)
 			MISSINGMEMORY_DATA = nil
 		end
+	end
+	
+	-- here's your elegant (sorta :D) solution Wertz
+	if REVERSECARD_DATA == "used" and player:GetSprite():IsFinished("PickupWalkDown") then
+		secondary_card = player:GetCard(1)
+		player:SetCard(1, 0)
+		player:SetCard(0, secondary_card)
+		REVERSECARD_DATA = nil
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
@@ -157,7 +176,8 @@ function rplus:OnNPCDeath(npc)
 			MISSINGMEMORY_DATA = "light"
 		end
 	end	
-	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HasBox(BASEMENTKEY_CHANCE) then
+	
+	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HasBox(HEARTKEY_CHANCE) then
 		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.SCARLETCHEST, 0, npc.Position, npc.Velocity, nil)
 	end
 end
@@ -220,19 +240,6 @@ function rplus:CardUsed(card, player, useflags)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
-
-function rplus:DelReverseCard()
-	local player = Isaac.GetPlayer(0)
-	local secondary = player:GetCard(1)
-	reverseCardBuffer = math.min(0, reverseCardBuffer - 1)
-	if reverseCardBuffer == 0 and secondary == 0 then --weird shenanigans because secondary stays secondary when primary is deleted
-		player:SetCard(0, 0)
-	elseif reverseCardBuffer == 0 then
-		player:SetCard(0, secondary)
-		player:SetCard(1, 0)
-	end
-end
-rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.DelReverseCard)
 
 function rplus:OpenScarletChest(pickup, collider, low)
 	local player = Isaac.GetPlayer(0)
