@@ -15,7 +15,9 @@ local CARDRUNE_REPLACE_CHANCE = 2
 Collectibles = {
 	ORDLIFE = Isaac.GetItemIdByName("Ordinary Life"),
 	MISSINGMEMORY = Isaac.GetItemIdByName("Missing Memory"),
-	COOKIECUTTER = Isaac.GetItemIdByName("Cookie Cutter")
+	COOKIECUTTER = Isaac.GetItemIdByName("Cookie Cutter"),
+	RUBICKCUBE = Isaac.GetItemIdByName("Rubick's Cube"),
+	SOLVEDCUBE = Isaac.GetItemIdByName("Solved Cube")
 }
 
 Trinkets = {
@@ -68,6 +70,7 @@ function rplus:OnGameStart(continued)
 		ORDLIFE_DATA = nil
 		MISSINGMEMORY_DATA = nil
 		REVERSECARD_DATA = nil
+		CUBE_COUNTER = 0
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
@@ -106,10 +109,27 @@ function rplus:OnItemUse(itemused, rng, player, flags, slot, customdata)
 	elseif itemused == Collectibles.COOKIECUTTER then
 		player:AddMaxHearts(2, true)
 		player:AddBrokenHearts(1)
+		sfx:Play(SoundEffect.SOUND_VAMP_GULP, 1, 2, false, 1, 0)
 		if player:GetBrokenHearts() >= 12 then
 			player:Die()
 		end
-		return {Discharge = true, Remove = false, ShowAnim = true}
+		return true
+	elseif itemused == Collectibles.RUBICKCUBE then
+		local solve_chance = math.random(100)
+		
+		if solve_chance <= 5 or CUBE_COUNTER == 20 then
+			player:RemoveCollectible(Collectibles.RUBICKCUBE, true, ActiveSlot.SLOT_PRIMARY, true)
+			Isaac.Spawn(5, 100, Collectibles.SOLVEDCUBE, player.Position + Vector(20, 20), Vector.Zero, nil)
+			player:AnimateHappy()
+			CUBE_COUNTER = 0
+			return false
+		else
+			CUBE_COUNTER = CUBE_COUNTER + 1
+			return true
+		end
+	elseif itemused == Collectibles.SOLVEDCUBE then
+		player:UseCard(Card.CARD_SOUL_EDEN, UseFlag.USE_NOANIM | UseFlag.USE_OWNED | UseFlag.USE_NOANNOUNCER)
+		return true
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
@@ -153,7 +173,6 @@ function rplus:OnFrame()
 		end
 	end
 	
-	-- here's your elegant (sorta :D) solution Wertz
 	if REVERSECARD_DATA == "used" and player:GetSprite():IsFinished("PickupWalkDown") then
 		secondary_card = player:GetCard(1)
 		player:SetCard(1, 0)
@@ -236,6 +255,7 @@ function rplus:CardUsed(card, player, useflags)
 		end
 	elseif card == PocketItems.REVERSECARD then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false, false, true, false, -1)
+		REVERSECARD_DATA = "used"
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
