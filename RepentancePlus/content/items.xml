@@ -7,4 +7,6 @@
 	<trinket name="Basement Key" description="???" gfx="35_basementkey.png" />
   <!-- T.Maggy to Isaac -->
 	<active name="Cookie Cutter" description="Cut your Hearts!" gfx="02_cookiecutter.png" quality="1" maxcharges="0"/>
+  <!-- T:Maggy to Lamb -->
+	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="36_keytotheheart.png" />
 </items>

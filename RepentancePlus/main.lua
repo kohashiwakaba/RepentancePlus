@@ -9,6 +9,7 @@ local sfx = SFXManager()
 local music = MusicManager()
 
 local BASEMENTKEY_CHANCE = 5
+local HEARTKEY_CHANCE = 25
 local CARDRUNE_REPLACE_CHANCE = 2
 
 local reverseCardBuffer = 0 --don't know any elegant solution
@@ -20,7 +21,8 @@ Collectibles = {
 }
 
 Trinkets = {
-	BASEMENTKEY = Isaac.GetTrinketIdByName("Basement Key")
+	BASEMENTKEY = Isaac.GetTrinketIdByName("Basement Key"),
+	KEYTOTHEHEART = Isaac.GetTrinketIdByName("Key to the Heart")
 }
 
 PocketItems = {
@@ -28,6 +30,10 @@ PocketItems = {
 	SDDSHARD = Isaac.GetCardIdByName("Spindown Dice Shard"),
 	REVERSECARD = Isaac.GetCardIdByName("Reverse Card"),
 	REDRUNE = Isaac.GetCardIdByName("Red Rune")
+}
+
+PickUps = {
+	SCARLETCHEST = Isaac.GetEntityVariantByName("Scarlet Chest")
 }
 
 ---------------------
@@ -151,6 +157,9 @@ function rplus:OnNPCDeath(npc)
 			MISSINGMEMORY_DATA = "light"
 		end
 	end	
+	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HasBox(BASEMENTKEY_CHANCE) then
+		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.SCARLETCHEST, 0, npc.Position, npc.Velocity, nil)
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 
@@ -161,16 +170,8 @@ function rplus:OnPickupInit(pickup)
 	if player:HasTrinket(Trinkets.BASEMENTKEY) and pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST and math.random(100) <= HasBox(BASEMENTKEY_CHANCE) then
 		pickup:Morph(5, PickupVariant.PICKUP_OLDCHEST, 0, true, true, false)
 	end
-
-	if pickup.Variant == 300 then
-		local sprite = pickup:GetSprite()
-		if pickup.SubType == PocketItems.SDDSHARD then
-			sprite:Load("gfx/005.391_spindowndiceshard.anm2", true)
-			sprite:Play("Appear")
-		elseif pickup.SubType == PocketItems.REDRUNE then
-			sprite:Load("gfx/005.390_redrune.anm2", true)
-			sprite:Play("Appear")
-		end
+	if pickup.Type == EntityType.ENTITY_PICKUP and pickup.Variant == PickUps.SCARLETCHEST and pickup.SubType == 1 and type(pickup:GetData()["IsRoom"]) == type(nil) then
+		pickup:Remove()
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, rplus.OnPickupInit)
@@ -232,6 +233,24 @@ function rplus:DelReverseCard()
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.DelReverseCard)
+
+function rplus:OpenScarletChest(pickup, collider, low)
+	local player = Isaac.GetPlayer(0)
+	if collider.Type == 1 and pickup.SubType == 0 then
+		pickup.SubType = 1
+		pickup:GetSprite():Play("Open")
+		pickup:GetData()["IsRoom"] = true
+		local die = RNG()
+		local dieroll = die:RandomInt(10)
+		if dieroll < 2 then
+		elseif dieroll < 4 then
+		
+		elseif dieroll <10 then
+		
+		end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.OpenScarletChest, PickUps.SCARLETCHEST)
 
 
 
