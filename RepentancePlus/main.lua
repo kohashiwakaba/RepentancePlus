@@ -235,8 +235,7 @@ function rplus:CardUsed(card, player, useflags)
 			end
 		end
 	elseif card == PocketItems.REVERSECARD then
-		player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false, false, true, false, -1) --currently shows anim, I don't have a clue why
-		reverseCardBuffer = 200 -- works mostly consistent, needs some work though
+		player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false, false, true, false, -1)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
