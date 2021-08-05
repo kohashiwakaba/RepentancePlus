@@ -13,8 +13,6 @@
 	<active name="Cookie Cutter" description="Cut your hearts!" gfx="02_cookiecutter.png" quality="1" maxcharges="0"/>
   <!-- T:Maggy to Lamb -->
 	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="36_keytotheheart.png" />
-	
-	
-	<!-- T.Eden to ... -->
-	<passive name="Magic Pen" description="I want to be an artist" gfx="27_apen.png" quality="2" />
+  <!-- T.Maggy to Satan -->
+	<passive name="Heart of a Sinner" description="Homing shots + shot speed down" gfx = "14_sinnersheart.png" quality="2" cache="damage shotspeed tearflag range tearcolor"/>
 </items>
