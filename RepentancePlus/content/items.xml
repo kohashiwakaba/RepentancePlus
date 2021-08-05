@@ -6,8 +6,8 @@
   <!-- T.Isaac to the Lamb -->
 	<trinket name="Basement Key" description="???" gfx="35_basementkey.png" />
   <!-- T.Isaac wherever -->
-	<active name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="19a_rubickscube.png" quality="0" maxcharges="2" />
-	<active name="Magic Cube" description="Did you set the world record?" gfx="19b_rubickscube.png" quality="4" maxcharges="4" />  
+	<active name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="19_rubikscube.png" quality="0" maxcharges="2" />
+	<active name="Magic Cube" description="Did you set the world record?" gfx="20_magiccube.png" quality="4" maxcharges="4" />  
 	
   <!-- T.Maggy to Isaac -->
 	<active name="Cookie Cutter" description="Cut your Hearts!" gfx="02_cookiecutter.png" quality="1" maxcharges="0"/>
