@@ -10,7 +10,7 @@
 	<active name="Magic Cube" description="Did you set the world record?" gfx="20_magiccube.png" quality="4" maxcharges="4" />  
 	
   <!-- T.Maggy to Isaac -->
-	<active name="Cookie Cutter" description="Cut your Hearts!" gfx="02_cookiecutter.png" quality="1" maxcharges="0"/>
+	<active name="Cookie Cutter" description="Cut your hearts!" gfx="02_cookiecutter.png" quality="1" maxcharges="0"/>
   <!-- T:Maggy to Lamb -->
 	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="36_keytotheheart.png" />
 </items>
