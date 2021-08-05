@@ -2,12 +2,12 @@
   <!-- T.Isaac to Isaac -->
 	<active name="Ordinary Life" description="What if it all's just a dream?" gfx="01_ordinarylife.png" quality="3" maxcharges="12" />
   <!-- T.Isaac to Satan -->
-	<passive name="Missing Memory" description="Who is she?" gfx="97_untitled.png" quality="2" />
+	<passive name="The Missing Memory" description="Who is she?" gfx="37_themissingmemory.png" quality="2" />
   <!-- T.Isaac to the Lamb -->
 	<trinket name="Basement Key" description="???" gfx="35_basementkey.png" />
   <!-- T.Isaac wherever -->
-	<active name="Rubick's Cube" description="No more than 20 steps to solve!" gfx="19a_rubickscube.png" quality="0" maxcharges="2" />
-	<active name="Solved Cube" description="Did you set the world record?" gfx="19b_rubickscube.png" quality="4" maxcharges="4" />  
+	<active name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="19a_rubickscube.png" quality="0" maxcharges="2" />
+	<active name="Magic Cube" description="Did you set the world record?" gfx="19b_rubickscube.png" quality="4" maxcharges="4" />  
 	
   <!-- T.Maggy to Isaac -->
 	<active name="Cookie Cutter" description="Cut your Hearts!" gfx="02_cookiecutter.png" quality="1" maxcharges="0"/>
