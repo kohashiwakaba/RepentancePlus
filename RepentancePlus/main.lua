@@ -14,10 +14,10 @@ local CARDRUNE_REPLACE_CHANCE = 2
 
 Collectibles = {
 	ORDLIFE = Isaac.GetItemIdByName("Ordinary Life"),
-	MISSINGMEMORY = Isaac.GetItemIdByName("Missing Memory"),
+	MISSINGMEMORY = Isaac.GetItemIdByName("The Missing Memory"),
 	COOKIECUTTER = Isaac.GetItemIdByName("Cookie Cutter"),
-	RUBICKCUBE = Isaac.GetItemIdByName("Rubick's Cube"),
-	SOLVEDCUBE = Isaac.GetItemIdByName("Solved Cube")
+	RUBICKCUBE = Isaac.GetItemIdByName("Rubik's Cube"),
+	SOLVEDCUBE = Isaac.GetItemIdByName("Magic Cube")
 }
 
 Trinkets = {
