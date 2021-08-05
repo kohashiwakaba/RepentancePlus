@@ -92,24 +92,4 @@
 	<Pool Name="rottenBeggar">
 		
 	</Pool>
-	<Pool Name="scarletChest">
-		<!-- The Poop -->
-		<Item Id="36" Weight="1" DecreaseBy="0.4" RemoveOn="0.1"/>
-		<!-- The Peeper -->
-		<Item Id="155" Weight="1" DecreaseBy="0.4" RemoveOn="0.1"/>
-		<!-- Dead Tooth -->
-		<Item Id="446" Weight="1" DecreaseBy="0.4" RemoveOn="0.1"/>
-		<!-- Mystery Egg-->
-		<Item Id="539" Weight="1" DecreaseBy="0.4" RemoveOn="0.1"/>
-		<!-- Slipped Rib -->
-		<Item Id="542" Weight="1" DecreaseBy="0.4" RemoveOn="0.1"/>
-		<!-- Pointy Rib -->
-		<Item Id="544" Weight="1" DecreaseBy="0.4" RemoveOn="0.1"/>
-		<!-- Jaw Bone -->
-		<Item Id="548" Weight="1" DecreaseBy="0.4" RemoveOn="0.1"/>
-		<!-- Brittle Bones -->
-		<Item Id="549" Weight="1" DecreaseBy="0.4" RemoveOn="0.1"/>
-		<!-- Magic Skin -->
-		<Item Id="642" Weight="1" DecreaseBy="0.4" RemoveOn="0.1"/>
-	</Pool>
 </ItemPools>

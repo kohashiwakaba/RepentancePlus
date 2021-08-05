@@ -7,17 +7,18 @@ local game = Game()
 local rplus = RegisterMod("Repentance Plus", 1)
 local sfx = SFXManager()
 local music = MusicManager()
+local rdm = RNG()
 
 local BASEMENTKEY_CHANCE = 5
-local HEARTKEY_CHANCE = 25
+local HEARTKEY_CHANCE = 5
 local CARDRUNE_REPLACE_CHANCE = 2
 
 Collectibles = {
 	ORDLIFE = Isaac.GetItemIdByName("Ordinary Life"),
 	MISSINGMEMORY = Isaac.GetItemIdByName("The Missing Memory"),
 	COOKIECUTTER = Isaac.GetItemIdByName("Cookie Cutter"),
-	RUBICKCUBE = Isaac.GetItemIdByName("Rubik's Cube"),
-	SOLVEDCUBE = Isaac.GetItemIdByName("Magic Cube")
+	RUBIKSCUBE = Isaac.GetItemIdByName("Rubik's Cube"),
+	MAGICCUBE = Isaac.GetItemIdByName("Magic Cube")
 }
 
 Trinkets = {
@@ -36,6 +37,47 @@ PickUps = {
 	SCARLETCHEST = Isaac.GetEntityVariantByName("Scarlet Chest")
 }
 
+ScarletChestItems = { --just indent
+	13, --The Virus
+	16, --Raw Liver
+	26, --Rotten Meat
+	36, --The Poop
+	73, --Cube of Meat
+	155, --The Peeper
+	157, --Bloody Lust
+	176, --Stem Cells
+	214, --Anemic
+	218, --Placenta
+	236, --E. Coli
+	253, --Magic Scab
+	411, --Lusty Blood
+	440, --Kidney Stone
+	446, --Dead Tooth
+	452, --Varicose Veins
+	502, --Large Zit
+	509, --Bloodshot Eye
+	529, --Pop!
+	539, --Mystery Egg
+	541, --Marrow
+	542, --Slipped Rib
+	544, --Pointy Rib
+	548, --Jaw Bone
+	549, --Brittle Boney
+	553, --Mucormycosis
+	612, --Lost Soul
+	639, --Yuck Heart
+	642, --Magic Skin
+	657, --Vasculitis
+	676, --Empty Heart
+	684, --Hungry Soul
+	688, --Inner Child
+	694, --Heartbreak
+	695  --Bloody Gust
+}
+
+ScarletChestHearts = {
+	1, 2, 5, 10 --every Heart with red in it which is automatically unlocked
+}
 ---------------------
 -- LOCAL FUNCTIONS --
 ---------------------
@@ -59,6 +101,28 @@ local function GetRandomCustomCard()
 	return PocketItems[random_key]
 end
 
+local function isCollectibleUnlocked(collectibleType)
+	local isUnlocked = false
+	local itemPool = game:GetItemPool()
+	local player = Isaac.GetPlayer(0)
+	local hasChaos = false
+	itemPool:AddRoomBlacklist(CollectibleType.COLLECTIBLE_SAD_ONION)
+
+	if player:HasCollectible(CollectibleType.COLLECTIBLE_CHAOS) == true then
+		player:RemoveCollectible(CollectibleType.COLLECTIBLE_CHAOS)
+		hasChaos = true
+	end
+	local seed = game:GetSeeds():GetNextSeed()
+	local testCollectible = itemPool:GetCollectible(ItemPoolType.POOL_24, false, seed)
+	if testCollectible == collectibleType then
+		isUnlocked = true
+	end
+	if hasChaos == true then
+		player:AddCollectible(CollectibleType.COLLECTIBLE_CHAOS, 0, false)
+	end
+	itemPool:ResetRoomBlacklist()		
+	return isUnlocked	
+end
 
 ---------------------
 -- GLOBAL FUNCTIONS --
@@ -114,12 +178,12 @@ function rplus:OnItemUse(itemused, rng, player, flags, slot, customdata)
 			player:Die()
 		end
 		return true
-	elseif itemused == Collectibles.RUBICKCUBE then
+	elseif itemused == Collectibles.RUBIKSCUBE then
 		local solve_chance = math.random(100)
 		
 		if solve_chance <= 5 or CUBE_COUNTER == 20 then
-			player:RemoveCollectible(Collectibles.RUBICKCUBE, true, ActiveSlot.SLOT_PRIMARY, true)
-			Isaac.Spawn(5, 100, Collectibles.SOLVEDCUBE, player.Position + Vector(20, 20), Vector.Zero, nil)
+			player:RemoveCollectible(Collectibles.RUBIKSCUBE, true, ActiveSlot.SLOT_PRIMARY, true)
+			Isaac.Spawn(5, 100, Collectibles.MAGICCUBE, player.Position + Vector(20, 20), Vector.Zero, nil)
 			player:AnimateHappy()
 			CUBE_COUNTER = 0
 			return false
@@ -127,7 +191,7 @@ function rplus:OnItemUse(itemused, rng, player, flags, slot, customdata)
 			CUBE_COUNTER = CUBE_COUNTER + 1
 			return true
 		end
-	elseif itemused == Collectibles.SOLVEDCUBE then
+	elseif itemused == Collectibles.MAGICCUBE then
 		player:UseCard(Card.CARD_SOUL_EDEN, UseFlag.USE_NOANIM | UseFlag.USE_OWNED | UseFlag.USE_NOANNOUNCER)
 		return true
 	end
@@ -266,17 +330,47 @@ function rplus:OpenScarletChest(pickup, collider, low)
 		pickup.SubType = 1
 		pickup:GetSprite():Play("Open")
 		pickup:GetData()["IsRoom"] = true
-		local die = RNG()
-		local dieroll = die:RandomInt(10)
+		local dieroll = rdm:RandomInt(10)
 		if dieroll < 2 then
+			local item = ScarletChestItems[rdm:RandomInt(#ScarletChestItems) + 1]
+			while not isCollectibleUnlocked(item) do
+				item = ScarletChestItems[rdm:RandomInt(#ScarletChestItems) + 1]
+			end
+			item = Isaac.Spawn(5, 100, item, pickup.Position, Vector(0, 0), pickup)
+			pickup:Remove()
 		elseif dieroll < 4 then
-		
-		elseif dieroll <10 then
-		
+			Isaac.Spawn(5, 350, game:GetItemPool():GetTrinket(), pickup.Position, Vector.FromAngle(math.random(360)) * 5, pickup)
+		elseif dieroll < 10 then
+			local numOfPickUps = rdm:RandomInt(5) + 2 -- 2 to 6 pickups
+			for i=1, numOfPickUps do
+				local variant = nil
+				local subtype = nil
+				if rdm:RandomInt(100) < 75 then
+					variant = 10
+					subtype = ScarletChestHearts[rdm:RandomInt(#ScarletChestHearts) + 1]
+				else
+					variant = 70
+					subtype = game:GetItemPool():GetPill(game:GetSeeds():GetNextSeed())
+				end
+				Isaac.Spawn(5, variant, subtype, pickup.Position, Vector.FromAngle(math.random(360)) * 5, pickup)
+			end
 		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.OpenScarletChest, PickUps.SCARLETCHEST)
+
+function rplus:RenderScarletPedestal(pickup)
+	if pickup.Type == 5 and pickup.Variant == 100 and pickup.SpawnerVariant == 392 then
+		for i = 3, 5 do pickup:GetSprite():ReplaceSpritesheet(i,"gfx/items/slots/levelitem_scarletchest_itemaltar_dlc4.png") end
+		pickup:GetSprite():LoadGraphics()
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, rplus.RenderScarletPedestal)
+
+
+
+
+
 
 
 
