@@ -357,15 +357,15 @@ function rplus:CardUsed(Card, player, _)
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false, false, true, false, -1)
 		REVERSECARD_DATA = "used"
 	elseif Card == PocketItems.KINGOFSPADES then
+		sfx:Play(SoundEffect.SOUND_GOLDENKEY, 1, 2, false, 1, 0)
+		local NumPickups = math.floor(player:GetNumKeys() / 4)
 		player:AddKeys(-player:GetNumKeys())
-		if player:HasGoldenKey() then
-			player:RemoveGoldenKey()
-		end
-		local numPickUps = 5
-		for i=1, numPickUps do
+		if player:HasGoldenKey() then player:RemoveGoldenKey() NumPickups = NumPickups + 2 end
+		for i = 1, NumPickups do
 			player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SIN, false, false, true, false, -1)
 		end
-		player:UseActiveItem(CollectibleType.COLLECTIBLE_MYSTERY_GIFT, false, false, true, false, -1)
+		if NumPickups >= 3 then Isaac.Spawn(5, 350, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
+		if NumPickups >= 5 then Isaac.Spawn(5, 100, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
