@@ -16,6 +16,7 @@
 	<card type="suit" name="Joker?" hud="Joker?" mimiccharge="1" description="¿¿¿" /> <!--T.Azazel to BR-->
 	<card name="Spindown Dice Shard" hud="Spindown Dice Shard" mimiccharge="6" description="-1?" pickup="161"/> <!--T.Isaac to Greed-->
 	<card type="special" name="Reverse Card" hud="Reverse Card" mimiccharge="2" description="No, You!" pickup="17" /> <!--T.Isaac to BR-->
+	<card type="suit" name="King of Spades" hud="King of Spades" mimiccharge="6" description="Lose everything to get something" pickup="2" />
 	
 	<rune name="Red Rune" hud="Red Rune" mimiccharge="4" description="Abyss" pickup="160"/> <!--T.Apollyon to Greed-->
 	

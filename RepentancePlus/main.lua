@@ -32,7 +32,8 @@ PocketItems = {
 	RJOKER = Isaac.GetCardIdByName("Joker?"),
 	SDDSHARD = Isaac.GetCardIdByName("Spindown Dice Shard"),
 	REVERSECARD = Isaac.GetCardIdByName("Reverse Card"),
-	REDRUNE = Isaac.GetCardIdByName("Red Rune")
+	REDRUNE = Isaac.GetCardIdByName("Red Rune"),
+	KINGOFSPADES = Isaac.GetCardIdByName("King of Spades")
 }
 
 PickUps = {
@@ -118,6 +119,10 @@ local function GetRandomCustomCard()
 
 	local random_key = keys[math.random(1, #keys)]
 	return PocketItems[random_key]
+end
+
+local function GetRandomElement(List)
+	return List[math.random(#List) + 1]
 end
 
 -- Is this collectible unlocked?
@@ -351,6 +356,16 @@ function rplus:CardUsed(Card, player, _)
 	elseif Card == PocketItems.REVERSECARD then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false, false, true, false, -1)
 		REVERSECARD_DATA = "used"
+	elseif Card == PocketItems.KINGOFSPADES then
+		player:AddKeys(-player:GetNumKeys())
+		if player:HasGoldenKey() then
+			player:RemoveGoldenKey()
+		end
+		local numPickUps = 5
+		for i=1, numPickUps do
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SIN, false, false, true, false, -1)
+		end
+		player:UseActiveItem(CollectibleType.COLLECTIBLE_MYSTERY_GIFT, false, false, true, false, -1)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
@@ -364,9 +379,9 @@ function rplus:OpenScarletChest(Pickup, Collider, _)
 		Pickup:GetData()["IsRoom"] = true
 		local DieRoll = rdm:RandomInt(10)
 		if DieRoll < 2 then
-			local item = ScarletChestItems[rdm:RandomInt(#ScarletChestItems) + 1]
+			local item = GetRandomElement(ScarletChestItems)
 			while not IsCollectibleUnlocked(item) do
-				item = ScarletChestItems[rdm:RandomInt(#ScarletChestItems) + 1]
+				item = GetRandomElement(ScarletChestItems)
 			end
 			item = Isaac.Spawn(5, 100, item, Pickup.Position, Vector(0, 0), Pickup)
 			Pickup:Remove()
@@ -379,7 +394,7 @@ function rplus:OpenScarletChest(Pickup, Collider, _)
 				local subtype = nil
 				if rdm:RandomInt(100) < 75 then
 					variant = 10
-					subtype = ScarletChestHearts[rdm:RandomInt(#ScarletChestHearts) + 1]
+					subtype = GetRandomElement(ScarletChestHearts)
 				else
 					variant = 70
 					subtype = game:GetItemPool():GetPill(game:GetSeeds():GetNextSeed())
