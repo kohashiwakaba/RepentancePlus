@@ -19,6 +19,7 @@ Collectibles = {
 	COOKIECUTTER = Isaac.GetItemIdByName("Cookie Cutter"),
 	RUBIKSCUBE = Isaac.GetItemIdByName("Rubik's Cube"),
 	MAGICCUBE = Isaac.GetItemIdByName("Magic Cube"),
+	MAGICPEN = Isaac.GetItemIdByName("Magic Pen"),
 	SINNERSHEART = Isaac.GetItemIdByName("Heart of a Sinner")
 }
 
@@ -83,21 +84,32 @@ ScarletChestHearts = {
 StatUps = {
 	SINNERSHEART_DMG = 1.5,
 	SINNERSHEART_SHSP = -0.3,
-	SINNERSHEART_THEIGHT = -3 --negative TearHeight = positive Range
+	SINNERSHEART_TEARHEIGHT = -3 --negative TearHeight = positive Range
 }
+
+CreepColors = {
+	Color(255, 0, 0), --red
+	Color(255, 127, 0), --orange
+	Color(255, 255, 0), --yellow
+	Color(0, 255, 0), --green
+	Color(0, 0, 255), --blue
+	Color(75, 0, 130), --indigo
+	Color(143, 0, 255) --violet
+}
+
 ---------------------
 -- LOCAL FUNCTIONS --
 ---------------------
 
 -- If Isaac has Mom's Box, trinkets' effects are doubled.
-local function HasBox(trinketchance)
+local function HasBox(TrinketChance)
 	if Isaac.GetPlayer(0):HasCollectible(CollectibleType.COLLECTIBLE_MOMS_BOX) then
-		trinketchance = trinketchance * 2
+		TrinketChance = TrinketChance * 2
 	end
-	return trinketchance
+	return TrinketChance
 end
 
--- Helper function to return a random custom card to take place of the normal one.
+-- Helper function to return a random custom Card to take place of the normal one.
 local function GetRandomCustomCard()
 	local keys = {}
 	for k in pairs(PocketItems) do
@@ -108,7 +120,8 @@ local function GetRandomCustomCard()
 	return PocketItems[random_key]
 end
 
-local function isCollectibleUnlocked(collectibleType)
+-- Is this collectible unlocked?
+local function IsCollectibleUnlocked(collectibleType)
 	local isUnlocked = false
 	local itemPool = game:GetItemPool()
 	local player = Isaac.GetPlayer(0)
@@ -136,8 +149,8 @@ end
 ---------------------
 
 -- GAME STARTED --
-function rplus:OnGameStart(continued)
-	if not continued then
+function rplus:OnGameStart(Continued)
+	if not Continued then
 		ORDLIFE_DATA = nil
 		MISSINGMEMORY_DATA = nil
 		REVERSECARD_DATA = nil
@@ -160,12 +173,19 @@ function rplus:OnNewLevel()
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 
+-- EVERY NEW ROOM
+function rplus:OnNewRoom()
+	local player = Isaac.GetPlayer(0)
+
+end
+rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
+
 -- ACTIVE ITEM USED --
-function rplus:OnItemUse(itemused, rng, player, flags, slot, customdata)
+function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 	local level = game:GetLevel()
 	local player = Isaac.GetPlayer(0)
 	
-	if itemused == Collectibles.ORDLIFE then
+	if ItemUsed == Collectibles.ORDLIFE then
 		if not ORDLIFE_DATA then
 			ORDLIFE_DATA = "used"
 			music:Disable()
@@ -177,18 +197,18 @@ function rplus:OnItemUse(itemused, rng, player, flags, slot, customdata)
 			player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, true, true, false, false, -1)
 			return {Discharge = true, Remove = false, ShowAnim = true}
 		end
-	elseif itemused == Collectibles.COOKIECUTTER then
+	elseif ItemUsed == Collectibles.COOKIECUTTER then
 		player:AddMaxHearts(2, true)
 		player:AddBrokenHearts(1)
-		sfx:Play(SoundEffect.SOUND_VAMP_GULP, 1, 2, false, 1, 0)
+		sfx:Play(SoundEffect.SOUND_BLOODBANK_SPAWN, 1, 2, false, 1, 0)
 		if player:GetBrokenHearts() >= 12 then
 			player:Die()
 		end
 		return true
-	elseif itemused == Collectibles.RUBIKSCUBE then
-		local solve_chance = math.random(100)
+	elseif ItemUsed == Collectibles.RUBIKSCUBE then
+		local SolveChance = math.random(100)
 		
-		if solve_chance <= 5 or CUBE_COUNTER == 20 then
+		if SolveChance <= 5 or CUBE_COUNTER == 20 then
 			player:RemoveCollectible(Collectibles.RUBIKSCUBE, true, ActiveSlot.SLOT_PRIMARY, true)
 			Isaac.Spawn(5, 100, Collectibles.MAGICCUBE, player.Position + Vector(20, 20), Vector.Zero, nil)
 			player:AnimateHappy()
@@ -198,7 +218,7 @@ function rplus:OnItemUse(itemused, rng, player, flags, slot, customdata)
 			CUBE_COUNTER = CUBE_COUNTER + 1
 			return true
 		end
-	elseif itemused == Collectibles.MAGICCUBE then
+	elseif ItemUsed == Collectibles.MAGICCUBE then
 		player:UseCard(Card.CARD_SOUL_EDEN, UseFlag.USE_NOANIM | UseFlag.USE_OWNED | UseFlag.USE_NOANNOUNCER)
 		return true
 	end
@@ -245,19 +265,23 @@ function rplus:OnFrame()
 	end
 	
 	if REVERSECARD_DATA == "used" and player:GetSprite():IsFinished("PickupWalkDown") then
-		secondary_card = player:GetCard(1)
+		secondary_Card = player:GetCard(1)
 		player:SetCard(1, 0)
-		player:SetCard(0, secondary_card)
+		player:SetCard(0, secondary_Card)
 		REVERSECARD_DATA = nil
+	end
+	
+	if player:HasCollectible(Collectibles.MAGICPEN) and game:GetFrameCount() % 100 == 0 then
+		RandomCreepColor = math.random(#CreepColors)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
 -- WHEN NPC (ENEMY) DIES --
-function rplus:OnNPCDeath(npc)
+function rplus:OnNPCDeath(NPC)
 	local player = Isaac.GetPlayer(0)
 	
-	if player:HasCollectible(Collectibles.MISSINGMEMORY) and npc.Type == EntityType.ENTITY_MOTHER then
+	if player:HasCollectible(Collectibles.MISSINGMEMORY) and NPC.Type == EntityType.ENTITY_MOTHER then
 		if player:HasCollectible(328) then
 			Isaac.GridSpawn(GridEntityType.GRID_TRAPDOOR, 0, Vector(320,280), false)
 			MISSINGMEMORY_DATA = "dark"
@@ -268,27 +292,27 @@ function rplus:OnNPCDeath(npc)
 	end	
 	
 	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HasBox(HEARTKEY_CHANCE) then
-		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.SCARLETCHEST, 0, npc.Position, npc.Velocity, nil)
+		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.SCARLETCHEST, 0, NPC.Position, NPC.Velocity, nil)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 
 -- ON PICKUP INITIALIZATION -- 
-function rplus:OnPickupInit(pickup)
+function rplus:OnPickupInit(Pickup)
 	local player = Isaac.GetPlayer(0)
 	
-	if player:HasTrinket(Trinkets.BASEMENTKEY) and pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST and math.random(100) <= HasBox(BASEMENTKEY_CHANCE) then
-		pickup:Morph(5, PickupVariant.PICKUP_OLDCHEST, 0, true, true, false)
+	if player:HasTrinket(Trinkets.BASEMENTKEY) and Pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST and math.random(100) <= HasBox(BASEMENTKEY_CHANCE) then
+		Pickup:Morph(5, PickupVariant.PICKUP_OLDCHEST, 0, true, true, false)
 	end
-	if pickup.Type == EntityType.ENTITY_PICKUP and pickup.Variant == PickUps.SCARLETCHEST and pickup.SubType == 1 and type(pickup:GetData()["IsRoom"]) == type(nil) then
-		pickup:Remove()
+	if Pickup.Type == EntityType.ENTITY_PICKUP and Pickup.Variant == PickUps.SCARLETCHEST and Pickup.SubType == 1 and type(Pickup:GetData()["IsRoom"]) == type(nil) then
+		Pickup:Remove()
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, rplus.OnPickupInit)
 
 -- ON GETTING A CARD --
-function rplus:OnCardInit(rng, card, playingcards, runes, onlyrunes)
-	if playingcards or runes then
+function rplus:OnCardInit(_, _, PlayingCards, Runes, OnlyRunes)
+	if PlayingCards or Runes then
 		if math.random(100) <= CARDRUNE_REPLACE_CHANCE then
 			GetRandomCustomCard()
 		end
@@ -297,19 +321,19 @@ end
 rplus:AddCallback(ModCallbacks.MC_GET_CARD, rplus.OnCardInit)
 
 -- ON USING CARD -- 
-function rplus:CardUsed(card, player, useflags)
+function rplus:CardUsed(Card, player, _)
 	local player = Isaac.GetPlayer(0)
 	
-	if card == PocketItems.RJOKER then
+	if Card == PocketItems.RJOKER then
 		game:StartRoomTransition(-6, -1, RoomTransitionAnim.TELEPORT, player, -1)
-	elseif card == PocketItems.SDDSHARD then
+	elseif Card == PocketItems.SDDSHARD then
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Variant == PickupVariant.PICKUP_COLLECTIBLE then
 				local id = entity.SubType - 1
 				entity:ToPickup():Morph(EntityType.ENTITY_PICKUP, 100, id, true, true, false)
 			end
 		end
-	elseif card == PocketItems.REDRUNE then
+	elseif Card == PocketItems.REDRUNE then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_ABYSS, false, false, true, false, -1)
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_NECRONOMICON, false, false, true, false, -1)
 		local locustRNG = RNG()
@@ -324,32 +348,33 @@ function rplus:CardUsed(card, player, useflags)
 				end
 			end
 		end
-	elseif card == PocketItems.REVERSECARD then
+	elseif Card == PocketItems.REVERSECARD then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false, false, true, false, -1)
 		REVERSECARD_DATA = "used"
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 
-function rplus:OpenScarletChest(pickup, collider, low)
+-- ON PICKUP COLLISION
+function rplus:OpenScarletChest(Pickup, Collider, _)
 	local player = Isaac.GetPlayer(0)
-	if collider.Type == 1 and pickup.Variant == PickUps.SCARLETCHEST and pickup.SubType == 0 then
-		pickup.SubType = 1
-		pickup:GetSprite():Play("Open")
-		pickup:GetData()["IsRoom"] = true
-		local dieroll = rdm:RandomInt(10)
-		if dieroll < 2 then
+	if Collider.Type == 1 and Pickup.Variant == PickUps.SCARLETCHEST and Pickup.SubType == 0 then
+		Pickup.SubType = 1
+		Pickup:GetSprite():Play("Open")
+		Pickup:GetData()["IsRoom"] = true
+		local DieRoll = rdm:RandomInt(10)
+		if DieRoll < 2 then
 			local item = ScarletChestItems[rdm:RandomInt(#ScarletChestItems) + 1]
-			while not isCollectibleUnlocked(item) do
+			while not IsCollectibleUnlocked(item) do
 				item = ScarletChestItems[rdm:RandomInt(#ScarletChestItems) + 1]
 			end
-			item = Isaac.Spawn(5, 100, item, pickup.Position, Vector(0, 0), pickup)
-			pickup:Remove()
-		elseif dieroll < 4 then
-			Isaac.Spawn(5, 350, game:GetItemPool():GetTrinket(), pickup.Position, Vector.FromAngle(math.random(360)) * 5, pickup)
-		elseif dieroll < 10 then
-			local numOfPickUps = rdm:RandomInt(5) + 2 -- 2 to 6 pickups
-			for i=1, numOfPickUps do
+			item = Isaac.Spawn(5, 100, item, Pickup.Position, Vector(0, 0), Pickup)
+			Pickup:Remove()
+		elseif DieRoll < 4 then
+			Isaac.Spawn(5, 350, game:GetItemPool():GetTrinket(), Pickup.Position, Vector.FromAngle(math.random(360)) * 5, Pickup)
+		elseif DieRoll < 10 then
+			local NumOfPickUps = rdm:RandomInt(5) + 2 -- 2 to 6 Pickups
+			for i = 1, NumOfPickUps do
 				local variant = nil
 				local subtype = nil
 				if rdm:RandomInt(100) < 75 then
@@ -359,43 +384,59 @@ function rplus:OpenScarletChest(pickup, collider, low)
 					variant = 70
 					subtype = game:GetItemPool():GetPill(game:GetSeeds():GetNextSeed())
 				end
-				Isaac.Spawn(5, variant, subtype, pickup.Position, Vector.FromAngle(math.random(360)) * 5, pickup)
+				Isaac.Spawn(5, variant, subtype, Pickup.Position, Vector.FromAngle(math.random(360)) * 5, Pickup)
 			end
 		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.OpenScarletChest)
 
-function rplus:RenderScarletPedestal(pickup)
-	if pickup.Type == 5 and pickup.Variant == 100 and pickup.SpawnerVariant == 392 then
-		for i = 3, 5 do pickup:GetSprite():ReplaceSpritesheet(i,"gfx/items/slots/levelitem_scarletchest_itemaltar_dlc4.png") end
-		pickup:GetSprite():LoadGraphics()
+-- ON UPDATING THE PICKUPS
+function rplus:PickupUpdate(Pickup)
+	if Pickup.Type == 5 and Pickup.Variant == 100 and Pickup.SpawnerVariant == 392 then
+		for i = 3, 5 do Pickup:GetSprite():ReplaceSpritesheet(i,"gfx/items/slots/levelitem_scarletchest_itemaltar_dlc4.png") end
+		Pickup:GetSprite():LoadGraphics()
 	end
 end
-rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, rplus.RenderScarletPedestal)
+rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, rplus.PickupUpdate)
 
-function rplus:UpdateStats(player, flag) --If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml
-	if flag == CacheFlag.CACHE_DAMAGE then
+-- ON TEAR UPDATE
+function rplus:OnTearUpdate(Tear)
+	local player = Isaac.GetPlayer(0)
+	
+	if player:HasCollectible(Collectibles.MAGICPEN) then
+		local CreepTrail = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL, 0, Tear.Position, Vector.Zero, nil):ToEffect()
+		CreepTrail.Scale = 0.4
+		if RandomCreepColor then CreepTrail:SetColor(CreepColors[RandomCreepColor], 500, 1, false, false) end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
+
+-- UPDATING PLAYER STATS
+function rplus:UpdateStats(player, Flag) 
+	--If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml
+	if Flag == CacheFlag.CACHE_DAMAGE then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
 			player.Damage = player.Damage + StatUps.SINNERSHEART_DMG
 		end
 	end
-	if flag == CacheFlag.CACHE_TEARFLAG then
+	if Flag == CacheFlag.CACHE_TEARFLAG then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
 			player.TearFlags = player.TearFlags | TearFlags.TEAR_HOMING
 		end
 	end
-	if flag == CacheFlag.CACHE_SHOTSPEED then
+	if Flag == CacheFlag.CACHE_SHOTSPEED then
 		if player:HasCollectible(Collectibles.SINNERSHEART)  then
 			player.ShotSpeed = player.ShotSpeed + StatUps.SINNERSHEART_SHSP
 		end
 	end
-	if flag == CacheFlag.CACHE_RANGE then --Range currently not functioning, blame edmund
+	if Flag == CacheFlag.CACHE_RANGE then 
+		--Range currently not functioning, blame Edmund
 		if player:HasCollectible(Collectibles.SINNERSHEART)  then
-			player.TearHeight = player.TearHeight + StatUps.SINNERSHEART_THEIGHT
+			player.TearHeight = player.TearHeight + StatUps.SINNERSHEART_TEARHEIGHT
 		end
 	end
-	if flag == CacheFlag.CACHE_TEARCOLOR then
+	if Flag == CacheFlag.CACHE_TEARCOLOR then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
 			Isaac.DebugString("pink")
 			player.TearColor = Color(0.4, 0.1, 0.38, 1, 0.27843, 0, 0.4549)
@@ -403,6 +444,15 @@ function rplus:UpdateStats(player, flag) --If any Stat-Changes are done, just ch
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, rplus.UpdateStats)
+
+
+
+
+
+
+
+
+
 
 
 
