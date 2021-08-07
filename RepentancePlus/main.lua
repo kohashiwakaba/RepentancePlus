@@ -33,7 +33,8 @@ PocketItems = {
 	SDDSHARD = Isaac.GetCardIdByName("Spindown Dice Shard"),
 	REVERSECARD = Isaac.GetCardIdByName("Reverse Card"),
 	REDRUNE = Isaac.GetCardIdByName("Red Rune"),
-	KINGOFSPADES = Isaac.GetCardIdByName("King of Spades")
+	KINGOFSPADES = Isaac.GetCardIdByName("King of Spades"),
+	NEEDLEANDTHREAD = Isaac.GetCardIdByName("Needle and Thread")
 }
 
 PickUps = {
@@ -366,6 +367,12 @@ function rplus:CardUsed(Card, player, _)
 		end
 		if NumPickups >= 3 then Isaac.Spawn(5, 350, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
 		if NumPickups >= 5 then Isaac.Spawn(5, 100, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
+	elseif Card == PocketItems.NEEDLEANDTHREAD then
+		if player:GetBrokenHearts() > 0 then
+			player:AddBrokenHearts(-1)
+			player:AddMaxHearts(2, true)
+			player:AddHearts(2)
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
@@ -453,7 +460,6 @@ function rplus:UpdateStats(player, Flag)
 	end
 	if Flag == CacheFlag.CACHE_TEARCOLOR then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
-			Isaac.DebugString("pink")
 			player.TearColor = Color(0.4, 0.1, 0.38, 1, 0.27843, 0, 0.4549)
 		end
 	end

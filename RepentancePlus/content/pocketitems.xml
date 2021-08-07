@@ -17,6 +17,7 @@
 	<card name="Spindown Dice Shard" hud="Spindown Dice Shard" mimiccharge="6" description="-1?" pickup="161"/> <!--T.Isaac to Greed-->
 	<card type="special" name="Reverse Card" hud="Reverse Card" mimiccharge="2" description="No, You!" pickup="17" /> <!--T.Isaac to BR-->
 	<card type="suit" name="King of Spades" hud="King of Spades" mimiccharge="6" description="Lose everything to get something" pickup="2" />
+	<card name="Needle and Thread" hud="Needle and Thread" mimiccharge="4" description="To cure my broken heart" pickup="162" />
 	
 	<rune name="Red Rune" hud="Red Rune" mimiccharge="4" description="Abyss" pickup="160"/> <!--T.Apollyon to Greed-->
 	
