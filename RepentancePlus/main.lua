@@ -499,7 +499,7 @@ rplus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, rplus.UpdateStats)
 function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 	local player = Isaac.GetPlayer(0)
 	
-	if player:HasCollectible(Collectibles.MAGICPEN) and CreepTrail and Source.Entity and Source.Entity.Type == 1000 and Source.Entity.SubType == 4 then
+	if player:HasCollectible(Collectibles.MAGICPEN) and Source.Entity and Source.Entity.Type == 1000 and Source.Entity.SubType == 4 then
 		if math.random(100) == 1 then
 			local Flags = {
 				EntityFlag.FLAG_POISON, 
