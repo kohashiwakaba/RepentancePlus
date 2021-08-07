@@ -278,8 +278,26 @@ function rplus:OnFrame()
 		REVERSECARD_DATA = nil
 	end
 	
-	if player:HasCollectible(Collectibles.MAGICPEN) and game:GetFrameCount() % 100 == 0 then
-		RandomCreepColor = math.random(#CreepColors)
+	if player:HasCollectible(Collectibles.MAGICPEN) then
+		-- taste the rainbow
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity.Type == 1000 and entity.Variant == EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL and entity.SubType == 4 then
+				local Frame = game:GetFrameCount() % 490 + 1
+				if Frame <= 140 then
+					entity:SetColor(Color(1, Frame / 140, 0), 1, 1, false, false)
+				elseif Frame <= 210 then
+					entity:SetColor(Color(1 - (Frame - 140) / 70, 1, 0), 1, 1, false, false)
+				elseif Frame <= 280 then
+					entity:SetColor(Color(0, 1 - (Frame - 210) / 70, (Frame - 210) / 70), 1, 1, false, false)
+				elseif Frame <= 350 then
+					entity:SetColor(Color((Frame - 280) / 70 * 75 / 255, 0, (Frame - 280) / 70 * 130 / 255), 1, 1, false, false)
+				elseif Frame <= 420 then
+					entity:SetColor(Color((75 + (Frame - 350) / 70 * 58) / 255, 0, (130 + (Frame - 350) / 70 * 125) / 255), 1, 1, false, false)
+				else
+					entity:SetColor(Color((143 + (Frame - 420) / 70 * 112) / 255, 0, 1 - (Frame - 420) / 70), 1, 1, false, false)
+				end
+			end
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
@@ -439,9 +457,8 @@ function rplus:OnTearUpdate(Tear)
 	local player = Isaac.GetPlayer(0)
 	
 	if player:HasCollectible(Collectibles.MAGICPEN) then
-		local CreepTrail = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL, 0, Tear.Position, Vector.Zero, nil):ToEffect()
+		local CreepTrail = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL, 4, Tear.Position, Vector.Zero, nil):ToEffect()
 		CreepTrail.Scale = 0.4
-		if RandomCreepColor then CreepTrail:SetColor(CreepColors[RandomCreepColor], 500, 1, false, false) end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
@@ -478,6 +495,28 @@ function rplus:UpdateStats(player, Flag)
 end
 rplus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, rplus.UpdateStats)
 
+-- ENTITY TAKES DAMAGE
+function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
+	local player = Isaac.GetPlayer(0)
+	
+	if player:HasCollectible(Collectibles.MAGICPEN) and CreepTrail and Source.Entity and Source.Entity.Type == 1000 and Source.Entity.SubType == 4 then
+		if math.random(100) == 1 then
+			local Flags = {
+				EntityFlag.FLAG_POISON, 
+				EntityFlag.FLAG_SLOW, 
+				EntityFlag.FLAG_CHARM, 
+				EntityFlag.FLAG_CONFUSION, 
+				EntityFlag.FLAG_FEAR, 
+				EntityFlag.FLAG_BURN
+			}
+			local RandomEffectFlag = Flags[math.random(#Flags)]
+			
+			Entity:AddEntityFlags(RandomEffectFlag)
+		end
+		return false
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
 
 
 
