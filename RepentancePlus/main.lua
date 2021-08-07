@@ -34,7 +34,8 @@ PocketItems = {
 	REVERSECARD = Isaac.GetCardIdByName("Reverse Card"),
 	REDRUNE = Isaac.GetCardIdByName("Red Rune"),
 	KINGOFSPADES = Isaac.GetCardIdByName("King of Spades"),
-	NEEDLEANDTHREAD = Isaac.GetCardIdByName("Needle and Thread")
+	NEEDLEANDTHREAD = Isaac.GetCardIdByName("Needle and Thread"),
+	QUEENOFDIAMONDS = Isaac.GetCardIdByName("Queen of Diamonds")
 }
 
 PickUps = {
@@ -372,6 +373,17 @@ function rplus:CardUsed(Card, player, _)
 			player:AddBrokenHearts(-1)
 			player:AddMaxHearts(2, true)
 			player:AddHearts(2)
+		end
+	elseif Card == PocketItems.QUEENOFDIAMONDS then
+		for i=1, math.random(12) do
+			local QueenOfDiamondsRandom = math.random(100)
+			if QueenOfDiamondsRandom <= 92 then
+				Isaac.Spawn(5, PickupVariant.PICKUP_COIN,1 , game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
+			elseif QueenOfDiamondsRandom <= 98 then
+				Isaac.Spawn(5, PickupVariant.PICKUP_COIN,2 , game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
+			else
+				Isaac.Spawn(5, PickupVariant.PICKUP_COIN,3 , game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
+			end
 		end
 	end
 end
