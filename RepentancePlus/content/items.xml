@@ -15,4 +15,7 @@
 	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="36_keytotheheart.png" />
   <!-- T.Maggy to Satan -->
 	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx = "14_sinnersheart.png" quality="2" cache="damage shotspeed tearflag range tearcolor"/>
+	
+	
+	<passive name="Magic Pen" description="I want to be an artist" gfx="52_magicpen.png" quality="1" /> 
 </items>
