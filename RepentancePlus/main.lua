@@ -124,7 +124,7 @@ local function GetRandomCustomCard()
 end
 
 local function GetRandomElement(List)
-	return List[math.random(#List) + 1]
+	return List[math.random(#List)]
 end
 
 -- Is this collectible unlocked?
