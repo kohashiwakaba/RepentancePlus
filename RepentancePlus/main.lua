@@ -20,7 +20,7 @@ Collectibles = {
 	RUBIKSCUBE = Isaac.GetItemIdByName("Rubik's Cube"),
 	MAGICCUBE = Isaac.GetItemIdByName("Magic Cube"),
 	MAGICPEN = Isaac.GetItemIdByName("Magic Pen"),
-	SINNERSHEART = Isaac.GetItemIdByName("Heart of a Sinner")
+	SINNERSHEART = Isaac.GetItemIdByName("Sinner's Heart")
 }
 
 Trinkets = {
