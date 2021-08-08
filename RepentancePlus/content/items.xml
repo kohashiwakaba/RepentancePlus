@@ -14,7 +14,10 @@
   <!-- T:Maggy to Lamb -->
 	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="36_keytotheheart.png" />
   <!-- T.Maggy to Satan -->
-	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx = "14_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor"/>
+	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx="14_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor"/>
+	
+  <!-- T.Cain to Satan -->
+	<passive name="Mark of Cain" description="Extra life... at a cost" gfx="03_themarkofcain.png" quality="3" />
 	
   <!-- T.Eden to ... -->
 	<passive name="Magic Pen" description="I want to be an artist" gfx="52_magicpen.png" quality="1" /> 

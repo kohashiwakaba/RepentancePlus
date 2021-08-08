@@ -20,7 +20,8 @@ Collectibles = {
 	RUBIKSCUBE = Isaac.GetItemIdByName("Rubik's Cube"),
 	MAGICCUBE = Isaac.GetItemIdByName("Magic Cube"),
 	MAGICPEN = Isaac.GetItemIdByName("Magic Pen"),
-	SINNERSHEART = Isaac.GetItemIdByName("Sinner's Heart")
+	SINNERSHEART = Isaac.GetItemIdByName("Sinner's Heart"),
+	MARKCAIN = Isaac.GetItemIdByName("Mark of Cain")
 }
 
 Trinkets = {
@@ -35,7 +36,8 @@ PocketItems = {
 	REDRUNE = Isaac.GetCardIdByName("Red Rune"),
 	KINGOFSPADES = Isaac.GetCardIdByName("King of Spades"),
 	NEEDLEANDTHREAD = Isaac.GetCardIdByName("Needle and Thread"),
-	QUEENOFDIAMONDS = Isaac.GetCardIdByName("Queen of Diamonds")
+	QUEENOFDIAMONDS = Isaac.GetCardIdByName("Queen of Diamonds"),
+	BAGTISSUE = Isaac.GetCardIdByName("Bag Tissue")
 }
 
 PickUps = {
@@ -446,7 +448,7 @@ function rplus:CardUsed(Card, player, _)
 				Isaac.Spawn(5, PickupVariant.PICKUP_COIN,3 , game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
 			end
 		end
-	elseif Card == 2 then -- will be bag of crafting tissue
+	elseif Card == PocketItems.BAGTISSUE then
 		local Weights = {}
 		local SumWeight = 0
 		local EnoughConsumables = true
@@ -458,7 +460,7 @@ function rplus:CardUsed(Card, player, _)
 					table.insert(Weights, PickupWeights[entity.Variant][entity.SubType])
 					Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
 					entity:Remove()
-				elseif entity.Variant == 90 then
+				elseif entity.Variant == 70 then
 					table.insert(Weights, 2)
 					Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
 					entity:Remove()
