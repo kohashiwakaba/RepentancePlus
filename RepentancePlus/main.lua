@@ -85,7 +85,8 @@ ScarletChestHearts = {
 }
 
 StatUps = {
-	SINNERSHEART_DMG = 1.5,
+	SINNERSHEART_DMG_MUL = 1.5,
+	SINNERSHEART_DMG_ADD = 2,
 	SINNERSHEART_SHSP = -0.3,
 	SINNERSHEART_TEARHEIGHT = -3 --negative TearHeight = positive Range
 }
@@ -414,17 +415,17 @@ function rplus:OpenScarletChest(Pickup, Collider, _)
 		Pickup.SubType = 1
 		Pickup:GetSprite():Play("Open")
 		Pickup:GetData()["IsRoom"] = true
-		local DieRoll = rdm:RandomInt(10)
-		if DieRoll < 2 then
+		local DieRoll = math.random(100)
+		if DieRoll < 20 then
 			local item = GetRandomElement(ScarletChestItems)
 			while not IsCollectibleUnlocked(item) do
 				item = GetRandomElement(ScarletChestItems)
 			end
 			item = Isaac.Spawn(5, 100, item, Pickup.Position, Vector(0, 0), Pickup)
 			Pickup:Remove()
-		elseif DieRoll < 4 then
+		elseif DieRoll < 40 then
 			Isaac.Spawn(5, 350, game:GetItemPool():GetTrinket(), Pickup.Position, Vector.FromAngle(math.random(360)) * 5, Pickup)
-		elseif DieRoll < 10 then
+		elseif DieRoll < 90 then
 			local NumOfPickUps = rdm:RandomInt(5) + 2 -- 2 to 6 Pickups
 			for i = 1, NumOfPickUps do
 				local variant = nil
@@ -438,6 +439,8 @@ function rplus:OpenScarletChest(Pickup, Collider, _)
 				end
 				Isaac.Spawn(5, variant, subtype, Pickup.Position, Vector.FromAngle(math.random(360)) * 5, Pickup)
 			end
+		else
+			EntityNPC.ThrowSpider(Pickup.Position, Pickup, Pickup.Position + Vector.FromAngle(math.random(360)) * 200, false, 0)
 		end
 	end
 end
@@ -468,7 +471,8 @@ function rplus:UpdateStats(player, Flag)
 	--If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml
 	if Flag == CacheFlag.CACHE_DAMAGE then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
-			player.Damage = player.Damage + StatUps.SINNERSHEART_DMG
+			player.Damage = player.Damage + StatUps.SINNERSHEART_DMG_ADD
+			player.Damage = player.Damage * StatUps.SINNERSHEART_DMG_MUL
 		end
 	end
 	if Flag == CacheFlag.CACHE_TEARFLAG then
