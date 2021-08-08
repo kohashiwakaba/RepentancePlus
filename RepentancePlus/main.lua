@@ -101,6 +101,48 @@ CreepColors = {
 	Color(143, 0, 255) --violet
 }
 
+PickupWeights = {
+	[PickupVariant.PICKUP_HEART] = {
+		[HeartSubType.HEART_FULL] = 1,
+		[HeartSubType.HEART_HALF] = 1,
+		[HeartSubType.HEART_SOUL] = 4,
+		[HeartSubType.HEART_ETERNAL] = 6,
+		[HeartSubType.HEART_DOUBLEPACK] = 2,
+		[HeartSubType.HEART_BLACK] = 5,
+		[HeartSubType.HEART_GOLDEN] = 5,
+		[HeartSubType.HEART_HALF_SOUL] = 4,
+		[HeartSubType.HEART_SCARED] = 1,
+		[HeartSubType.HEART_BLENDED] = 3,
+		[HeartSubType.HEART_BONE] = 5,
+		[HeartSubType.HEART_ROTTEN] = 5 
+	},
+	[PickupVariant.PICKUP_COIN] = {
+		[CoinSubType.COIN_PENNY] = 1,
+		[CoinSubType.COIN_NICKEL] = 3,
+		[CoinSubType.COIN_DIME] = 5,
+		[CoinSubType.COIN_DOUBLEPACK] = 2,
+		[CoinSubType.COIN_LUCKYPENNY] = 7,
+		[CoinSubType.COIN_GOLDEN] = 4
+	},
+	[PickupVariant.PICKUP_KEY] = {
+		[KeySubType.KEY_NORMAL] = 1,
+		[KeySubType.KEY_GOLDEN] = 5,
+		[KeySubType.KEY_DOUBLEPACK] = 2,
+		[KeySubType.KEY_CHARGED] = 5
+	},
+	[PickupVariant.PICKUP_BOMB] = {
+		[BombSubType.BOMB_NORMAL] = 2,
+		[BombSubType.BOMB_DOUBLEPACK] = 4,
+		[BombSubType.BOMB_GOLDEN] = 6
+	},
+	[PickupVariant.PICKUP_LIL_BATTERY] = {
+		[BatterySubType.BATTERY_NORMAL] = 4,
+		[BatterySubType.BATTERY_MICRO] = 2,
+		[BatterySubType.BATTERY_MEGA] = 8,
+		[BatterySubType.BATTERY_GOLDEN] = 5
+	}
+}
+
 ---------------------
 -- LOCAL FUNCTIONS --
 ---------------------
@@ -404,6 +446,55 @@ function rplus:CardUsed(Card, player, _)
 				Isaac.Spawn(5, PickupVariant.PICKUP_COIN,3 , game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
 			end
 		end
+	elseif Card == 2 then -- will be bag of crafting tissue
+		local Weights = {}
+		local SumWeight = 0
+		local EnoughConsumables = true
+		
+		-- getting total weight of 8 most valuable pickups in a room
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity.Type == 5 then
+				if PickupWeights[entity.Variant] and PickupWeights[entity.Variant][entity.SubType] then
+					table.insert(Weights, PickupWeights[entity.Variant][entity.SubType])
+					Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
+					entity:Remove()
+				elseif entity.Variant == 90 then
+					table.insert(Weights, 2)
+					Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
+					entity:Remove()
+				elseif entity.Variant == 300 then
+					table.insert(Weights, 3)
+					Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
+					entity:Remove()
+				end
+			end
+		end
+		table.sort(Weights, function(a,b) return a>b end)
+		for i = 1, 8 do
+			if not Weights[i] then
+				EnoughConsumables = false player:AnimateSad() break
+			end
+			SumWeight = SumWeight + Weights[i]
+		end
+
+
+		if EnoughConsumables then
+			-- defining item quality 
+			DesiredQuality = math.floor(SumWeight / 9)
+			if DesiredQuality > 4 then
+				DesiredQuality = 4
+			end
+			
+			-- trying to get random (not story-related!!) item with desired quality
+			repeat
+				ID = math.random(729)
+			until Isaac.GetItemConfig():GetCollectible(ID).Quality == DesiredQuality and 
+			Isaac.GetItemConfig():GetCollectible(ID).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST
+			
+			-- spawning the item
+			player:AnimateHappy()
+			Isaac.Spawn(5, 100, ID, Isaac.GetFreeNearPosition(player.Position, 5.0), Vector.Zero, nil)
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
@@ -411,31 +502,36 @@ rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 -- ON PICKUP COLLISION
 function rplus:OpenScarletChest(Pickup, Collider, _)
 	local player = Isaac.GetPlayer(0)
+	
 	if Collider.Type == 1 and Pickup.Variant == PickUps.SCARLETCHEST and Pickup.SubType == 0 then
 		Pickup.SubType = 1
 		Pickup:GetSprite():Play("Open")
 		Pickup:GetData()["IsRoom"] = true
+		sfx:Play(SoundEffect.SOUND_CHEST_OPEN, 1, 1, false, 1, 0)
+		player:TakeDamage(1, DamageFlag.DAMAGE_RED_HEARTS | DamageFlag.DAMAGE_NO_PENALTIES, EntityRef(Pickup), 30)
 		local DieRoll = math.random(100)
-		if DieRoll < 20 then
-			local item = GetRandomElement(ScarletChestItems)
-			while not IsCollectibleUnlocked(item) do
-				item = GetRandomElement(ScarletChestItems)
-			end
-			item = Isaac.Spawn(5, 100, item, Pickup.Position, Vector(0, 0), Pickup)
+		
+		if DieRoll < 15 then
+			repeat
+				Item = GetRandomElement(ScarletChestItems)
+			until IsCollectibleUnlocked(Item)
+			Isaac.Spawn(5, 100, Item, Pickup.Position, Vector(0, 0), Pickup)
 			Pickup:Remove()
-		elseif DieRoll < 40 then
-			Isaac.Spawn(5, 350, game:GetItemPool():GetTrinket(), Pickup.Position, Vector.FromAngle(math.random(360)) * 5, Pickup)
-		elseif DieRoll < 90 then
-			local NumOfPickUps = rdm:RandomInt(5) + 2 -- 2 to 6 Pickups
+		-- elseif DieRoll < 40 then
+			-- Isaac.Spawn(5, 350, math.random(189), Pickup.Position, Vector.FromAngle(math.random(360)) * 5, Pickup)
+		elseif DieRoll < 80 then
+			local NumOfPickUps = rdm:RandomInt(4) + 1 -- 1 to 4 Pickups
+			
 			for i = 1, NumOfPickUps do
 				local variant = nil
 				local subtype = nil
-				if rdm:RandomInt(100) < 75 then
+				
+				if rdm:RandomInt(100) < 66 then
 					variant = 10
 					subtype = GetRandomElement(ScarletChestHearts)
 				else
 					variant = 70
-					subtype = game:GetItemPool():GetPill(game:GetSeeds():GetNextSeed())
+					subtype = 0
 				end
 				Isaac.Spawn(5, variant, subtype, Pickup.Position, Vector.FromAngle(math.random(360)) * 5, Pickup)
 			end

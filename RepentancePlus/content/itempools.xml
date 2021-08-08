@@ -1,9 +1,9 @@
 <ItemPools>
 	<!--Here are all item pools with an example of how to put an item here-->
 	<Pool Name="treasure">
-		<!--The Sad Onion-->
-		<!--Item Id="1" Weight="1" DecreaseBy="1" RemoveOn="0.1"/-->
-		
+		<!-- Item Name="Ophiuchus" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05"/ -->
+		<Item Name="Rubik's Cube" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Magic Pen" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="shop">
 		
@@ -12,18 +12,15 @@
 		
 	</Pool>
 	<Pool Name="devil">
-		
+		<Item Name="Sinner's Heart" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 	</Pool>
 	<Pool Name="angel">
 		
 	</Pool>
 	<Pool Name="secret">
-		
+		<Item Name="Ordinary Life" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="library">
-		
-	</Pool>
-	<Pool Name="shellGame">
 		
 	</Pool>
 	<Pool Name="goldenChest">
@@ -36,10 +33,10 @@
 		
 	</Pool>
 	<Pool Name="demonBeggar">
-		
+		<Item Name="Cookie Cutter" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="curse">
-		
+		<Item Name="Cookie Cutter" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="keyMaster">
 		
@@ -50,29 +47,9 @@
 	<Pool Name="momsChest">
 		
 	</Pool>
-	<Pool Name="greedTreasure">
-		
-	</Pool>
-	<Pool Name="greedBoss">
-		
-	</Pool>
-	<Pool Name="greedShop">
-		
-	</Pool>
-	<Pool Name="greedCurse">
-		
-	</Pool>
-	<Pool Name="greedDevil">
-		
-	</Pool>
-	<Pool Name="greedAngel">
-		
-	</Pool>
-	<Pool Name="greedSecret">
-		
-	</Pool>
 	<Pool Name="craneGame">
-		
+		<Item Name="Rubik's Cube" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Magic Pen" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="bombBum">
 		
