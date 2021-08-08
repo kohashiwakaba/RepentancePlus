@@ -149,6 +149,22 @@ PickupWeights = {
 -- LOCAL FUNCTIONS --
 ---------------------
 
+local function HasFamiliars(player)
+	local HasFams = false --only is true when has familiars (exc 1 incubus as lilith)
+	local HasIncubus = not (player:GetPlayerType() == PlayerType.PLAYER_LILITH)
+	for _, entity in pairs(Isaac.GetRoomEntities()) do
+		if entity.Type == EntityType.ENTITY_FAMILIAR then
+				if entity.Variant == FamiliarVariant.INCUBUS and not HasIncubus then
+					HasIncubus = true
+				else
+					HasFams = true
+				end
+			end
+	end
+	
+	return HasFams
+end
+
 -- If Isaac has Mom's Box, trinkets' effects are doubled.
 local function HasBox(TrinketChance)
 	if Isaac.GetPlayer(0):HasCollectible(CollectibleType.COLLECTIBLE_MOMS_BOX) then
@@ -207,6 +223,7 @@ function rplus:OnGameStart(Continued)
 		MISSINGMEMORY_DATA = nil
 		REVERSECARD_DATA = nil
 		CUBE_COUNTER = 0
+		MARKCAIN_DATA = false
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
@@ -283,6 +300,7 @@ function rplus:OnFrame()
 	local level = game:GetLevel()
 	local player = Isaac.GetPlayer(0)
 	local stage = level:GetStage()
+	local sprite = player:GetSprite()
 	
 	if player:HasCollectible(Collectibles.ORDLIFE) and ORDLIFE_DATA == "used" then
 		for i = 0,7 do
@@ -344,6 +362,23 @@ function rplus:OnFrame()
 			end
 		end
 	end
+	
+	if player:HasCollectible(Collectibles.MARKCAIN) and sprite:IsPlaying("Death") and sprite:GetFrame() >= 21 and not MARKCAIN_DATA and HasFamiliars(player) then
+		player:Revive()
+		player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, true, false, true, true, -1)
+		MARKCAIN_DATA = true
+		local HasIncubus = not (player:GetPlayerType() == PlayerType.PLAYER_LILITH) --true when either not Lilith or has Incubus as Lilith
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity.Type == EntityType.ENTITY_FAMILIAR then
+				if entity.Variant == FamiliarVariant.INCUBUS and not HasIncubus then
+					HasIncubus = true
+				else
+					entity:Remove()
+				end
+			end
+		end
+	end
+	
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
@@ -619,9 +654,6 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
-
-
-
 
 
 
