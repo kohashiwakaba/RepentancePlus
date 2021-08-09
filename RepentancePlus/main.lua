@@ -465,7 +465,7 @@ function rplus:CardUsed(Card, player, _)
 			player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SIN, false, false, true, false, -1)
 		end
 		if NumPickups >= 3 then Isaac.Spawn(5, 350, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
-		if NumPickups >= 5 then Isaac.Spawn(5, 100, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
+		if NumPickups >= 7 then Isaac.Spawn(5, 100, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
 	elseif Card == PocketItems.NEEDLEANDTHREAD then
 		if player:GetBrokenHearts() > 0 then
 			player:AddBrokenHearts(-1)
@@ -655,8 +655,32 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
 
+-----------------------------------------
+--- EXTERNAL ITEM DESCRIPTIONS COMPAT ---
+-----------------------------------------
 
+if EID then
+	EID:addCollectible(Collectibles.ORDLIFE, "On first use, Isaac enters a state where no enemies or pickups spawn and he can freely walk between rooms #On second use, the effect is deactivated, time is reverted to the previous room and the item discharges #{{Warning}} Travelling to the next floor will automatically deactivate the effect and discharge the item")	
+	EID:addCollectible(Collectibles.MISSINGMEMORY, "{{BossRoom}} Allows to continue run past Mother, spawning a trapdoor or a beam of light if Isaac has Negative or Polaroid respectively")
+	EID:addCollectible(Collectibles.COOKIECUTTER, "On use, gives you one {{Heart}} heart container and one broken heart #{{Warning}} Having 12 broken hearts kills you!")
+	EID:addCollectible(Collectibles.SINNERSHEART, "{{ArrowUp}} Damage +2 then x1.5 #{{ArrowDown}} Shot speed down #Homing tears")
+	EID:addCollectible(Collectibles.RUBIKSCUBE, "After each use, has a 5% (100% on 20-th use) chance to be 'solved', removed from the player and spawn a Magic Cube on the ground")
+	EID:addCollectible(Collectibles.MAGICCUBE, "{{DiceRoom}} Invokes effects of D6+D20 on use #Rerolled items can be drawn from any item pool")
+	EID:addCollectible(Collectibles.MAGICPEN, "Tears leave {{ColorRainbow}}rainbow{{CR}} creep underneath them #Random permanent status effects is applied to enemies walking over that creep")
+	EID:addCollectible(Collectibles.MARKCAIN, "???")
 
+	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
+	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}}heart/{{Pill}}pills or a random body-related item")
+	
+	EID:addCard(PocketItems.SDDSHARD, "On use, invokes the effect of Spindown Dice")
+	EID:addCard(PocketItems.REDRUNE, "On use, damage all enemies in a room, turn any item pedestals into red locusts (similar to Abyss item), and turns pickups into random locusts with a 50% chance")
+	EID:addCard(PocketItems.NEEDLEANDTHREAD, "On use, removes one broken heart and grants one {{Heart}} heart container")
+	EID:addCard(PocketItems.QUEENOFDIAMONDS, "On use, spawns 1-12 random {{Coin}} coins (those can be nickels or dimes as well)")
+	EID:addCard(PocketItems.KINGOFSPADES, "On use, lose all your keys and spawn a number of pickups proportional to the amount of keys lost #At least 12 {{Key}} keys is needed for a trinket, and at least 28 for an item #If Isaac has {{GoldenKey}} Golden key, it is removed too and significantly increases total value")
+	EID:addCard(PocketItems.BAGTISSUE, "On use, all pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight; the item of such quality is then spawned #The most valuable pickups are the rarest ones, e.g. {{EthernalHeart}} Eternal hearts or {{Battery}} Mega batteries #{{Warning}} If used in a room with less then 8 pickups, no item will spawn!")
+	EID:addCard(PocketItems.RJOKER, "On use, teleports Isaac to a {{SuperSecretRoom}} Black Market")
+	EID:addCard(PocketItems.REVERSECARD, "On use, invokes the effect of Glowing Hourglass")
+end
 
 
 
