@@ -46,7 +46,8 @@ PocketItems = {
 	KINGOFSPADES = Isaac.GetCardIdByName("King of Spades"),
 	NEEDLEANDTHREAD = Isaac.GetCardIdByName("Needle and Thread"),
 	QUEENOFDIAMONDS = Isaac.GetCardIdByName("Queen of Diamonds"),
-	BAGTISSUE = Isaac.GetCardIdByName("Bag Tissue")
+	BAGTISSUE = Isaac.GetCardIdByName("Bag Tissue"),
+	LAUGHINGBOY = Isaac.GetCardIdByName("Laughing Boy")
 }
 
 PickUps = {
@@ -102,6 +103,8 @@ StatUps = {
 	SINNERSHEART_TEARHEIGHT = -3, --negative TearHeight = positive Range
 	--
 	MARKCAIN_DMG = 0.3
+	--
+	LAUGHINGBOY_LUCK = 10
 }
 
 CreepColors = {
@@ -221,6 +224,8 @@ function rplus:OnGameStart(Continued)
 		MARKCAIN_DATA = 0
 		BAGOTRASH_LEVELS = 0
 		ErasedEnemies = {}
+		LAUGHINGBOY_DATA = false
+		LAUGHINGBOY_ROOM = nil
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
@@ -404,6 +409,12 @@ function rplus:OnFrame()
 			SUPERBERSERKSTATE = false
 		end
 	end
+	if LAUGHINGBOY_DATA and (game:GetLevel():GetCurrentRoomIndex() ~= LAUGHINGBOY_ROOM) then
+		LAUGHINGBOY_ROOM = nil
+		LAUGHINGBOY_DATA = false
+		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
+		player:EvaluateItems()
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
@@ -557,6 +568,11 @@ function rplus:CardUsed(Card, player, _)
 			player:AnimateHappy()
 			Isaac.Spawn(5, 100, ID, Isaac.GetFreeNearPosition(player.Position, 5.0), Vector.Zero, nil)
 		end
+	elseif Card == PocketItems.LAUGHINGBOY then
+		LAUGHINGBOY_DATA = true
+		LAUGHINGBOY_ROOM = game:GetLevel():GetCurrentRoomIndex()
+		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
+		player:EvaluateItems()
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
@@ -656,6 +672,11 @@ function rplus:UpdateStats(player, Flag)
 	end
 	if Flag == CacheFlag.CACHE_FAMILIARS then
 		player:CheckFamiliar(Familiars.BAGOTRASH, player:GetCollectibleNum(Collectibles.BAGOTRASH), player:GetCollectibleRNG(Collectibles.BAGOTRASH))
+	end
+	if Flag == CacheFlag.CACHE_LUCK then
+		if LAUGHINGBOY_DATA then
+			player.Luck = player.Luck + StatUps.LAUGHINGBOY_LUCK
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, rplus.UpdateStats)
@@ -759,6 +780,7 @@ if EID then
 	EID:addCard(PocketItems.BAGTISSUE, "On use, all pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight; the item of such quality is then spawned #The most valuable pickups are the rarest ones, e.g. {{EthernalHeart}} Eternal hearts or {{Battery}} Mega batteries #{{Warning}} If used in a room with less then 8 pickups, no item will spawn!")
 	EID:addCard(PocketItems.RJOKER, "On use, teleports Isaac to a {{SuperSecretRoom}} Black Market")
 	EID:addCard(PocketItems.REVERSECARD, "On use, invokes the effect of Glowing Hourglass")
+	EID:addCard(PocketItems.LAUGHINGBOY, "{{ArrowUp}} On use, grants 10 Luck for the current Room")
 end
 
 
