@@ -1,7 +1,7 @@
 
----------------------
------ VARIABLES -----
----------------------
+									---------------------
+									----- VARIABLES -----
+									---------------------
 
 local game = Game()
 local rplus = RegisterMod("Repentance Plus", 1)
@@ -12,6 +12,13 @@ local rdm = RNG()
 local BASEMENTKEY_CHANCE = 5
 local HEARTKEY_CHANCE = 5
 local CARDRUNE_REPLACE_CHANCE = 2
+local SUPERBERSERKSTATE_CHANCE = 1
+local SUPERBERSERK_DELETE_CHANCE = 2
+local TRASHBAG_BREAK_CHANCE = 2
+
+Familiars = {
+	BAGOTRASH = Isaac.GetEntityVariantByName("Bag O' Trash")
+}
 
 Collectibles = {
 	ORDLIFE = Isaac.GetItemIdByName("Ordinary Life"),
@@ -21,7 +28,9 @@ Collectibles = {
 	MAGICCUBE = Isaac.GetItemIdByName("Magic Cube"),
 	MAGICPEN = Isaac.GetItemIdByName("Magic Pen"),
 	SINNERSHEART = Isaac.GetItemIdByName("Sinner's Heart"),
-	MARKCAIN = Isaac.GetItemIdByName("Mark of Cain")
+	MARKCAIN = Isaac.GetItemIdByName("Mark of Cain"),
+	BAGOTRASH = Isaac.GetItemIdByName("Bag O' Trash"),
+	GWRAGRH = Isaac.GetItemIdByName("GRWRGAAAARRRRGHHH")
 }
 
 Trinkets = {
@@ -90,7 +99,9 @@ StatUps = {
 	SINNERSHEART_DMG_MUL = 1.5,
 	SINNERSHEART_DMG_ADD = 2,
 	SINNERSHEART_SHSP = -0.3,
-	SINNERSHEART_TEARHEIGHT = -3 --negative TearHeight = positive Range
+	SINNERSHEART_TEARHEIGHT = -3, --negative TearHeight = positive Range
+	--
+	MARKCAIN_DMG = 0.3
 }
 
 CreepColors = {
@@ -145,9 +156,9 @@ PickupWeights = {
 	}
 }
 
----------------------
--- LOCAL FUNCTIONS --
----------------------
+								---------------------
+								-- LOCAL FUNCTIONS --
+								---------------------
 
 -- If Isaac has Mom's Box, trinkets' effects are doubled.
 local function HasBox(TrinketChance)
@@ -196,22 +207,25 @@ local function IsCollectibleUnlocked(collectibleType)
 	return isUnlocked	
 end
 
----------------------
--- GLOBAL FUNCTIONS --
----------------------
+								---------------------
+								-- GLOBAL FUNCTIONS --
+								---------------------
 
--- GAME STARTED --
+						-- GAME STARTED --
 function rplus:OnGameStart(Continued)
 	if not Continued then
 		ORDLIFE_DATA = nil
 		MISSINGMEMORY_DATA = nil
 		REVERSECARD_DATA = nil
 		CUBE_COUNTER = 0
+		MARKCAIN_DATA = 0
+		BAGOTRASH_LEVELS = 0
+		ErasedEnemies = {}
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
 
--- EVERY NEW LEVEL 
+						-- EVERY NEW LEVEL 
 function rplus:OnNewLevel()
 	local player = Isaac.GetPlayer(0)
 	local level = game:GetLevel()
@@ -222,17 +236,21 @@ function rplus:OnNewLevel()
 		player:DischargeActiveItem(ActiveSlot.SLOT_PRIMARY)
 		ORDLIFE_DATA = nil
 	end
+	
+	if player:HasCollectible(Collectibles.BAGOTRASH) then
+		BagLevels = BagLevels + 1
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 
--- EVERY NEW ROOM
+						-- EVERY NEW ROOM
 function rplus:OnNewRoom()
 	local player = Isaac.GetPlayer(0)
 
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
 
--- ACTIVE ITEM USED --
+						-- ACTIVE ITEM USED --
 function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 	local level = game:GetLevel()
 	local player = Isaac.GetPlayer(0)
@@ -277,7 +295,7 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
 
--- EVERY FRAME --
+						-- EVERY FRAME --
 function rplus:OnFrame()
 	local room = game:GetRoom()
 	local level = game:GetLevel()
@@ -351,7 +369,9 @@ function rplus:OnFrame()
 			MyFamiliars = {}
 			for i = 1, 1000 do
 				if Isaac.GetItemConfig():GetCollectible(i) and Isaac.GetItemConfig():GetCollectible(i).Type == ItemType.ITEM_FAMILIAR and player:HasCollectible(i) then
-					table.insert(MyFamiliars, i)
+					for j = 1, player:GetCollectibleNum(i, true) do
+						table.insert(MyFamiliars, i)
+					end
 				end
 			end
 			
@@ -361,16 +381,33 @@ function rplus:OnFrame()
 				player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, true, false, true, true, -1)
 				sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
 				
-				for i = 1, #MyFamiliars do
-					player:RemoveCollectible(MyFamiliars[i])
+				for i = 1, #MyFamiliars do player:RemoveCollectible(MyFamiliars[i]) end
+			end
+		end
+	end
+	
+	if player:HasCollectible(Collectibles.GWRAGRH) and SUPERBERSERKSTATE then
+		local CurFrame = game:GetFrameCount()
+		
+		if game:GetFrameCount() < CurFrame + 120 then
+			for _, entity in pairs(Isaac.GetRoomEntities()) do
+				if entity:IsActiveEnemy() then
+					for i = 1, #ErasedEnemies do
+						if entity.Type == ErasedEnemies[i] then
+							entity:Kill()
+							break
+						end
+					end
 				end
 			end
+		else
+			SUPERBERSERKSTATE = false
 		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
--- WHEN NPC (ENEMY) DIES --
+						-- WHEN NPC (ENEMY) DIES --
 function rplus:OnNPCDeath(NPC)
 	local player = Isaac.GetPlayer(0)
 	
@@ -390,7 +427,7 @@ function rplus:OnNPCDeath(NPC)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 
--- ON PICKUP INITIALIZATION -- 
+						-- ON PICKUP INITIALIZATION -- 
 function rplus:OnPickupInit(Pickup)
 	local player = Isaac.GetPlayer(0)
 	
@@ -403,7 +440,7 @@ function rplus:OnPickupInit(Pickup)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, rplus.OnPickupInit)
 
--- ON GETTING A CARD --
+						-- ON GETTING A CARD --
 function rplus:OnCardInit(_, _, PlayingCards, Runes, OnlyRunes)
 	if PlayingCards or Runes then
 		if math.random(100) <= CARDRUNE_REPLACE_CHANCE then
@@ -413,7 +450,7 @@ function rplus:OnCardInit(_, _, PlayingCards, Runes, OnlyRunes)
 end
 rplus:AddCallback(ModCallbacks.MC_GET_CARD, rplus.OnCardInit)
 
--- ON USING CARD -- 
+						-- ON USING CARD -- 
 function rplus:CardUsed(Card, player, _)
 	local player = Isaac.GetPlayer(0)
 	
@@ -524,7 +561,7 @@ function rplus:CardUsed(Card, player, _)
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 
--- ON PICKUP COLLISION
+						-- ON PICKUP COLLISION
 function rplus:PickupCollision(Pickup, Collider, _)
 	local player = Isaac.GetPlayer(0)
 	
@@ -567,7 +604,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.PickupCollision)
 
--- ON UPDATING THE PICKUPS
+						-- ON UPDATING THE PICKUPS
 function rplus:PickupUpdate(Pickup)
 	if Pickup.Type == 5 and Pickup.Variant == 100 and Pickup.SpawnerVariant == 392 then
 		for i = 3, 5 do Pickup:GetSprite():ReplaceSpritesheet(i,"gfx/items/slots/levelitem_scarletchest_itemaltar_dlc4.png") end
@@ -576,7 +613,7 @@ function rplus:PickupUpdate(Pickup)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, rplus.PickupUpdate)
 
--- ON TEAR UPDATE
+						-- ON TEAR UPDATE
 function rplus:OnTearUpdate(Tear)
 	local player = Isaac.GetPlayer(0)
 	
@@ -587,7 +624,7 @@ function rplus:OnTearUpdate(Tear)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
 
--- UPDATING PLAYER STATS
+						-- UPDATING PLAYER STATS
 function rplus:UpdateStats(player, Flag) 
 	--If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml
 	if Flag == CacheFlag.CACHE_DAMAGE then
@@ -617,10 +654,13 @@ function rplus:UpdateStats(player, Flag)
 			player.TearColor = Color(0.4, 0.1, 0.38, 1, 0.27843, 0, 0.4549)
 		end
 	end
+	if Flag == CacheFlag.CACHE_FAMILIARS then
+		player:CheckFamiliar(Familiars.BAGOTRASH, player:GetCollectibleNum(Collectibles.BAGOTRASH), player:GetCollectibleRNG(Collectibles.BAGOTRASH))
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, rplus.UpdateStats)
 
--- ENTITY TAKES DAMAGE
+						-- ENTITY TAKES DAMAGE
 function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 	local player = Isaac.GetPlayer(0)
 	
@@ -640,12 +680,63 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		end
 		return false
 	end
+	
+	if player:HasCollectible(Collectibles.GWRAGRH) then 
+		if Entity.Type == 1 and math.random(100) <= SUPERBERSERKSTATE_CHANCE then
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_BERSERK, true, true, false, true, -1)
+			SUPERBERSERKSTATE = true
+		elseif SUPERBERSERKSTATE and Entity:IsActiveEnemy(false) and not Entity:IsBoss() and math.random(100) <= SUPERBERSERK_DELETE_CHANCE then
+			table.insert(ErasedEnemies, Entity.Type)
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
 
------------------------------------------
---- EXTERNAL ITEM DESCRIPTIONS COMPAT ---
------------------------------------------
+						-- ON FAMILIAR INITIALIZATION
+function rplus:FamiliarInit(Familiar)
+	BagLevels = 1
+	Familiar:AddToFollowers()
+	Familiar.IsFollower = true
+	Familiar:GetSprite():Play("FloatDown")
+end
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.FamiliarInit, Familiars.BAGOTRASH)
+
+						-- ON FAMILIAR UPDATE
+function rplus:FamiliarUpdate(Familiar)
+	Familiar:FollowParent()
+	if Familiar:GetSprite():IsFinished("Spawn") then
+		Familiar:GetSprite().PlaybackSpeed = 1.0
+		Familiar:GetSprite():Play("FloatDown")
+	end
+	
+	if Familiar.RoomClearCount == 1 then
+		local NumFlies = math.random(BagLevels * 2)
+		
+		Familiar:GetSprite().PlaybackSpeed = 0.5
+		Familiar:GetSprite():Play("Spawn")
+		for _ = 1, NumFlies do Isaac.Spawn(3, FamiliarVariant.BLUE_FLY, 0, Familiar.Position, Vector.Zero, nil) end
+		Familiar.RoomClearCount = 0
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.FamiliarUpdate, Familiars.BAGOTRASH)
+
+						-- PROJECTILE COLLISION
+function rplus:ProjectileCollision(Projectile, Collider, _)
+	if Collider.Variant == Familiars.BAGOTRASH then
+		Projectile:Remove()
+		
+		if math.random(100) <= TRASHBAG_BREAK_CHANCE then
+			sfx:Play(SoundEffect.SOUND_THUMBS_DOWN, 1, 1, false, 1, 0)
+			Isaac.GetPlayer(0):RemoveCollectible(Collectibles.BAGOTRASH)
+			Isaac.Spawn(5, 100, CollectibleType.COLLECTIBLE_BREAKFAST, Collider.Position, Vector.Zero, nil)
+		end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, rplus.ProjectileCollision)
+
+								-----------------------------------------
+								--- EXTERNAL ITEM DESCRIPTIONS COMPAT ---
+								-----------------------------------------
 
 if EID then
 	EID:addCollectible(Collectibles.ORDLIFE, "On first use, Isaac enters a state where no enemies or pickups spawn and he can freely walk between rooms #On second use, the effect is deactivated, time is reverted to the previous room and the item discharges #{{Warning}} Travelling to the next floor will automatically deactivate the effect and discharge the item")	
