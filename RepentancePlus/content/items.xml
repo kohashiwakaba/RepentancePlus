@@ -15,6 +15,7 @@
 	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="36_keytotheheart.png" />
   <!-- T.Maggy to Satan -->
 	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx="14_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2"/>
+	<passive name="Cherry Friends" description=":3" gfx="36_cherryfriends.png" quality="2" />
 	
   <!-- T. Cain to Isaac -->
 	<familiar name="Bag O' Trash" description="Will you take it out already?!" gfx="50_bagotrash.png" quality="1" />
@@ -26,4 +27,7 @@
 	
   <!-- T.Eden to ... -->
 	<passive name="Magic Pen" description="I want to be an artist" gfx="52_magicpen.png" quality="1" /> 
+	
+  <!-- T. Lost to ... -->
+	<familiar name="Zen Baby" description="He sees all" gfx="11_zenbaby.png" quality="3" />
 </items>

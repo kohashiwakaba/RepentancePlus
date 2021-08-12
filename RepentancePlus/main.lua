@@ -11,13 +11,18 @@ local rdm = RNG()
 
 local BASEMENTKEY_CHANCE = 5
 local HEARTKEY_CHANCE = 5
+local SCARLETCHEST_CHANCE = 2
+local BITTENPENNY_CHANCE = 2
 local CARDRUNE_REPLACE_CHANCE = 2
-local SUPERBERSERKSTATE_CHANCE = 1
-local SUPERBERSERK_DELETE_CHANCE = 2
+local SUPERBERSERKSTATE_CHANCE = 10
+local SUPERBERSERK_DELETE_CHANCE = 10
 local TRASHBAG_BREAK_CHANCE = 2
+local CHERRY_SPAWN_CHANCE = 20
 
 Familiars = {
-	BAGOTRASH = Isaac.GetEntityVariantByName("Bag O' Trash")
+	BAGOTRASH = Isaac.GetEntityVariantByName("Bag O' Trash"),
+	ZENBABY = Isaac.GetEntityVariantByName("Zen Baby"),
+	CHERRY = Isaac.GetEntityVariantByName("Cherry")
 }
 
 Collectibles = {
@@ -30,7 +35,9 @@ Collectibles = {
 	SINNERSHEART = Isaac.GetItemIdByName("Sinner's Heart"),
 	MARKCAIN = Isaac.GetItemIdByName("Mark of Cain"),
 	BAGOTRASH = Isaac.GetItemIdByName("Bag O' Trash"),
-	GWRAGRH = Isaac.GetItemIdByName("GRWRGAAAARRRRGHHH")
+	GWRAGRH = Isaac.GetItemIdByName("GRWRGAAAARRRRGHHH"),
+	CHERRYFRIENDS = Isaac.GetItemIdByName("Cherry Friends"),
+	ZENBABY = Isaac.GetItemIdByName("Zen Baby")
 }
 
 Trinkets = {
@@ -51,10 +58,11 @@ PocketItems = {
 }
 
 PickUps = {
-	SCARLETCHEST = Isaac.GetEntityVariantByName("Scarlet Chest")
+	SCARLETCHEST = Isaac.GetEntityVariantByName("Scarlet Chest"),
+	BITTENPENNY = Isaac.GetEntityVariantByName("Bitten Penny")
 }
 
-ScarletChestItems = { --just indent
+ScarletChestItems = { 
 	13, --The Virus
 	16, --Raw Liver
 	26, --Rotten Meat
@@ -102,7 +110,7 @@ StatUps = {
 	SINNERSHEART_SHSP = -0.3,
 	SINNERSHEART_TEARHEIGHT = -3, --negative TearHeight = positive Range
 	--
-	MARKCAIN_DMG = 0.3
+	MARKCAIN_DMG = 0.3,
 	--
 	LAUGHINGBOY_LUCK = 10
 }
@@ -159,6 +167,29 @@ PickupWeights = {
 	}
 }
 
+DIRECTION_FLOAT_ANIM = {
+	[Direction.NO_DIRECTION] = "FloatDown", 
+	[Direction.LEFT] = "FloatLeft",
+	[Direction.UP] = "FloatUp",
+	[Direction.RIGHT] = "FloatRight",
+	[Direction.DOWN] = "FloatDown"
+}
+
+DIRECTION_SHOOT_ANIM = {
+	[Direction.NO_DIRECTION] = "FloatShootDown",
+	[Direction.LEFT] = "FloatShootRight",
+	[Direction.UP] = "FloatShootUp",
+	[Direction.RIGHT] = "FloatShootLeft",
+	[Direction.DOWN] = "FloatShootDown"
+}
+
+DIRECTION_VECTOR = {
+	[Direction.LEFT] = Vector(-1, 0),
+	[Direction.UP] = Vector(0, -1),
+	[Direction.RIGHT] = Vector(1, 0),
+	[Direction.DOWN] = Vector(0, 1)
+}
+								
 								---------------------
 								-- LOCAL FUNCTIONS --
 								---------------------
@@ -391,29 +422,38 @@ function rplus:OnFrame()
 		end
 	end
 	
-	if player:HasCollectible(Collectibles.GWRAGRH) and SUPERBERSERKSTATE then
-		local CurFrame = game:GetFrameCount()
+	if player:HasCollectible(Collectibles.GWRAGRH) then
+		if SUPERBERSERKSTATE and sfx:IsPlaying(SoundEffect.SOUND_BERSERK_END) then SUPERBERSERKSTATE = false end
 		
-		if game:GetFrameCount() < CurFrame + 120 then
-			for _, entity in pairs(Isaac.GetRoomEntities()) do
-				if entity:IsActiveEnemy() then
-					for i = 1, #ErasedEnemies do
-						if entity.Type == ErasedEnemies[i] then
-							entity:Kill()
-							break
-						end
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity:IsActiveEnemy() then
+				for i = 1, #ErasedEnemies do
+					if entity.Type == ErasedEnemies[i] then
+						entity:Kill()
+						break
 					end
 				end
 			end
-		else
-			SUPERBERSERKSTATE = false
 		end
 	end
+	
 	if LAUGHINGBOY_DATA and (game:GetLevel():GetCurrentRoomIndex() ~= LAUGHINGBOY_ROOM) then
 		LAUGHINGBOY_ROOM = nil
 		LAUGHINGBOY_DATA = false
 		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
 		player:EvaluateItems()
+	end
+	
+	if player:HasCollectible(Collectibles.CHERRYFRIENDS) and room:IsClear() then
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity.Type == 3 and entity.Variant == Familiars.CHERRY then
+				entity:GetSprite():Play("Collect")
+				if entity:GetSprite():IsFinished("Collect") then
+					entity:Remove()
+					Isaac.Spawn(5, PickupVariant.PICKUP_HEART, HeartSubType.HEART_HALF, entity.Position, Vector.Zero, nil)
+				end
+			end
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
@@ -435,6 +475,11 @@ function rplus:OnNPCDeath(NPC)
 	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HasBox(HEARTKEY_CHANCE) then
 		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.SCARLETCHEST, 0, NPC.Position, NPC.Velocity, nil)
 	end
+	
+	if player:HasCollectible(Collectibles.CHERRYFRIENDS) and math.random(100) <= CHERRY_SPAWN_CHANCE then
+		Isaac.Spawn(3, Familiars.CHERRY, 1, NPC.Position, Vector.Zero, nil)
+		sfx:Play(SoundEffect.SOUND_BABY_HURT, 1, 2, false, 1, 0)
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 
@@ -442,11 +487,16 @@ rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 function rplus:OnPickupInit(Pickup)
 	local player = Isaac.GetPlayer(0)
 	
+	-- let's make scarlet chests appear normally
+	if Pickup.Variant > 49 and Pickup.Variant < 61 and math.random(100) <= SCARLETCHEST_CHANCE then
+		Pickup:Morph(5, PickUps.SCARLETCHEST, 0, 0, true, true, false)
+	end
+	if Pickup.Variant == PickUps.SCARLETCHEST and Pickup.SubType == 1 and type(Pickup:GetData()["IsRoom"]) == type(nil) then
+		Pickup:Remove()
+	end
+	
 	if player:HasTrinket(Trinkets.BASEMENTKEY) and Pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST and math.random(100) <= HasBox(BASEMENTKEY_CHANCE) then
 		Pickup:Morph(5, PickupVariant.PICKUP_OLDCHEST, 0, true, true, false)
-	end
-	if Pickup.Type == EntityType.ENTITY_PICKUP and Pickup.Variant == PickUps.SCARLETCHEST and Pickup.SubType == 1 and type(Pickup:GetData()["IsRoom"]) == type(nil) then
-		Pickup:Remove()
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, rplus.OnPickupInit)
@@ -672,6 +722,7 @@ function rplus:UpdateStats(player, Flag)
 	end
 	if Flag == CacheFlag.CACHE_FAMILIARS then
 		player:CheckFamiliar(Familiars.BAGOTRASH, player:GetCollectibleNum(Collectibles.BAGOTRASH), player:GetCollectibleRNG(Collectibles.BAGOTRASH))
+		player:CheckFamiliar(Familiars.ZENBABY, player:GetCollectibleNum(Collectibles.ZENBABY), player:GetCollectibleRNG(Collectibles.ZENBABY))
 	end
 	if Flag == CacheFlag.CACHE_LUCK then
 		if LAUGHINGBOY_DATA then
@@ -714,16 +765,23 @@ end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
 
 						-- ON FAMILIAR INITIALIZATION
-function rplus:FamiliarInit(Familiar)
+function rplus:TrashBagInit(Familiar)
 	BagLevels = 1
 	Familiar:AddToFollowers()
 	Familiar.IsFollower = true
 	Familiar:GetSprite():Play("FloatDown")
 end
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.FamiliarInit, Familiars.BAGOTRASH)
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.TrashBagInit, Familiars.BAGOTRASH)
+
+function rplus:ZenBabyInit(Familiar)
+	Familiar:AddToFollowers()
+	Familiar.IsFollower = true
+	Familiar:GetSprite():Play("FloatDown")
+end
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.ZenBabyInit, Familiars.ZENBABY)
 
 						-- ON FAMILIAR UPDATE
-function rplus:FamiliarUpdate(Familiar)
+function rplus:TrashBagUpdate(Familiar)
 	Familiar:FollowParent()
 	if Familiar:GetSprite():IsFinished("Spawn") then
 		Familiar:GetSprite().PlaybackSpeed = 1.0
@@ -732,6 +790,7 @@ function rplus:FamiliarUpdate(Familiar)
 	
 	if Familiar.RoomClearCount == 1 then
 		local NumFlies = math.random(BagLevels * 2)
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS, true) then NumFlies = NumFlies + math.random(2) end
 		
 		Familiar:GetSprite().PlaybackSpeed = 0.5
 		Familiar:GetSprite():Play("Spawn")
@@ -739,7 +798,44 @@ function rplus:FamiliarUpdate(Familiar)
 		Familiar.RoomClearCount = 0
 	end
 end
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.FamiliarUpdate, Familiars.BAGOTRASH)
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.TrashBagUpdate, Familiars.BAGOTRASH)
+
+function rplus:ZenBabyUpdate(Familiar)
+	Familiar:FollowParent()
+	local Sprite = Familiar:GetSprite()
+	local player = Isaac.GetPlayer(0)
+	
+	if player:GetFireDirection() == Direction.NO_DIRECTION then
+		Sprite:Play(DIRECTION_FLOAT_ANIM[player:GetMovementDirection()], false)
+	else
+		local TearVector = DIRECTION_VECTOR[player:GetFireDirection()]:Normalized()
+
+		if Familiar.FireCooldown <= 0 then
+			local Tear = Familiar:FireProjectile(TearVector):ToTear()
+			Tear.TearFlags = TearFlags.TEAR_GLOW | TearFlags.TEAR_HOMING
+
+			if player:HasTrinket(Isaac.GetTrinketIdByName("Forgotten Lullaby")) then
+				Familiar.FireCooldown = 8
+			else
+				Familiar.FireCooldown = 14
+			end
+		end
+
+		Sprite:Play(DIRECTION_SHOOT_ANIM[player:GetFireDirection()], false)
+	end
+
+	Familiar.FireCooldown = Familiar.FireCooldown - 1
+end
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.ZenBabyUpdate, Familiars.ZENBABY)
+
+						-- FAMILIAR COLLISION
+function rplus:CherryCollision(Familiar, Collider, _)
+	if Collider:IsActiveEnemy(true) and not Collider:IsBoss() then
+		game:CharmFart(Familiar.Position, 10.0, Familiar)
+		sfx:Play(SoundEffect.SOUND_FART, 1, 2, false, 1, 0)
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.CherryCollision, Familiars.CHERRY)
 
 						-- PROJECTILE COLLISION
 function rplus:ProjectileCollision(Projectile, Collider, _)
@@ -768,7 +864,11 @@ if EID then
 	EID:addCollectible(Collectibles.MAGICCUBE, "{{DiceRoom}} Invokes effects of D6+D20 on use #Rerolled items can be drawn from any item pool")
 	EID:addCollectible(Collectibles.MAGICPEN, "Tears leave {{ColorRainbow}}rainbow{{CR}} creep underneath them #Random permanent status effects is applied to enemies walking over that creep")
 	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers and gain invincibility shield for 5 seconds #{{Warning}} Works only once!")
-
+	EID:addCollectible(Collectibles.GWRAGRH, "Upon taking damage, there is a 10% chance to enter a Berserk state #While in this state, every enemy killed has a 10% chance to be erased for the rest of the run")
+	EID:addCollectible(Collectibles.BAGOTRASH, "Spawns a familiar that creates blue flies upon clearing a room #It also blocks enemy projectiles, and after blocking it the bag has a 2% chance to be destroyed and drop Breakfast #The more floors it is not destroyed, the more flies it spawns")
+	EID:addCollectible(Collectibles.ZENBABY, "Spawns a familiar that shoots Godhead tears at a fast firerate")
+	EID:addCollectible(Collectibles.CHERRYFRIENDS, "Killing an enemy has a 20% chance to drop cherry familiar on the ground #Those cherries emit a charming fart when an enemy walks over them, and drop half a heart when a room is cleared")
+	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}}heart/{{Pill}}pills or a random body-related item")
 	
@@ -780,7 +880,7 @@ if EID then
 	EID:addCard(PocketItems.BAGTISSUE, "On use, all pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight; the item of such quality is then spawned #The most valuable pickups are the rarest ones, e.g. {{EthernalHeart}} Eternal hearts or {{Battery}} Mega batteries #{{Warning}} If used in a room with less then 8 pickups, no item will spawn!")
 	EID:addCard(PocketItems.RJOKER, "On use, teleports Isaac to a {{SuperSecretRoom}} Black Market")
 	EID:addCard(PocketItems.REVERSECARD, "On use, invokes the effect of Glowing Hourglass")
-	EID:addCard(PocketItems.LAUGHINGBOY, "{{ArrowUp}} On use, grants 10 Luck for the current Room")
+	EID:addCard(PocketItems.LAUGHINGBOY, "{{ArrowUp}} On use, grants 10 Luck for the current room")
 end
 
 
