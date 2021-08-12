@@ -23,7 +23,7 @@
 	<passive name="Mark of Cain" description="Extra life... at a cost" gfx="03_themarkofcain.png" quality="3" devilprice="1"/>
 
   <!-- T.Samson to ... -->
-	<passive name="GRWRGAAAARRRRGHHH" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="35_gwragrh.png" quality="3" /> 
+	<passive name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="35_tempertantrum.png" quality="3" /> 
 	
   <!-- T.Eden to ... -->
 	<passive name="Magic Pen" description="I want to be an artist" gfx="52_magicpen.png" quality="1" /> 

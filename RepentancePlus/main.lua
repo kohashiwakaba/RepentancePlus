@@ -35,7 +35,7 @@ Collectibles = {
 	SINNERSHEART = Isaac.GetItemIdByName("Sinner's Heart"),
 	MARKCAIN = Isaac.GetItemIdByName("Mark of Cain"),
 	BAGOTRASH = Isaac.GetItemIdByName("Bag O' Trash"),
-	GWRAGRH = Isaac.GetItemIdByName("GRWRGAAAARRRRGHHH"),
+	TEMPERTANTRUM = Isaac.GetItemIdByName("Temper Tantrum"),
 	CHERRYFRIENDS = Isaac.GetItemIdByName("Cherry Friends"),
 	ZENBABY = Isaac.GetItemIdByName("Zen Baby")
 }
@@ -140,7 +140,7 @@ PickupWeights = {
 		[HeartSubType.HEART_BONE] = 5,
 		[HeartSubType.HEART_ROTTEN] = 5 
 	},
-	[PickupVariant.PICKUP_COIN] = {
+	[PickupVariant.PICKUP_COIN] = { --TODO: adding bitten penny
 		[CoinSubType.COIN_PENNY] = 1,
 		[CoinSubType.COIN_NICKEL] = 3,
 		[CoinSubType.COIN_DIME] = 5,
@@ -422,11 +422,11 @@ function rplus:OnFrame()
 		end
 	end
 	
-	if player:HasCollectible(Collectibles.GWRAGRH) then
+	if player:HasCollectible(Collectibles.TEMPERTANTRUM) then
 		if SUPERBERSERKSTATE and sfx:IsPlaying(SoundEffect.SOUND_BERSERK_END) then SUPERBERSERKSTATE = false end
 		
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
-			if entity:IsActiveEnemy() then
+			if entity:IsActiveEnemy() and ErasedEnemies ~= nil then
 				for i = 1, #ErasedEnemies do
 					if entity.Type == ErasedEnemies[i] then
 						entity:Kill()
@@ -452,6 +452,17 @@ function rplus:OnFrame()
 					entity:Remove()
 					Isaac.Spawn(5, PickupVariant.PICKUP_HEART, HeartSubType.HEART_HALF, entity.Position, Vector.Zero, nil)
 				end
+			end
+		end
+	end
+	
+	for _, entity in pairs(Isaac.GetRoomEntities()) do --sprite Arrangement for Pickups
+		local EntitySprite = entity:GetSprite()
+		if entity.Type == 5 and entity.Variant == PickUps.BITTENPENNY then --bitten penny
+			if EntitySprite:IsPlaying("Collect") and EntitySprite:GetFrame() == 6 then
+				entity:Remove()
+			elseif EntitySprite:IsEventTriggered("DropSound") then
+				sfx:Play(SoundEffect.SOUND_PENNYDROP)
 			end
 		end
 	end
@@ -667,6 +678,29 @@ function rplus:PickupCollision(Pickup, Collider, _)
 			EntityNPC.ThrowSpider(Pickup.Position, Pickup, Pickup.Position + Vector.FromAngle(math.random(360)) * 200, false, 0)
 		end
 	end
+	
+	--bitten penny
+	if Collider.Type == 1 and Pickup.Variant == PickUps.BITTENPENNY and Pickup:GetData().Picked == nil then
+		Pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE --doesn't work rn as intended :(
+		Pickup.Velocity = Vector.Zero
+		DieRoll = math.random(100)
+		Pickup:GetData().Picked = true
+		local Sound = 0
+		if DieRoll < 40 then
+			player:AddCoins(1)
+			Sound = SoundEffect.SOUND_PENNYPICKUP
+		elseif DieRoll < 50 then
+			player:AnimateSad()
+		elseif DieRoll < 75 then
+			player:AddCoins(5)
+			Sound = SoundEffect.SOUND_NICKELPICKUP
+		else
+			player:AddCoins(10)
+			Sound = SoundEffect.SOUND_DIMEPICKUP
+		end
+		sfx:Play(Sound, 1, 1, false, 1, 0)
+		Pickup:GetSprite():Play("Collect")
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.PickupCollision)
 
@@ -753,7 +787,7 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		return false
 	end
 	
-	if player:HasCollectible(Collectibles.GWRAGRH) then 
+	if player:HasCollectible(Collectibles.TEMPERTANTRUM) then 
 		if Entity.Type == 1 and math.random(100) <= SUPERBERSERKSTATE_CHANCE then
 			player:UseActiveItem(CollectibleType.COLLECTIBLE_BERSERK, true, true, false, true, -1)
 			SUPERBERSERKSTATE = true
@@ -864,7 +898,7 @@ if EID then
 	EID:addCollectible(Collectibles.MAGICCUBE, "{{DiceRoom}} Invokes effects of D6+D20 on use #Rerolled items can be drawn from any item pool")
 	EID:addCollectible(Collectibles.MAGICPEN, "Tears leave {{ColorRainbow}}rainbow{{CR}} creep underneath them #Random permanent status effects is applied to enemies walking over that creep")
 	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers and gain invincibility shield for 5 seconds #{{Warning}} Works only once!")
-	EID:addCollectible(Collectibles.GWRAGRH, "Upon taking damage, there is a 10% chance to enter a Berserk state #While in this state, every enemy killed has a 10% chance to be erased for the rest of the run")
+	EID:addCollectible(Collectibles.TEMPERTANTRUM, "Upon taking damage, there is a 10% chance to enter a Berserk state #While in this state, every enemy killed has a 10% chance to be erased for the rest of the run")
 	EID:addCollectible(Collectibles.BAGOTRASH, "Spawns a familiar that creates blue flies upon clearing a room #It also blocks enemy projectiles, and after blocking it the bag has a 2% chance to be destroyed and drop Breakfast #The more floors it is not destroyed, the more flies it spawns")
 	EID:addCollectible(Collectibles.ZENBABY, "Spawns a familiar that shoots Godhead tears at a fast firerate")
 	EID:addCollectible(Collectibles.CHERRYFRIENDS, "Killing an enemy has a 20% chance to drop cherry familiar on the ground #Those cherries emit a charming fart when an enemy walks over them, and drop half a heart when a room is cleared")
