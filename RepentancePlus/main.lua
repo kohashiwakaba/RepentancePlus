@@ -16,7 +16,7 @@ local BITTENPENNY_CHANCE = 2
 local CARDRUNE_REPLACE_CHANCE = 2
 local SUPERBERSERKSTATE_CHANCE = 10
 local SUPERBERSERK_DELETE_CHANCE = 10
-local TRASHBAG_BREAK_CHANCE = 2
+local TRASHBAG_BREAK_CHANCE = 1
 local CHERRY_SPAWN_CHANCE = 20
 
 Familiars = {
@@ -33,16 +33,19 @@ Collectibles = {
 	MAGICCUBE = Isaac.GetItemIdByName("Magic Cube"),
 	MAGICPEN = Isaac.GetItemIdByName("Magic Pen"),
 	SINNERSHEART = Isaac.GetItemIdByName("Sinner's Heart"),
-	MARKCAIN = Isaac.GetItemIdByName("Mark of Cain"),
+	MARKCAIN = Isaac.GetItemIdByName("The Mark of Cain"),
 	BAGOTRASH = Isaac.GetItemIdByName("Bag O' Trash"),
 	TEMPERTANTRUM = Isaac.GetItemIdByName("Temper Tantrum"),
 	CHERRYFRIENDS = Isaac.GetItemIdByName("Cherry Friends"),
-	ZENBABY = Isaac.GetItemIdByName("Zen Baby")
+	ZENBABY = Isaac.GetItemIdByName("Zen Baby"),
+	BLACKDOLL = Isaac.GetItemIdByName("Black Doll")
 }
 
 Trinkets = {
 	BASEMENTKEY = Isaac.GetTrinketIdByName("Basement Key"),
-	KEYTOTHEHEART = Isaac.GetTrinketIdByName("Key to the Heart")
+	KEYTOTHEHEART = Isaac.GetTrinketIdByName("Key to the Heart"),
+	SLEIGHTOFHAND = Isaac.GetTrinketIdByName("Sleight of Hand"),
+	JUDASKISS = Isaac.GetTrinketIdByName("Judas' Kiss")
 }
 
 PocketItems = {
@@ -188,7 +191,7 @@ DIRECTION_VECTOR = {
 	[Direction.UP] = Vector(0, -1),
 	[Direction.RIGHT] = Vector(1, 0),
 	[Direction.DOWN] = Vector(0, 1)
-}
+}							
 								
 								---------------------
 								-- LOCAL FUNCTIONS --
@@ -214,7 +217,7 @@ local function GetRandomCustomCard()
 end
 
 local function GetRandomElement(List)
-	return List[math.random(#List)]
+	if List then return List[math.random(#List)] end
 end
 
 -- Is this collectible unlocked?
@@ -252,11 +255,18 @@ function rplus:OnGameStart(Continued)
 		MISSINGMEMORY_DATA = nil
 		REVERSECARD_DATA = nil
 		CUBE_COUNTER = 0
-		MARKCAIN_DATA = 0
+		MARKCAIN_DATA = nil
 		BAGOTRASH_LEVELS = 0
 		ErasedEnemies = {}
 		LAUGHINGBOY_DATA = false
 		LAUGHINGBOY_ROOM = nil
+		
+		--[[ Spawn items/trinkets for testing here if necessary
+		Isaac.Spawn(5, 350, Trinkets.TestTrinket, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 100, Collectibles.TestCollectible, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		--]]
+		Isaac.Spawn(5, 350, Trinkets.SLEIGHTOFHAND, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 100, Collectibles.BLACKDOLL, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
@@ -414,7 +424,8 @@ function rplus:OnFrame()
 			if #MyFamiliars > 0 then
 				player:RemoveCollectible(Collectibles.MARKCAIN)
 				player:Revive()
-				player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, true, false, true, true, -1)
+				MARKCAIN_DATA = "player revived"
+				player:UseCard(Card.RUNE_ALGIZ, UseFlag.USE_NOANIM | UseFlag.USE_OWNED | UseFlag.USE_NOANNOUNCER)
 				sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
 				
 				for i = 1, #MyFamiliars do player:RemoveCollectible(MyFamiliars[i]) end
@@ -724,13 +735,16 @@ function rplus:OnTearUpdate(Tear)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
 
-						-- UPDATING PLAYER STATS
+						-- UPDATING PLAYER STATS (CACHE)
 function rplus:UpdateStats(player, Flag) 
 	--If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml
 	if Flag == CacheFlag.CACHE_DAMAGE then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
 			player.Damage = player.Damage + StatUps.SINNERSHEART_DMG_ADD
 			player.Damage = player.Damage * StatUps.SINNERSHEART_DMG_MUL
+		end
+		if MARKCAIN_DATA == "player revived" then
+			player.Damage = player.Damage + #MyFamiliars * StatUps.MARKCAIN_DMG
 		end
 	end
 	if Flag == CacheFlag.CACHE_TEARFLAG then
@@ -771,7 +785,7 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 	local player = Isaac.GetPlayer(0)
 	
 	if player:HasCollectible(Collectibles.MAGICPEN) and Source.Entity and Source.Entity.Type == 1000 and Source.Entity.SubType == 4 then
-		if math.random(100) == 1 then
+		if math.random(100) == 1 then 
 			local Flags = {
 				EntityFlag.FLAG_POISON, 
 				EntityFlag.FLAG_SLOW, 
@@ -780,9 +794,8 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 				EntityFlag.FLAG_FEAR, 
 				EntityFlag.FLAG_BURN
 			}
-			local RandomEffectFlag = Flags[math.random(#Flags)]
 			
-			Entity:AddEntityFlags(RandomEffectFlag)
+			Entity:AddEntityFlags(Flags[math.random(#Flags)])
 		end
 		return false
 	end
@@ -794,6 +807,10 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		elseif SUPERBERSERKSTATE and Entity:IsActiveEnemy(false) and not Entity:IsBoss() and math.random(100) <= SUPERBERSERK_DELETE_CHANCE then
 			table.insert(ErasedEnemies, Entity.Type)
 		end
+	end
+	
+	if player:HasTrinket(Trinkets.JUDASKISS) and Entity.Type == 1 and Source.Entity:IsActiveEnemy(false) then
+		Source.Entity:AddEntityFlags(EntityFlag.FLAG_BAITED)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
@@ -824,7 +841,7 @@ function rplus:TrashBagUpdate(Familiar)
 	
 	if Familiar.RoomClearCount == 1 then
 		local NumFlies = math.random(BagLevels * 2)
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS, true) then NumFlies = NumFlies + math.random(2) end
+		if Isaac.GetPlayer(0):HasCollectible(CollectibleType.COLLECTIBLE_BFFS, true) then NumFlies = NumFlies + math.random(2) end
 		
 		Familiar:GetSprite().PlaybackSpeed = 0.5
 		Familiar:GetSprite():Play("Spawn")
@@ -864,7 +881,7 @@ rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.ZenBabyUpdate, Familiar
 
 						-- FAMILIAR COLLISION
 function rplus:CherryCollision(Familiar, Collider, _)
-	if Collider:IsActiveEnemy(true) and not Collider:IsBoss() then
+	if Collider:IsActiveEnemy(true) and not Collider:IsBoss() and game:GetFrameCount() % 10 == 0 then
 		game:CharmFart(Familiar.Position, 10.0, Familiar)
 		sfx:Play(SoundEffect.SOUND_FART, 1, 2, false, 1, 0)
 	end
@@ -897,7 +914,7 @@ if EID then
 	EID:addCollectible(Collectibles.RUBIKSCUBE, "After each use, has a 5% (100% on 20-th use) chance to be 'solved', removed from the player and spawn a Magic Cube on the ground")
 	EID:addCollectible(Collectibles.MAGICCUBE, "{{DiceRoom}} Invokes effects of D6+D20 on use #Rerolled items can be drawn from any item pool")
 	EID:addCollectible(Collectibles.MAGICPEN, "Tears leave {{ColorRainbow}}rainbow{{CR}} creep underneath them #Random permanent status effects is applied to enemies walking over that creep")
-	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers and gain invincibility shield for 5 seconds #{{Warning}} Works only once!")
+	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers, gain +0.3 DMG for each consumed familiar and gain invincibility shield for 5 seconds #{{Warning}} Works only once!")
 	EID:addCollectible(Collectibles.TEMPERTANTRUM, "Upon taking damage, there is a 10% chance to enter a Berserk state #While in this state, every enemy killed has a 10% chance to be erased for the rest of the run")
 	EID:addCollectible(Collectibles.BAGOTRASH, "Spawns a familiar that creates blue flies upon clearing a room #It also blocks enemy projectiles, and after blocking it the bag has a 2% chance to be destroyed and drop Breakfast #The more floors it is not destroyed, the more flies it spawns")
 	EID:addCollectible(Collectibles.ZENBABY, "Spawns a familiar that shoots Godhead tears at a fast firerate")
@@ -905,6 +922,7 @@ if EID then
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}}heart/{{Pill}}pills or a random body-related item")
+	EID:addTrinket(Trinkets.JUDASKISS, "Enemies touching you become targeted by other enemies (effect similar to Rotten Tomato)")
 	
 	EID:addCard(PocketItems.SDDSHARD, "On use, invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "On use, damage all enemies in a room, turn any item pedestals into red locusts (similar to Abyss item), and turns pickups into random locusts with a 50% chance")
