@@ -267,6 +267,7 @@ function rplus:OnGameStart(Continued)
 		--]]
 		Isaac.Spawn(5, 350, Trinkets.SLEIGHTOFHAND, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		Isaac.Spawn(5, 100, Collectibles.BLACKDOLL, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 100, 403, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
@@ -293,6 +294,23 @@ rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 function rplus:OnNewRoom()
 	local player = Isaac.GetPlayer(0)
 
+	if player:HasCollectible(Collectibles.BLACKDOLL) then
+		ABSepNumber = math.floor(Isaac.CountEnemies() / 2)
+		EntitiesGroupA = {}
+		EntitiesGroupB = {}
+		local Count = 0
+		
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity:IsActiveEnemy(false) and not entity:IsBoss() then
+				Count = Count + 1
+				if Count <= ABSepNumber then
+					table.insert(EntitiesGroupA, entity)
+				else
+					table.insert(EntitiesGroupB, entity)
+				end
+			end
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
 
@@ -667,8 +685,6 @@ function rplus:PickupCollision(Pickup, Collider, _)
 			until IsCollectibleUnlocked(Item)
 			Isaac.Spawn(5, 100, Item, Pickup.Position, Vector(0, 0), Pickup)
 			Pickup:Remove()
-		-- elseif DieRoll < 40 then
-			-- Isaac.Spawn(5, 350, math.random(189), Pickup.Position, Vector.FromAngle(math.random(360)) * 5, Pickup)
 		elseif DieRoll < 80 then
 			local NumOfPickUps = rdm:RandomInt(4) + 1 -- 1 to 4 Pickups
 			
@@ -811,6 +827,19 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 	
 	if player:HasTrinket(Trinkets.JUDASKISS) and Entity.Type == 1 and Source.Entity:IsActiveEnemy(false) then
 		Source.Entity:AddEntityFlags(EntityFlag.FLAG_BAITED)
+	end
+	
+	if player:HasCollectible(Collectibles.BLACKDOLL) then
+		for i = 1, #EntitiesGroupA do 
+			if Entity.Type == EntitiesGroupA[i].Type and EntitiesGroupB[i] and Source.Entity and Source.Entity.Type < 9 then 
+				EntitiesGroupB[i]:TakeDamage(player.Damage / 3, 0, EntityRef(Entity), 0)
+			end 
+		end
+		for i = 1, #EntitiesGroupB do 
+			if Entity.Type == EntitiesGroupB[i].Type and EntitiesGroupA[i] and Source.Entity and Source.Entity.Type < 9 then 
+				EntitiesGroupA[i]:TakeDamage(player.Damage / 3, 0, EntityRef(Entity), 0)
+			end 
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
