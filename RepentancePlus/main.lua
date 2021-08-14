@@ -1,3 +1,4 @@
+-- Welcome to main.lua, please make yourself comfortable while reading all of this bullshit
 
 									---------------------
 									----- VARIABLES -----
@@ -14,15 +15,17 @@ local HEARTKEY_CHANCE = 5
 local SCARLETCHEST_CHANCE = 2
 local BITTENPENNY_CHANCE = 2
 local CARDRUNE_REPLACE_CHANCE = 2
-local SUPERBERSERKSTATE_CHANCE = 10
+local SUPERBERSERKSTATE_CHANCE = 25
 local SUPERBERSERK_DELETE_CHANCE = 10
 local TRASHBAG_BREAK_CHANCE = 1
 local CHERRY_SPAWN_CHANCE = 20
+local SLEIGHTOFHAND_CHANCE = 7
 
 Familiars = {
 	BAGOTRASH = Isaac.GetEntityVariantByName("Bag O' Trash"),
 	ZENBABY = Isaac.GetEntityVariantByName("Zen Baby"),
-	CHERRY = Isaac.GetEntityVariantByName("Cherry")
+	CHERRY = Isaac.GetEntityVariantByName("Cherry"),
+	BIRD = Isaac.GetEntityVariantByName("Bird of Hope")
 }
 
 Collectibles = {
@@ -38,7 +41,8 @@ Collectibles = {
 	TEMPERTANTRUM = Isaac.GetItemIdByName("Temper Tantrum"),
 	CHERRYFRIENDS = Isaac.GetItemIdByName("Cherry Friends"),
 	ZENBABY = Isaac.GetItemIdByName("Zen Baby"),
-	BLACKDOLL = Isaac.GetItemIdByName("Black Doll")
+	BLACKDOLL = Isaac.GetItemIdByName("Black Doll"),
+	BIRDOFHOPE = Isaac.GetItemIdByName("Bird of Hope")
 }
 
 Trinkets = {
@@ -244,11 +248,12 @@ local function IsCollectibleUnlocked(collectibleType)
 	return isUnlocked	
 end
 
-								---------------------
+								----------------------
 								-- GLOBAL FUNCTIONS --
-								---------------------
+								----------------------
 
 						-- GAME STARTED --
+						------------------
 function rplus:OnGameStart(Continued)
 	if not Continued then
 		ORDLIFE_DATA = nil
@@ -260,19 +265,27 @@ function rplus:OnGameStart(Continued)
 		ErasedEnemies = {}
 		LAUGHINGBOY_DATA = false
 		LAUGHINGBOY_ROOM = nil
+		NumRevivals = 0
+		BirdCaught = true
 		
-		--[[ Spawn items/trinkets for testing here if necessary
+		-- I somehow fucked up Mark of Cain so this will have to stay
+		Isaac.GetPlayer(0):AddCacheFlags(CacheFlag.CACHE_ALL)
+		Isaac.GetPlayer(0):EvaluateItems()
+		
+		--[[ Spawn items/trinkets or turn on debug commands for testing here if necessary
+		! DEBUG: 3 - INFINITE HP, 4 - HIGH DAMAGE, 8 - INFINITE CHARGES, 10 - INSTAKILL ENEMIES !
 		Isaac.Spawn(5, 350, Trinkets.TestTrinket, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		Isaac.Spawn(5, 100, Collectibles.TestCollectible, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.ExecuteCommand("debug 0")
 		--]]
 		Isaac.Spawn(5, 350, Trinkets.SLEIGHTOFHAND, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
-		Isaac.Spawn(5, 100, Collectibles.BLACKDOLL, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
-		Isaac.Spawn(5, 100, 403, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 100, Collectibles.BIRDOFHOPE, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
 
-						-- EVERY NEW LEVEL 
+						-- EVERY NEW LEVEL --
+						---------------------
 function rplus:OnNewLevel()
 	local player = Isaac.GetPlayer(0)
 	local level = game:GetLevel()
@@ -290,11 +303,13 @@ function rplus:OnNewLevel()
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 
-						-- EVERY NEW ROOM
+						-- EVERY NEW ROOM --
+						--------------------
 function rplus:OnNewRoom()
 	local player = Isaac.GetPlayer(0)
+	local room = game:GetRoom()
 
-	if player:HasCollectible(Collectibles.BLACKDOLL) then
+	if player:HasCollectible(Collectibles.BLACKDOLL) and room:IsFirstVisit() and Isaac.CountEnemies() > 1 then
 		ABSepNumber = math.floor(Isaac.CountEnemies() / 2)
 		EntitiesGroupA = {}
 		EntitiesGroupB = {}
@@ -315,6 +330,7 @@ end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
 
 						-- ACTIVE ITEM USED --
+						----------------------
 function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 	local level = game:GetLevel()
 	local player = Isaac.GetPlayer(0)
@@ -360,6 +376,7 @@ end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
 
 						-- EVERY FRAME --
+						-----------------
 function rplus:OnFrame()
 	local room = game:GetRoom()
 	local level = game:GetLevel()
@@ -399,7 +416,7 @@ function rplus:OnFrame()
 		end
 	end
 	
-	if REVERSECARD_DATA == "used" and player:GetSprite():IsFinished("PickupWalkDown") then
+	if REVERSECARD_DATA == "used" and sprite:IsFinished("PickupWalkDown") then
 		secondary_Card = player:GetCard(1)
 		player:SetCard(1, 0)
 		player:SetCard(0, secondary_Card)
@@ -429,7 +446,7 @@ function rplus:OnFrame()
 	end
 	
 	if player:HasCollectible(Collectibles.MARKCAIN) then
-		if sprite:IsPlaying("Death") and sprite:GetFrame() > 30 then
+		if sprite:IsPlaying("Death") and sprite:GetFrame() > 25 then
 			MyFamiliars = {}
 			for i = 1, 1000 do
 				if Isaac.GetItemConfig():GetCollectible(i) and Isaac.GetItemConfig():GetCollectible(i).Type == ItemType.ITEM_FAMILIAR and player:HasCollectible(i) then
@@ -442,11 +459,14 @@ function rplus:OnFrame()
 			if #MyFamiliars > 0 then
 				player:RemoveCollectible(Collectibles.MARKCAIN)
 				player:Revive()
+				sprite:Stop()
 				MARKCAIN_DATA = "player revived"
-				player:UseCard(Card.RUNE_ALGIZ, UseFlag.USE_NOANIM | UseFlag.USE_OWNED | UseFlag.USE_NOANNOUNCER)
+				player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, UseFlag.USE_NOANIM, -1)
 				sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
 				
 				for i = 1, #MyFamiliars do player:RemoveCollectible(MyFamiliars[i]) end
+				player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+				player:EvaluateItems()
 			end
 		end
 	end
@@ -495,10 +515,30 @@ function rplus:OnFrame()
 			end
 		end
 	end
+	
+	if player:HasCollectible(Collectibles.BIRDOFHOPE) then
+		if sprite:IsPlaying("Death") and BirdCaught then
+			BirdCaught = false
+			DieFrame = game:GetFrameCount()
+			NumRevivals = NumRevivals + 1
+			
+			player:Revive()
+			sprite:Stop()
+			player:UseCard(Card.CARD_SOUL_LOST, UseFlag.USE_NOANIM | UseFlag.USE_OWNED | UseFlag.USE_NOANNOUNCER)
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, UseFlag.USE_NOANIM, -1)
+			
+			Birdy = Isaac.Spawn(3, Familiars.BIRD, 0, room:GetCenterPos(), Vector.FromAngle(math.random(360)) * NumRevivals, nil) 
+			Birdy:GetSprite():Play("Flying")
+		elseif DieFrame and game:GetFrameCount() > DieFrame + 120 and not BirdCaught then
+			player:Die()
+			BirdCaught = "DONT KILL HIM IF HE HAS EXTRA LIVES THO"
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
-						-- WHEN NPC (ENEMY) DIES --
+						-- WHEN NPC DIES --
+						-------------------
 function rplus:OnNPCDeath(NPC)
 	local player = Isaac.GetPlayer(0)
 	
@@ -523,7 +563,8 @@ function rplus:OnNPCDeath(NPC)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 
-						-- ON PICKUP INITIALIZATION -- 
+						-- ON PICKUP INIT -- 
+						--------------------
 function rplus:OnPickupInit(Pickup)
 	local player = Isaac.GetPlayer(0)
 	
@@ -542,6 +583,7 @@ end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, rplus.OnPickupInit)
 
 						-- ON GETTING A CARD --
+						-----------------------
 function rplus:OnCardInit(_, _, PlayingCards, Runes, OnlyRunes)
 	if PlayingCards or Runes then
 		if math.random(100) <= CARDRUNE_REPLACE_CHANCE then
@@ -552,6 +594,7 @@ end
 rplus:AddCallback(ModCallbacks.MC_GET_CARD, rplus.OnCardInit)
 
 						-- ON USING CARD -- 
+						-------------------
 function rplus:CardUsed(Card, player, _)
 	local player = Isaac.GetPlayer(0)
 	
@@ -667,7 +710,8 @@ function rplus:CardUsed(Card, player, _)
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 
-						-- ON PICKUP COLLISION
+						-- ON PICKUP COLLISION --
+						-------------------------
 function rplus:PickupCollision(Pickup, Collider, _)
 	local player = Isaac.GetPlayer(0)
 	
@@ -731,7 +775,8 @@ function rplus:PickupCollision(Pickup, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.PickupCollision)
 
-						-- ON UPDATING THE PICKUPS
+						-- ON UPDATING PICKUPS --
+						-------------------------
 function rplus:PickupUpdate(Pickup)
 	if Pickup.Type == 5 and Pickup.Variant == 100 and Pickup.SpawnerVariant == 392 then
 		for i = 3, 5 do Pickup:GetSprite():ReplaceSpritesheet(i,"gfx/items/slots/levelitem_scarletchest_itemaltar_dlc4.png") end
@@ -740,7 +785,8 @@ function rplus:PickupUpdate(Pickup)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, rplus.PickupUpdate)
 
-						-- ON TEAR UPDATE
+						-- ON TEAR UPDATE --
+						--------------------
 function rplus:OnTearUpdate(Tear)
 	local player = Isaac.GetPlayer(0)
 	
@@ -751,7 +797,8 @@ function rplus:OnTearUpdate(Tear)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
 
-						-- UPDATING PLAYER STATS (CACHE)
+						-- UPDATING PLAYER STATS (CACHE) --
+						-----------------------------------
 function rplus:UpdateStats(player, Flag) 
 	--If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml
 	if Flag == CacheFlag.CACHE_DAMAGE then
@@ -796,7 +843,8 @@ function rplus:UpdateStats(player, Flag)
 end
 rplus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, rplus.UpdateStats)
 
-						-- ENTITY TAKES DAMAGE
+						-- ENTITY TAKES DAMAGE --
+						-------------------------
 function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 	local player = Isaac.GetPlayer(0)
 	
@@ -829,22 +877,23 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		Source.Entity:AddEntityFlags(EntityFlag.FLAG_BAITED)
 	end
 	
-	if player:HasCollectible(Collectibles.BLACKDOLL) then
+	if player:HasCollectible(Collectibles.BLACKDOLL) and ABSepNumber then
 		for i = 1, #EntitiesGroupA do 
-			if Entity.Type == EntitiesGroupA[i].Type and EntitiesGroupB[i] and Source.Entity and Source.Entity.Type < 9 then 
-				EntitiesGroupB[i]:TakeDamage(player.Damage / 3, 0, EntityRef(Entity), 0)
+			if Entity:GetData() == EntitiesGroupA[i]:GetData() and EntitiesGroupB[i] and Source.Entity and Source.Entity.Type < 9 then 
+				EntitiesGroupB[i]:TakeDamage(player.Damage / 2, 0, EntityRef(Entity), 0)
 			end 
 		end
 		for i = 1, #EntitiesGroupB do 
-			if Entity.Type == EntitiesGroupB[i].Type and EntitiesGroupA[i] and Source.Entity and Source.Entity.Type < 9 then 
-				EntitiesGroupA[i]:TakeDamage(player.Damage / 3, 0, EntityRef(Entity), 0)
+			if Entity:GetData() == EntitiesGroupB[i]:GetData() and EntitiesGroupA[i] and Source.Entity and Source.Entity.Type < 9 then 
+				EntitiesGroupA[i]:TakeDamage(player.Damage / 2, 0, EntityRef(Entity), 0)
 			end 
 		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
 
-						-- ON FAMILIAR INITIALIZATION
+						-- ON FAMILIAR INIT --
+						----------------------
 function rplus:TrashBagInit(Familiar)
 	BagLevels = 1
 	Familiar:AddToFollowers()
@@ -860,7 +909,8 @@ function rplus:ZenBabyInit(Familiar)
 end
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.ZenBabyInit, Familiars.ZENBABY)
 
-						-- ON FAMILIAR UPDATE
+						-- ON FAMILIAR UPDATE --
+						------------------------
 function rplus:TrashBagUpdate(Familiar)
 	Familiar:FollowParent()
 	if Familiar:GetSprite():IsFinished("Spawn") then
@@ -908,7 +958,8 @@ function rplus:ZenBabyUpdate(Familiar)
 end
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.ZenBabyUpdate, Familiars.ZENBABY)
 
-						-- FAMILIAR COLLISION
+						-- FAMILIAR COLLISION --
+						------------------------
 function rplus:CherryCollision(Familiar, Collider, _)
 	if Collider:IsActiveEnemy(true) and not Collider:IsBoss() and game:GetFrameCount() % 10 == 0 then
 		game:CharmFart(Familiar.Position, 10.0, Familiar)
@@ -917,7 +968,18 @@ function rplus:CherryCollision(Familiar, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.CherryCollision, Familiars.CHERRY)
 
-						-- PROJECTILE COLLISION
+function rplus:BirdCollision(Familiar, Collider, _)
+	if Collider.Type == 1 then
+		sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
+		Isaac.Spawn(1000, EffectVariant.POOF01, 0, Familiar.Position, Vector.Zero, nil)
+		Familiar:Remove()
+		BirdCaught = true
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.BirdCollision, Familiars.BIRD)
+
+						-- PROJECTILE COLLISION --
+						--------------------------
 function rplus:ProjectileCollision(Projectile, Collider, _)
 	if Collider.Variant == Familiars.BAGOTRASH then
 		Projectile:Remove()
@@ -944,14 +1006,17 @@ if EID then
 	EID:addCollectible(Collectibles.MAGICCUBE, "{{DiceRoom}} Invokes effects of D6+D20 on use #Rerolled items can be drawn from any item pool")
 	EID:addCollectible(Collectibles.MAGICPEN, "Tears leave {{ColorRainbow}}rainbow{{CR}} creep underneath them #Random permanent status effects is applied to enemies walking over that creep")
 	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers, gain +0.3 DMG for each consumed familiar and gain invincibility shield for 5 seconds #{{Warning}} Works only once!")
-	EID:addCollectible(Collectibles.TEMPERTANTRUM, "Upon taking damage, there is a 10% chance to enter a Berserk state #While in this state, every enemy killed has a 10% chance to be erased for the rest of the run")
+	EID:addCollectible(Collectibles.TEMPERTANTRUM, "Upon taking damage, there is a 25% chance to enter a Berserk state #While in this state, every enemy damaged has a 10% chance to be erased for the rest of the run")
 	EID:addCollectible(Collectibles.BAGOTRASH, "Spawns a familiar that creates blue flies upon clearing a room #It also blocks enemy projectiles, and after blocking it the bag has a 2% chance to be destroyed and drop Breakfast #The more floors it is not destroyed, the more flies it spawns")
 	EID:addCollectible(Collectibles.ZENBABY, "Spawns a familiar that shoots Godhead tears at a fast firerate")
 	EID:addCollectible(Collectibles.CHERRYFRIENDS, "Killing an enemy has a 20% chance to drop cherry familiar on the ground #Those cherries emit a charming fart when an enemy walks over them, and drop half a heart when a room is cleared")
+	EID:addCollectible(Collectibles.BLACKDOLL, "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal half of that damage to another enemy in that pair")
+	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into a ghost, gain invincibility shield and a bird flies out of a room center in a random direction. Catching the bird in 5 seconds will save you and give you an extra life, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it less possible to catch her #{{Warning}} Only works once per room!")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}}heart/{{Pill}}pills or a random body-related item")
 	EID:addTrinket(Trinkets.JUDASKISS, "Enemies touching you become targeted by other enemies (effect similar to Rotten Tomato)")
+	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a small chance to not subtract it from your inventory count")
 	
 	EID:addCard(PocketItems.SDDSHARD, "On use, invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "On use, damage all enemies in a room, turn any item pedestals into red locusts (similar to Abyss item), and turns pickups into random locusts with a 50% chance")

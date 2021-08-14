@@ -20,13 +20,16 @@
 	<!-- T. Judas -->
 	<passive name="Black Doll" description="Bound by blood" gfx="38_blackdoll.png" quality="2" devilprice="1" />
 	<trinket name="Judas' Kiss" description="One on the cheek" gfx="38_judaskiss.png" />
+	
+	<!-- T. Eve -->
+	<passive name="Bird of Hope" description="Fly or die" gfx="06_birdofhope.png" quality="2" />
 
-	<!-- T.Samson to ... -->
+	<!-- T.Samson -->
 	<passive name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="35_tempertantrum.png" quality="3" /> 
 	
-	<!-- T.Eden to ... -->
+	<!-- T.Eden -->
 	<passive name="Magic Pen" description="I want to be an artist" gfx="52_magicpen.png" quality="1" /> 
 	
-	<!-- T. Lost to ... -->
+	<!-- T. Lost -->
 	<familiar name="Zen Baby" description="He sees all" gfx="11_zenbaby.png" quality="3" />
 </items>

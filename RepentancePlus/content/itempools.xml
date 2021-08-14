@@ -16,9 +16,11 @@
 	<Pool Name="devil">
 		<Item Name="Sinner's Heart" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="The Mark of Cain" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Black Doll" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="angel">
 		<Item Name="Zen Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bird of Hope" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="secret">
 		<Item Name="Ordinary Life" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -31,7 +33,7 @@
 		
 	</Pool>
 	<Pool Name="redChest">
-		
+		<Item Name="Black Doll" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="beggar">
 		<Item Name="Bag O' Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -42,6 +44,7 @@
 	<Pool Name="curse">
 		<Item Name="Cookie Cutter" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="The Mark of Cain" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
+		<Item Name="Black Doll" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="keyMaster">
 		
@@ -66,7 +69,8 @@
 		
 	</Pool>
 	<Pool Name="babyShop">
-		
+		<Item Name="Zen Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bag O' Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="woodenChest">
 		
