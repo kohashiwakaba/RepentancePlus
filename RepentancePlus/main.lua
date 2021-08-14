@@ -1,6 +1,7 @@
--- Welcome to main.lua, please make yourself comfortable while reading all of this bullshit
 
-									---------------------
+----------------------------------------------------------------------------------------------
+-- Welcome to main.lua, please make yourself comfortable while reading all of this bullshit --
+----------------------------------------------------------------------------------------------
 									----- VARIABLES -----
 									---------------------
 
@@ -49,7 +50,8 @@ Trinkets = {
 	BASEMENTKEY = Isaac.GetTrinketIdByName("Basement Key"),
 	KEYTOTHEHEART = Isaac.GetTrinketIdByName("Key to the Heart"),
 	SLEIGHTOFHAND = Isaac.GetTrinketIdByName("Sleight of Hand"),
-	JUDASKISS = Isaac.GetTrinketIdByName("Judas' Kiss")
+	JUDASKISS = Isaac.GetTrinketIdByName("Judas' Kiss"),
+	CHEWPENNY = Isaac.GetTrinketIdByName("Chewed Penny")
 }
 
 PocketItems = {
@@ -279,7 +281,7 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		--]]
 		Isaac.Spawn(5, 350, Trinkets.SLEIGHTOFHAND, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
-		Isaac.Spawn(5, 100, Collectibles.BIRDOFHOPE, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 350, Trinkets.CHEWPENNY, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
@@ -428,6 +430,7 @@ function rplus:OnFrame()
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Type == 1000 and entity.Variant == EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL and entity.SubType == 4 then
 				local Frame = game:GetFrameCount() % 490 + 1
+				
 				if Frame <= 140 then
 					entity:SetColor(Color(1, Frame / 140, 0), 1, 1, false, false)
 				elseif Frame <= 210 then
@@ -448,6 +451,7 @@ function rplus:OnFrame()
 	if player:HasCollectible(Collectibles.MARKCAIN) then
 		if sprite:IsPlaying("Death") and sprite:GetFrame() > 25 then
 			MyFamiliars = {}
+			
 			for i = 1, 1000 do
 				if Isaac.GetItemConfig():GetCollectible(i) and Isaac.GetItemConfig():GetCollectible(i).Type == ItemType.ITEM_FAMILIAR and player:HasCollectible(i) then
 					for j = 1, player:GetCollectibleNum(i, true) do
@@ -455,7 +459,6 @@ function rplus:OnFrame()
 					end
 				end
 			end
-			
 			if #MyFamiliars > 0 then
 				player:RemoveCollectible(Collectibles.MARKCAIN)
 				player:Revive()
@@ -574,6 +577,11 @@ function rplus:OnPickupInit(Pickup)
 	end
 	if Pickup.Variant == PickUps.SCARLETCHEST and Pickup.SubType == 1 and type(Pickup:GetData()["IsRoom"]) == type(nil) then
 		Pickup:Remove()
+	end
+	
+	if Pickup.Variant == PickupVariant.PICKUP_COIN and Pickup.SubType == 1 and 
+	(math.random(100) <= BITTENPENNY_CHANCE or (player:HasTrinket(Trinkets.CHEWPENNY) and math.random(10) <= HasBox(BITTENPENNY_CHANCE))) then
+		Pickup:Morph(5, PickUps.BITTENPENNY, 0, true, true, false)
 	end
 	
 	if player:HasTrinket(Trinkets.BASEMENTKEY) and Pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST and math.random(100) <= HasBox(BASEMENTKEY_CHANCE) then
@@ -757,18 +765,34 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		DieRoll = math.random(100)
 		Pickup:GetData().Picked = true
 		local Sound = 0
-		if DieRoll < 40 then
-			player:AddCoins(1)
-			Sound = SoundEffect.SOUND_PENNYPICKUP
-		elseif DieRoll < 50 then
-			player:AnimateSad()
-		elseif DieRoll < 75 then
-			player:AddCoins(5)
-			Sound = SoundEffect.SOUND_NICKELPICKUP
-		else
-			player:AddCoins(10)
-			Sound = SoundEffect.SOUND_DIMEPICKUP
+		if player:HasTrinket(Trinkets.CHEWPENNY) then	-- 40%, 30%, 15%, 15% with the trinket
+			if DieRoll < 40 then
+				player:AnimateSad()
+			elseif DieRoll < 70 then
+				player:AddCoins(1)
+				Sound = SoundEffect.SOUND_PENNYPICKUP
+			elseif DieRoll < 85 then
+				player:AddCoins(5)
+				Sound = SoundEffect.SOUND_NICKELPICKUP
+			else
+				player:AddCoins(10)
+				Sound = SoundEffect.SOUND_DIMEPICKUP
+			end
+		else											-- 10%, 55%, 30%, 5% without the trinket
+			if DieRoll < 10 then
+				player:AnimateSad()
+			elseif DieRoll < 65 then
+				player:AddCoins(1)
+				Sound = SoundEffect.SOUND_PENNYPICKUP
+			elseif DieRoll < 95 then
+				player:AddCoins(5)
+				Sound = SoundEffect.SOUND_NICKELPICKUP
+			else
+				player:AddCoins(10)
+				Sound = SoundEffect.SOUND_DIMEPICKUP
+			end
 		end
+		
 		sfx:Play(Sound, 1, 1, false, 1, 0)
 		Pickup:GetSprite():Play("Collect")
 	end
@@ -1014,9 +1038,10 @@ if EID then
 	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into a ghost, gain invincibility shield and a bird flies out of a room center in a random direction. Catching the bird in 5 seconds will save you and give you an extra life, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it less possible to catch her #{{Warning}} Only works once per room!")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
-	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}}heart/{{Pill}}pills or a random body-related item")
+	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
 	EID:addTrinket(Trinkets.JUDASKISS, "Enemies touching you become targeted by other enemies (effect similar to Rotten Tomato)")
 	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a small chance to not subtract it from your inventory count")
+	EID:addTrinket(Trinkets.CHEWPENNY, "Drastically increases chance for each {{Coin}} penny to turn into Bitten Coin #Increases chances of getting either nothing or 10 coins when picking up Bitten Coins")
 	
 	EID:addCard(PocketItems.SDDSHARD, "On use, invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "On use, damage all enemies in a room, turn any item pedestals into red locusts (similar to Abyss item), and turns pickups into random locusts with a 50% chance")
