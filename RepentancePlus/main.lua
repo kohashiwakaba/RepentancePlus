@@ -223,6 +223,7 @@ local function IsCollectibleUnlocked(collectibleType)
 	local itemPool = game:GetItemPool()
 	local player = Isaac.GetPlayer(0)
 	local hasChaos = false
+	
 	itemPool:AddRoomBlacklist(CollectibleType.COLLECTIBLE_SAD_ONION)
 
 	if player:HasCollectible(CollectibleType.COLLECTIBLE_CHAOS) == true then
@@ -237,7 +238,8 @@ local function IsCollectibleUnlocked(collectibleType)
 	if hasChaos == true then
 		player:AddCollectible(CollectibleType.COLLECTIBLE_CHAOS, 0, false)
 	end
-	itemPool:ResetRoomBlacklist()		
+	itemPool:ResetRoomBlacklist()
+	
 	return isUnlocked	
 end
 
@@ -249,6 +251,7 @@ end
 						------------------
 function rplus:OnGameStart(Continued)
 	if not Continued then
+		-- I was trying to make this in a single CustomData table and failed miserably cuz lua can't fucking read from this table
 		ORDLIFE_DATA = nil
 		MISSINGMEMORY_DATA = nil
 		REVERSECARD_DATA = nil
@@ -339,6 +342,7 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, true, true, false, false, -1)
 			return {Discharge = true, Remove = false, ShowAnim = true}
 		end
+		
 	elseif ItemUsed == Collectibles.COOKIECUTTER then
 		player:AddMaxHearts(2, true)
 		player:AddBrokenHearts(1)
@@ -347,6 +351,7 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			player:Die()
 		end
 		return true
+		
 	elseif ItemUsed == Collectibles.RUBIKSCUBE then
 		local SolveChance = math.random(100)
 		
@@ -360,6 +365,7 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			CUBE_COUNTER = CUBE_COUNTER + 1
 			return true
 		end
+		
 	elseif ItemUsed == Collectibles.MAGICCUBE then
 		player:UseCard(Card.CARD_SOUL_EDEN, UseFlag.USE_NOANIM | UseFlag.USE_OWNED | UseFlag.USE_NOANNOUNCER)
 		return true
@@ -524,7 +530,10 @@ function rplus:OnFrame()
 			Birdy:GetSprite():Play("Flying")
 		elseif DieFrame and game:GetFrameCount() > DieFrame + 120 and not BirdCaught then
 			player:Die()
-			BirdCaught = "DONT KILL HIM IF HE HAS EXTRA LIVES THO"
+			BirdCaught = "blah blah"	-- just so that it's not true and player doesn't die over and over until all his extra lives deplete
+			-- !!! THIS IS A SERIOUS CROTCH !!! since you end up near the door when reviving, and the bird familiar doesn't despawn if you don't catch her,
+			-- you automatically pick her up and this allows you to repeat the cycle (since it switches data to true) and doesn't take away your extra lives
+			-- so don't touch it if you don't think it through. like, for real.
 		end
 	end
 end
@@ -598,6 +607,7 @@ function rplus:CardUsed(Card, player, _)
 	
 	if Card == PocketItems.RJOKER then
 		game:StartRoomTransition(-6, -1, RoomTransitionAnim.TELEPORT, player, -1)
+		
 	elseif Card == PocketItems.SDDSHARD then
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Variant == PickupVariant.PICKUP_COLLECTIBLE then
@@ -605,6 +615,7 @@ function rplus:CardUsed(Card, player, _)
 				entity:ToPickup():Morph(EntityType.ENTITY_PICKUP, 100, id, true, true, false)
 			end
 		end
+		
 	elseif Card == PocketItems.REDRUNE then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_ABYSS, false, false, true, false, -1)
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_NECRONOMICON, false, false, true, false, -1)
@@ -620,9 +631,11 @@ function rplus:CardUsed(Card, player, _)
 				end
 			end
 		end
+		
 	elseif Card == PocketItems.REVERSECARD then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false, false, true, false, -1)
 		REVERSECARD_DATA = "used"
+		
 	elseif Card == PocketItems.KINGOFSPADES then
 		sfx:Play(SoundEffect.SOUND_GOLDENKEY, 1, 2, false, 1, 0)
 		local NumPickups = math.floor(player:GetNumKeys() / 4)
@@ -633,12 +646,14 @@ function rplus:CardUsed(Card, player, _)
 		end
 		if NumPickups >= 3 then Isaac.Spawn(5, 350, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
 		if NumPickups >= 7 then Isaac.Spawn(5, 100, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
+		
 	elseif Card == PocketItems.NEEDLEANDTHREAD then
 		if player:GetBrokenHearts() > 0 then
 			player:AddBrokenHearts(-1)
 			player:AddMaxHearts(2, true)
 			player:AddHearts(2)
 		end
+		
 	elseif Card == PocketItems.QUEENOFDIAMONDS then
 		for i=1, math.random(12) do
 			local QueenOfDiamondsRandom = math.random(100)
@@ -650,6 +665,7 @@ function rplus:CardUsed(Card, player, _)
 				Isaac.Spawn(5, PickupVariant.PICKUP_COIN,3 , game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
 			end
 		end
+		
 	elseif Card == PocketItems.BAGTISSUE then
 		local Weights = {}
 		local SumWeight = 0
@@ -699,6 +715,7 @@ function rplus:CardUsed(Card, player, _)
 			player:AnimateHappy()
 			Isaac.Spawn(5, 100, ID, Isaac.GetFreeNearPosition(player.Position, 5.0), Vector.Zero, nil)
 		end
+		
 	elseif Card == PocketItems.LAUGHINGBOY then
 		LAUGHINGBOY_DATA = true
 		LAUGHINGBOY_ROOM = game:GetLevel():GetCurrentRoomIndex()
@@ -793,7 +810,9 @@ rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.PickupCollision)
 						-------------------------
 function rplus:PickupUpdate(Pickup)
 	if Pickup.Type == 5 and Pickup.Variant == 100 and Pickup.SpawnerVariant == 392 then
-		for i = 3, 5 do Pickup:GetSprite():ReplaceSpritesheet(i,"gfx/items/slots/levelitem_scarletchest_itemaltar_dlc4.png") end
+		for i = 3, 5 do 
+			Pickup:GetSprite():ReplaceSpritesheet(i,"gfx/items/slots/levelitem_scarletchest_itemaltar_dlc4.png") 
+		end
 		Pickup:GetSprite():LoadGraphics()
 	end
 end
@@ -814,41 +833,49 @@ rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
 						-- UPDATING PLAYER STATS (CACHE) --
 						-----------------------------------
 function rplus:UpdateStats(player, Flag) 
-	--If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml
+	-- If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml
 	if Flag == CacheFlag.CACHE_DAMAGE then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
 			player.Damage = player.Damage + StatUps.SINNERSHEART_DMG_ADD
 			player.Damage = player.Damage * StatUps.SINNERSHEART_DMG_MUL
 		end
+		
 		if MARKCAIN_DATA == "player revived" then
 			player.Damage = player.Damage + #MyFamiliars * StatUps.MARKCAIN_DMG
 		end
 	end
+	
 	if Flag == CacheFlag.CACHE_TEARFLAG then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
 			player.TearFlags = player.TearFlags | TearFlags.TEAR_HOMING
 		end
 	end
+	
 	if Flag == CacheFlag.CACHE_SHOTSPEED then
 		if player:HasCollectible(Collectibles.SINNERSHEART)  then
 			player.ShotSpeed = player.ShotSpeed + StatUps.SINNERSHEART_SHSP
 		end
 	end
+	
 	if Flag == CacheFlag.CACHE_RANGE then 
-		--Range currently not functioning, blame Edmund
+		-- Range currently not functioning, blame Edmund
 		if player:HasCollectible(Collectibles.SINNERSHEART)  then
 			player.TearHeight = player.TearHeight + StatUps.SINNERSHEART_TEARHEIGHT
 		end
 	end
+	
 	if Flag == CacheFlag.CACHE_TEARCOLOR then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
 			player.TearColor = Color(0.4, 0.1, 0.38, 1, 0.27843, 0, 0.4549)
 		end
 	end
+	
 	if Flag == CacheFlag.CACHE_FAMILIARS then
 		player:CheckFamiliar(Familiars.BAGOTRASH, player:GetCollectibleNum(Collectibles.BAGOTRASH), player:GetCollectibleRNG(Collectibles.BAGOTRASH))
+		
 		player:CheckFamiliar(Familiars.ZENBABY, player:GetCollectibleNum(Collectibles.ZENBABY), player:GetCollectibleRNG(Collectibles.ZENBABY))
 	end
+	
 	if Flag == CacheFlag.CACHE_LUCK then
 		if LAUGHINGBOY_DATA then
 			player.Luck = player.Luck + StatUps.LAUGHINGBOY_LUCK
@@ -1079,7 +1106,25 @@ if EID then
 	EID:addCard(PocketItems.LAUGHINGBOY, "{{ArrowUp}} On use, grants 10 Luck for the current room")
 end
 
+								-----------------------------------------
+								----------- MINIMAP API COMPAT ----------
+								-----------------------------------------
 
+if MinimapAPI then
+	--MinimapAPI:AddPickup(id, Icon, EntityType, number variant, number subtype, function, icongroup, number priority)
+	--MinimapAPI:AddIcon(id, Sprite, string animationName, number frame, (optional) Color color)
+	
+	local Icons = Sprite()
+	Icons:Load("gfx/ui/minimap_icons_rplus.anm2", true)
+	
+	-- scarlet chests
+	MinimapAPI:AddIcon("scarletchest", Icons, "scarletchest", 0)
+	MinimapAPI:AddPickup("scarletchest", "scarletchest", 5, 392, -1, MinimapAPI.PickupNotCollected, "chests", 7450)
+
+	-- bitten pennies
+	MinimapAPI:AddIcon("bittenpenny", Icons, "bittenpenny", 0)
+	MinimapAPI:AddPickup("bittenpenny", "bittenpenny", 5, 395, -1, MinimapAPI.PickupNotCollected, "coins", 3050)
+end
 
 
 
