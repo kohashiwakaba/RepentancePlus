@@ -20,7 +20,7 @@ local SUPERBERSERKSTATE_CHANCE = 25
 local SUPERBERSERK_DELETE_CHANCE = 10
 local TRASHBAG_BREAK_CHANCE = 1
 local CHERRY_SPAWN_CHANCE = 20
-local SLEIGHTOFHAND_CHANCE = 7
+local SLEIGHTOFHAND_CHANCE = 12
 
 Familiars = {
 	BAGOTRASH = Isaac.GetEntityVariantByName("Bag O' Trash"),
@@ -72,40 +72,31 @@ PickUps = {
 }
 
 ScarletChestItems = { 
-	13, --The Virus
 	16, --Raw Liver
-	26, --Rotten Meat
-	36, --The Poop
 	73, --Cube of Meat
 	155, --The Peeper
-	157, --Bloody Lust
 	176, --Stem Cells
 	214, --Anemic
 	218, --Placenta
 	236, --E. Coli
 	253, --Magic Scab
-	411, --Lusty Blood
 	440, --Kidney Stone
 	446, --Dead Tooth
 	452, --Varicose Veins
 	502, --Large Zit
 	509, --Bloodshot Eye
 	529, --Pop!
-	539, --Mystery Egg
 	541, --Marrow
 	542, --Slipped Rib
 	544, --Pointy Rib
 	548, --Jaw Bone
-	549, --Brittle Boney
-	553, --Mucormycosis
-	612, --Lost Soul
+	549, --Brittle Bones
+	611, --Larynx
 	639, --Yuck Heart
 	642, --Magic Skin
 	657, --Vasculitis
 	676, --Empty Heart
-	684, --Hungry Soul
 	688, --Inner Child
-	694, --Heartbreak
 	695  --Bloody Gust
 }
 
@@ -276,12 +267,11 @@ function rplus:OnGameStart(Continued)
 		
 		--[[ Spawn items/trinkets or turn on debug commands for testing here if necessary
 		! DEBUG: 3 - INFINITE HP, 4 - HIGH DAMAGE, 8 - INFINITE CHARGES, 10 - INSTAKILL ENEMIES !
+		
 		Isaac.Spawn(5, 350, Trinkets.TestTrinket, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		Isaac.Spawn(5, 100, Collectibles.TestCollectible, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		Isaac.ExecuteCommand("debug 0")
 		--]]
-		Isaac.Spawn(5, 350, Trinkets.SLEIGHTOFHAND, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
-		Isaac.Spawn(5, 350, Trinkets.CHEWPENNY, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
@@ -1017,6 +1007,41 @@ function rplus:ProjectileCollision(Projectile, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, rplus.ProjectileCollision)
 
+						-- PLAYER COLLISION --
+						----------------------
+function rplus:PlayerCollision(Player, Collider, _)
+	if Player:HasTrinket(Trinkets.SLEIGHTOFHAND) and math.random(100) <= SLEIGHTOFHAND_CHANCE then
+		-- cuz slots don't have their own collision callback, thanks api lmao
+		if Collider.Type == 6 then
+			local S = Collider:GetSprite()
+			
+			-- make sure that we don't infinitely collide with them, results in infinite consumables!!!
+			if S:GetFrame() == 1 and 
+			(S:IsPlaying("PayPrize") or S:IsPlaying("PayNothing") or S:IsPlaying("PayShuffle") or S:IsPlaying("Wiggle")) then
+				if Player:GetNumCoins() > 0 and		-- slots that take your money
+				(Collider.Variant == 1 or Collider.Variant == 3 or Collider.Variant == 4 or Collider.Variant == 6 or Collider.Variant == 10 or Collider.Variant == 13 or Collider.Variant == 18) then 
+					Player:AddCoins(1)
+				end
+				if Player:GetNumBombs() > 0 and Collider.Variant == 9 then	-- that was bomb bum, simple stuff
+					Player:AddBombs(1)
+				end
+				if Player:GetNumKeys() > 0 and Collider.Variant == 7 then	-- and that was a key master
+					Player:AddKeys(1)
+				end
+			end
+		elseif Collider.Type == 5 then
+			local S = Collider:GetSprite()
+			
+			if S:GetFrame() == 1 and (S:IsPlaying("Open") or S:IsPlaying("UseKey")) and 	-- chests that require a key to open
+			(Collider.Variant == 53 or Collider.Variant == 55 or Collider.Variant == 57 or Collider.Variant == 60) and	-- no golden keys or lockpicks allowed!!
+			not Player:HasGoldenKey() and not Player:HasTrinket(TrinketType.TRINKET_PAPER_CLIP) then 
+				Player:AddKeys(1) 
+			end
+		end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0)
+
 								-----------------------------------------
 								--- EXTERNAL ITEM DESCRIPTIONS COMPAT ---
 								-----------------------------------------
@@ -1040,7 +1065,7 @@ if EID then
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
 	EID:addTrinket(Trinkets.JUDASKISS, "Enemies touching you become targeted by other enemies (effect similar to Rotten Tomato)")
-	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a small chance to not subtract it from your inventory count")
+	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a 12% chance to not subtract it from your inventory count")
 	EID:addTrinket(Trinkets.CHEWPENNY, "Drastically increases chance for each {{Coin}} penny to turn into Bitten Coin #Increases chances of getting either nothing or 10 coins when picking up Bitten Coins")
 	
 	EID:addCard(PocketItems.SDDSHARD, "On use, invokes the effect of Spindown Dice")
