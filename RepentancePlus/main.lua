@@ -38,12 +38,12 @@ Collectibles = {
 	MAGICPEN = Isaac.GetItemIdByName("Magic Pen"),
 	SINNERSHEART = Isaac.GetItemIdByName("Sinner's Heart"),
 	MARKCAIN = Isaac.GetItemIdByName("The Mark of Cain"),
-	BAGOTRASH = Isaac.GetItemIdByName("Bag O' Trash"),
+	BAGOTRASH = Isaac.GetItemIdByName("Bag-o-Trash"),
 	TEMPERTANTRUM = Isaac.GetItemIdByName("Temper Tantrum"),
 	CHERRYFRIENDS = Isaac.GetItemIdByName("Cherry Friends"),
 	ZENBABY = Isaac.GetItemIdByName("Zen Baby"),
 	BLACKDOLL = Isaac.GetItemIdByName("Black Doll"),
-	BIRDOFHOPE = Isaac.GetItemIdByName("Bird of Hope")
+	BIRDOFHOPE = Isaac.GetItemIdByName("Bird of a Hope")
 }
 
 Trinkets = {
