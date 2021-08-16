@@ -1,5 +1,7 @@
 
-									---------------------
+----------------------------------------------------------------------------------------------
+-- Welcome to main.lua, please make yourself comfortable while reading all of this bullshit --
+----------------------------------------------------------------------------------------------
 									----- VARIABLES -----
 									---------------------
 
@@ -14,15 +16,18 @@ local HEARTKEY_CHANCE = 5
 local SCARLETCHEST_CHANCE = 2
 local BITTENPENNY_CHANCE = 2
 local CARDRUNE_REPLACE_CHANCE = 2
-local SUPERBERSERKSTATE_CHANCE = 10
+local SUPERBERSERKSTATE_CHANCE = 25
 local SUPERBERSERK_DELETE_CHANCE = 10
-local TRASHBAG_BREAK_CHANCE = 2
+local TRASHBAG_BREAK_CHANCE = 1
 local CHERRY_SPAWN_CHANCE = 20
+local SLEIGHTOFHAND_CHANCE = 12
+local JACKOF_CHANCE = 20
 
 Familiars = {
 	BAGOTRASH = Isaac.GetEntityVariantByName("Bag O' Trash"),
 	ZENBABY = Isaac.GetEntityVariantByName("Zen Baby"),
-	CHERRY = Isaac.GetEntityVariantByName("Cherry")
+	CHERRY = Isaac.GetEntityVariantByName("Cherry"),
+	BIRD = Isaac.GetEntityVariantByName("Bird of Hope")
 }
 
 Collectibles = {
@@ -33,16 +38,21 @@ Collectibles = {
 	MAGICCUBE = Isaac.GetItemIdByName("Magic Cube"),
 	MAGICPEN = Isaac.GetItemIdByName("Magic Pen"),
 	SINNERSHEART = Isaac.GetItemIdByName("Sinner's Heart"),
-	MARKCAIN = Isaac.GetItemIdByName("Mark of Cain"),
-	BAGOTRASH = Isaac.GetItemIdByName("Bag O' Trash"),
+	MARKCAIN = Isaac.GetItemIdByName("The Mark of Cain"),
+	BAGOTRASH = Isaac.GetItemIdByName("Bag-o-Trash"),
 	TEMPERTANTRUM = Isaac.GetItemIdByName("Temper Tantrum"),
 	CHERRYFRIENDS = Isaac.GetItemIdByName("Cherry Friends"),
-	ZENBABY = Isaac.GetItemIdByName("Zen Baby")
+	ZENBABY = Isaac.GetItemIdByName("Zen Baby"),
+	BLACKDOLL = Isaac.GetItemIdByName("Black Doll"),
+	BIRDOFHOPE = Isaac.GetItemIdByName("Bird of a Hope")
 }
 
 Trinkets = {
 	BASEMENTKEY = Isaac.GetTrinketIdByName("Basement Key"),
-	KEYTOTHEHEART = Isaac.GetTrinketIdByName("Key to the Heart")
+	KEYTOTHEHEART = Isaac.GetTrinketIdByName("Key to the Heart"),
+	SLEIGHTOFHAND = Isaac.GetTrinketIdByName("Sleight of Hand"),
+	JUDASKISS = Isaac.GetTrinketIdByName("Judas' Kiss"),
+	CHEWPENNY = Isaac.GetTrinketIdByName("Chewed Penny")
 }
 
 PocketItems = {
@@ -54,49 +64,41 @@ PocketItems = {
 	NEEDLEANDTHREAD = Isaac.GetCardIdByName("Needle and Thread"),
 	QUEENOFDIAMONDS = Isaac.GetCardIdByName("Queen of Diamonds"),
 	BAGTISSUE = Isaac.GetCardIdByName("Bag Tissue"),
-	LAUGHINGBOY = Isaac.GetCardIdByName("Laughing Boy")
+	LOADEDDICE = Isaac.GetCardIdByName("Loaded Dice"),
+	JACKOFDIAMONDS = Isaac.GetCardIdByName("Jack of Diamonds")
 }
 
 PickUps = {
-	SCARLETCHEST = Isaac.GetEntityVariantByName("Scarlet Chest"),
-	BITTENPENNY = Isaac.GetEntityVariantByName("Bitten Penny")
+	SCARLETCHEST = Isaac.GetEntityVariantByName("Scarlet Chest")
+	--BITTENPENNY = Isaac.GetEntityVariantByName("Bitten Penny")
 }
 
 ScarletChestItems = { 
-	13, --The Virus
 	16, --Raw Liver
-	26, --Rotten Meat
-	36, --The Poop
 	73, --Cube of Meat
 	155, --The Peeper
-	157, --Bloody Lust
 	176, --Stem Cells
 	214, --Anemic
 	218, --Placenta
 	236, --E. Coli
 	253, --Magic Scab
-	411, --Lusty Blood
 	440, --Kidney Stone
 	446, --Dead Tooth
 	452, --Varicose Veins
 	502, --Large Zit
 	509, --Bloodshot Eye
 	529, --Pop!
-	539, --Mystery Egg
 	541, --Marrow
 	542, --Slipped Rib
 	544, --Pointy Rib
 	548, --Jaw Bone
-	549, --Brittle Boney
-	553, --Mucormycosis
-	612, --Lost Soul
+	549, --Brittle Bones
+	611, --Larynx
 	639, --Yuck Heart
 	642, --Magic Skin
 	657, --Vasculitis
 	676, --Empty Heart
-	684, --Hungry Soul
 	688, --Inner Child
-	694, --Heartbreak
 	695  --Bloody Gust
 }
 
@@ -112,7 +114,7 @@ StatUps = {
 	--
 	MARKCAIN_DMG = 0.3,
 	--
-	LAUGHINGBOY_LUCK = 10
+	LOADEDDICE_LUCK = 10
 }
 
 CreepColors = {
@@ -140,7 +142,7 @@ PickupWeights = {
 		[HeartSubType.HEART_BONE] = 5,
 		[HeartSubType.HEART_ROTTEN] = 5 
 	},
-	[PickupVariant.PICKUP_COIN] = { --TODO: adding bitten penny
+	[PickupVariant.PICKUP_COIN] = { 
 		[CoinSubType.COIN_PENNY] = 1,
 		[CoinSubType.COIN_NICKEL] = 3,
 		[CoinSubType.COIN_DIME] = 5,
@@ -188,7 +190,7 @@ DIRECTION_VECTOR = {
 	[Direction.UP] = Vector(0, -1),
 	[Direction.RIGHT] = Vector(1, 0),
 	[Direction.DOWN] = Vector(0, 1)
-}
+}							
 								
 								---------------------
 								-- LOCAL FUNCTIONS --
@@ -214,7 +216,7 @@ local function GetRandomCustomCard()
 end
 
 local function GetRandomElement(List)
-	return List[math.random(#List)]
+	if List then return List[math.random(#List)] end
 end
 
 -- Is this collectible unlocked?
@@ -223,6 +225,7 @@ local function IsCollectibleUnlocked(collectibleType)
 	local itemPool = game:GetItemPool()
 	local player = Isaac.GetPlayer(0)
 	local hasChaos = false
+	
 	itemPool:AddRoomBlacklist(CollectibleType.COLLECTIBLE_SAD_ONION)
 
 	if player:HasCollectible(CollectibleType.COLLECTIBLE_CHAOS) == true then
@@ -237,31 +240,50 @@ local function IsCollectibleUnlocked(collectibleType)
 	if hasChaos == true then
 		player:AddCollectible(CollectibleType.COLLECTIBLE_CHAOS, 0, false)
 	end
-	itemPool:ResetRoomBlacklist()		
+	itemPool:ResetRoomBlacklist()
+	
 	return isUnlocked	
 end
 
-								---------------------
+								----------------------
 								-- GLOBAL FUNCTIONS --
-								---------------------
+								----------------------
 
 						-- GAME STARTED --
+						------------------
 function rplus:OnGameStart(Continued)
 	if not Continued then
+		-- I was trying to make this in a single CustomData table and failed miserably cuz lua can't fucking read from this table
 		ORDLIFE_DATA = nil
 		MISSINGMEMORY_DATA = nil
 		REVERSECARD_DATA = nil
 		CUBE_COUNTER = 0
-		MARKCAIN_DATA = 0
+		MARKCAIN_DATA = nil
 		BAGOTRASH_LEVELS = 0
 		ErasedEnemies = {}
-		LAUGHINGBOY_DATA = false
-		LAUGHINGBOY_ROOM = nil
+		LOADEDDICE_DATA = false
+		LOADEDDICE_ROOM = nil
+		NumRevivals = 0
+		BirdCaught = true
+		JACKOFDIAMONDS_DATA = false
+		
+		-- I somehow fucked up Mark of Cain so this will have to stay
+		Isaac.GetPlayer(0):AddCacheFlags(CacheFlag.CACHE_ALL)
+		Isaac.GetPlayer(0):EvaluateItems()
+		
+		--[[ Spawn items/trinkets or turn on debug commands for testing here if necessary
+		! DEBUG: 3 - INFINITE HP, 4 - HIGH DAMAGE, 8 - INFINITE CHARGES, 10 - INSTAKILL ENEMIES !
+		
+		Isaac.Spawn(5, 350, Trinkets.TestTrinket, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 100, Collectibles.TestCollectible, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.ExecuteCommand("debug 0")
+		--]]
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
 
-						-- EVERY NEW LEVEL 
+						-- EVERY NEW LEVEL --
+						---------------------
 function rplus:OnNewLevel()
 	local player = Isaac.GetPlayer(0)
 	local level = game:GetLevel()
@@ -279,14 +301,34 @@ function rplus:OnNewLevel()
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 
-						-- EVERY NEW ROOM
+						-- EVERY NEW ROOM --
+						--------------------
 function rplus:OnNewRoom()
 	local player = Isaac.GetPlayer(0)
+	local room = game:GetRoom()
 
+	if player:HasCollectible(Collectibles.BLACKDOLL) and room:IsFirstVisit() and Isaac.CountEnemies() > 1 then
+		ABSepNumber = math.floor(Isaac.CountEnemies() / 2)
+		EntitiesGroupA = {}
+		EntitiesGroupB = {}
+		local Count = 0
+		
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity:IsActiveEnemy(false) and not entity:IsBoss() then
+				Count = Count + 1
+				if Count <= ABSepNumber then
+					table.insert(EntitiesGroupA, entity)
+				else
+					table.insert(EntitiesGroupB, entity)
+				end
+			end
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
 
 						-- ACTIVE ITEM USED --
+						----------------------
 function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 	local level = game:GetLevel()
 	local player = Isaac.GetPlayer(0)
@@ -303,6 +345,7 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, true, true, false, false, -1)
 			return {Discharge = true, Remove = false, ShowAnim = true}
 		end
+		
 	elseif ItemUsed == Collectibles.COOKIECUTTER then
 		player:AddMaxHearts(2, true)
 		player:AddBrokenHearts(1)
@@ -311,6 +354,7 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			player:Die()
 		end
 		return true
+		
 	elseif ItemUsed == Collectibles.RUBIKSCUBE then
 		local SolveChance = math.random(100)
 		
@@ -324,6 +368,7 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			CUBE_COUNTER = CUBE_COUNTER + 1
 			return true
 		end
+		
 	elseif ItemUsed == Collectibles.MAGICCUBE then
 		player:UseCard(Card.CARD_SOUL_EDEN, UseFlag.USE_NOANIM | UseFlag.USE_OWNED | UseFlag.USE_NOANNOUNCER)
 		return true
@@ -332,6 +377,7 @@ end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
 
 						-- EVERY FRAME --
+						-----------------
 function rplus:OnFrame()
 	local room = game:GetRoom()
 	local level = game:GetLevel()
@@ -371,7 +417,7 @@ function rplus:OnFrame()
 		end
 	end
 	
-	if REVERSECARD_DATA == "used" and player:GetSprite():IsFinished("PickupWalkDown") then
+	if REVERSECARD_DATA == "used" and sprite:IsFinished("PickupWalkDown") then
 		secondary_Card = player:GetCard(1)
 		player:SetCard(1, 0)
 		player:SetCard(0, secondary_Card)
@@ -383,6 +429,7 @@ function rplus:OnFrame()
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Type == 1000 and entity.Variant == EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL and entity.SubType == 4 then
 				local Frame = game:GetFrameCount() % 490 + 1
+				
 				if Frame <= 140 then
 					entity:SetColor(Color(1, Frame / 140, 0), 1, 1, false, false)
 				elseif Frame <= 210 then
@@ -401,8 +448,9 @@ function rplus:OnFrame()
 	end
 	
 	if player:HasCollectible(Collectibles.MARKCAIN) then
-		if sprite:IsPlaying("Death") and sprite:GetFrame() > 30 then
+		if sprite:IsPlaying("Death") and sprite:GetFrame() > 25 then
 			MyFamiliars = {}
+			
 			for i = 1, 1000 do
 				if Isaac.GetItemConfig():GetCollectible(i) and Isaac.GetItemConfig():GetCollectible(i).Type == ItemType.ITEM_FAMILIAR and player:HasCollectible(i) then
 					for j = 1, player:GetCollectibleNum(i, true) do
@@ -410,14 +458,17 @@ function rplus:OnFrame()
 					end
 				end
 			end
-			
 			if #MyFamiliars > 0 then
 				player:RemoveCollectible(Collectibles.MARKCAIN)
 				player:Revive()
-				player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, true, false, true, true, -1)
+				sprite:Stop()
+				MARKCAIN_DATA = "player revived"
+				player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, UseFlag.USE_NOANIM, -1)
 				sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
 				
 				for i = 1, #MyFamiliars do player:RemoveCollectible(MyFamiliars[i]) end
+				player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+				player:EvaluateItems()
 			end
 		end
 	end
@@ -437,9 +488,9 @@ function rplus:OnFrame()
 		end
 	end
 	
-	if LAUGHINGBOY_DATA and (game:GetLevel():GetCurrentRoomIndex() ~= LAUGHINGBOY_ROOM) then
-		LAUGHINGBOY_ROOM = nil
-		LAUGHINGBOY_DATA = false
+	if LOADEDDICE_DATA and (game:GetLevel():GetCurrentRoomIndex() ~= LOADEDDICE_ROOM) then
+		LOADEDDICE_ROOM = nil
+		LOADEDDICE_DATA = false
 		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
 		player:EvaluateItems()
 	end
@@ -456,7 +507,7 @@ function rplus:OnFrame()
 		end
 	end
 	
-	for _, entity in pairs(Isaac.GetRoomEntities()) do --sprite Arrangement for Pickups
+	--[[for _, entity in pairs(Isaac.GetRoomEntities()) do --sprite Arrangement for Pickups
 		local EntitySprite = entity:GetSprite()
 		if entity.Type == 5 and entity.Variant == PickUps.BITTENPENNY then --bitten penny
 			if EntitySprite:IsPlaying("Collect") and EntitySprite:GetFrame() == 6 then
@@ -465,11 +516,34 @@ function rplus:OnFrame()
 				sfx:Play(SoundEffect.SOUND_PENNYDROP)
 			end
 		end
+	end --]]
+	
+	if player:HasCollectible(Collectibles.BIRDOFHOPE) then
+		if sprite:IsPlaying("Death") and BirdCaught then
+			BirdCaught = false
+			DieFrame = game:GetFrameCount()
+			NumRevivals = NumRevivals + 1
+			
+			player:Revive()
+			sprite:Stop()
+			player:UseCard(Card.CARD_SOUL_LOST, UseFlag.USE_NOANIM | UseFlag.USE_OWNED | UseFlag.USE_NOANNOUNCER)
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, UseFlag.USE_NOANIM, -1)
+			
+			Birdy = Isaac.Spawn(3, Familiars.BIRD, 0, room:GetCenterPos(), Vector.FromAngle(math.random(360)) * NumRevivals, nil) 
+			Birdy:GetSprite():Play("Flying")
+		elseif DieFrame and game:GetFrameCount() > DieFrame + 120 and not BirdCaught then
+			player:Die()
+			BirdCaught = "blah blah"	-- just so that it's not true and player doesn't die over and over until all his extra lives deplete
+			-- !!! THIS IS A SERIOUS CROTCH !!! since you end up near the door when reviving, and the bird familiar doesn't despawn if you don't catch her,
+			-- you automatically pick her up and this allows you to repeat the cycle (since it switches data to true) and doesn't take away your extra lives
+			-- so don't touch it if you don't think it through. like, for real.
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
-						-- WHEN NPC (ENEMY) DIES --
+						-- WHEN NPC DIES --
+						-------------------
 function rplus:OnNPCDeath(NPC)
 	local player = Isaac.GetPlayer(0)
 	
@@ -494,7 +568,8 @@ function rplus:OnNPCDeath(NPC)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 
-						-- ON PICKUP INITIALIZATION -- 
+						-- ON PICKUP INIT -- 
+						--------------------
 function rplus:OnPickupInit(Pickup)
 	local player = Isaac.GetPlayer(0)
 	
@@ -506,6 +581,11 @@ function rplus:OnPickupInit(Pickup)
 		Pickup:Remove()
 	end
 	
+	--[[if Pickup.Variant == PickupVariant.PICKUP_COIN and Pickup.SubType == 1 and 
+	(math.random(100) <= BITTENPENNY_CHANCE or (player:HasTrinket(Trinkets.CHEWPENNY) and math.random(10) <= HasBox(BITTENPENNY_CHANCE))) then
+		Pickup:Morph(5, PickUps.BITTENPENNY, 0, true, true, false)
+	end --]]
+	
 	if player:HasTrinket(Trinkets.BASEMENTKEY) and Pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST and math.random(100) <= HasBox(BASEMENTKEY_CHANCE) then
 		Pickup:Morph(5, PickupVariant.PICKUP_OLDCHEST, 0, true, true, false)
 	end
@@ -513,6 +593,7 @@ end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, rplus.OnPickupInit)
 
 						-- ON GETTING A CARD --
+						-----------------------
 function rplus:OnCardInit(_, _, PlayingCards, Runes, OnlyRunes)
 	if PlayingCards or Runes then
 		if math.random(100) <= CARDRUNE_REPLACE_CHANCE then
@@ -523,8 +604,11 @@ end
 rplus:AddCallback(ModCallbacks.MC_GET_CARD, rplus.OnCardInit)
 
 						-- ON USING CARD -- 
+						-------------------
 function rplus:CardUsed(Card, player, _)
 	local player = Isaac.GetPlayer(0)
+	--turning Data variables shortcut:
+	JACKOFDIAMONDS_DATA = Card == PocketItems.JACKOFDIAMONDS
 	
 	if Card == PocketItems.RJOKER then
 		game:StartRoomTransition(-6, -1, RoomTransitionAnim.TELEPORT, player, -1)
@@ -535,6 +619,7 @@ function rplus:CardUsed(Card, player, _)
 				entity:ToPickup():Morph(EntityType.ENTITY_PICKUP, 100, id, true, true, false)
 			end
 		end
+		
 	elseif Card == PocketItems.REDRUNE then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_ABYSS, false, false, true, false, -1)
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_NECRONOMICON, false, false, true, false, -1)
@@ -550,9 +635,11 @@ function rplus:CardUsed(Card, player, _)
 				end
 			end
 		end
+		
 	elseif Card == PocketItems.REVERSECARD then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false, false, true, false, -1)
 		REVERSECARD_DATA = "used"
+		
 	elseif Card == PocketItems.KINGOFSPADES then
 		sfx:Play(SoundEffect.SOUND_GOLDENKEY, 1, 2, false, 1, 0)
 		local NumPickups = math.floor(player:GetNumKeys() / 4)
@@ -563,12 +650,14 @@ function rplus:CardUsed(Card, player, _)
 		end
 		if NumPickups >= 3 then Isaac.Spawn(5, 350, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
 		if NumPickups >= 7 then Isaac.Spawn(5, 100, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
+		
 	elseif Card == PocketItems.NEEDLEANDTHREAD then
 		if player:GetBrokenHearts() > 0 then
 			player:AddBrokenHearts(-1)
 			player:AddMaxHearts(2, true)
 			player:AddHearts(2)
 		end
+		
 	elseif Card == PocketItems.QUEENOFDIAMONDS then
 		for i=1, math.random(12) do
 			local QueenOfDiamondsRandom = math.random(100)
@@ -580,6 +669,7 @@ function rplus:CardUsed(Card, player, _)
 				Isaac.Spawn(5, PickupVariant.PICKUP_COIN,3 , game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
 			end
 		end
+		
 	elseif Card == PocketItems.BAGTISSUE then
 		local Weights = {}
 		local SumWeight = 0
@@ -629,16 +719,18 @@ function rplus:CardUsed(Card, player, _)
 			player:AnimateHappy()
 			Isaac.Spawn(5, 100, ID, Isaac.GetFreeNearPosition(player.Position, 5.0), Vector.Zero, nil)
 		end
-	elseif Card == PocketItems.LAUGHINGBOY then
-		LAUGHINGBOY_DATA = true
-		LAUGHINGBOY_ROOM = game:GetLevel():GetCurrentRoomIndex()
+		
+	elseif Card == PocketItems.LOADEDDICE then
+		LOADEDDICE_DATA = true
+		LOADEDDICE_ROOM = game:GetLevel():GetCurrentRoomIndex()
 		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
 		player:EvaluateItems()
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 
-						-- ON PICKUP COLLISION
+						-- ON PICKUP COLLISION --
+						-------------------------
 function rplus:PickupCollision(Pickup, Collider, _)
 	local player = Isaac.GetPlayer(0)
 	
@@ -656,8 +748,6 @@ function rplus:PickupCollision(Pickup, Collider, _)
 			until IsCollectibleUnlocked(Item)
 			Isaac.Spawn(5, 100, Item, Pickup.Position, Vector(0, 0), Pickup)
 			Pickup:Remove()
-		-- elseif DieRoll < 40 then
-			-- Isaac.Spawn(5, 350, math.random(189), Pickup.Position, Vector.FromAngle(math.random(360)) * 5, Pickup)
 		elseif DieRoll < 80 then
 			local NumOfPickUps = rdm:RandomInt(4) + 1 -- 1 to 4 Pickups
 			
@@ -679,41 +769,61 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		end
 	end
 	
-	--bitten penny
+	--[[ bitten penny, on ice
 	if Collider.Type == 1 and Pickup.Variant == PickUps.BITTENPENNY and Pickup:GetData().Picked == nil then
 		Pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE --doesn't work rn as intended :(
 		Pickup.Velocity = Vector.Zero
 		DieRoll = math.random(100)
 		Pickup:GetData().Picked = true
 		local Sound = 0
-		if DieRoll < 40 then
-			player:AddCoins(1)
-			Sound = SoundEffect.SOUND_PENNYPICKUP
-		elseif DieRoll < 50 then
-			player:AnimateSad()
-		elseif DieRoll < 75 then
-			player:AddCoins(5)
-			Sound = SoundEffect.SOUND_NICKELPICKUP
-		else
-			player:AddCoins(10)
-			Sound = SoundEffect.SOUND_DIMEPICKUP
+		if player:HasTrinket(Trinkets.CHEWPENNY) then	-- 40%, 30%, 15%, 15% with the trinket
+			if DieRoll < 40 then
+				player:AnimateSad()
+			elseif DieRoll < 70 then
+				player:AddCoins(1)
+				Sound = SoundEffect.SOUND_PENNYPICKUP
+			elseif DieRoll < 85 then
+				player:AddCoins(5)
+				Sound = SoundEffect.SOUND_NICKELPICKUP
+			else
+				player:AddCoins(10)
+				Sound = SoundEffect.SOUND_DIMEPICKUP
+			end
+		else											-- 10%, 55%, 30%, 5% without the trinket
+			if DieRoll < 10 then
+				player:AnimateSad()
+			elseif DieRoll < 65 then
+				player:AddCoins(1)
+				Sound = SoundEffect.SOUND_PENNYPICKUP
+			elseif DieRoll < 95 then
+				player:AddCoins(5)
+				Sound = SoundEffect.SOUND_NICKELPICKUP
+			else
+				player:AddCoins(10)
+				Sound = SoundEffect.SOUND_DIMEPICKUP
+			end
 		end
+		
 		sfx:Play(Sound, 1, 1, false, 1, 0)
 		Pickup:GetSprite():Play("Collect")
-	end
+	end --]]
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.PickupCollision)
 
-						-- ON UPDATING THE PICKUPS
+						-- ON UPDATING PICKUPS --
+						-------------------------
 function rplus:PickupUpdate(Pickup)
 	if Pickup.Type == 5 and Pickup.Variant == 100 and Pickup.SpawnerVariant == 392 then
-		for i = 3, 5 do Pickup:GetSprite():ReplaceSpritesheet(i,"gfx/items/slots/levelitem_scarletchest_itemaltar_dlc4.png") end
+		for i = 3, 5 do 
+			Pickup:GetSprite():ReplaceSpritesheet(i,"gfx/items/slots/levelitem_scarletchest_itemaltar_dlc4.png") 
+		end
 		Pickup:GetSprite():LoadGraphics()
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, rplus.PickupUpdate)
 
-						-- ON TEAR UPDATE
+						-- ON TEAR UPDATE --
+						--------------------
 function rplus:OnTearUpdate(Tear)
 	local player = Isaac.GetPlayer(0)
 	
@@ -724,54 +834,67 @@ function rplus:OnTearUpdate(Tear)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
 
-						-- UPDATING PLAYER STATS
+						-- UPDATING PLAYER STATS (CACHE) --
+						-----------------------------------
 function rplus:UpdateStats(player, Flag) 
-	--If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml
+	-- If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml
 	if Flag == CacheFlag.CACHE_DAMAGE then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
 			player.Damage = player.Damage + StatUps.SINNERSHEART_DMG_ADD
 			player.Damage = player.Damage * StatUps.SINNERSHEART_DMG_MUL
 		end
+		
+		if MARKCAIN_DATA == "player revived" then
+			player.Damage = player.Damage + #MyFamiliars * StatUps.MARKCAIN_DMG
+		end
 	end
+	
 	if Flag == CacheFlag.CACHE_TEARFLAG then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
 			player.TearFlags = player.TearFlags | TearFlags.TEAR_HOMING
 		end
 	end
+	
 	if Flag == CacheFlag.CACHE_SHOTSPEED then
 		if player:HasCollectible(Collectibles.SINNERSHEART)  then
 			player.ShotSpeed = player.ShotSpeed + StatUps.SINNERSHEART_SHSP
 		end
 	end
+	
 	if Flag == CacheFlag.CACHE_RANGE then 
-		--Range currently not functioning, blame Edmund
+		-- Range currently not functioning, blame Edmund
 		if player:HasCollectible(Collectibles.SINNERSHEART)  then
 			player.TearHeight = player.TearHeight + StatUps.SINNERSHEART_TEARHEIGHT
 		end
 	end
+	
 	if Flag == CacheFlag.CACHE_TEARCOLOR then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
 			player.TearColor = Color(0.4, 0.1, 0.38, 1, 0.27843, 0, 0.4549)
 		end
 	end
+	
 	if Flag == CacheFlag.CACHE_FAMILIARS then
 		player:CheckFamiliar(Familiars.BAGOTRASH, player:GetCollectibleNum(Collectibles.BAGOTRASH), player:GetCollectibleRNG(Collectibles.BAGOTRASH))
+		
 		player:CheckFamiliar(Familiars.ZENBABY, player:GetCollectibleNum(Collectibles.ZENBABY), player:GetCollectibleRNG(Collectibles.ZENBABY))
 	end
+	
 	if Flag == CacheFlag.CACHE_LUCK then
-		if LAUGHINGBOY_DATA then
-			player.Luck = player.Luck + StatUps.LAUGHINGBOY_LUCK
+		if LOADEDDICE_DATA then
+			player.Luck = player.Luck + StatUps.LOADEDDICE_LUCK
 		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, rplus.UpdateStats)
 
-						-- ENTITY TAKES DAMAGE
+						-- ENTITY TAKES DAMAGE --
+						-------------------------
 function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 	local player = Isaac.GetPlayer(0)
 	
 	if player:HasCollectible(Collectibles.MAGICPEN) and Source.Entity and Source.Entity.Type == 1000 and Source.Entity.SubType == 4 then
-		if math.random(100) == 1 then
+		if math.random(100) == 1 then 
 			local Flags = {
 				EntityFlag.FLAG_POISON, 
 				EntityFlag.FLAG_SLOW, 
@@ -780,9 +903,8 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 				EntityFlag.FLAG_FEAR, 
 				EntityFlag.FLAG_BURN
 			}
-			local RandomEffectFlag = Flags[math.random(#Flags)]
 			
-			Entity:AddEntityFlags(RandomEffectFlag)
+			Entity:AddEntityFlags(Flags[math.random(#Flags)])
 		end
 		return false
 	end
@@ -795,10 +917,28 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 			table.insert(ErasedEnemies, Entity.Type)
 		end
 	end
+	
+	if player:HasTrinket(Trinkets.JUDASKISS) and Entity.Type == 1 and Source.Entity:IsActiveEnemy(false) then
+		Source.Entity:AddEntityFlags(EntityFlag.FLAG_BAITED)
+	end
+	
+	if player:HasCollectible(Collectibles.BLACKDOLL) and ABSepNumber then
+		for i = 1, #EntitiesGroupA do 
+			if Entity:GetData() == EntitiesGroupA[i]:GetData() and EntitiesGroupB[i] and Source.Entity and Source.Entity.Type < 9 then 
+				EntitiesGroupB[i]:TakeDamage(player.Damage / 2, 0, EntityRef(Entity), 0)
+			end 
+		end
+		for i = 1, #EntitiesGroupB do 
+			if Entity:GetData() == EntitiesGroupB[i]:GetData() and EntitiesGroupA[i] and Source.Entity and Source.Entity.Type < 9 then 
+				EntitiesGroupA[i]:TakeDamage(player.Damage / 2, 0, EntityRef(Entity), 0)
+			end 
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
 
-						-- ON FAMILIAR INITIALIZATION
+						-- ON FAMILIAR INIT --
+						----------------------
 function rplus:TrashBagInit(Familiar)
 	BagLevels = 1
 	Familiar:AddToFollowers()
@@ -814,7 +954,8 @@ function rplus:ZenBabyInit(Familiar)
 end
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.ZenBabyInit, Familiars.ZENBABY)
 
-						-- ON FAMILIAR UPDATE
+						-- ON FAMILIAR UPDATE --
+						------------------------
 function rplus:TrashBagUpdate(Familiar)
 	Familiar:FollowParent()
 	if Familiar:GetSprite():IsFinished("Spawn") then
@@ -824,7 +965,7 @@ function rplus:TrashBagUpdate(Familiar)
 	
 	if Familiar.RoomClearCount == 1 then
 		local NumFlies = math.random(BagLevels * 2)
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS, true) then NumFlies = NumFlies + math.random(2) end
+		if Isaac.GetPlayer(0):HasCollectible(CollectibleType.COLLECTIBLE_BFFS, true) then NumFlies = NumFlies + math.random(2) end
 		
 		Familiar:GetSprite().PlaybackSpeed = 0.5
 		Familiar:GetSprite():Play("Spawn")
@@ -862,16 +1003,28 @@ function rplus:ZenBabyUpdate(Familiar)
 end
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.ZenBabyUpdate, Familiars.ZENBABY)
 
-						-- FAMILIAR COLLISION
+						-- FAMILIAR COLLISION --
+						------------------------
 function rplus:CherryCollision(Familiar, Collider, _)
-	if Collider:IsActiveEnemy(true) and not Collider:IsBoss() then
+	if Collider:IsActiveEnemy(true) and not Collider:IsBoss() and game:GetFrameCount() % 10 == 0 then
 		game:CharmFart(Familiar.Position, 10.0, Familiar)
 		sfx:Play(SoundEffect.SOUND_FART, 1, 2, false, 1, 0)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.CherryCollision, Familiars.CHERRY)
 
-						-- PROJECTILE COLLISION
+function rplus:BirdCollision(Familiar, Collider, _)
+	if Collider.Type == 1 then
+		sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
+		Isaac.Spawn(1000, EffectVariant.POOF01, 0, Familiar.Position, Vector.Zero, nil)
+		Familiar:Remove()
+		BirdCaught = true
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.BirdCollision, Familiars.BIRD)
+
+						-- PROJECTILE COLLISION --
+						--------------------------
 function rplus:ProjectileCollision(Projectile, Collider, _)
 	if Collider.Variant == Familiars.BAGOTRASH then
 		Projectile:Remove()
@@ -885,6 +1038,57 @@ function rplus:ProjectileCollision(Projectile, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, rplus.ProjectileCollision)
 
+						-- PLAYER COLLISION --
+						----------------------
+function rplus:PlayerCollision(Player, Collider, _)
+	if Player:HasTrinket(Trinkets.SLEIGHTOFHAND) and math.random(100) <= SLEIGHTOFHAND_CHANCE then
+		-- cuz slots don't have their own collision callback, thanks api lmao
+		if Collider.Type == 6 then
+			local S = Collider:GetSprite()
+			
+			-- make sure that we don't infinitely collide with them, results in infinite consumables!!!
+			if S:GetFrame() == 1 and 
+			(S:IsPlaying("PayPrize") or S:IsPlaying("PayNothing") or S:IsPlaying("PayShuffle") or S:IsPlaying("Wiggle")) then
+				if Player:GetNumCoins() > 0 and		-- slots that take your money
+				(Collider.Variant == 1 or Collider.Variant == 3 or Collider.Variant == 4 or Collider.Variant == 6 or Collider.Variant == 10 or Collider.Variant == 13 or Collider.Variant == 18) then 
+					Player:AddCoins(1)
+				end
+				if Player:GetNumBombs() > 0 and Collider.Variant == 9 then	-- that was bomb bum, simple stuff
+					Player:AddBombs(1)
+				end
+				if Player:GetNumKeys() > 0 and Collider.Variant == 7 then	-- and that was a key master
+					Player:AddKeys(1)
+				end
+			end
+		elseif Collider.Type == 5 then
+			local S = Collider:GetSprite()
+			
+			if S:GetFrame() == 1 and (S:IsPlaying("Open") or S:IsPlaying("UseKey")) and 	-- chests that require a key to open
+			(Collider.Variant == 53 or Collider.Variant == 55 or Collider.Variant == 57 or Collider.Variant == 60) and	-- no golden keys or lockpicks allowed!!
+			not Player:HasGoldenKey() and not Player:HasTrinket(TrinketType.TRINKET_PAPER_CLIP) then 
+				Player:AddKeys(1) 
+			end
+		end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0)
+
+function rplus:PickupSpawn(Type, Variant, SubType, _, _, Spawner, Seed) --Spawner need refinement?
+	if JACKOFDIAMONDS_DATA and Type == 5 and (Variant <= 40 or Variant == 70 or Variant == 90 or Variant == 300) and Variant ~= 20 and math.random(100) <= JACKOF_CHANCE and Spawner == nil then
+		local dieroll = math.random(100)
+		local NewSubType = 1
+		if dieroll <= 90 then
+			NewSubType = 1
+		elseif dieroll <= 98 then
+			NewSubType = 2
+		else
+			NewSubType = 3
+		end
+		return {5, 20, NewSubType, Seed}
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_ENTITY_SPAWN, rplus.PickupSpawn)
+
 								-----------------------------------------
 								--- EXTERNAL ITEM DESCRIPTIONS COMPAT ---
 								-----------------------------------------
@@ -897,14 +1101,19 @@ if EID then
 	EID:addCollectible(Collectibles.RUBIKSCUBE, "After each use, has a 5% (100% on 20-th use) chance to be 'solved', removed from the player and spawn a Magic Cube on the ground")
 	EID:addCollectible(Collectibles.MAGICCUBE, "{{DiceRoom}} Invokes effects of D6+D20 on use #Rerolled items can be drawn from any item pool")
 	EID:addCollectible(Collectibles.MAGICPEN, "Tears leave {{ColorRainbow}}rainbow{{CR}} creep underneath them #Random permanent status effects is applied to enemies walking over that creep")
-	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers and gain invincibility shield for 5 seconds #{{Warning}} Works only once!")
-	EID:addCollectible(Collectibles.TEMPERTANTRUM, "Upon taking damage, there is a 10% chance to enter a Berserk state #While in this state, every enemy killed has a 10% chance to be erased for the rest of the run")
+	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers, gain +0.3 DMG for each consumed familiar and gain invincibility shield for 5 seconds #{{Warning}} Works only once!")
+	EID:addCollectible(Collectibles.TEMPERTANTRUM, "Upon taking damage, there is a 25% chance to enter a Berserk state #While in this state, every enemy damaged has a 10% chance to be erased for the rest of the run")
 	EID:addCollectible(Collectibles.BAGOTRASH, "Spawns a familiar that creates blue flies upon clearing a room #It also blocks enemy projectiles, and after blocking it the bag has a 2% chance to be destroyed and drop Breakfast #The more floors it is not destroyed, the more flies it spawns")
 	EID:addCollectible(Collectibles.ZENBABY, "Spawns a familiar that shoots Godhead tears at a fast firerate")
 	EID:addCollectible(Collectibles.CHERRYFRIENDS, "Killing an enemy has a 20% chance to drop cherry familiar on the ground #Those cherries emit a charming fart when an enemy walks over them, and drop half a heart when a room is cleared")
+	EID:addCollectible(Collectibles.BLACKDOLL, "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal half of that damage to another enemy in that pair")
+	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into a ghost, gain invincibility shield and a bird flies out of a room center in a random direction. Catching the bird in 5 seconds will save you and give you an extra life, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it less possible to catch her #{{Warning}} Only works once per room!")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
-	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}}heart/{{Pill}}pills or a random body-related item")
+	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
+	EID:addTrinket(Trinkets.JUDASKISS, "Enemies touching you become targeted by other enemies (effect similar to Rotten Tomato)")
+	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a 12% chance to not subtract it from your inventory count")
+	EID:addTrinket(Trinkets.CHEWPENNY, "Drastically increases chance for each {{Coin}} penny to turn into Bitten Coin #Increases chances of getting either nothing or 10 coins when picking up Bitten Coins")
 	
 	EID:addCard(PocketItems.SDDSHARD, "On use, invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "On use, damage all enemies in a room, turn any item pedestals into red locusts (similar to Abyss item), and turns pickups into random locusts with a 50% chance")
@@ -914,10 +1123,28 @@ if EID then
 	EID:addCard(PocketItems.BAGTISSUE, "On use, all pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight; the item of such quality is then spawned #The most valuable pickups are the rarest ones, e.g. {{EthernalHeart}} Eternal hearts or {{Battery}} Mega batteries #{{Warning}} If used in a room with less then 8 pickups, no item will spawn!")
 	EID:addCard(PocketItems.RJOKER, "On use, teleports Isaac to a {{SuperSecretRoom}} Black Market")
 	EID:addCard(PocketItems.REVERSECARD, "On use, invokes the effect of Glowing Hourglass")
-	EID:addCard(PocketItems.LAUGHINGBOY, "{{ArrowUp}} On use, grants 10 Luck for the current room")
+	EID:addCard(PocketItems.LOADEDDICE, "{{ArrowUp}} On use, grants 10 Luck for the current room")
 end
 
+								-----------------------------------------
+								----------- MINIMAP API COMPAT ----------
+								-----------------------------------------
 
+if MinimapAPI then
+	--MinimapAPI:AddPickup(id, Icon, EntityType, number variant, number subtype, function, icongroup, number priority)
+	--MinimapAPI:AddIcon(id, Sprite, string animationName, number frame, (optional) Color color)
+	
+	local Icons = Sprite()
+	Icons:Load("gfx/ui/minimap_icons_rplus.anm2", true)
+	
+	-- scarlet chests
+	MinimapAPI:AddIcon("scarletchest", Icons, "scarletchest", 0)
+	MinimapAPI:AddPickup("scarletchest", "scarletchest", 5, 392, -1, MinimapAPI.PickupNotCollected, "chests", 7450)
+
+	-- bitten pennies
+	MinimapAPI:AddIcon("bittenpenny", Icons, "bittenpenny", 0)
+	MinimapAPI:AddPickup("bittenpenny", "bittenpenny", 5, 395, -1, MinimapAPI.PickupNotCollected, "coins", 3050)
+end
 
 
 

@@ -1,33 +1,41 @@
 <items gfxroot="gfx/items/" version="1">
-  <!-- T.Isaac to Isaac -->
+	<!-- T.Isaac -->
 	<active name="Ordinary Life" description="What if it all's just a dream?" gfx="01_ordinarylife.png" quality="3" maxcharges="12" />
-  <!-- T.Isaac to Satan -->
 	<passive name="The Missing Memory" description="Who is she?" gfx="37_themissingmemory.png" quality="2" />
-  <!-- T.Isaac to the Lamb -->
 	<trinket name="Basement Key" description="Open your memories" gfx="35_basementkey.png" />
-  <!-- T.Isaac wherever -->
 	<active name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="19_rubikscube.png" quality="0" maxcharges="2" />
 	<active name="Magic Cube" description="Did you set the world record?" gfx="20_magiccube.png" quality="4" maxcharges="4" />  
 	
-  <!-- T.Maggy to Isaac -->
+	<!-- T.Maggy -->
 	<active name="Cookie Cutter" description="Cut your hearts!" gfx="02_cookiecutter.png" quality="1" maxcharges="0"/>
-  <!-- T:Maggy to Lamb -->
 	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="36_keytotheheart.png" />
-  <!-- T.Maggy to Satan -->
-	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx="14_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2"/>
 	<passive name="Cherry Friends" description=":3" gfx="36_cherryfriends.png" quality="2" />
 	
-  <!-- T. Cain to Isaac -->
-	<familiar name="Bag O' Trash" description="Will you take it out already?!" gfx="50_bagotrash.png" quality="1" />
-  <!-- T.Cain to Satan -->
-	<passive name="Mark of Cain" description="Extra life... at a cost" gfx="03_themarkofcain.png" quality="3" devilprice="1"/>
+	<!-- T. Cain -->
+	<passive name="The Mark of Cain" description="Extra life... at a cost" gfx="03_themarkofcain.png" quality="3" devilprice="1" cache="damage" />
+	<trinket name="Sleight of Hand" description="Faster than you'd think!" gfx="37_sleightofhand.png" />
+	<trinket name="Chewed Penny" description="Wealth of risk" gfx="39_chewedpenny.png" />
 
-  <!-- T.Samson to ... -->
+	<!-- T. Judas -->
+	<passive name="Black Doll" description="Bound by blood" gfx="38_blackdoll.png" quality="2" devilprice="1" />
+	<trinket name="Judas' Kiss" description="One on the cheek" gfx="38_judaskiss.png" />
+	
+	<!-- T. ??? -->
+	<familiar name="Bag-o-Trash" description="Will you take it out already?!" gfx="50_bagotrash.png" quality="1" />
+	
+	<!-- T. Eve -->
+	<passive name="Bird of a Hope" description="Catch her!" gfx="06_birdofhope.png" quality="2" />
+
+	<!-- T.Samson -->
 	<passive name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="35_tempertantrum.png" quality="3" /> 
 	
-  <!-- T.Eden to ... -->
+	<!-- T.Eden -->
 	<passive name="Magic Pen" description="I want to be an artist" gfx="52_magicpen.png" quality="1" /> 
 	
-  <!-- T. Lost to ... -->
+	<!-- T. Lost -->
 	<familiar name="Zen Baby" description="He sees all" gfx="11_zenbaby.png" quality="3" />
+	
+	<!-- T. Apollyon -->
+	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx="14_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2"/>
+	
 </items>
