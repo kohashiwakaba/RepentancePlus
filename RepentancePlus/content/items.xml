@@ -24,7 +24,7 @@
 	<familiar name="Bag-o-Trash" description="Will you take it out already?!" gfx="50_bagotrash.png" quality="1" />
 	
 	<!-- T. Eve -->
-	<passive name="Bird of a Hope" description="Catch her!" gfx="06_birdofhope.png" quality="2" />
+	<passive name="Bird of Hope" description="Catch her!" gfx="06_birdofhope.png" quality="2" />
 
 	<!-- T.Samson -->
 	<passive name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="35_tempertantrum.png" quality="3" /> 

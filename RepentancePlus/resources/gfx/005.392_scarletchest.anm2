@@ -1,9 +1,9 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="04.08.2021 12:18:48" Version="109" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="17.08.2021 23:44:20" Version="110" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="items\pick ups\scarlet_chest.png" Id="0"/>
-			<Spritesheet Path="shadow.png" Id="1"/>
+			<Spritesheet Path="effects\effect_shadow.png" Id="1"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="body" Id="0" SpritesheetId="0"/>

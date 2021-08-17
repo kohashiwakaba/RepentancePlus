@@ -44,7 +44,7 @@ Collectibles = {
 	CHERRYFRIENDS = Isaac.GetItemIdByName("Cherry Friends"),
 	ZENBABY = Isaac.GetItemIdByName("Zen Baby"),
 	BLACKDOLL = Isaac.GetItemIdByName("Black Doll"),
-	BIRDOFHOPE = Isaac.GetItemIdByName("Bird of a Hope")
+	BIRDOFHOPE = Isaac.GetItemIdByName("Bird of Hope")
 }
 
 Trinkets = {
@@ -279,6 +279,7 @@ function rplus:OnGameStart(Continued)
 		Isaac.Spawn(5, 350, Trinkets.TestTrinket, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		Isaac.Spawn(5, 100, Collectibles.TestCollectible, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		Isaac.ExecuteCommand("debug 0")
+		
 		--]]
 	end
 end
