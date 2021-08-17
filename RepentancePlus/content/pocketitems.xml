@@ -17,16 +17,17 @@
 	-->
 	
 	<!-- custom backs -->
-	<rune type="rune" name="Red Rune" hud="Red Rune" mimiccharge="12" description="Abyss" pickup="160" />
+	<rune type="rune" name="Red Rune" hud="Red Rune" mimiccharge="12" description="Abyss" pickup="160" /> <!-- T.Apollyon to Greed-->
 	<card type="object" name="Spindown Dice Shard" hud="Spindown Dice Shard" mimiccharge="6" description="-1?" pickup="161"/> <!--T.Isaac to Greed-->
 	<card type="object" name="Needle and Thread" hud="Needle and Thread" mimiccharge="4" description="To cure my broken heart" pickup="162" />
 	<card type="object" name="Bag Tissue" hud="Bag Tissue" mimiccharge="12" description="Craft a piece of your destiny" pickup="163" />
+	<card type="object" name="Loaded Dice" hud="Loaded Dice" mimiccharge="2" description="Luck is on your side" pickup="164" /> <!-- T.Cain to BR -->
 	
 	<!-- non-custom backs -->
 	<card type="suit" name="Joker?" hud="Joker?" mimiccharge="1" description="¿¿¿" pickup="2"/> <!--T.Azazel to BR-->
 	<card type="special" name="Reverse Card" hud="Reverse Card" mimiccharge="2" description="No, You!" pickup="17" /> <!--T.Isaac to BR-->
 	<card type="suit" name="King of Spades" hud="King of Spades" mimiccharge="6" description="Lose everything to get something" pickup="2" />
 	<card type="suit" name="Queen of Diamonds" hud="Queen of Diamonds" mimiccharge="6" description="$" pickup="2" />
-	<card type="suit" name="Laughing Boy" hud="Laughing Boy" mimiccharge="2" description="Good Luck" pickup="2" />
+	<card type="suit" name="Jack of Diamonds" hud="Jack of Diamonds" mimiccharge="2" description="Increase your Wealth" pickup="2" /> <!-- T.Blue Baby to BR-->
 	
 </pocketitems>

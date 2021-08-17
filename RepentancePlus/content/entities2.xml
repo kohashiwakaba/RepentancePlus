@@ -1,10 +1,10 @@
 <entities anm2root="gfx/" version="5">
 
-<entity anm2path="005.390_redrune.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Custom Object" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="160">
+<entity anm2path="005.390_redrune.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Red Rune" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="160">
        <preload-snd id="8" />
 </entity>
 
-<entity anm2path="005.391_spindowndiceshard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Custom Object" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="161">
+<entity anm2path="005.391_spindowndiceshard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Spindowndice Shard" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="161">
        <preload-snd id="8" />
 </entity>
 
@@ -33,8 +33,8 @@
 <entity anm2path="003.213_bird.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Bird of Hope" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2103">
     </entity>
 
-<entity anm2path="005.395_bittenpenny.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Bitten Penny" numGridCollisionPoints="24" shadowSize="14" stageHP="0" variant="395">
-		<preload-snd id="234" /> <!-- PENNYPICKUP -->
+<entity anm2path="005.396_loadeddice.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Loaded Dice" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="164">
+       <preload-snd id="8" />
 </entity>
-	
+
 </entities>

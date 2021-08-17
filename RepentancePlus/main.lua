@@ -21,6 +21,7 @@ local SUPERBERSERK_DELETE_CHANCE = 10
 local TRASHBAG_BREAK_CHANCE = 1
 local CHERRY_SPAWN_CHANCE = 20
 local SLEIGHTOFHAND_CHANCE = 12
+local JACKOF_CHANCE = 20
 
 Familiars = {
 	BAGOTRASH = Isaac.GetEntityVariantByName("Bag O' Trash"),
@@ -63,12 +64,13 @@ PocketItems = {
 	NEEDLEANDTHREAD = Isaac.GetCardIdByName("Needle and Thread"),
 	QUEENOFDIAMONDS = Isaac.GetCardIdByName("Queen of Diamonds"),
 	BAGTISSUE = Isaac.GetCardIdByName("Bag Tissue"),
-	LAUGHINGBOY = Isaac.GetCardIdByName("Laughing Boy")
+	LOADEDDICE = Isaac.GetCardIdByName("Loaded Dice"),
+	JACKOFDIAMONDS = Isaac.GetCardIdByName("Jack of Diamonds")
 }
 
 PickUps = {
-	SCARLETCHEST = Isaac.GetEntityVariantByName("Scarlet Chest"),
-	BITTENPENNY = Isaac.GetEntityVariantByName("Bitten Penny")
+	SCARLETCHEST = Isaac.GetEntityVariantByName("Scarlet Chest")
+	--BITTENPENNY = Isaac.GetEntityVariantByName("Bitten Penny")
 }
 
 ScarletChestItems = { 
@@ -112,7 +114,7 @@ StatUps = {
 	--
 	MARKCAIN_DMG = 0.3,
 	--
-	LAUGHINGBOY_LUCK = 10
+	LOADEDDICE_LUCK = 10
 }
 
 CreepColors = {
@@ -140,7 +142,7 @@ PickupWeights = {
 		[HeartSubType.HEART_BONE] = 5,
 		[HeartSubType.HEART_ROTTEN] = 5 
 	},
-	[PickupVariant.PICKUP_COIN] = { --TODO: adding bitten penny
+	[PickupVariant.PICKUP_COIN] = { 
 		[CoinSubType.COIN_PENNY] = 1,
 		[CoinSubType.COIN_NICKEL] = 3,
 		[CoinSubType.COIN_DIME] = 5,
@@ -259,10 +261,13 @@ function rplus:OnGameStart(Continued)
 		MARKCAIN_DATA = nil
 		BAGOTRASH_LEVELS = 0
 		ErasedEnemies = {}
-		LAUGHINGBOY_DATA = false
-		LAUGHINGBOY_ROOM = nil
 		NumRevivals = 0
 		BirdCaught = true
+		LOADEDDICE_DATA = false
+		LOADEDDICE_ROOM = nil
+		NumRevivals = 0
+		BirdCaught = true
+		JACKOFDIAMONDS_DATA = false
 		
 		-- I somehow fucked up Mark of Cain so this will have to stay
 		Isaac.GetPlayer(0):AddCacheFlags(CacheFlag.CACHE_ALL)
@@ -485,9 +490,9 @@ function rplus:OnFrame()
 		end
 	end
 	
-	if LAUGHINGBOY_DATA and (game:GetLevel():GetCurrentRoomIndex() ~= LAUGHINGBOY_ROOM) then
-		LAUGHINGBOY_ROOM = nil
-		LAUGHINGBOY_DATA = false
+	if LOADEDDICE_DATA and (game:GetLevel():GetCurrentRoomIndex() ~= LOADEDDICE_ROOM) then
+		LOADEDDICE_ROOM = nil
+		LOADEDDICE_DATA = false
 		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
 		player:EvaluateItems()
 	end
@@ -504,7 +509,7 @@ function rplus:OnFrame()
 		end
 	end
 	
-	for _, entity in pairs(Isaac.GetRoomEntities()) do --sprite Arrangement for Pickups
+	--[[for _, entity in pairs(Isaac.GetRoomEntities()) do --sprite Arrangement for Pickups
 		local EntitySprite = entity:GetSprite()
 		if entity.Type == 5 and entity.Variant == PickUps.BITTENPENNY then --bitten penny
 			if EntitySprite:IsPlaying("Collect") and EntitySprite:GetFrame() == 6 then
@@ -513,7 +518,7 @@ function rplus:OnFrame()
 				sfx:Play(SoundEffect.SOUND_PENNYDROP)
 			end
 		end
-	end
+	end --]]
 	
 	if player:HasCollectible(Collectibles.BIRDOFHOPE) then
 		if sprite:IsPlaying("Death") and BirdCaught then
@@ -577,11 +582,11 @@ function rplus:OnPickupInit(Pickup)
 	if Pickup.Variant == PickUps.SCARLETCHEST and Pickup.SubType == 1 and type(Pickup:GetData()["IsRoom"]) == type(nil) then
 		Pickup:Remove()
 	end
-	
-	if Pickup.Variant == PickupVariant.PICKUP_COIN and Pickup.SubType == 1 and 
+
+	--[[if Pickup.Variant == PickupVariant.PICKUP_COIN and Pickup.SubType == 1 and 
 	(math.random(100) <= BITTENPENNY_CHANCE or (player:HasTrinket(Trinkets.CHEWPENNY) and math.random(10) <= HasBox(BITTENPENNY_CHANCE))) then
 		Pickup:Morph(5, PickUps.BITTENPENNY, 0, true, true, false)
-	end
+	end --]]
 	
 	if player:HasTrinket(Trinkets.BASEMENTKEY) and Pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST and math.random(100) <= HasBox(BASEMENTKEY_CHANCE) then
 		Pickup:Morph(5, PickupVariant.PICKUP_OLDCHEST, 0, true, true, false)
@@ -716,9 +721,10 @@ function rplus:CardUsed(Card, player, _)
 			Isaac.Spawn(5, 100, ID, Isaac.GetFreeNearPosition(player.Position, 5.0), Vector.Zero, nil)
 		end
 		
-	elseif Card == PocketItems.LAUGHINGBOY then
-		LAUGHINGBOY_DATA = true
-		LAUGHINGBOY_ROOM = game:GetLevel():GetCurrentRoomIndex()
+	elseif Card == PocketItems.LOADEDDICE then
+		LOADEDDICE_DATA = true
+		LOADEDDICE_ROOM = game:GetLevel():GetCurrentRoomIndex()
+		
 		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
 		player:EvaluateItems()
 	end
@@ -765,7 +771,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		end
 	end
 	
-	--bitten penny
+	--[[ bitten penny, on ice
 	if Collider.Type == 1 and Pickup.Variant == PickUps.BITTENPENNY and Pickup:GetData().Picked == nil then
 		Pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE --doesn't work rn as intended :(
 		Pickup.Velocity = Vector.Zero
@@ -802,7 +808,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		
 		sfx:Play(Sound, 1, 1, false, 1, 0)
 		Pickup:GetSprite():Play("Collect")
-	end
+	end --]]
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.PickupCollision)
 
@@ -877,8 +883,8 @@ function rplus:UpdateStats(player, Flag)
 	end
 	
 	if Flag == CacheFlag.CACHE_LUCK then
-		if LAUGHINGBOY_DATA then
-			player.Luck = player.Luck + StatUps.LAUGHINGBOY_LUCK
+		if LOADEDDICE_DATA then
+			player.Luck = player.Luck + StatUps.LOADEDDICE_LUCK
 		end
 	end
 end
@@ -1069,6 +1075,22 @@ function rplus:PlayerCollision(Player, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0)
 
+function rplus:PickupSpawn(Type, Variant, SubType, _, _, Spawner, Seed) -- Spawner need refinement?
+	if JACKOFDIAMONDS_DATA and Type == 5 and (Variant <= 40 or Variant == 70 or Variant == 90 or Variant == 300) and Variant ~= 20 and math.random(100) <= JACKOF_CHANCE and Spawner == nil then
+		local dieroll = math.random(100)
+		local NewSubType = 1
+		if dieroll <= 90 then
+			NewSubType = 1
+		elseif dieroll <= 98 then
+			NewSubType = 2
+		else
+			NewSubType = 3
+		end
+		return {5, 20, NewSubType, Seed}
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_ENTITY_SPAWN, rplus.PickupSpawn)
+
 								-----------------------------------------
 								--- EXTERNAL ITEM DESCRIPTIONS COMPAT ---
 								-----------------------------------------
@@ -1103,7 +1125,7 @@ if EID then
 	EID:addCard(PocketItems.BAGTISSUE, "On use, all pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight; the item of such quality is then spawned #The most valuable pickups are the rarest ones, e.g. {{EthernalHeart}} Eternal hearts or {{Battery}} Mega batteries #{{Warning}} If used in a room with less then 8 pickups, no item will spawn!")
 	EID:addCard(PocketItems.RJOKER, "On use, teleports Isaac to a {{SuperSecretRoom}} Black Market")
 	EID:addCard(PocketItems.REVERSECARD, "On use, invokes the effect of Glowing Hourglass")
-	EID:addCard(PocketItems.LAUGHINGBOY, "{{ArrowUp}} On use, grants 10 Luck for the current room")
+	EID:addCard(PocketItems.LOADEDDICE, "{{ArrowUp}} On use, grants 10 Luck for the current room")
 end
 
 								-----------------------------------------
