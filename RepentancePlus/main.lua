@@ -21,7 +21,7 @@ local SUPERBERSERK_DELETE_CHANCE = 10
 local TRASHBAG_BREAK_CHANCE = 1
 local CHERRY_SPAWN_CHANCE = 20
 local SLEIGHTOFHAND_CHANCE = 12
-local JACKOF_CHANCE = 20
+local JACKOF_CHANCE = 50
 
 Familiars = {
 	BAGOTRASH = Isaac.GetEntityVariantByName("Bag O' Trash"),
@@ -65,7 +65,10 @@ PocketItems = {
 	QUEENOFDIAMONDS = Isaac.GetCardIdByName("Queen of Diamonds"),
 	BAGTISSUE = Isaac.GetCardIdByName("Bag Tissue"),
 	LOADEDDICE = Isaac.GetCardIdByName("Loaded Dice"),
-	JACKOFDIAMONDS = Isaac.GetCardIdByName("Jack of Diamonds")
+	JACKOFDIAMONDS = Isaac.GetCardIdByName("Jack of Diamonds"),
+	JACKOFCLUBS = Isaac.GetCardIdByName("Jack of Clubs"),
+	JACKOFSPADES = Isaac.GetCardIdByName("Jack of Spades"),
+	JACKOFHEARTS = Isaac.GetCardIdByName("Jack of Hearts")
 }
 
 PickUps = {
@@ -267,7 +270,7 @@ function rplus:OnGameStart(Continued)
 		LOADEDDICE_ROOM = nil
 		NumRevivals = 0
 		BirdCaught = true
-		JACKOFDIAMONDS_DATA = false
+		JACK_DATA = nil --Only one jack can be active, check is with "Diamonds", "Clubs", etc. 
 		
 		-- I somehow fucked up Mark of Cain so this will have to stay
 		Isaac.GetPlayer(0):AddCacheFlags(CacheFlag.CACHE_ALL)
@@ -301,6 +304,7 @@ function rplus:OnNewLevel()
 	if player:HasCollectible(Collectibles.BAGOTRASH) then
 		BagLevels = BagLevels + 1
 	end
+	JACK_DATA = nil
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 
@@ -728,6 +732,14 @@ function rplus:CardUsed(Card, player, _)
 		
 		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
 		player:EvaluateItems()
+	elseif Card == PocketItems.JACKOFDIAMONDS then
+		JACK_DATA = "Diamonds"
+	elseif Card == PocketItems.JACKOFCLUBS then
+		JACK_DATA = "Clubs"
+	elseif Card == PocketItems.JACKOFSPADES then
+		JACK_DATA = "Spades"	
+	elseif Card == PocketItems.JACKOFHEARTS then
+		JACK_DATA = "Hearts"
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
@@ -840,7 +852,7 @@ rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
 						-- UPDATING PLAYER STATS (CACHE) --
 						-----------------------------------
 function rplus:UpdateStats(player, Flag) 
-	-- If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml
+	-- If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml)
 	if Flag == CacheFlag.CACHE_DAMAGE then
 		if player:HasCollectible(Collectibles.SINNERSHEART) then
 			player.Damage = player.Damage + StatUps.SINNERSHEART_DMG_ADD
@@ -1076,21 +1088,62 @@ function rplus:PlayerCollision(Player, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0)
 
-function rplus:PickupSpawn(Type, Variant, SubType, _, _, Spawner, Seed) -- Spawner need refinement?
-	if JACKOFDIAMONDS_DATA and Type == 5 and (Variant <= 40 or Variant == 70 or Variant == 90 or Variant == 300) and Variant ~= 20 and math.random(100) <= JACKOF_CHANCE and Spawner == nil then
-		local dieroll = math.random(100)
-		local NewSubType = 1
-		if dieroll <= 90 then
-			NewSubType = 1
-		elseif dieroll <= 98 then
-			NewSubType = 2
-		else
-			NewSubType = 3
+function rplus:PickupSpawn(_, Pos)
+	if math.random(100) < JACKOF_CHANCE and JACK_DATA ~= nil and game:GetLevel():GetCurrentRoomDesc().Data.Type ~= RoomType.ROOM_BOSS then
+		local Variant = nil
+		local SubType = nil
+		dieroll = math.random(100)
+		if JACK_DATA == "Diamonds" then
+			Variant = 20
+			if dieroll <= 90 then
+				SubType = 1 --penny
+			elseif dieroll <= 98 then
+				SubType = 2 --nickel 
+			else
+				SubType = 3 --dime
+			end
+		elseif JACK_DATA == "Clubs" then
+			Variant = 40
+			if dieroll <= 70 then
+				SubType = 1 --bomb
+			elseif dieroll <= 80 then
+				SubType = 2	--double bomb
+			elseif dieroll <= 90 then
+				SubType = 3	--troll bomb
+			elseif dieroll <= 99 then
+				SubType = 5 --super troll bomb
+			else
+				SubType = 6 --golden troll bomb
+			end
+		elseif JACK_DATA == "Spades" then
+			Variant = 30
+			SubType = 1 --Key
+			if dieroll <= 10 then
+				SubType = 2 --Golden Key
+			end
+		elseif JACK_DATA == "Hearts" then
+			Variant = 10
+			if dieroll <= 40 then
+				SubType = 1 --Heart
+			elseif dieroll <= 70 then
+				SubType = 2 --Half Heart
+			elseif dieroll <= 80 then
+				SubType = 5 --Double Heart
+			elseif dieroll <= 90 then
+				SubType = 3 --Soul Heart
+			elseif dieroll <= 96 then
+				SubType = 10 --Blended Heart
+			elseif dieroll <= 99 then
+				SubType = 6  --Black Heart
+			else
+				SubType = 4  --Eternal Heart
+			end
 		end
-		return {5, 20, NewSubType, Seed}
+		Isaac.Spawn(5, Variant, SubType, game:GetRoom():FindFreePickupSpawnPosition ( Pos, 0, true, false ), Vector.Zero, nil)
+		return true
 	end
 end
-rplus:AddCallback(ModCallbacks.MC_PRE_ENTITY_SPAWN, rplus.PickupSpawn)
+rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupSpawn)
 
 								-----------------------------------------
 								--- EXTERNAL ITEM DESCRIPTIONS COMPAT ---
@@ -1140,13 +1193,16 @@ if MinimapAPI then
 	local Icons = Sprite()
 	Icons:Load("gfx/ui/minimap_icons_rplus.anm2", true)
 	
+	
 	-- scarlet chests
 	MinimapAPI:AddIcon("scarletchest", Icons, "scarletchest", 0)
 	MinimapAPI:AddPickup("scarletchest", "scarletchest", 5, 392, -1, MinimapAPI.PickupNotCollected, "chests", 7450)
 
+	--[[
 	-- bitten pennies
 	MinimapAPI:AddIcon("bittenpenny", Icons, "bittenpenny", 0)
 	MinimapAPI:AddPickup("bittenpenny", "bittenpenny", 5, 395, -1, MinimapAPI.PickupNotCollected, "coins", 3050)
+	--]]
 end
 
 

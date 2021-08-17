@@ -29,5 +29,8 @@
 	<card type="suit" name="King of Spades" hud="King of Spades" mimiccharge="6" description="Lose everything to get something" pickup="2" />
 	<card type="suit" name="Queen of Diamonds" hud="Queen of Diamonds" mimiccharge="6" description="$" pickup="2" />
 	<card type="suit" name="Jack of Diamonds" hud="Jack of Diamonds" mimiccharge="2" description="Increase your Wealth" pickup="2" /> <!-- T.Blue Baby to BR-->
+	<card type="suit" name="Jack of Clubs" hud="Jack of Clubs" mimiccharge="2" description="Increase your Blast" pickup="2" />
+	<card type="suit" name="Jack of Spades" hud="Jack of Spades" mimiccharge="2" description="Increase your Access" pickup="2" />
+	<card type="suit" name="Jack of Hearts" hud="Jack of Hearts" mimiccharge="2" description="Increase your Health" pickup="2" />
 	
 </pocketitems>
