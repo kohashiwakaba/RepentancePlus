@@ -14,7 +14,7 @@
 	<!-- T. Cain -->
 	<passive name="The Mark of Cain" description="Extra life... at a cost" gfx="03_themarkofcain.png" quality="3" devilprice="1" cache="damage" />
 	<trinket name="Sleight of Hand" description="Faster than you'd think!" gfx="37_sleightofhand.png" />
-	<trinket name="Chewed Penny" description="Wealth of risk" gfx="39_chewedpenny.png" />
+	<trinket name="Bitten Penny" description="Wealth of risk" gfx="39_bittenpenny.png" />
 
 	<!-- T. Judas -->
 	<passive name="Black Doll" description="Bound by blood" gfx="38_blackdoll.png" quality="2" devilprice="1" />
@@ -33,7 +33,7 @@
 	<passive name="Magic Pen" description="I want to be an artist" gfx="52_magicpen.png" quality="1" /> 
 	
 	<!-- T. Lost -->
-	<familiar name="Zen Baby" description="He sees all" gfx="11_zenbaby.png" quality="3" />
+	<familiar name="Zen Baby" description="He sees everything" gfx="11_zenbaby.png" quality="3" />
 	
 	<!-- T. Apollyon -->
 	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx="14_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2"/>

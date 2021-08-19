@@ -1,6 +1,11 @@
 
 ----------------------------------------------------------------------------------------------
 -- Welcome to main.lua, please make yourself comfortable while reading all of this bullshit --
+-- Popcorn 100g: $5 350g: $10 ----------------------------------------------------------------
+-- Nachos 100g, any dip: $6 --------------------- For Saver menus, allergens, other food -----
+-- Soft-Drink, any  0.5l: $4 1l: $6 -------------- and further questions please ask our ------
+-- Water, sparkling or still  0.5l: $2 1l: $3 ------------------ staff -----------------------
+-- Beer 0.33l: $3 ------------------------------------------ Enjoy the show! -----------------
 ----------------------------------------------------------------------------------------------
 									----- VARIABLES -----
 									---------------------
@@ -14,7 +19,7 @@ local rdm = RNG()
 local BASEMENTKEY_CHANCE = 5
 local HEARTKEY_CHANCE = 5
 local SCARLETCHEST_CHANCE = 2
-local BITTENPENNY_CHANCE = 2
+-- local BITTENPENNY_CHANCE = 2
 local CARDRUNE_REPLACE_CHANCE = 2
 local SUPERBERSERKSTATE_CHANCE = 25
 local SUPERBERSERK_DELETE_CHANCE = 10
@@ -22,6 +27,7 @@ local TRASHBAG_BREAK_CHANCE = 1
 local CHERRY_SPAWN_CHANCE = 20
 local SLEIGHTOFHAND_CHANCE = 12
 local JACKOF_CHANCE = 50
+local BITTENPENNY_UPGRADECHANCE = 20
 
 Familiars = {
 	BAGOTRASH = Isaac.GetEntityVariantByName("Bag O' Trash"),
@@ -52,7 +58,7 @@ Trinkets = {
 	KEYTOTHEHEART = Isaac.GetTrinketIdByName("Key to the Heart"),
 	SLEIGHTOFHAND = Isaac.GetTrinketIdByName("Sleight of Hand"),
 	JUDASKISS = Isaac.GetTrinketIdByName("Judas' Kiss"),
-	CHEWPENNY = Isaac.GetTrinketIdByName("Chewed Penny")
+	BITTENPENNY = Isaac.GetTrinketIdByName("Bitten Penny")
 }
 
 PocketItems = {
@@ -1088,7 +1094,7 @@ function rplus:PlayerCollision(Player, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0)
 
-function rplus:PickupSpawn(_, Pos)
+function rplus:PickupAwardSpawn(_, Pos)
 	if math.random(100) < JACKOF_CHANCE and JACK_DATA ~= nil and game:GetLevel():GetCurrentRoomDesc().Data.Type ~= RoomType.ROOM_BOSS then
 		local Variant = nil
 		local SubType = nil
@@ -1143,8 +1149,16 @@ function rplus:PickupSpawn(_, Pos)
 		return true
 	end
 end
-rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupSpawn)
+rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
 
+function rplus:PickupSpawn(Type, Variant, SubType, _, _, _, Seed)
+	local player = Isaac.GetPlayer(0)
+	if Type == 5 and Variant == 20 and SubType <= 2 and player:HasTrinket(Trinkets.BITTENPENNY) and math.random(100) <= BITTENPENNY_UPGRADECHANCE then
+		player:AnimateHappy()
+		return {5, 20, SubType + 1, Seed}
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_ENTITY_SPAWN, rplus.PickupSpawn)
 								-----------------------------------------
 								--- EXTERNAL ITEM DESCRIPTIONS COMPAT ---
 								-----------------------------------------
