@@ -126,16 +126,6 @@ StatUps = {
 	LOADEDDICE_LUCK = 10
 }
 
-CreepColors = {
-	Color(255, 0, 0), --red
-	Color(255, 127, 0), --orange
-	Color(255, 255, 0), --yellow
-	Color(0, 255, 0), --green
-	Color(0, 0, 255), --blue
-	Color(75, 0, 130), --indigo
-	Color(143, 0, 255) --violet
-}
-
 PickupWeights = {
 	[PickupVariant.PICKUP_HEART] = {
 		[HeartSubType.HEART_FULL] = 1,
@@ -310,6 +300,7 @@ function rplus:OnNewLevel()
 	if player:HasCollectible(Collectibles.BAGOTRASH) then
 		BagLevels = BagLevels + 1
 	end
+	
 	JACK_DATA = nil
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
@@ -602,6 +593,15 @@ function rplus:OnPickupInit(Pickup)
 	if player:HasTrinket(Trinkets.BASEMENTKEY) and Pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST and math.random(100) <= HasBox(BASEMENTKEY_CHANCE) then
 		Pickup:Morph(5, PickupVariant.PICKUP_OLDCHEST, 0, true, true, false)
 	end
+	
+	local CoinSubTypesByVal = {1, 4, 6, 2, 7, 3, 5} -- penny, doublepack, sticky nickel, nickel, golden penny, dime, lucky penny
+	if Pickup.Type == 5 and Pickup.Variant == 20 and Pickup.SubType ~= 5 and player:HasTrinket(Trinkets.BITTENPENNY) and math.random(100) <= BITTENPENNY_UPGRADECHANCE then
+		player:AnimateHappy()
+		for i = 1, #CoinSubTypesByVal do
+			if CoinSubTypesByVal[i] == Pickup.SubType then CurType = i break end
+		end
+		Pickup:Morph(5, 20, CoinSubTypesByVal[CurType + 1], true, true, false)
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, rplus.OnPickupInit)
 
@@ -623,16 +623,18 @@ function rplus:CardUsed(Card, player, _)
 	
 	if Card == PocketItems.RJOKER then
 		game:StartRoomTransition(-6, -1, RoomTransitionAnim.TELEPORT, player, -1)
-		
-	elseif Card == PocketItems.SDDSHARD then
+	end
+	
+	if Card == PocketItems.SDDSHARD then
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Variant == PickupVariant.PICKUP_COLLECTIBLE then
 				local id = entity.SubType - 1
 				entity:ToPickup():Morph(EntityType.ENTITY_PICKUP, 100, id, true, true, false)
 			end
 		end
-		
-	elseif Card == PocketItems.REDRUNE then
+	end
+	
+	if Card == PocketItems.REDRUNE then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_ABYSS, false, false, true, false, -1)
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_NECRONOMICON, false, false, true, false, -1)
 		local locustRNG = RNG()
@@ -647,12 +649,14 @@ function rplus:CardUsed(Card, player, _)
 				end
 			end
 		end
-		
-	elseif Card == PocketItems.REVERSECARD then
+	end
+	
+	if Card == PocketItems.REVERSECARD then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false, false, true, false, -1)
 		REVERSECARD_DATA = "used"
-		
-	elseif Card == PocketItems.KINGOFSPADES then
+	end
+	
+	if Card == PocketItems.KINGOFSPADES then
 		sfx:Play(SoundEffect.SOUND_GOLDENKEY, 1, 2, false, 1, 0)
 		local NumPickups = math.floor(player:GetNumKeys() / 4)
 		player:AddKeys(-player:GetNumKeys())
@@ -662,15 +666,17 @@ function rplus:CardUsed(Card, player, _)
 		end
 		if NumPickups >= 3 then Isaac.Spawn(5, 350, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
 		if NumPickups >= 7 then Isaac.Spawn(5, 100, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
-		
-	elseif Card == PocketItems.NEEDLEANDTHREAD then
+	end
+	
+	if Card == PocketItems.NEEDLEANDTHREAD then
 		if player:GetBrokenHearts() > 0 then
 			player:AddBrokenHearts(-1)
 			player:AddMaxHearts(2, true)
 			player:AddHearts(2)
 		end
-		
-	elseif Card == PocketItems.QUEENOFDIAMONDS then
+	end
+	
+	if Card == PocketItems.QUEENOFDIAMONDS then
 		for i=1, math.random(12) do
 			local QueenOfDiamondsRandom = math.random(100)
 			if QueenOfDiamondsRandom <= 92 then
@@ -681,8 +687,9 @@ function rplus:CardUsed(Card, player, _)
 				Isaac.Spawn(5, PickupVariant.PICKUP_COIN,3 , game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
 			end
 		end
-		
-	elseif Card == PocketItems.BAGTISSUE then
+	end
+	
+	if Card == PocketItems.BAGTISSUE then
 		local Weights = {}
 		local SumWeight = 0
 		local EnoughConsumables = true
@@ -731,14 +738,18 @@ function rplus:CardUsed(Card, player, _)
 			player:AnimateHappy()
 			Isaac.Spawn(5, 100, ID, Isaac.GetFreeNearPosition(player.Position, 5.0), Vector.Zero, nil)
 		end
-		
-	elseif Card == PocketItems.LOADEDDICE then
+	end
+	
+	if Card == PocketItems.LOADEDDICE then
 		LOADEDDICE_DATA = true
 		LOADEDDICE_ROOM = game:GetLevel():GetCurrentRoomIndex()
 		
 		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
 		player:EvaluateItems()
-	elseif Card == PocketItems.JACKOFDIAMONDS then
+	end
+	
+	-- jacks
+	if Card == PocketItems.JACKOFDIAMONDS then
 		JACK_DATA = "Diamonds"
 	elseif Card == PocketItems.JACKOFCLUBS then
 		JACK_DATA = "Clubs"
@@ -1094,13 +1105,20 @@ function rplus:PlayerCollision(Player, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0)
 
+						-- PRE ROOM CLEAR AWARD SPAWN --
+						--------------------------------
 function rplus:PickupAwardSpawn(_, Pos)
-	if math.random(100) < JACKOF_CHANCE and JACK_DATA ~= nil and game:GetLevel():GetCurrentRoomDesc().Data.Type ~= RoomType.ROOM_BOSS then
+	local player = Isaac.GetPlayer(0)
+	
+	if math.random(100) < JACKOF_CHANCE and JACK_DATA and game:GetRoom():GetType() ~= RoomType.ROOM_BOSS then
 		local Variant = nil
 		local SubType = nil
+		
 		dieroll = math.random(100)
+		
 		if JACK_DATA == "Diamonds" then
 			Variant = 20
+			
 			if dieroll <= 90 then
 				SubType = 1 --penny
 			elseif dieroll <= 98 then
@@ -1110,25 +1128,25 @@ function rplus:PickupAwardSpawn(_, Pos)
 			end
 		elseif JACK_DATA == "Clubs" then
 			Variant = 40
-			if dieroll <= 70 then
+			
+			if dieroll <= 80 then
 				SubType = 1 --bomb
-			elseif dieroll <= 80 then
-				SubType = 2	--double bomb
-			elseif dieroll <= 90 then
-				SubType = 3	--troll bomb
-			elseif dieroll <= 99 then
-				SubType = 5 --super troll bomb
 			else
-				SubType = 6 --golden troll bomb
+				SubType = 2	--double bomb
 			end
 		elseif JACK_DATA == "Spades" then
 			Variant = 30
-			SubType = 1 --Key
-			if dieroll <= 10 then
-				SubType = 2 --Golden Key
+			
+			if dieroll <= 80 then
+				SubType = 1 --key
+			elseif dieroll <= 90 then
+				SubType = 3	--double key
+			elseif dieroll <= 98 then
+				SubType = 4 --charged key
 			end
 		elseif JACK_DATA == "Hearts" then
 			Variant = 10
+			
 			if dieroll <= 40 then
 				SubType = 1 --Heart
 			elseif dieroll <= 70 then
@@ -1145,24 +1163,17 @@ function rplus:PickupAwardSpawn(_, Pos)
 				SubType = 4  --Eternal Heart
 			end
 		end
-		Isaac.Spawn(5, Variant, SubType, game:GetRoom():FindFreePickupSpawnPosition ( Pos, 0, true, false ), Vector.Zero, nil)
+		
+		Isaac.Spawn(5, Variant, SubType, game:GetRoom():FindFreePickupSpawnPosition(Pos, 0, true, false), Vector.Zero, nil)
 		return true
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
 
-function rplus:PickupSpawn(Type, Variant, SubType, _, _, _, Seed)
-	local player = Isaac.GetPlayer(0)
-	if Type == 5 and Variant == 20 and SubType <= 2 and player:HasTrinket(Trinkets.BITTENPENNY) and math.random(100) <= BITTENPENNY_UPGRADECHANCE then
-		player:AnimateHappy()
-		return {5, 20, SubType + 1, Seed}
-	end
-end
-rplus:AddCallback(ModCallbacks.MC_PRE_ENTITY_SPAWN, rplus.PickupSpawn)
 								-----------------------------------------
 								--- EXTERNAL ITEM DESCRIPTIONS COMPAT ---
 								-----------------------------------------
-
+								
 if EID then
 	EID:addCollectible(Collectibles.ORDLIFE, "On first use, Isaac enters a state where no enemies or pickups spawn and he can freely walk between rooms #On second use, the effect is deactivated, time is reverted to the previous room and the item discharges #{{Warning}} Travelling to the next floor will automatically deactivate the effect and discharge the item")	
 	EID:addCollectible(Collectibles.MISSINGMEMORY, "{{BossRoom}} Allows to continue run past Mother, spawning a trapdoor or a beam of light if Isaac has Negative or Polaroid respectively")
@@ -1183,7 +1194,7 @@ if EID then
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
 	EID:addTrinket(Trinkets.JUDASKISS, "Enemies touching you become targeted by other enemies (effect similar to Rotten Tomato)")
 	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a 12% chance to not subtract it from your inventory count")
-	EID:addTrinket(Trinkets.CHEWPENNY, "Drastically increases chance for each {{Coin}} penny to turn into Bitten Coin #Increases chances of getting either nothing or 10 coins when picking up Bitten Coins")
+	EID:addTrinket(Trinkets.BITTENPENNY, "Upon spawning, every coin has a 20% chance to be upgraded to a higher value: #penny -> doublepack pennies -> sticky nickel -> nickel -> golden penny -> dime -> lucky penny")
 	
 	EID:addCard(PocketItems.SDDSHARD, "On use, invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "On use, damage all enemies in a room, turn any item pedestals into red locusts (similar to Abyss item), and turns pickups into random locusts with a 50% chance")
@@ -1194,6 +1205,10 @@ if EID then
 	EID:addCard(PocketItems.RJOKER, "On use, teleports Isaac to a {{SuperSecretRoom}} Black Market")
 	EID:addCard(PocketItems.REVERSECARD, "On use, invokes the effect of Glowing Hourglass")
 	EID:addCard(PocketItems.LOADEDDICE, "{{ArrowUp}} On use, grants 10 Luck for the current room")
+	EID:addCard(PocketItems.JACKOFCLUBS, "Upon use, bombs will drop more often from clearing rooms for current floor, and the average quality of bombs is increased")
+	EID:addCard(PocketItems.JACKOFDIAMONDS, "Upon use, coins will drop more often from clearing rooms for current floor, and the average quality of coins is increased")
+	EID:addCard(PocketItems.JACKOFSPADES, "Upon use, keys will drop more often from clearing rooms for current floor, and the average quality of keys is increased")
+	EID:addCard(PocketItems.JACKOFHEARTS, "Upon use, hearts will drop more often from clearing rooms for current floor, and the average quality of hearts is increased")
 end
 
 								-----------------------------------------
