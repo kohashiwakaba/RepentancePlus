@@ -33,7 +33,8 @@ Familiars = {
 	BAGOTRASH = Isaac.GetEntityVariantByName("Bag O' Trash"),
 	ZENBABY = Isaac.GetEntityVariantByName("Zen Baby"),
 	CHERRY = Isaac.GetEntityVariantByName("Cherry"),
-	BIRD = Isaac.GetEntityVariantByName("Bird of Hope")
+	BIRD = Isaac.GetEntityVariantByName("Bird of Hope"),
+	SOUL = Isaac.GetEntityVariantByName("Enraged Soul")
 }
 
 Collectibles = {
@@ -50,7 +51,8 @@ Collectibles = {
 	CHERRYFRIENDS = Isaac.GetItemIdByName("Cherry Friends"),
 	ZENBABY = Isaac.GetItemIdByName("Zen Baby"),
 	BLACKDOLL = Isaac.GetItemIdByName("Black Doll"),
-	BIRDOFHOPE = Isaac.GetItemIdByName("Bird of Hope")
+	BIRDOFHOPE = Isaac.GetItemIdByName("Bird of Hope"),
+	ENRAGEDSOUL = Isaac.GetItemIdByName("Enraged Soul")
 }
 
 Trinkets = {
@@ -190,7 +192,7 @@ DIRECTION_VECTOR = {
 	[Direction.RIGHT] = Vector(1, 0),
 	[Direction.DOWN] = Vector(0, 1)
 }							
-								
+
 								---------------------
 								-- LOCAL FUNCTIONS --
 								---------------------
@@ -267,6 +269,8 @@ function rplus:OnGameStart(Continued)
 		NumRevivals = 0
 		BirdCaught = true
 		JACK_DATA = nil --Only one jack can be active, check is with "Diamonds", "Clubs", etc. 
+		SoulLaunchCooldown = nil
+		AttachedEnemy = nil
 		
 		-- I somehow fucked up Mark of Cain so this will have to stay
 		Isaac.GetPlayer(0):AddCacheFlags(CacheFlag.CACHE_ALL)
@@ -280,6 +284,7 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
+		Isaac.Spawn(5, 100, Collectibles.ENRAGEDSOUL, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
@@ -325,6 +330,14 @@ function rplus:OnNewRoom()
 				else
 					table.insert(EntitiesGroupB, entity)
 				end
+			end
+		end
+	end
+	
+	if player:HasCollectible(Collectibles.ENRAGEDSOUL) then
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity.Type == 3 and entity.Variant == Familiars.SOUL then
+				entity:Remove()
 			end
 		end
 	end
@@ -545,6 +558,62 @@ function rplus:OnFrame()
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
+
+						-- POST PLAYER UPDATE --
+						------------------------
+function rplus:PostPlayerUpdate(Player)
+	-- this callback handles inputs, because it rolls in 60 fps, unlike MC_POST_UPDATE, so inputs won't be missed out
+	if Player:HasCollectible(Collectibles.ENRAGEDSOUL) then
+		for i = 4, 7 do -- shooting left, right, up, down; reading first input
+			if Input.IsActionTriggered(i, 0) and not ButtonState then
+				ButtonPressed = i
+				ButtonState = "listening for second tap"
+				PressFrame = game:GetFrameCount()
+				--print('button ' .. ButtonPressed .. ' is pressed on frame ' .. PressFrame)
+			end
+		end
+		
+		if PressFrame and game:GetFrameCount() <= PressFrame + 4 then -- listening for next inputs in the next 6 frames
+			if not Input.IsActionTriggered(ButtonPressed, 0) and ButtonState == "listening for second tap" then
+				ButtonState = "button released"
+			end
+			
+			if ButtonState == "button released" and Input.IsActionTriggered(ButtonPressed, 0) and 
+			(not SoulLaunchCooldown or SoulLaunchCooldown <= 0) then
+				--print('button ' .. ButtonPressed .. ' double tapped')
+				-- spawning the soul
+				if ButtonPressed == 4 then
+					Velocity = DIRECTION_VECTOR[Direction.LEFT]
+					DashAnim = "DashHoriz"
+				elseif ButtonPressed == 5 then
+					Velocity = DIRECTION_VECTOR[Direction.RIGHT]
+					DashAnim = "DashHoriz"
+				elseif ButtonPressed == 6 then
+					Velocity = DIRECTION_VECTOR[Direction.UP]
+					DashAnim = "DashUp"
+				else
+					Velocity = DIRECTION_VECTOR[Direction.DOWN]
+					DashAnim = "DashDown"
+				end
+				SoulLaunchCooldown = 600 -- so 10 seconds
+				local SoulSprite = Isaac.Spawn(3, Familiars.SOUL, 0, Player.Position, Velocity * 12, nil):GetSprite()
+				
+				SoulSprite:Load("gfx/003.214_enragedsoul.anm2", true)
+				if ButtonPressed == 4 then SoulSprite.FlipX = true end
+				SoulSprite:Play(DashAnim, true)
+				sfx:Play(SoundEffect.SOUND_MONSTER_YELL_A, 1, 2, false, 1, 0)
+				
+				ButtonState = nil
+			end
+		else
+			ButtonState = nil
+		end
+		
+		if SoulLaunchCooldown then SoulLaunchCooldown = SoulLaunchCooldown - 1 end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
+
 
 						-- WHEN NPC DIES --
 						-------------------
@@ -1035,6 +1104,19 @@ function rplus:ZenBabyUpdate(Familiar)
 end
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.ZenBabyUpdate, Familiars.ZENBABY)
 
+function rplus:SoulUpdate(Familiar)
+	if AttachedEnemy then
+		if AttachedEnemy:IsActiveEnemy() and AttachFrames >= 0 then
+			Familiar.Position = AttachedEnemy.Position
+			AttachFrames = AttachFrames - 1
+		else 	
+			Familiar:Kill()
+			AttachedEnemy = nil
+		end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.SoulUpdate, Familiars.SOUL)
+
 						-- FAMILIAR COLLISION --
 						------------------------
 function rplus:CherryCollision(Familiar, Collider, _)
@@ -1054,6 +1136,16 @@ function rplus:BirdCollision(Familiar, Collider, _)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.BirdCollision, Familiars.BIRD)
+
+function rplus:SoulCollision(Familiar, Collider, _)
+	if Collider:IsActiveEnemy(true) and not AttachedEnemy then
+		Familiar.Velocity = Vector.Zero
+		AttachedEnemy = Collider
+		AttachFrames = 300
+		Familiar:GetSprite():Play("Idle", true)
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.SoulCollision, Familiars.SOUL)
 
 						-- PROJECTILE COLLISION --
 						--------------------------
@@ -1189,6 +1281,7 @@ if EID then
 	EID:addCollectible(Collectibles.CHERRYFRIENDS, "Killing an enemy has a 20% chance to drop cherry familiar on the ground #Those cherries emit a charming fart when an enemy walks over them, and drop half a heart when a room is cleared")
 	EID:addCollectible(Collectibles.BLACKDOLL, "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal half of that damage to another enemy in that pair")
 	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into a ghost, gain invincibility shield and a bird flies out of a room center in a random direction. Catching the bird in 5 seconds will save you and give you an extra life, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it less possible to catch her #{{Warning}} Only works once per room!")
+	EID:addCollectible(Collectibles.ENRAGEDSOUL, "Double tap shooting button to launch a ghost familiar in the direction you are firing #The ghost will latch onto the first enemy it collides with, dealing damage over time for 10 seconds or until that enemy is killed #The ghost can latch onto bosses aswell #{{Warning}} Has a 10 seconds cooldown")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
