@@ -15,6 +15,7 @@ local rplus = RegisterMod("Repentance Plus", 1)
 local sfx = SFXManager()
 local music = MusicManager()
 local rdm = RNG()
+local CustomDataTable
 
 local BASEMENTKEY_CHANCE = 5
 local HEARTKEY_CHANCE = 5
@@ -28,6 +29,11 @@ local CHERRY_SPAWN_CHANCE = 20
 local SLEIGHTOFHAND_CHANCE = 12
 local JACKOF_CHANCE = 50
 local BITTENPENNY_UPGRADECHANCE = 20
+
+Costumes = {
+	ORDLIFE = Isaac.GetCostumeIdByPath("gfx/characters/costume_001_ordinarylife.anm2"),
+	CHERRYFRIENDS = Isaac.GetCostumeIdByPath("gfx/characters/costume_002_cherryfriends.anm2")
+}
 
 Familiars = {
 	BAGOTRASH = Isaac.GetEntityVariantByName("Bag O' Trash"),
@@ -255,23 +261,23 @@ end
 						------------------
 function rplus:OnGameStart(Continued)
 	if not Continued then
-		-- I was trying to make this in a single CustomData table and failed miserably cuz lua can't fucking read from this table
-		ORDLIFE_DATA = nil
-		MISSINGMEMORY_DATA = nil
-		REVERSECARD_DATA = nil
-		CUBE_COUNTER = 0
-		MARKCAIN_DATA = nil
-		BAGOTRASH_LEVELS = 0
-		ErasedEnemies = {}
-		NumRevivals = 0
-		BirdCaught = true
-		LOADEDDICE_DATA = false
-		LOADEDDICE_ROOM = nil
-		NumRevivals = 0
-		BirdCaught = true
-		JACK_DATA = nil --Only one jack can be active, check is with "Diamonds", "Clubs", etc. 
-		SoulLaunchCooldown = nil
-		AttachedEnemy = nil
+		CustomData = {
+			Items = {
+				BIRDOFHOPE = {NumRevivals = 0, BirdCaught = true},
+				ORDLIFE = nil,
+				MISSINGMEMORY = nil,
+				RUBIKSCUBE = {Counter = 0},
+				MARKCAIN = nil,
+				BAGOTRASH = {Levels = 0},
+				TEMPERTANTRUM = {ErasedEnemies = {}},
+				ENRAGEDSOUL = {SoulLaunchCooldown = nil, AttachedEnemy = nil}
+			},
+			Cards = {
+				REVERSECARD = nil,
+				LOADEDDICE = {Data = false, Room = nil},
+				JACK = nil
+			}
+		}
 		
 		-- I somehow fucked up Mark of Cain so this will have to stay
 		Isaac.GetPlayer(0):AddCacheFlags(CacheFlag.CACHE_ALL)
@@ -285,7 +291,8 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
-		Isaac.Spawn(5, 100, Collectibles.ENRAGEDSOUL, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 100, Collectibles.RUBIKSCUBE, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.ExecuteCommand("debug 8")
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
@@ -296,18 +303,18 @@ function rplus:OnNewLevel()
 	local player = Isaac.GetPlayer(0)
 	local level = game:GetLevel()
 	
-	if player:HasCollectible(Collectibles.ORDLIFE) and ORDLIFE_DATA == "used" then
+	if player:HasCollectible(Collectibles.ORDLIFE) and CustomData.Items.ORDLIFE == "used" then
 		level:RemoveCurses(LevelCurse.CURSE_OF_DARKNESS)
 		music:Enable()
 		player:DischargeActiveItem(ActiveSlot.SLOT_PRIMARY)
-		ORDLIFE_DATA = nil
+		CustomData.Items.ORDLIFE = nil
 	end
 	
 	if player:HasCollectible(Collectibles.BAGOTRASH) then
-		BagLevels = BagLevels + 1
+		CustomData.Items.BAGOTRASH.Levels = CustomData.Items.BAGOTRASH.Levels + 1
 	end
 	
-	JACK_DATA = nil
+	CustomData.Cards.JACK = nil
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 
@@ -352,14 +359,14 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 	local player = Isaac.GetPlayer(0)
 	
 	if ItemUsed == Collectibles.ORDLIFE then
-		if not ORDLIFE_DATA then
-			ORDLIFE_DATA = "used"
+		if not CustomData.Items.ORDLIFE then
+			CustomData.Items.ORDLIFE = "used"
 			music:Disable()
 			level:AddCurse(LevelCurse.CURSE_OF_DARKNESS, false)
 			PlayerSprite = player:GetSprite()
-			PlayerSprite:Load("gfx/characters/character_001_ordinarylife.anm2", true)
+			PlayerSprite:Load("gfx/characters/costume_001_ordinarylife.anm2", true)
 			return {Discharge = false, Remove = false, ShowAnim = false}
-		elseif ORDLIFE_DATA == "used" then
+		elseif CustomData.Items.ORDLIFE == "used" then
 			player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, true, true, false, false, -1)
 			return {Discharge = true, Remove = false, ShowAnim = true}
 		end
@@ -376,19 +383,26 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 	elseif ItemUsed == Collectibles.RUBIKSCUBE then
 		local SolveChance = math.random(100)
 		
-		if SolveChance <= 5 or CUBE_COUNTER == 20 then
+		if SolveChance <= 5 or CustomData.Items.RUBIKSCUBE.Counter == 20 then
 			player:RemoveCollectible(Collectibles.RUBIKSCUBE, true, ActiveSlot.SLOT_PRIMARY, true)
 			Isaac.Spawn(5, 100, Collectibles.MAGICCUBE, player.Position + Vector(20, 20), Vector.Zero, nil)
 			player:AnimateHappy()
-			CUBE_COUNTER = 0
+			CustomData.Items.RUBIKSCUBE.Counter = 0
 			return false
 		else
-			CUBE_COUNTER = CUBE_COUNTER + 1
+			CustomData.Items.RUBIKSCUBE.Counter = CustomData.Items.RUBIKSCUBE.Counter + 1
 			return true
 		end
 		
 	elseif ItemUsed == Collectibles.MAGICCUBE then
-		player:UseCard(Card.CARD_SOUL_EDEN, UseFlag.USE_NOANIM | UseFlag.USE_OWNED | UseFlag.USE_NOANNOUNCER)
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity.Type == 5 and entity.Variant == 100 and entity.SubType > 0 then
+				repeat
+					ID = math.random(729)
+				until Isaac.GetItemConfig():GetCollectible(ID) and Isaac.GetItemConfig():GetCollectible(ID).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST
+				entity:ToPickup():Morph(5, 100, ID, true, false, true)
+			end
+		end
 		return true
 	end
 end
@@ -403,7 +417,7 @@ function rplus:OnFrame()
 	local stage = level:GetStage()
 	local sprite = player:GetSprite()
 	
-	if player:HasCollectible(Collectibles.ORDLIFE) and ORDLIFE_DATA == "used" then
+	if player:HasCollectible(Collectibles.ORDLIFE) and CustomData.Items.ORDLIFE == "used" then
 		for i = 0,7 do
 			door = room:GetDoor(i)
 			if door then door:Open() end
@@ -421,25 +435,25 @@ function rplus:OnFrame()
 			level:RemoveCurses(LevelCurse.CURSE_OF_DARKNESS)
 			music:Enable()
 			player:DischargeActiveItem(ActiveSlot.SLOT_PRIMARY)
-			ORDLIFE_DATA = nil
+			CustomData.Items.ORDLIFE = nil
 		end
 	end
 	
 	if player:HasCollectible(Collectibles.MISSINGMEMORY) then
-		if MISSINGMEMORY_DATA == "dark" and player:GetSprite():IsPlaying("Trapdoor") then
+		if CustomData.Items.MISSINGMEMORY == "dark" and player:GetSprite():IsPlaying("Trapdoor") then
 			level:SetStage(LevelStage.STAGE4_2, StageType.STAGETYPE_ORIGINAL)
-			MISSINGMEMORY_DATA = nil
-		elseif MISSINGMEMORY_DATA == "light" and player:GetSprite():IsPlaying("LightTravel") then
+			CustomData.Items.MISSINGMEMORY = nil
+		elseif CustomData.Items.MISSINGMEMORY == "light" and player:GetSprite():IsPlaying("LightTravel") then
 			level:SetStage(LevelStage.STAGE4_2, StageType.STAGETYPE_ORIGINAL)
-			MISSINGMEMORY_DATA = nil
+			CustomData.Items.MISSINGMEMORY = nil
 		end
 	end
 	
-	if REVERSECARD_DATA == "used" and sprite:IsFinished("PickupWalkDown") then
+	if CustomData.Cards.REVERSECARD == "used" and sprite:IsFinished("PickupWalkDown") then
 		secondary_Card = player:GetCard(1)
 		player:SetCard(1, 0)
 		player:SetCard(0, secondary_Card)
-		REVERSECARD_DATA = nil
+		CustomData.Cards.REVERSECARD = nil
 	end
 	
 	if player:HasCollectible(Collectibles.MAGICPEN) then
@@ -480,7 +494,7 @@ function rplus:OnFrame()
 				player:RemoveCollectible(Collectibles.MARKCAIN)
 				player:Revive()
 				sprite:Stop()
-				MARKCAIN_DATA = "player revived"
+				CustomData.Items.MARKCAIN = "player revived"
 				player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, UseFlag.USE_NOANIM, -1)
 				sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
 				
@@ -495,9 +509,9 @@ function rplus:OnFrame()
 		if SUPERBERSERKSTATE and sfx:IsPlaying(SoundEffect.SOUND_BERSERK_END) then SUPERBERSERKSTATE = false end
 		
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
-			if entity:IsActiveEnemy() and ErasedEnemies ~= nil then
-				for i = 1, #ErasedEnemies do
-					if entity.Type == ErasedEnemies[i] then
+			if entity:IsActiveEnemy() and CustomData.Items.TEMPERTANTRUM.ErasedEnemies ~= nil then
+				for i = 1, #CustomData.Items.TEMPERTANTRUM.ErasedEnemies do
+					if entity.Type == CustomData.Items.TEMPERTANTRUM.ErasedEnemies[i] then
 						entity:Kill()
 						break
 					end
@@ -506,9 +520,9 @@ function rplus:OnFrame()
 		end
 	end
 	
-	if LOADEDDICE_DATA and (game:GetLevel():GetCurrentRoomIndex() ~= LOADEDDICE_ROOM) then
-		LOADEDDICE_ROOM = nil
-		LOADEDDICE_DATA = false
+	if CustomData.Cards.LOADEDDICE.Data and (game:GetLevel():GetCurrentRoomIndex() ~= CustomData.Cards.LOADEDDICE.Room) then
+		CustomData.Cards.LOADEDDICE.Room = nil
+		CustomData.Cards.LOADEDDICE.Data = false
 		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
 		player:EvaluateItems()
 	end
@@ -537,21 +551,21 @@ function rplus:OnFrame()
 	end --]]
 	
 	if player:HasCollectible(Collectibles.BIRDOFHOPE) then
-		if sprite:IsPlaying("Death") and BirdCaught then
-			BirdCaught = false
+		if sprite:IsPlaying("Death") and CustomData.Items.BIRDOFHOPE.BirdCaught then
+			CustomData.Items.BIRDOFHOPE.BirdCaught = false
 			DieFrame = game:GetFrameCount()
-			NumRevivals = NumRevivals + 1
+			CustomData.Items.BIRDOFHOPE.NumRevivals = CustomData.Items.BIRDOFHOPE.NumRevivals + 1
 			
 			player:Revive()
 			sprite:Stop()
 			player:UseCard(Card.CARD_SOUL_LOST, UseFlag.USE_NOANIM | UseFlag.USE_OWNED | UseFlag.USE_NOANNOUNCER)
 			player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, UseFlag.USE_NOANIM, -1)
 			
-			Birdy = Isaac.Spawn(3, Familiars.BIRD, 0, room:GetCenterPos(), Vector.FromAngle(math.random(360)) * NumRevivals, nil) 
+			Birdy = Isaac.Spawn(3, Familiars.BIRD, 0, room:GetCenterPos(), Vector.FromAngle(math.random(360)) * CustomData.Items.BIRDOFHOPE.NumRevivals, nil) 
 			Birdy:GetSprite():Play("Flying")
-		elseif DieFrame and game:GetFrameCount() > DieFrame + 120 and not BirdCaught then
+		elseif DieFrame and game:GetFrameCount() > DieFrame + 120 and not CustomData.Items.BIRDOFHOPE.BirdCaught then
 			player:Die()
-			BirdCaught = "blah blah"	-- just so that it's not true and player doesn't die over and over until all his extra lives deplete
+			CustomData.Items.BIRDOFHOPE.BirdCaught = "blah blah"	-- just so that it's not true and player doesn't die over and over until all his extra lives deplete
 			-- !!! THIS IS A SERIOUS CROTCH !!! since you end up near the door when reviving, and the bird familiar doesn't despawn if you don't catch her,
 			-- you automatically pick her up and this allows you to repeat the cycle (since it switches data to true) and doesn't take away your extra lives
 			-- so don't touch it if you don't think it through. like, for real.
@@ -580,7 +594,7 @@ function rplus:PostPlayerUpdate(Player)
 			end
 			
 			if ButtonState == "button released" and Input.IsActionTriggered(ButtonPressed, 0) and 
-			(not SoulLaunchCooldown or SoulLaunchCooldown <= 0) then
+			(not CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown or CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown <= 0) then
 				--print('button ' .. ButtonPressed .. ' double tapped')
 				-- spawning the soul
 				if ButtonPressed == 4 then
@@ -596,7 +610,7 @@ function rplus:PostPlayerUpdate(Player)
 					Velocity = DIRECTION_VECTOR[Direction.DOWN]
 					DashAnim = "DashDown"
 				end
-				SoulLaunchCooldown = 600 -- so 10 seconds
+				CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown = 600 -- so 10 seconds
 				local SoulSprite = Isaac.Spawn(3, Familiars.SOUL, 0, Player.Position, Velocity * 12, nil):GetSprite()
 				
 				SoulSprite:Load("gfx/003.214_enragedsoul.anm2", true)
@@ -610,7 +624,7 @@ function rplus:PostPlayerUpdate(Player)
 			ButtonState = nil
 		end
 		
-		if SoulLaunchCooldown then SoulLaunchCooldown = SoulLaunchCooldown - 1 end
+		if CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown then CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown = CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown - 1 end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
@@ -624,10 +638,10 @@ function rplus:OnNPCDeath(NPC)
 	if player:HasCollectible(Collectibles.MISSINGMEMORY) and NPC.Type == EntityType.ENTITY_MOTHER then
 		if player:HasCollectible(328) then
 			Isaac.GridSpawn(GridEntityType.GRID_TRAPDOOR, 0, Vector(320,280), false)
-			MISSINGMEMORY_DATA = "dark"
+			CustomData.Items.MISSINGMEMORY = "dark"
 		elseif player:HasCollectible(327) then
 			Isaac.Spawn(1000, EffectVariant.HEAVEN_LIGHT_DOOR, 0, Vector(320,280), Vector.Zero, nil)
-			MISSINGMEMORY_DATA = "light"
+			CustomData.Items.MISSINGMEMORY = "light"
 		end
 	end	
 	
@@ -723,7 +737,7 @@ function rplus:CardUsed(Card, player, _)
 	
 	if Card == PocketItems.REVERSECARD then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false, false, true, false, -1)
-		REVERSECARD_DATA = "used"
+		CustomData.Cards.REVERSECARD = "used"
 	end
 	
 	if Card == PocketItems.KINGOFSPADES then
@@ -811,8 +825,8 @@ function rplus:CardUsed(Card, player, _)
 	end
 	
 	if Card == PocketItems.LOADEDDICE then
-		LOADEDDICE_DATA = true
-		LOADEDDICE_ROOM = game:GetLevel():GetCurrentRoomIndex()
+		CustomData.Cards.LOADEDDICE.Data = true
+		CustomData.Cards.LOADEDDICE.Room = game:GetLevel():GetCurrentRoomIndex()
 		
 		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
 		player:EvaluateItems()
@@ -820,22 +834,23 @@ function rplus:CardUsed(Card, player, _)
 	
 	-- jacks
 	if Card == PocketItems.JACKOFDIAMONDS then
-		JACK_DATA = "Diamonds"
+		CustomData.Cards.JACK = "Diamonds"
 	elseif Card == PocketItems.JACKOFCLUBS then
-		JACK_DATA = "Clubs"
+		CustomData.Cards.JACK = "Clubs"
 	elseif Card == PocketItems.JACKOFSPADES then
-		JACK_DATA = "Spades"	
+		CustomData.Cards.JACK = "Spades"	
 	elseif Card == PocketItems.JACKOFHEARTS then
-		JACK_DATA = "Hearts"
+		CustomData.Cards.JACK = "Hearts"
 	end
 	
 	if Card == PocketItems.BEDSIDEQUEEN then
 		local numKeys = math.random(12)
+		
 		for i = 1, numKeys do
 			if math.random(100) <= 95 then
 				Isaac.Spawn(5, PickupVariant.PICKUP_KEY, 1, game:GetRoom():FindFreePickupSpawnPosition(player.Position, 0, true, false), Vector.Zero, nil)
 			else
-				Isaac.Spawn(5, PickupVariant.PICKUP_KEY, 2, game:GetRoom():FindFreePickupSpawnPosition(player.Position, 0, true, false), Vector.Zero, nil)
+				Isaac.Spawn(5, PickupVariant.PICKUP_KEY, 4, game:GetRoom():FindFreePickupSpawnPosition(player.Position, 0, true, false), Vector.Zero, nil)
 			end
 		end
 	end
@@ -957,7 +972,7 @@ function rplus:UpdateStats(player, Flag)
 			player.Damage = player.Damage * StatUps.SINNERSHEART_DMG_MUL
 		end
 		
-		if MARKCAIN_DATA == "player revived" then
+		if CustomData.Items.MARKCAIN == "player revived" then
 			player.Damage = player.Damage + #MyFamiliars * StatUps.MARKCAIN_DMG
 		end
 	end
@@ -994,7 +1009,7 @@ function rplus:UpdateStats(player, Flag)
 	end
 	
 	if Flag == CacheFlag.CACHE_LUCK then
-		if LOADEDDICE_DATA then
+		if CustomData.Cards.LOADEDDICE.Data then
 			player.Luck = player.Luck + StatUps.LOADEDDICE_LUCK
 		end
 	end
@@ -1027,7 +1042,7 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 			player:UseActiveItem(CollectibleType.COLLECTIBLE_BERSERK, true, true, false, true, -1)
 			SUPERBERSERKSTATE = true
 		elseif SUPERBERSERKSTATE and Entity:IsActiveEnemy(false) and not Entity:IsBoss() and math.random(100) <= SUPERBERSERK_DELETE_CHANCE then
-			table.insert(ErasedEnemies, Entity.Type)
+			table.insert(CustomData.Items.TEMPERTANTRUM.ErasedEnemies, Entity.Type)
 		end
 	end
 	
@@ -1053,7 +1068,7 @@ rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
 						-- ON FAMILIAR INIT --
 						----------------------
 function rplus:TrashBagInit(Familiar)
-	BagLevels = 1
+	CustomData.Items.BAGOTRASH.Levels = 1
 	Familiar:AddToFollowers()
 	Familiar.IsFollower = true
 	Familiar:GetSprite():Play("FloatDown")
@@ -1077,7 +1092,7 @@ function rplus:TrashBagUpdate(Familiar)
 	end
 	
 	if Familiar.RoomClearCount == 1 then
-		local NumFlies = math.random(BagLevels * 2)
+		local NumFlies = math.random(CustomData.Items.BAGOTRASH.Levels * 2)
 		if Isaac.GetPlayer(0):HasCollectible(CollectibleType.COLLECTIBLE_BFFS, true) then NumFlies = NumFlies + math.random(2) end
 		
 		Familiar:GetSprite().PlaybackSpeed = 0.5
@@ -1117,13 +1132,13 @@ end
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.ZenBabyUpdate, Familiars.ZENBABY)
 
 function rplus:SoulUpdate(Familiar)
-	if AttachedEnemy then
-		if AttachedEnemy:IsActiveEnemy() and AttachFrames >= 0 then
-			Familiar.Position = AttachedEnemy.Position
+	if CustomData.Items.ENRAGEDSOUL.AttachedEnemy then
+		if CustomData.Items.ENRAGEDSOUL.AttachedEnemy:IsActiveEnemy() and AttachFrames >= 0 then
+			Familiar.Position = CustomData.Items.ENRAGEDSOUL.AttachedEnemy.Position
 			AttachFrames = AttachFrames - 1
 		else 	
 			Familiar:Kill()
-			AttachedEnemy = nil
+			CustomData.Items.ENRAGEDSOUL.AttachedEnemy = nil
 		end
 	end
 end
@@ -1144,15 +1159,15 @@ function rplus:BirdCollision(Familiar, Collider, _)
 		sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
 		Isaac.Spawn(1000, EffectVariant.POOF01, 0, Familiar.Position, Vector.Zero, nil)
 		Familiar:Remove()
-		BirdCaught = true
+		CustomData.Items.BIRDOFHOPE.BirdCaught = true
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.BirdCollision, Familiars.BIRD)
 
 function rplus:SoulCollision(Familiar, Collider, _)
-	if Collider:IsActiveEnemy(true) and not AttachedEnemy then
+	if Collider:IsActiveEnemy(true) and not CustomData.Items.ENRAGEDSOUL.AttachedEnemy then
 		Familiar.Velocity = Vector.Zero
-		AttachedEnemy = Collider
+		CustomData.Items.ENRAGEDSOUL.AttachedEnemy = Collider
 		AttachFrames = 300
 		Familiar:GetSprite():Play("Idle", true)
 	end
@@ -1214,13 +1229,13 @@ rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0
 function rplus:PickupAwardSpawn(_, Pos)
 	local player = Isaac.GetPlayer(0)
 	
-	if math.random(100) < JACKOF_CHANCE and JACK_DATA and game:GetRoom():GetType() ~= RoomType.ROOM_BOSS then
+	if math.random(100) < JACKOF_CHANCE and CustomData.Cards.JACK and game:GetRoom():GetType() ~= RoomType.ROOM_BOSS then
 		local Variant = nil
 		local SubType = nil
 		
 		dieroll = math.random(100)
 		
-		if JACK_DATA == "Diamonds" then
+		if CustomData.Cards.JACK == "Diamonds" then
 			Variant = 20
 			
 			if dieroll <= 90 then
@@ -1230,7 +1245,7 @@ function rplus:PickupAwardSpawn(_, Pos)
 			else
 				SubType = 3 --dime
 			end
-		elseif JACK_DATA == "Clubs" then
+		elseif CustomData.Cards.JACK == "Clubs" then
 			Variant = 40
 			
 			if dieroll <= 80 then
@@ -1238,7 +1253,7 @@ function rplus:PickupAwardSpawn(_, Pos)
 			else
 				SubType = 2	--double bomb
 			end
-		elseif JACK_DATA == "Spades" then
+		elseif CustomData.Cards.JACK == "Spades" then
 			Variant = 30
 			
 			if dieroll <= 80 then
@@ -1248,7 +1263,7 @@ function rplus:PickupAwardSpawn(_, Pos)
 			elseif dieroll <= 98 then
 				SubType = 4 --charged key
 			end
-		elseif JACK_DATA == "Hearts" then
+		elseif CustomData.Cards.JACK == "Hearts" then
 			Variant = 10
 			
 			if dieroll <= 40 then
@@ -1284,7 +1299,7 @@ if EID then
 	EID:addCollectible(Collectibles.COOKIECUTTER, "On use, gives you one {{Heart}} heart container and one broken heart #{{Warning}} Having 12 broken hearts kills you!")
 	EID:addCollectible(Collectibles.SINNERSHEART, "{{ArrowUp}} Damage +2 then x1.5 #{{ArrowDown}} Shot speed down #Homing tears")
 	EID:addCollectible(Collectibles.RUBIKSCUBE, "After each use, has a 5% (100% on 20-th use) chance to be 'solved', removed from the player and spawn a Magic Cube on the ground")
-	EID:addCollectible(Collectibles.MAGICCUBE, "{{DiceRoom}} Invokes effects of D6+D20 on use #Rerolled items can be drawn from any item pool")
+	EID:addCollectible(Collectibles.MAGICCUBE, "{{DiceRoom}} Invokes effect of D6 on use #Rerolled items can be drawn from any item pool")
 	EID:addCollectible(Collectibles.MAGICPEN, "Tears leave {{ColorRainbow}}rainbow{{CR}} creep underneath them #Random permanent status effects is applied to enemies walking over that creep")
 	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers, gain +0.3 DMG for each consumed familiar and gain invincibility shield for 5 seconds #{{Warning}} Works only once!")
 	EID:addCollectible(Collectibles.TEMPERTANTRUM, "Upon taking damage, there is a 25% chance to enter a Berserk state #While in this state, every enemy damaged has a 10% chance to be erased for the rest of the run")
@@ -1310,6 +1325,7 @@ if EID then
 	EID:addCard(PocketItems.RJOKER, "On use, teleports Isaac to a {{SuperSecretRoom}} Black Market")
 	EID:addCard(PocketItems.REVERSECARD, "On use, invokes the effect of Glowing Hourglass")
 	EID:addCard(PocketItems.LOADEDDICE, "{{ArrowUp}} On use, grants 10 Luck for the current room")
+	EID:addCard(PocketItems.BEDSIDEQUEEN, "On use, spawns 1-12 random {{Key}} keys #There is a small chance to spawn a charged key")
 	EID:addCard(PocketItems.JACKOFCLUBS, "Upon use, bombs will drop more often from clearing rooms for current floor, and the average quality of bombs is increased")
 	EID:addCard(PocketItems.JACKOFDIAMONDS, "Upon use, coins will drop more often from clearing rooms for current floor, and the average quality of coins is increased")
 	EID:addCard(PocketItems.JACKOFSPADES, "Upon use, keys will drop more often from clearing rooms for current floor, and the average quality of keys is increased")
