@@ -76,7 +76,8 @@ PocketItems = {
 	JACKOFDIAMONDS = Isaac.GetCardIdByName("Jack of Diamonds"),
 	JACKOFCLUBS = Isaac.GetCardIdByName("Jack of Clubs"),
 	JACKOFSPADES = Isaac.GetCardIdByName("Jack of Spades"),
-	JACKOFHEARTS = Isaac.GetCardIdByName("Jack of Hearts")
+	JACKOFHEARTS = Isaac.GetCardIdByName("Jack of Hearts"),
+	BEDSIDEQUEEN = Isaac.GetCardIdByName("Bedside Queen")
 }
 
 PickUps = {
@@ -826,6 +827,17 @@ function rplus:CardUsed(Card, player, _)
 		JACK_DATA = "Spades"	
 	elseif Card == PocketItems.JACKOFHEARTS then
 		JACK_DATA = "Hearts"
+	end
+	
+	if Card == PocketItems.BEDSIDEQUEEN then
+		local numKeys = math.random(12)
+		for i = 1, numKeys do
+			if math.random(100) <= 95 then
+				Isaac.Spawn(5, PickupVariant.PICKUP_KEY, 1, game:GetRoom():FindFreePickupSpawnPosition(player.Position, 0, true, false), Vector.Zero, nil)
+			else
+				Isaac.Spawn(5, PickupVariant.PICKUP_KEY, 2, game:GetRoom():FindFreePickupSpawnPosition(player.Position, 0, true, false), Vector.Zero, nil)
+			end
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
