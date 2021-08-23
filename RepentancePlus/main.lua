@@ -15,7 +15,7 @@ local rplus = RegisterMod("Repentance Plus", 1)
 local sfx = SFXManager()
 local music = MusicManager()
 local rdm = RNG()
-local CustomDataTable
+local CustomData
 
 local BASEMENTKEY_CHANCE = 5
 local HEARTKEY_CHANCE = 5
@@ -58,7 +58,9 @@ Collectibles = {
 	ZENBABY = Isaac.GetItemIdByName("Zen Baby"),
 	BLACKDOLL = Isaac.GetItemIdByName("Black Doll"),
 	BIRDOFHOPE = Isaac.GetItemIdByName("Bird of Hope"),
-	ENRAGEDSOUL = Isaac.GetItemIdByName("Enraged Soul")
+	ENRAGEDSOUL = Isaac.GetItemIdByName("Enraged Soul"),
+	CEREMDAGGER = Isaac.GetItemIdByName("Ceremonial Dagger"),
+	ADAMSRIB = Isaac.GetItemIdByName("Adam's Rib")
 }
 
 Trinkets = {
@@ -66,7 +68,10 @@ Trinkets = {
 	KEYTOTHEHEART = Isaac.GetTrinketIdByName("Key to the Heart"),
 	SLEIGHTOFHAND = Isaac.GetTrinketIdByName("Sleight of Hand"),
 	JUDASKISS = Isaac.GetTrinketIdByName("Judas' Kiss"),
-	BITTENPENNY = Isaac.GetTrinketIdByName("Bitten Penny")
+	BITTENPENNY = Isaac.GetTrinketIdByName("Bitten Penny"),
+	GREEDSHEART = Isaac.GetTrinketIdByName("Greed's Heart"),
+	ANGELSCROWN = Isaac.GetTrinketIdByName("Angel's Crown"),
+	REDMAP = Isaac.GetTrinketIdByName("Red Map")
 }
 
 PocketItems = {
@@ -283,7 +288,7 @@ function rplus:OnGameStart(Continued)
 			}
 		}
 		
-		-- I somehow fucked up Mark of Cain so this will have to stay
+		-- recalculating cache, just in case
 		Isaac.GetPlayer(0):AddCacheFlags(CacheFlag.CACHE_ALL)
 		Isaac.GetPlayer(0):EvaluateItems()
 		
@@ -295,8 +300,11 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
-		Isaac.Spawn(5, 100, Collectibles.RUBIKSCUBE, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
-		Isaac.ExecuteCommand("debug 8")
+		Isaac.Spawn(5, 350, Trinkets.GREEDSHEART, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 100, Collectibles.ADAMSRIB, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 350, Trinkets.REDMAP, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 100, Collectibles.CEREMDAGGER, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 350, Trinkets.ANGELSCROWN, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
@@ -318,7 +326,7 @@ function rplus:OnNewLevel()
 		CustomData.Items.BAGOTRASH.Levels = CustomData.Items.BAGOTRASH.Levels + 1
 	end
 	
-	CustomData.Cards.JACK = nil
+	if CustomData then CustomData.Cards.JACK = nil end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 
@@ -374,8 +382,9 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, true, true, false, false, -1)
 			return {Discharge = true, Remove = false, ShowAnim = true}
 		end
-		
-	elseif ItemUsed == Collectibles.COOKIECUTTER then
+	end
+	
+	if ItemUsed == Collectibles.COOKIECUTTER then
 		player:AddMaxHearts(2, true)
 		player:AddBrokenHearts(1)
 		sfx:Play(SoundEffect.SOUND_BLOODBANK_SPAWN, 1, 2, false, 1, 0)
@@ -383,8 +392,9 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			player:Die()
 		end
 		return true
-		
-	elseif ItemUsed == Collectibles.RUBIKSCUBE then
+	end
+	
+	if ItemUsed == Collectibles.RUBIKSCUBE then
 		local SolveChance = math.random(100)
 		
 		if SolveChance <= 5 or CustomData.Items.RUBIKSCUBE.Counter == 20 then
@@ -397,8 +407,9 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			CustomData.Items.RUBIKSCUBE.Counter = CustomData.Items.RUBIKSCUBE.Counter + 1
 			return true
 		end
-		
-	elseif ItemUsed == Collectibles.MAGICCUBE then
+	end
+	
+	if ItemUsed == Collectibles.MAGICCUBE then
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Type == 5 and entity.Variant == 100 and entity.SubType > 0 then
 				repeat
@@ -444,16 +455,15 @@ function rplus:OnFrame()
 	end
 	
 	if player:HasCollectible(Collectibles.MISSINGMEMORY) then
-		if CustomData.Items.MISSINGMEMORY == "dark" and player:GetSprite():IsPlaying("Trapdoor") then
-			level:SetStage(LevelStage.STAGE4_2, StageType.STAGETYPE_ORIGINAL)
-			CustomData.Items.MISSINGMEMORY = nil
-		elseif CustomData.Items.MISSINGMEMORY == "light" and player:GetSprite():IsPlaying("LightTravel") then
-			level:SetStage(LevelStage.STAGE4_2, StageType.STAGETYPE_ORIGINAL)
-			CustomData.Items.MISSINGMEMORY = nil
+		if CustomData.Items.MISSINGMEMORY == "dark" or CustomData.Items.MISSINGMEMORY == "light" then
+			if player:GetSprite():IsPlaying("Trapdoor") or player:GetSprite():IsPlaying("LightTravel") then
+				level:SetStage(LevelStage.STAGE4_2, 0)
+				CustomData.Items.MISSINGMEMORY = nil
+			end
 		end
 	end
 	
-	if CustomData.Cards.REVERSECARD == "used" and sprite:IsFinished("PickupWalkDown") then
+	if CustomData and CustomData.Cards.REVERSECARD == "used" and sprite:IsFinished("PickupWalkDown") then
 		secondary_Card = player:GetCard(1)
 		player:SetCard(1, 0)
 		player:SetCard(0, secondary_Card)
@@ -524,7 +534,7 @@ function rplus:OnFrame()
 		end
 	end
 	
-	if CustomData.Cards.LOADEDDICE.Data and (game:GetLevel():GetCurrentRoomIndex() ~= CustomData.Cards.LOADEDDICE.Room) then
+	if CustomData and CustomData.Cards.LOADEDDICE.Data and (game:GetLevel():GetCurrentRoomIndex() ~= CustomData.Cards.LOADEDDICE.Room) then
 		CustomData.Cards.LOADEDDICE.Room = nil
 		CustomData.Cards.LOADEDDICE.Data = false
 		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
@@ -592,7 +602,7 @@ function rplus:PostPlayerUpdate(Player)
 			end
 		end
 		
-		if PressFrame and game:GetFrameCount() <= PressFrame + 4 then -- listening for next inputs in the next 6 frames
+		if PressFrame and game:GetFrameCount() <= PressFrame + 4 then -- listening for next inputs in the next 4 frames
 			if not Input.IsActionTriggered(ButtonPressed, 0) and ButtonState == "listening for second tap" then
 				ButtonState = "button released"
 			end
@@ -639,15 +649,21 @@ rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
 function rplus:OnNPCDeath(NPC)
 	local player = Isaac.GetPlayer(0)
 	
-	if player:HasCollectible(Collectibles.MISSINGMEMORY) and NPC.Type == EntityType.ENTITY_MOTHER then
-		if player:HasCollectible(328) then
-			Isaac.GridSpawn(GridEntityType.GRID_TRAPDOOR, 0, Vector(320,280), false)
-			CustomData.Items.MISSINGMEMORY = "dark"
-		elseif player:HasCollectible(327) then
-			Isaac.Spawn(1000, EffectVariant.HEAVEN_LIGHT_DOOR, 0, Vector(320,280), Vector.Zero, nil)
-			CustomData.Items.MISSINGMEMORY = "light"
+	if player:HasCollectible(Collectibles.MISSINGMEMORY) then
+		if NPC.Type == EntityType.ENTITY_MOTHER and NPC:GetSprite():IsFinished("Death") then
+			if player:HasCollectible(328) then
+				Isaac.GridSpawn(GridEntityType.GRID_TRAPDOOR, 0, Vector(280,280), false)
+				CustomData.Items.MISSINGMEMORY = "dark"
+			end
+			if player:HasCollectible(327) then
+				Isaac.Spawn(1000, EffectVariant.HEAVEN_LIGHT_DOOR, 0, Vector(360,280), Vector.Zero, nil)
+				CustomData.Items.MISSINGMEMORY = "light"
+			end
 		end
-	end	
+	end
+	if NPC.Type == EntityType.ENTITY_MOMS_HEART and NPC:GetSprite():IsFinished("Death") and game:GetLevel():GetStageType() >= 4 then
+		Isaac.Spawn(5, 100, Collectibles.MISSINGMEMORY, Vector(320,280), Vector.Zero, nil)
+	end
 	
 	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HasBox(HEARTKEY_CHANCE) then
 		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.SCARLETCHEST, 0, NPC.Position, NPC.Velocity, nil)
@@ -765,14 +781,14 @@ function rplus:CardUsed(Card, player, _)
 	end
 	
 	if Card == PocketItems.QUEENOFDIAMONDS then
-		for i=1, math.random(12) do
+		for i = 1, math.random(12) do
 			local QueenOfDiamondsRandom = math.random(100)
 			if QueenOfDiamondsRandom <= 92 then
-				Isaac.Spawn(5, PickupVariant.PICKUP_COIN,1 , game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
+				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 1, game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
 			elseif QueenOfDiamondsRandom <= 98 then
-				Isaac.Spawn(5, PickupVariant.PICKUP_COIN,2 , game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
+				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 2, game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
 			else
-				Isaac.Spawn(5, PickupVariant.PICKUP_COIN,3 , game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
+				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 3, game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
 			end
 		end
 	end
@@ -959,7 +975,7 @@ rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, rplus.PickupUpdate)
 function rplus:OnTearUpdate(Tear)
 	local player = Isaac.GetPlayer(0)
 	
-	if player:HasCollectible(Collectibles.MAGICPEN) then
+	if player:HasCollectible(Collectibles.MAGICPEN) and EntityRef(Tear).Entity.SpawnerType == EntityType.ENTITY_PLAYER then
 		local CreepTrail = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL, 4, Tear.Position, Vector.Zero, nil):ToEffect()
 		CreepTrail.Scale = 0.4
 	end
@@ -976,7 +992,7 @@ function rplus:UpdateStats(player, Flag)
 			player.Damage = player.Damage * StatUps.SINNERSHEART_DMG_MUL
 		end
 		
-		if CustomData.Items.MARKCAIN == "player revived" then
+		if CustomData and CustomData.Items.MARKCAIN == "player revived" then
 			player.Damage = player.Damage + #MyFamiliars * StatUps.MARKCAIN_DMG
 		end
 	end
@@ -1013,7 +1029,7 @@ function rplus:UpdateStats(player, Flag)
 	end
 	
 	if Flag == CacheFlag.CACHE_LUCK then
-		if CustomData.Cards.LOADEDDICE.Data then
+		if CustomData and CustomData.Cards.LOADEDDICE.Data then
 			player.Luck = player.Luck + StatUps.LOADEDDICE_LUCK
 		end
 	end
@@ -1293,10 +1309,14 @@ function rplus:PickupAwardSpawn(_, Pos)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
 
+						-- ON USING PIILL --
+						--------------------
 function rplus:UsePill(Pill, _)
 	local player = Isaac.GetPlayer(0)
+	
 	if Pill == Pills.ESTROGEN then
 		local BloodClots = player:GetHearts() - 1 
+		
 		player:AddHearts(-BloodClots)
 		for i = 1, BloodClots do
 			Isaac.Spawn(3, FamiliarVariant.BLOOD_BABY, 0, player.Position, Vector.Zero, nil)
@@ -1347,6 +1367,8 @@ if EID then
 	EID:addCard(PocketItems.JACKOFDIAMONDS, "Upon use, coins will drop more often from clearing rooms for current floor, and the average quality of coins is increased")
 	EID:addCard(PocketItems.JACKOFSPADES, "Upon use, keys will drop more often from clearing rooms for current floor, and the average quality of keys is increased")
 	EID:addCard(PocketItems.JACKOFHEARTS, "Upon use, hearts will drop more often from clearing rooms for current floor, and the average quality of hearts is increased")
+
+	EID:addPill(Pills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at half-a-heart, doesn't affect soul/black hearts")
 end
 
 								-----------------------------------------

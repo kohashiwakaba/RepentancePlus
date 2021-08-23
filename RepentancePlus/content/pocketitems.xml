@@ -35,6 +35,6 @@
 	<card type="suit" name="Bedside Queen" hud="Bedside Queen" mimiccharge="6" description="0--&#34;" pickup="2" />
 	
 	<!-- pill effects -->
-	<pilleffect name="Estrogen" mimiccharge="3" class="3+" /> <!-- T.Eve to Greed -->
+	<pilleffect name="Estrogen" mimiccharge="4" class="1+" /> <!-- T.Eve to Greed -->
 	
 </pocketitems>

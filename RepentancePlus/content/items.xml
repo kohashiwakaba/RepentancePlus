@@ -1,43 +1,52 @@
 <items gfxroot="gfx/items/" version="1">
 	<!-- T.Isaac -->
 	<active name="Ordinary Life" description="What if it all's just a dream?" gfx="01_ordinarylife.png" quality="3" maxcharges="12" />
-	<passive name="The Missing Memory" description="Who is she?" gfx="37_themissingmemory.png" quality="2" />
-	<trinket name="Basement Key" description="Open your memories" gfx="35_basementkey.png" />
-	<active name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="19_rubikscube.png" quality="0" maxcharges="2" />
-	<active name="Magic Cube" description="Did you set the world record?" gfx="20_magiccube.png" quality="4" maxcharges="4" />  
+	<passive name="The Missing Memory" description="Who is she?" gfx="02_themissingmemory.png" quality="2" />
+	<trinket name="Basement Key" description="Open your memories" gfx="t01_basementkey.png" />
+	<active name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="03_rubikscube.png" quality="0" maxcharges="2" />
+	<active name="Magic Cube" description="Did you set the world record?" gfx="04_magiccube.png" quality="4" maxcharges="4" />  
 	
 	<!-- T.Maggy -->
-	<active name="Cookie Cutter" description="Cut your hearts!" gfx="02_cookiecutter.png" quality="1" maxcharges="0"/>
-	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="36_keytotheheart.png" />
-	<passive name="Cherry Friends" description=":3" gfx="36_cherryfriends.png" quality="2" />
+	<active name="Cookie Cutter" description="Cut your hearts!" gfx="05_cookiecutter.png" quality="1" maxcharges="0"/>
+	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="t02_keytotheheart.png" />
+	<passive name="Cherry Friends" description=":3" gfx="06_cherryfriends.png" quality="2" />
 	
 	<!-- T. Cain -->
-	<passive name="The Mark of Cain" description="Extra life... at a cost" gfx="03_themarkofcain.png" quality="3" devilprice="1" cache="damage" tags="devil" />
-	<trinket name="Sleight of Hand" description="Faster than you'd think!" gfx="37_sleightofhand.png" />
-	<trinket name="Bitten Penny" description="Wealth of risk" gfx="39_bittenpenny.png" />
+	<passive name="The Mark of Cain" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="3" devilprice="1" cache="damage" tags="devil" />
+	<trinket name="Sleight of Hand" description="Faster than you'd think!" gfx="t03_sleightofhand.png" />
+	<trinket name="Bitten Penny" description="Wealth of risk" gfx="t04_bittenpenny.png" />
 
 	<!-- T. Judas -->
-	<passive name="Black Doll" description="Bound by blood" gfx="38_blackdoll.png" quality="2" devilprice="1" />
-	<trinket name="Judas' Kiss" description="One on the cheek" gfx="38_judaskiss.png" />
+	<passive name="Black Doll" description="Bound by blood" gfx="08_blackdoll.png" quality="2" devilprice="1" />
+	<trinket name="Judas' Kiss" description="One on the cheek" gfx="t05_judaskiss.png" />
+	<active name="Ceremonial Dagger" description="Just a drop of blood for our Gods" gfx="09_ceremonialdagger.png" quality="3" />
 	
 	<!-- T. ??? -->
-	<familiar name="Bag-o-Trash" description="Will you take it out already?!" gfx="50_bagotrash.png" quality="1" />
+	<familiar name="Bag-o-Trash" description="Will you take it out already?!" gfx="10_bagotrash.png" quality="1" />
 	
 	<!-- T. Eve -->
-	<passive name="Bird of Hope" description="Catch her!" gfx="06_birdofhope.png" quality="2" />
+	<passive name="Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="2" />
+	<passive name="Adam's Rib" description="Children of God" gfx="12_adamsrib.png" quality="2" />
 
 	<!-- T.Samson -->
-	<passive name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="35_tempertantrum.png" quality="3" /> 
+	<passive name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="13_tempertantrum.png" quality="3" /> 
+	
+	<!-- T. Azazel -->
+	<trinket name="Angel's Crown" description="Patience is a virtue" gfx="t07_angelscrown.png" />
 	
 	<!-- T.Eden -->
-	<passive name="Magic Pen" description="I want to be an artist" gfx="52_magicpen.png" quality="1" /> 
+	<passive name="Magic Pen" description="I want to be an artist" gfx="14_magicpen.png" quality="1" /> 
 	
 	<!-- T. Lost -->
-	<familiar name="Zen Baby" description="He sees everything" gfx="11_zenbaby.png" quality="3" tags="baby angel" />
+	<familiar name="Zen Baby" description="He sees everything" gfx="15_zenbaby.png" quality="3" tags="baby angel" />
+	<trinket name="Red Map" description="All secrets are unveiled to you" gfx="t08_redmap.png" />
+	
+	<!-- T. Keeper -->
+	<trinket name="Greed's Heart" description="$$$" gfx="t06_greedsheart.png" />
 	
 	<!-- T. Apollyon -->
-	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx="14_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2"/>
+	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2"/>
 	
 	<!-- T. Forgor -->
-	<passive name="Enraged Soul" description="You are stuck with me" gfx="07_enragedsoul.png" quality="3" devilprice="2" />
+	<passive name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="2" />
 </items>
