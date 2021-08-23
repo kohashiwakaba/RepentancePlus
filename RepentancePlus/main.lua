@@ -91,6 +91,10 @@ PickUps = {
 	--BITTENPENNY = Isaac.GetEntityVariantByName("Bitten Penny")
 }
 
+Pills = {
+	ESTROGEN = Isaac.GetPillEffectByName("Estrogen")
+}
+
 ScarletChestItems = { 
 	16, --Raw Liver
 	73, --Cube of Meat
@@ -1288,6 +1292,19 @@ function rplus:PickupAwardSpawn(_, Pos)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
+
+function rplus:UsePill(Pill, _)
+	local player = Isaac.GetPlayer(0)
+	if Pill == Pills.ESTROGEN then
+		local BloodClots = player:GetHearts() - 1 
+		player:AddHearts(-BloodClots)
+		for i = 1, BloodClots do
+			Isaac.Spawn(3, FamiliarVariant.BLOOD_BABY, 0, player.Position, Vector.Zero, nil)
+		end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_USE_PILL, rplus.UsePill)
+
 
 								-----------------------------------------
 								--- EXTERNAL ITEM DESCRIPTIONS COMPAT ---

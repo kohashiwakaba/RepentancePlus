@@ -34,4 +34,7 @@
 	<card type="suit" name="Jack of Hearts" hud="Jack of Hearts" mimiccharge="2" description="Increase your Health" pickup="2" />
 	<card type="suit" name="Bedside Queen" hud="Bedside Queen" mimiccharge="6" description="0--&#34;" pickup="2" />
 	
+	<!-- pill effects -->
+	<pilleffect name="Estrogen" mimiccharge="3" class="3+" /> <!-- T.Eve to Greed -->
+	
 </pocketitems>
