@@ -17,18 +17,18 @@ local music = MusicManager()
 local rdm = RNG()
 local CustomData
 
-local BASEMENTKEY_CHANCE = 5
-local HEARTKEY_CHANCE = 5
-local SCARLETCHEST_CHANCE = 2
--- local BITTENPENNY_CHANCE = 2
-local CARDRUNE_REPLACE_CHANCE = 2
-local SUPERBERSERKSTATE_CHANCE = 25
-local SUPERBERSERK_DELETE_CHANCE = 10
-local TRASHBAG_BREAK_CHANCE = 1
-local CHERRY_SPAWN_CHANCE = 20
-local SLEIGHTOFHAND_CHANCE = 12
-local JACKOF_CHANCE = 50
-local BITTENPENNY_UPGRADECHANCE = 20
+local BASEMENTKEY_CHANCE = 5	-- chance to replace golden chest with the old chest
+local HEARTKEY_CHANCE = 5	-- chance for enemy to drop Scarlet chest on death
+local SCARLETCHEST_CHANCE = 2	-- chance for Scarlet chest to appear normally
+local CARDRUNE_REPLACE_CHANCE = 2	-- chance to replace vanilla card with card from our mod
+local SUPERBERSERKSTATE_CHANCE = 25		-- chance to enter berserk state via Temper Tantrum
+local SUPERBERSERK_DELETE_CHANCE = 10	-- chance to erase enemies while in this state
+local TRASHBAG_BREAK_CHANCE = 1		-- chance of Bag o' Trash breaking
+local CHERRY_SPAWN_CHANCE = 20		-- chance to spawn cherry friend on enemy death
+local SLEIGHTOFHAND_CHANCE = 12		-- chance to save your consumable when using it via Sleight of Hand
+local JACKOF_CHANCE = 50	-- chance for Jack cards to spawn their respective type of pickup
+local BITTENPENNY_UPGRADECHANCE = 20	-- chance to 'upgrade' coins via Bitten Penny
+local REDKEY_TURN_CHANCE = 25		-- chance for any card to turn into Cracked Key via Red Map trinket
 
 Costumes = {
 	ORDLIFE = Isaac.GetCostumeIdByPath("gfx/characters/costume_001_ordinarylife.anm2"),
@@ -93,7 +93,6 @@ PocketItems = {
 
 PickUps = {
 	SCARLETCHEST = Isaac.GetEntityVariantByName("Scarlet Chest")
-	--BITTENPENNY = Isaac.GetEntityVariantByName("Bitten Penny")
 }
 
 Pills = {
@@ -225,7 +224,7 @@ end
 local function GetRandomCustomCard()
 	local keys = {}
 	for k in pairs(PocketItems) do
-	  table.insert(keys, k)
+	  if k ~= REDRUNE then table.insert(keys, k) end
 	end
 
 	local random_key = keys[math.random(1, #keys)]
@@ -285,6 +284,9 @@ function rplus:OnGameStart(Continued)
 				REVERSECARD = nil,
 				LOADEDDICE = {Data = false, Room = nil},
 				JACK = nil
+			},
+			Trinkets = {
+				GREEDSHEART = "CoinHeartEmpty"
 			}
 		}
 		
@@ -300,11 +302,10 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
-		Isaac.Spawn(5, 350, Trinkets.GREEDSHEART, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
-		Isaac.Spawn(5, 100, Collectibles.ADAMSRIB, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		Isaac.Spawn(5, 350, Trinkets.REDMAP, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
-		Isaac.Spawn(5, 100, Collectibles.CEREMDAGGER, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 350, Trinkets.GREEDSHEART, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		Isaac.Spawn(5, 350, Trinkets.ANGELSCROWN, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		--]]
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
@@ -327,6 +328,15 @@ function rplus:OnNewLevel()
 	end
 	
 	if CustomData then CustomData.Cards.JACK = nil end
+	
+	if player:HasTrinket(Trinkets.REDMAP) then
+		local USR = level:GetRoomByIdx(level:QueryRoomTypeIndex(RoomType.ROOM_ULTRASECRET, true, RNG(), true))
+		
+		if USR.Data and USR.Data.Type == RoomType.ROOM_ULTRASECRET and USR.DisplayFlags & 1 << 2 == 0 then
+			USR.DisplayFlags = USR.DisplayFlags | 1 << 2
+			level:UpdateVisibility()
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 
@@ -334,6 +344,7 @@ rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 						--------------------
 function rplus:OnNewRoom()
 	local player = Isaac.GetPlayer(0)
+	local level = game:GetLevel()
 	local room = game:GetRoom()
 
 	if player:HasCollectible(Collectibles.BLACKDOLL) and room:IsFirstVisit() and Isaac.CountEnemies() > 1 then
@@ -361,6 +372,21 @@ function rplus:OnNewRoom()
 			end
 		end
 	end
+	
+	if player:HasTrinket(Trinkets.ANGELSCROWN) and room:GetType() == RoomType.ROOM_TREASURE and room:IsFirstVisit() then
+		for i = 1, room:GetGridSize() do
+			if room:GetGridEntity(i) ~= nil and room:GetGridEntity(i):GetType() ~= GridEntityType.GRID_DOOR then
+				room:RemoveGridEntity(i, 0, false)
+			end
+		end
+		Isaac.GridSpawn(GridEntityType.GRID_STATUE, 1, Vector(320,200), false)
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity.Type == 5 then entity:Remove() end
+		end
+		
+		local AngelItem = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), Vector(320,280), Vector.Zero, nil):ToPickup()
+		AngelItem.Price = 15
+	end 
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
 
@@ -553,17 +579,6 @@ function rplus:OnFrame()
 		end
 	end
 	
-	--[[for _, entity in pairs(Isaac.GetRoomEntities()) do --sprite Arrangement for Pickups
-		local EntitySprite = entity:GetSprite()
-		if entity.Type == 5 and entity.Variant == PickUps.BITTENPENNY then --bitten penny
-			if EntitySprite:IsPlaying("Collect") and EntitySprite:GetFrame() == 6 then
-				entity:Remove()
-			elseif EntitySprite:IsEventTriggered("DropSound") then
-				sfx:Play(SoundEffect.SOUND_PENNYDROP)
-			end
-		end
-	end --]]
-	
 	if player:HasCollectible(Collectibles.BIRDOFHOPE) then
 		if sprite:IsPlaying("Death") and CustomData.Items.BIRDOFHOPE.BirdCaught then
 			CustomData.Items.BIRDOFHOPE.BirdCaught = false
@@ -643,6 +658,32 @@ function rplus:PostPlayerUpdate(Player)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
 
+						-- POST RENDERING --
+						--------------------
+function rplus:OnGameRender()
+	local player = Isaac.GetPlayer(0)
+	local level = game:GetLevel()
+	local room = game:GetRoom()
+	
+	if player:HasTrinket(Trinkets.GREEDSHEART) and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 10)then
+		CoinHeartSprite = Sprite()
+		
+		CoinHeartSprite:Load("gfx/ui/ui_coinhearts.anm2", true)
+		CoinHeartSprite:SetFrame(CustomData.Trinkets.GREEDSHEART, 0)
+		CoinHeartSprite:Render(Vector(134, 18), Vector.Zero, Vector.Zero)
+	end
+	
+	--[[ I made some experiments with changing the backdrop, they didn't... go well
+	if player:HasTrinket(Trinkets.ANGELSCROWN) and room:GetType() == RoomType.ROOM_TREASURE then
+		ATRSprite = Sprite()
+		
+		ATRSprite:Load("gfx/backdrop/angel_treasure_room_backdrops.anm2", true)
+		ATRSprite:SetFrame("Floor", 0)
+		ATRSprite:Render(Vector.Zero, Vector.Zero, Vector.Zero)
+	end
+	--]]
+end
+rplus:AddCallback(ModCallbacks.MC_POST_RENDER, rplus.OnGameRender)
 
 						-- WHEN NPC DIES --
 						-------------------
@@ -681,18 +722,12 @@ rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 function rplus:OnPickupInit(Pickup)
 	local player = Isaac.GetPlayer(0)
 	
-	-- let's make scarlet chests appear normally
 	if Pickup.Variant > 49 and Pickup.Variant < 61 and math.random(100) <= SCARLETCHEST_CHANCE then
 		Pickup:Morph(5, PickUps.SCARLETCHEST, 0, 0, true, true, false)
 	end
 	if Pickup.Variant == PickUps.SCARLETCHEST and Pickup.SubType == 1 and type(Pickup:GetData()["IsRoom"]) == type(nil) then
 		Pickup:Remove()
 	end
-
-	--[[if Pickup.Variant == PickupVariant.PICKUP_COIN and Pickup.SubType == 1 and 
-	(math.random(100) <= BITTENPENNY_CHANCE or (player:HasTrinket(Trinkets.CHEWPENNY) and math.random(10) <= HasBox(BITTENPENNY_CHANCE))) then
-		Pickup:Morph(5, PickUps.BITTENPENNY, 0, true, true, false)
-	end --]]
 	
 	if player:HasTrinket(Trinkets.BASEMENTKEY) and Pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST and math.random(100) <= HasBox(BASEMENTKEY_CHANCE) then
 		Pickup:Morph(5, PickupVariant.PICKUP_OLDCHEST, 0, true, true, false)
@@ -706,17 +741,22 @@ function rplus:OnPickupInit(Pickup)
 		end
 		Pickup:Morph(5, 20, CoinSubTypesByVal[CurType + 1], true, true, false)
 	end
+	
+	if player:HasTrinket(Trinkets.REDMAP) and Pickup.Variant == 300 and math.random(100) <= REDKEY_TURN_CHANCE then
+		Pickup:Morph(5, 300, Card.CARD_CRACKED_KEY, true, true, false)
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, rplus.OnPickupInit)
 
 						-- ON GETTING A CARD --
 						-----------------------
 function rplus:OnCardInit(_, _, PlayingCards, Runes, OnlyRunes)
-	if PlayingCards or Runes then
+	if (PlayingCards or Runes) and not OnlyRunes then
 		if math.random(100) <= CARDRUNE_REPLACE_CHANCE then
 			GetRandomCustomCard()
 		end
 	end
+	if OnlyRunes and math.random(100) <= CARDRUNE_REPLACE_CHANCE then return PocketItems[REDRUNE] end
 end
 rplus:AddCallback(ModCallbacks.MC_GET_CARD, rplus.OnCardInit)
 
@@ -886,7 +926,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		Pickup.SubType = 1
 		Pickup:GetSprite():Play("Open")
 		Pickup:GetData()["IsRoom"] = true
-		sfx:Play(SoundEffect.SOUND_CHEST_OPEN, 1, 1, false, 1, 0)
+		sfx:Play(SoundEffect.SOUND_CHEST_OPEN, 1, 2, false, 1, 0)
 		player:TakeDamage(1, DamageFlag.DAMAGE_RED_HEARTS | DamageFlag.DAMAGE_NO_PENALTIES, EntityRef(Pickup), 30)
 		local DieRoll = math.random(100)
 		
@@ -917,44 +957,11 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		end
 	end
 	
-	--[[ bitten penny, on ice
-	if Collider.Type == 1 and Pickup.Variant == PickUps.BITTENPENNY and Pickup:GetData().Picked == nil then
-		Pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE --doesn't work rn as intended :(
-		Pickup.Velocity = Vector.Zero
-		DieRoll = math.random(100)
-		Pickup:GetData().Picked = true
-		local Sound = 0
-		if player:HasTrinket(Trinkets.CHEWPENNY) then	-- 40%, 30%, 15%, 15% with the trinket
-			if DieRoll < 40 then
-				player:AnimateSad()
-			elseif DieRoll < 70 then
-				player:AddCoins(1)
-				Sound = SoundEffect.SOUND_PENNYPICKUP
-			elseif DieRoll < 85 then
-				player:AddCoins(5)
-				Sound = SoundEffect.SOUND_NICKELPICKUP
-			else
-				player:AddCoins(10)
-				Sound = SoundEffect.SOUND_DIMEPICKUP
-			end
-		else											-- 10%, 55%, 30%, 5% without the trinket
-			if DieRoll < 10 then
-				player:AnimateSad()
-			elseif DieRoll < 65 then
-				player:AddCoins(1)
-				Sound = SoundEffect.SOUND_PENNYPICKUP
-			elseif DieRoll < 95 then
-				player:AddCoins(5)
-				Sound = SoundEffect.SOUND_NICKELPICKUP
-			else
-				player:AddCoins(10)
-				Sound = SoundEffect.SOUND_DIMEPICKUP
-			end
-		end
-		
-		sfx:Play(Sound, 1, 1, false, 1, 0)
-		Pickup:GetSprite():Play("Collect")
-	end --]]
+	if player:HasTrinket(Trinkets.GREEDSHEART) and CustomData.Trinkets.GREEDSHEART == "CoinHeartEmpty" and Pickup.Variant == 20 and Pickup.SubType ~= 6 
+	and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 10) then
+		player:AddCoins(-1)
+		CustomData.Trinkets.GREEDSHEART = "CoinHeartFull"
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.PickupCollision)
 
@@ -1024,7 +1031,6 @@ function rplus:UpdateStats(player, Flag)
 	
 	if Flag == CacheFlag.CACHE_FAMILIARS then
 		player:CheckFamiliar(Familiars.BAGOTRASH, player:GetCollectibleNum(Collectibles.BAGOTRASH), player:GetCollectibleRNG(Collectibles.BAGOTRASH))
-		
 		player:CheckFamiliar(Familiars.ZENBABY, player:GetCollectibleNum(Collectibles.ZENBABY), player:GetCollectibleRNG(Collectibles.ZENBABY))
 	end
 	
@@ -1081,6 +1087,14 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 				EntitiesGroupA[i]:TakeDamage(player.Damage / 2, 0, EntityRef(Entity), 0)
 			end 
 		end
+	end
+	
+	if player:HasTrinket(Trinkets.GREEDSHEART) and CustomData.Trinkets.GREEDSHEART == "CoinHeartFull" and Entity.Type == 1 
+	and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) then
+		sfx:Play(SoundEffect.SOUND_ULTRA_GREED_COIN_DESTROY, 1, 2, false, 1, 0)
+		CustomData.Trinkets.GREEDSHEART = "CoinHeartEmpty"
+		Entity:TakeDamage(1, DamageFlag.DAMAGE_FAKE, EntityRef(Entity), 24)
+		return false
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
@@ -1249,7 +1263,7 @@ rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0
 function rplus:PickupAwardSpawn(_, Pos)
 	local player = Isaac.GetPlayer(0)
 	
-	if math.random(100) < JACKOF_CHANCE and CustomData.Cards.JACK and game:GetRoom():GetType() ~= RoomType.ROOM_BOSS then
+	if CustomData and math.random(100) < JACKOF_CHANCE and CustomData.Cards.JACK and game:GetRoom():GetType() ~= RoomType.ROOM_BOSS then
 		local Variant = nil
 		local SubType = nil
 		
@@ -1333,18 +1347,18 @@ rplus:AddCallback(ModCallbacks.MC_USE_PILL, rplus.UsePill)
 if EID then
 	EID:addCollectible(Collectibles.ORDLIFE, "On first use, Isaac enters a state where no enemies or pickups spawn and he can freely walk between rooms #On second use, the effect is deactivated, time is reverted to the previous room and the item discharges #{{Warning}} Travelling to the next floor will automatically deactivate the effect and discharge the item")	
 	EID:addCollectible(Collectibles.MISSINGMEMORY, "{{BossRoom}} Allows to continue run past Mother, spawning a trapdoor or a beam of light if Isaac has Negative or Polaroid respectively")
-	EID:addCollectible(Collectibles.COOKIECUTTER, "On use, gives you one {{Heart}} heart container and one broken heart #{{Warning}} Having 12 broken hearts kills you!")
+	EID:addCollectible(Collectibles.COOKIECUTTER, "Gives you one {{Heart}} heart container and one broken heart #{{Warning}} Having 12 broken hearts kills you!")
 	EID:addCollectible(Collectibles.SINNERSHEART, "{{ArrowUp}} Damage +2 then x1.5 #{{ArrowDown}} Shot speed down #Homing tears")
 	EID:addCollectible(Collectibles.RUBIKSCUBE, "After each use, has a 5% (100% on 20-th use) chance to be 'solved', removed from the player and spawn a Magic Cube on the ground")
-	EID:addCollectible(Collectibles.MAGICCUBE, "{{DiceRoom}} Invokes effect of D6 on use #Rerolled items can be drawn from any item pool")
+	EID:addCollectible(Collectibles.MAGICCUBE, "{{DiceRoom}} Rerolls item pedestals #Rerolled items can be drawn from any item pool")
 	EID:addCollectible(Collectibles.MAGICPEN, "Tears leave {{ColorRainbow}}rainbow{{CR}} creep underneath them #Random permanent status effects is applied to enemies walking over that creep")
 	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers, gain +0.3 DMG for each consumed familiar and gain invincibility shield for 5 seconds #{{Warning}} Works only once!")
 	EID:addCollectible(Collectibles.TEMPERTANTRUM, "Upon taking damage, there is a 25% chance to enter a Berserk state #While in this state, every enemy damaged has a 10% chance to be erased for the rest of the run")
-	EID:addCollectible(Collectibles.BAGOTRASH, "Spawns a familiar that creates blue flies upon clearing a room #It also blocks enemy projectiles, and after blocking it the bag has a 2% chance to be destroyed and drop Breakfast #The more floors it is not destroyed, the more flies it spawns")
-	EID:addCollectible(Collectibles.ZENBABY, "Spawns a familiar that shoots Godhead tears at a fast firerate")
+	EID:addCollectible(Collectibles.BAGOTRASH, "A familiar that creates blue flies upon clearing a room #Blocks enemy projectiles, and after blocking it has a 2% chance to be destroyed and drop Breakfast #The more floors it is not destroyed, the more flies it spawns")
+	EID:addCollectible(Collectibles.ZENBABY, "A familiar that shoots Godhead tears at a fast firerate")
 	EID:addCollectible(Collectibles.CHERRYFRIENDS, "Killing an enemy has a 20% chance to drop cherry familiar on the ground #Those cherries emit a charming fart when an enemy walks over them, and drop half a heart when a room is cleared")
 	EID:addCollectible(Collectibles.BLACKDOLL, "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal half of that damage to another enemy in that pair")
-	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into a ghost, gain invincibility shield and a bird flies out of a room center in a random direction. Catching the bird in 5 seconds will save you and give you an extra life, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it less possible to catch her #{{Warning}} Only works once per room!")
+	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into a ghost, gain invincibility shield and a bird flies out of a room center in a random direction. Catching the bird in 5 seconds will revive you, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it harder to catch her #{{Warning}} Only works once per room!")
 	EID:addCollectible(Collectibles.ENRAGEDSOUL, "Double tap shooting button to launch a ghost familiar in the direction you are firing #The ghost will latch onto the first enemy it collides with, dealing damage over time for 10 seconds or until that enemy is killed #The ghost can latch onto bosses aswell #{{Warning}} Has a 10 seconds cooldown")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
@@ -1352,21 +1366,24 @@ if EID then
 	EID:addTrinket(Trinkets.JUDASKISS, "Enemies touching you become targeted by other enemies (effect similar to Rotten Tomato)")
 	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a 12% chance to not subtract it from your inventory count")
 	EID:addTrinket(Trinkets.BITTENPENNY, "Upon spawning, every coin has a 20% chance to be upgraded to a higher value: #penny -> doublepack pennies -> sticky nickel -> nickel -> golden penny -> dime -> lucky penny")
+	EID:addTrinket(Trinkets.GREEDSHEART, "Gives you one empty coin heart #It is depleted before any of your normal hearts and can only be refilled by directly picking up money")
+	EID:addTrinket(Trinkets.REDMAP, "Displays the location of Ultra Secret Room on all subsequent floors #Every card has a 25% chance to turn into Cracked Key")
+	EID:addTrinket(Trinkets.ANGELSCROWN, "All new treasure rooms will have an angel item for sale instead of a normal item #Angels spawned from statues will not drop Key Pieces!")
 	
-	EID:addCard(PocketItems.SDDSHARD, "On use, invokes the effect of Spindown Dice")
-	EID:addCard(PocketItems.REDRUNE, "On use, damage all enemies in a room, turn any item pedestals into red locusts (similar to Abyss item), and turns pickups into random locusts with a 50% chance")
-	EID:addCard(PocketItems.NEEDLEANDTHREAD, "On use, removes one broken heart and grants one {{Heart}} heart container")
-	EID:addCard(PocketItems.QUEENOFDIAMONDS, "On use, spawns 1-12 random {{Coin}} coins (those can be nickels or dimes as well)")
-	EID:addCard(PocketItems.KINGOFSPADES, "On use, lose all your keys and spawn a number of pickups proportional to the amount of keys lost #At least 12 {{Key}} keys is needed for a trinket, and at least 28 for an item #If Isaac has {{GoldenKey}} Golden key, it is removed too and significantly increases total value")
-	EID:addCard(PocketItems.BAGTISSUE, "On use, all pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight; the item of such quality is then spawned #The most valuable pickups are the rarest ones, e.g. {{EthernalHeart}} Eternal hearts or {{Battery}} Mega batteries #{{Warning}} If used in a room with less then 8 pickups, no item will spawn!")
-	EID:addCard(PocketItems.RJOKER, "On use, teleports Isaac to a {{SuperSecretRoom}} Black Market")
-	EID:addCard(PocketItems.REVERSECARD, "On use, invokes the effect of Glowing Hourglass")
-	EID:addCard(PocketItems.LOADEDDICE, "{{ArrowUp}} On use, grants 10 Luck for the current room")
-	EID:addCard(PocketItems.BEDSIDEQUEEN, "On use, spawns 1-12 random {{Key}} keys #There is a small chance to spawn a charged key")
-	EID:addCard(PocketItems.JACKOFCLUBS, "Upon use, bombs will drop more often from clearing rooms for current floor, and the average quality of bombs is increased")
-	EID:addCard(PocketItems.JACKOFDIAMONDS, "Upon use, coins will drop more often from clearing rooms for current floor, and the average quality of coins is increased")
-	EID:addCard(PocketItems.JACKOFSPADES, "Upon use, keys will drop more often from clearing rooms for current floor, and the average quality of keys is increased")
-	EID:addCard(PocketItems.JACKOFHEARTS, "Upon use, hearts will drop more often from clearing rooms for current floor, and the average quality of hearts is increased")
+	EID:addCard(PocketItems.SDDSHARD, "Invokes the effect of Spindown Dice")
+	EID:addCard(PocketItems.REDRUNE, "Damages all enemies in a room, turns any item pedestals into red locusts and turns pickups into random locusts with a 50% chance")
+	EID:addCard(PocketItems.NEEDLEANDTHREAD, "Removes one broken heart and grants one {{Heart}} heart container")
+	EID:addCard(PocketItems.QUEENOFDIAMONDS, "Spawns 1-12 random {{Coin}} coins (those can be nickels or dimes as well)")
+	EID:addCard(PocketItems.KINGOFSPADES, "Lose all your keys and spawn a number of pickups proportional to the amount of keys lost #At least 12 {{Key}} keys is needed for a trinket, and at least 28 for an item #If Isaac has {{GoldenKey}} Golden key, it is removed too and significantly increases total value")
+	EID:addCard(PocketItems.BAGTISSUE, "All pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight; the item of such quality is then spawned #The most valuable pickups are the rarest ones, e.g. {{EthernalHeart}} Eternal hearts or {{Battery}} Mega batteries #{{Warning}} If used in a room with less then 8 pickups, no item will spawn!")
+	EID:addCard(PocketItems.RJOKER, "Teleports Isaac to a {{SuperSecretRoom}} Black Market")
+	EID:addCard(PocketItems.REVERSECARD, "Invokes the effect of Glowing Hourglass")
+	EID:addCard(PocketItems.LOADEDDICE, "{{ArrowUp}}  grants 10 Luck for the current room")
+	EID:addCard(PocketItems.BEDSIDEQUEEN, "Spawns 1-12 random {{Key}} keys #There is a small chance to spawn a charged key")
+	EID:addCard(PocketItems.JACKOFCLUBS, "Bombs will drop more often from clearing rooms for current floor, and the average quality of bombs is increased")
+	EID:addCard(PocketItems.JACKOFDIAMONDS, "Coins will drop more often from clearing rooms for current floor, and the average quality of coins is increased")
+	EID:addCard(PocketItems.JACKOFSPADES, "Keys will drop more often from clearing rooms for current floor, and the average quality of keys is increased")
+	EID:addCard(PocketItems.JACKOFHEARTS, "Hearts will drop more often from clearing rooms for current floor, and the average quality of hearts is increased")
 
 	EID:addPill(Pills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at half-a-heart, doesn't affect soul/black hearts")
 end
@@ -1386,12 +1403,6 @@ if MinimapAPI then
 	-- scarlet chests
 	MinimapAPI:AddIcon("scarletchest", Icons, "scarletchest", 0)
 	MinimapAPI:AddPickup("scarletchest", "scarletchest", 5, 392, -1, MinimapAPI.PickupNotCollected, "chests", 7450)
-
-	--[[
-	-- bitten pennies
-	MinimapAPI:AddIcon("bittenpenny", Icons, "bittenpenny", 0)
-	MinimapAPI:AddPickup("bittenpenny", "bittenpenny", 5, 395, -1, MinimapAPI.PickupNotCollected, "coins", 3050)
-	--]]
 end
 
 
