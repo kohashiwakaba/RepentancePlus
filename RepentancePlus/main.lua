@@ -212,14 +212,6 @@ DIRECTION_VECTOR = {
 								-- LOCAL FUNCTIONS --
 								---------------------
 
--- If Isaac has Mom's Box, trinkets' effects are doubled.
-local function HasBox(TrinketChance)
-	if Isaac.GetPlayer(0):HasCollectible(CollectibleType.COLLECTIBLE_MOMS_BOX) then
-		TrinketChance = TrinketChance * 2
-	end
-	return TrinketChance
-end
-
 -- Helper function to return a random custom Card to take place of the normal one.
 local function GetRandomCustomCard()
 	local keys = {}
@@ -229,10 +221,6 @@ local function GetRandomCustomCard()
 
 	local random_key = keys[math.random(1, #keys)]
 	return PocketItems[random_key]
-end
-
-local function GetRandomElement(List)
-	if List then return List[math.random(#List)] end
 end
 
 -- Is this collectible unlocked?
@@ -261,6 +249,17 @@ local function IsCollectibleUnlocked(collectibleType)
 	return isUnlocked	
 end
 
+-- Handle displaying error message advising players to restart
+local function DisplayErrorMessage()
+	local ErrorMessage = "! WARNING ! Custom Mod Data of Repentance Plus wasn't#loaded, the mod could work incorrectly. Our custom data#is loaded when starting a new run. Please restart#or turn off the mod."
+	if not CustomData then
+		YOffset = 0
+		for line in string.gmatch(ErrorMessage, '([^#]+)') do 
+			Isaac.RenderText(line, 50, 150 + YOffset, 1, 0.2, 0.2, 1) 
+			YOffset = YOffset + 12
+		end
+	end
+end
 								----------------------
 								-- GLOBAL FUNCTIONS --
 								----------------------
@@ -365,11 +364,9 @@ function rplus:OnNewRoom()
 		end
 	end
 	
-	if player:HasCollectible(Collectibles.ENRAGEDSOUL) then
-		for _, entity in pairs(Isaac.GetRoomEntities()) do
-			if entity.Type == 3 and entity.Variant == Familiars.SOUL then
-				entity:Remove()
-			end
+	for _, entity in pairs(Isaac.GetRoomEntities()) do
+		if entity.Type == 3 and entity.Variant == Familiars.SOUL then
+			entity:Remove()
 		end
 	end
 	
@@ -661,6 +658,7 @@ rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
 						-- POST RENDERING --
 						--------------------
 function rplus:OnGameRender()
+	DisplayErrorMessage()
 	local player = Isaac.GetPlayer(0)
 	local level = game:GetLevel()
 	local room = game:GetRoom()
@@ -672,16 +670,6 @@ function rplus:OnGameRender()
 		CoinHeartSprite:SetFrame(CustomData.Trinkets.GREEDSHEART, 0)
 		CoinHeartSprite:Render(Vector(134, 18), Vector.Zero, Vector.Zero)
 	end
-	
-	--[[ I made some experiments with changing the backdrop, they didn't... go well
-	if player:HasTrinket(Trinkets.ANGELSCROWN) and room:GetType() == RoomType.ROOM_TREASURE then
-		ATRSprite = Sprite()
-		
-		ATRSprite:Load("gfx/backdrop/angel_treasure_room_backdrops.anm2", true)
-		ATRSprite:SetFrame("Floor", 0)
-		ATRSprite:Render(Vector.Zero, Vector.Zero, Vector.Zero)
-	end
-	--]]
 end
 rplus:AddCallback(ModCallbacks.MC_POST_RENDER, rplus.OnGameRender)
 
@@ -706,7 +694,7 @@ function rplus:OnNPCDeath(NPC)
 		Isaac.Spawn(5, 100, Collectibles.MISSINGMEMORY, Vector(320,280), Vector.Zero, nil)
 	end
 	
-	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HasBox(HEARTKEY_CHANCE) then
+	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HEARTKEY_CHANCE * player:GetTrinketMultiplier(Trinkets.KEYTOTHEHEART) then
 		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.SCARLETCHEST, 0, NPC.Position, NPC.Velocity, nil)
 	end
 	
@@ -729,21 +717,19 @@ function rplus:OnPickupInit(Pickup)
 		Pickup:Remove()
 	end
 	
-	if player:HasTrinket(Trinkets.BASEMENTKEY) and Pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST and math.random(100) <= HasBox(BASEMENTKEY_CHANCE) then
+	if player:HasTrinket(Trinkets.BASEMENTKEY) and Pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST 
+	and math.random(100) <= BASEMENTKEY_CHANCE * player:GetTrinketMultiplier(Trinkets.BASEMENTKEY) then
 		Pickup:Morph(5, PickupVariant.PICKUP_OLDCHEST, 0, true, true, false)
 	end
 	
 	local CoinSubTypesByVal = {1, 4, 6, 2, 7, 3, 5} -- penny, doublepack, sticky nickel, nickel, golden penny, dime, lucky penny
-	if Pickup.Type == 5 and Pickup.Variant == 20 and Pickup.SubType ~= 5 and player:HasTrinket(Trinkets.BITTENPENNY) and math.random(100) <= BITTENPENNY_UPGRADECHANCE then
+	if Pickup.Type == 5 and Pickup.Variant == 20 and Pickup.SubType ~= 5 and player:HasTrinket(Trinkets.BITTENPENNY) 
+	and math.random(100) <= BITTENPENNY_UPGRADECHANCE * player:GetTrinketMultiplier(Trinkets.BITTENPENNY) then
 		player:AnimateHappy()
 		for i = 1, #CoinSubTypesByVal do
 			if CoinSubTypesByVal[i] == Pickup.SubType then CurType = i break end
 		end
 		Pickup:Morph(5, 20, CoinSubTypesByVal[CurType + 1], true, true, false)
-	end
-	
-	if player:HasTrinket(Trinkets.REDMAP) and Pickup.Variant == 300 and math.random(100) <= REDKEY_TURN_CHANCE then
-		Pickup:Morph(5, 300, Card.CARD_CRACKED_KEY, true, true, false)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, rplus.OnPickupInit)
@@ -932,7 +918,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		
 		if DieRoll < 15 then
 			repeat
-				Item = GetRandomElement(ScarletChestItems)
+				Item = ScarletChestItems[math.random(#ScarletChestItems)]
 			until IsCollectibleUnlocked(Item)
 			Isaac.Spawn(5, 100, Item, Pickup.Position, Vector(0, 0), Pickup)
 			Pickup:Remove()
@@ -945,7 +931,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 				
 				if rdm:RandomInt(100) < 66 then
 					variant = 10
-					subtype = GetRandomElement(ScarletChestHearts)
+					subtype = ScarletChestHearts[math.random(#ScarletChestHearts)]
 				else
 					variant = 70
 					subtype = 0
@@ -985,6 +971,7 @@ function rplus:OnTearUpdate(Tear)
 	if player:HasCollectible(Collectibles.MAGICPEN) and EntityRef(Tear).Entity.SpawnerType == EntityType.ENTITY_PLAYER then
 		local CreepTrail = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL, 4, Tear.Position, Vector.Zero, nil):ToEffect()
 		CreepTrail.Scale = 0.4
+		CreepTrail:Update()
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
@@ -1150,6 +1137,7 @@ function rplus:ZenBabyUpdate(Familiar)
 		if Familiar.FireCooldown <= 0 then
 			local Tear = Familiar:FireProjectile(TearVector):ToTear()
 			Tear.TearFlags = TearFlags.TEAR_GLOW | TearFlags.TEAR_HOMING
+			Tear:Update()
 
 			if player:HasTrinket(Isaac.GetTrinketIdByName("Forgotten Lullaby")) then
 				Familiar.FireCooldown = 8
@@ -1226,7 +1214,7 @@ rplus:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, rplus.ProjectileColl
 						-- PLAYER COLLISION --
 						----------------------
 function rplus:PlayerCollision(Player, Collider, _)
-	if Player:HasTrinket(Trinkets.SLEIGHTOFHAND) and math.random(100) <= SLEIGHTOFHAND_CHANCE then
+	if Player:HasTrinket(Trinkets.SLEIGHTOFHAND) and math.random(100) <= SLEIGHTOFHAND_CHANCE * Player:GetTrinketMultiplier(Trinkets.SLEIGHTOFHAND) then
 		-- cuz slots don't have their own collision callback, thanks api lmao
 		if Collider.Type == 6 then
 			local S = Collider:GetSprite()
@@ -1262,8 +1250,9 @@ rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0
 						--------------------------------
 function rplus:PickupAwardSpawn(_, Pos)
 	local player = Isaac.GetPlayer(0)
+	local room = game:GetRoom()
 	
-	if CustomData and math.random(100) < JACKOF_CHANCE and CustomData.Cards.JACK and game:GetRoom():GetType() ~= RoomType.ROOM_BOSS then
+	if CustomData and math.random(100) < JACKOF_CHANCE and CustomData.Cards.JACK and room:GetType() ~= RoomType.ROOM_BOSS then
 		local Variant = nil
 		local SubType = nil
 		
@@ -1320,11 +1309,16 @@ function rplus:PickupAwardSpawn(_, Pos)
 		Isaac.Spawn(5, Variant, SubType, game:GetRoom():FindFreePickupSpawnPosition(Pos, 0, true, false), Vector.Zero, nil)
 		return true
 	end
+	
+	if player:HasTrinket(Trinkets.REDMAP) and math.random(100) <= REDKEY_TURN_CHANCE and room:GetType() ~= RoomType.ROOM_BOSS then
+		Isaac.Spawn(5, 300, Card.CARD_CRACKED_KEY, game:GetRoom():FindFreePickupSpawnPosition(Pos, 0, true, false), Vector.Zero, nil)
+		return true
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
 
-						-- ON USING PIILL --
-						--------------------
+						-- ON USING PILL --
+						-------------------
 function rplus:UsePill(Pill, _)
 	local player = Isaac.GetPlayer(0)
 	
@@ -1367,7 +1361,7 @@ if EID then
 	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a 12% chance to not subtract it from your inventory count")
 	EID:addTrinket(Trinkets.BITTENPENNY, "Upon spawning, every coin has a 20% chance to be upgraded to a higher value: #penny -> doublepack pennies -> sticky nickel -> nickel -> golden penny -> dime -> lucky penny")
 	EID:addTrinket(Trinkets.GREEDSHEART, "Gives you one empty coin heart #It is depleted before any of your normal hearts and can only be refilled by directly picking up money")
-	EID:addTrinket(Trinkets.REDMAP, "Displays the location of Ultra Secret Room on all subsequent floors #Every card has a 25% chance to turn into Cracked Key")
+	EID:addTrinket(Trinkets.REDMAP, "Displays the location of Ultra Secret Room on all subsequent floors #Cracked Key drops on a room clear with 25% chance")
 	EID:addTrinket(Trinkets.ANGELSCROWN, "All new treasure rooms will have an angel item for sale instead of a normal item #Angels spawned from statues will not drop Key Pieces!")
 	
 	EID:addCard(PocketItems.SDDSHARD, "Invokes the effect of Spindown Dice")
