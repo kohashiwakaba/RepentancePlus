@@ -45,7 +45,7 @@ Familiars = {
 
 Collectibles = {
 	ORDLIFE = Isaac.GetItemIdByName("Ordinary Life"),
-	MISSINGMEMORY = Isaac.GetItemIdByName("The Missing Memory"),
+	--MISSINGMEMORY = Isaac.GetItemIdByName("The Missing Memory"),
 	COOKIECUTTER = Isaac.GetItemIdByName("Cookie Cutter"),
 	RUBIKSCUBE = Isaac.GetItemIdByName("Rubik's Cube"),
 	MAGICCUBE = Isaac.GetItemIdByName("Magic Cube"),
@@ -272,7 +272,6 @@ function rplus:OnGameStart(Continued)
 			Items = {
 				BIRDOFHOPE = {NumRevivals = 0, BirdCaught = true},
 				ORDLIFE = nil,
-				MISSINGMEMORY = nil,
 				RUBIKSCUBE = {Counter = 0},
 				MARKCAIN = nil,
 				BAGOTRASH = {Levels = 0},
@@ -477,15 +476,6 @@ function rplus:OnFrame()
 		end
 	end
 	
-	if player:HasCollectible(Collectibles.MISSINGMEMORY) then
-		if CustomData.Items.MISSINGMEMORY == "dark" or CustomData.Items.MISSINGMEMORY == "light" then
-			if player:GetSprite():IsPlaying("Trapdoor") or player:GetSprite():IsPlaying("LightTravel") then
-				level:SetStage(LevelStage.STAGE4_2, 0)
-				CustomData.Items.MISSINGMEMORY = nil
-			end
-		end
-	end
-	
 	if CustomData and CustomData.Cards.REVERSECARD == "used" and sprite:IsFinished("PickupWalkDown") then
 		secondary_Card = player:GetCard(1)
 		player:SetCard(1, 0)
@@ -677,22 +667,6 @@ rplus:AddCallback(ModCallbacks.MC_POST_RENDER, rplus.OnGameRender)
 						-------------------
 function rplus:OnNPCDeath(NPC)
 	local player = Isaac.GetPlayer(0)
-	
-	if player:HasCollectible(Collectibles.MISSINGMEMORY) then
-		if NPC.Type == EntityType.ENTITY_MOTHER and NPC:GetSprite():IsFinished("Death") then
-			if player:HasCollectible(328) then
-				Isaac.GridSpawn(GridEntityType.GRID_TRAPDOOR, 0, Vector(280,280), false)
-				CustomData.Items.MISSINGMEMORY = "dark"
-			end
-			if player:HasCollectible(327) then
-				Isaac.Spawn(1000, EffectVariant.HEAVEN_LIGHT_DOOR, 0, Vector(360,280), Vector.Zero, nil)
-				CustomData.Items.MISSINGMEMORY = "light"
-			end
-		end
-	end
-	if NPC.Type == EntityType.ENTITY_MOMS_HEART and NPC:GetSprite():IsFinished("Death") and game:GetLevel():GetStageType() >= 4 then
-		Isaac.Spawn(5, 100, Collectibles.MISSINGMEMORY, Vector(320,280), Vector.Zero, nil)
-	end
 	
 	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HEARTKEY_CHANCE * player:GetTrinketMultiplier(Trinkets.KEYTOTHEHEART) then
 		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.SCARLETCHEST, 0, NPC.Position, NPC.Velocity, nil)
@@ -1339,8 +1313,8 @@ rplus:AddCallback(ModCallbacks.MC_USE_PILL, rplus.UsePill)
 								-----------------------------------------
 								
 if EID then
+	--EID:addCollectible(Collectibles.MISSINGMEMORY, "{{BossRoom}} Allows to continue run past Mother, spawning a trapdoor or a beam of light if Isaac has Negative or Polaroid respectively")
 	EID:addCollectible(Collectibles.ORDLIFE, "On first use, Isaac enters a state where no enemies or pickups spawn and he can freely walk between rooms #On second use, the effect is deactivated, time is reverted to the previous room and the item discharges #{{Warning}} Travelling to the next floor will automatically deactivate the effect and discharge the item")	
-	EID:addCollectible(Collectibles.MISSINGMEMORY, "{{BossRoom}} Allows to continue run past Mother, spawning a trapdoor or a beam of light if Isaac has Negative or Polaroid respectively")
 	EID:addCollectible(Collectibles.COOKIECUTTER, "Gives you one {{Heart}} heart container and one broken heart #{{Warning}} Having 12 broken hearts kills you!")
 	EID:addCollectible(Collectibles.SINNERSHEART, "{{ArrowUp}} Damage +2 then x1.5 #{{ArrowDown}} Shot speed down #Homing tears")
 	EID:addCollectible(Collectibles.RUBIKSCUBE, "After each use, has a 5% (100% on 20-th use) chance to be 'solved', removed from the player and spawn a Magic Cube on the ground")

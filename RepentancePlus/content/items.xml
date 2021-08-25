@@ -1,7 +1,6 @@
 <items gfxroot="gfx/items/" version="1">
 	<!-- T.Isaac -->
 	<active name="Ordinary Life" description="What if it all's just a dream?" gfx="01_ordinarylife.png" quality="3" maxcharges="12" />
-	<passive name="The Missing Memory" description="Who is she?" gfx="02_themissingmemory.png" quality="2" />
 	<trinket name="Basement Key" description="Open your memories" gfx="t01_basementkey.png" />
 	<active name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="03_rubikscube.png" quality="0" maxcharges="2" />
 	<active name="Magic Cube" description="Did you set the world record?" gfx="04_magiccube.png" quality="4" maxcharges="4" />  
