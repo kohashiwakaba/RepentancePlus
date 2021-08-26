@@ -14,7 +14,7 @@ local game = Game()
 local rplus = RegisterMod("Repentance Plus", 1)
 local sfx = SFXManager()
 local music = MusicManager()
-local rdm = RNG()
+local modRNG = RNG()
 local CustomData
 
 local BASEMENTKEY_CHANCE = 5	-- chance to replace golden chest with the old chest
@@ -59,8 +59,10 @@ Collectibles = {
 	BLACKDOLL = Isaac.GetItemIdByName("Black Doll"),
 	BIRDOFHOPE = Isaac.GetItemIdByName("Bird of Hope"),
 	ENRAGEDSOUL = Isaac.GetItemIdByName("Enraged Soul"),
-	CEREMDAGGER = Isaac.GetItemIdByName("Ceremonial Dagger"),
-	ADAMSRIB = Isaac.GetItemIdByName("Adam's Rib")
+	CEREMDAGGER = Isaac.GetItemIdByName("Ceremonial Dagger"),	-- WIP
+	ADAMSRIB = Isaac.GetItemIdByName("Adam's Rib"),		-- WIP
+	CEILINGSTARS = Isaac.GetItemIdByName("Ceiling With Stars"),
+	QUASAR = Isaac.GetItemIdByName("Quasar")
 }
 
 Trinkets = {
@@ -249,6 +251,17 @@ local function IsCollectibleUnlocked(collectibleType)
 	return isUnlocked	
 end
 
+local function GetUnlockedVanillaCollectible(ExcludeStoryItems)
+	repeat
+		ID = math.random(729)
+	until Isaac.GetItemConfig():GetCollectible(ID) 	-- item exists
+	and ((ExcludeStoryItems and Isaac.GetItemConfig():GetCollectible(ID).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST)
+	or not ExcludeStoryItems)	 -- not story related if the flag is set
+	and IsCollectibleUnlocked(ID)	-- and is unlocked
+	
+	return ID
+end
+
 -- Handle displaying error message advising players to restart
 local function DisplayErrorMessage()
 	local ErrorMessage = "! WARNING ! Custom Mod Data of Repentance Plus wasn't#loaded, the mod could work incorrectly. Our custom data#is loaded when starting a new run. Please restart#or turn off the mod."
@@ -276,7 +289,8 @@ function rplus:OnGameStart(Continued)
 				MARKCAIN = nil,
 				BAGOTRASH = {Levels = 0},
 				TEMPERTANTRUM = {ErasedEnemies = {}},
-				ENRAGEDSOUL = {SoulLaunchCooldown = nil, AttachedEnemy = nil}
+				ENRAGEDSOUL = {SoulLaunchCooldown = nil, AttachedEnemy = nil},
+				CEILINGSTARS = {SleptInBed = false}
 			},
 			Cards = {
 				REVERSECARD = nil,
@@ -300,9 +314,8 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
-		Isaac.Spawn(5, 350, Trinkets.REDMAP, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
-		Isaac.Spawn(5, 350, Trinkets.GREEDSHEART, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
-		Isaac.Spawn(5, 350, Trinkets.ANGELSCROWN, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 100, Collectibles.CEILINGSTARS, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 100, Collectibles.QUASAR, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		--]]
 	end
 end
@@ -313,6 +326,11 @@ rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
 function rplus:OnNewLevel()
 	local player = Isaac.GetPlayer(0)
 	local level = game:GetLevel()
+	
+	if CustomData then 
+		CustomData.Cards.JACK = nil
+		CustomData.Items.CEILINGSTARS.SleptInBed = false
+	end
 	
 	if player:HasCollectible(Collectibles.ORDLIFE) and CustomData.Items.ORDLIFE == "used" then
 		level:RemoveCurses(LevelCurse.CURSE_OF_DARKNESS)
@@ -325,8 +343,6 @@ function rplus:OnNewLevel()
 		CustomData.Items.BAGOTRASH.Levels = CustomData.Items.BAGOTRASH.Levels + 1
 	end
 	
-	if CustomData then CustomData.Cards.JACK = nil end
-	
 	if player:HasTrinket(Trinkets.REDMAP) then
 		local USR = level:GetRoomByIdx(level:QueryRoomTypeIndex(RoomType.ROOM_ULTRASECRET, true, RNG(), true))
 		
@@ -334,6 +350,11 @@ function rplus:OnNewLevel()
 			USR.DisplayFlags = USR.DisplayFlags | 1 << 2
 			level:UpdateVisibility()
 		end
+	end
+	
+	if player:HasCollectible(Collectibles.CEILINGSTARS) then
+		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), player.Position, Vector.Zero, nil)
+		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), player.Position, Vector.Zero, nil)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
@@ -434,10 +455,21 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 	if ItemUsed == Collectibles.MAGICCUBE then
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Type == 5 and entity.Variant == 100 and entity.SubType > 0 then
-				repeat
-					ID = math.random(729)
-				until Isaac.GetItemConfig():GetCollectible(ID) and Isaac.GetItemConfig():GetCollectible(ID).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST
-				entity:ToPickup():Morph(5, 100, ID, true, false, true)
+				entity:ToPickup():Morph(5, 100, GetUnlockedVanillaCollectible(true), true, false, true)
+			end
+		end
+		return true
+	end
+	
+	if ItemUsed == Collectibles.QUASAR then
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity.Type == 5 and entity.Variant == 100 and entity.SubType > 0 then
+				for i = 1, 3 do
+					Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), player.Position, Vector.Zero, nil)
+					Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
+					entity:Remove()
+				end
+				sfx:Play(SoundEffect.SOUND_DEATH_CARD, 1, 2, false, 1, 0)
 			end
 		end
 		return true
@@ -587,6 +619,10 @@ function rplus:OnFrame()
 			-- so don't touch it if you don't think it through. like, for real.
 		end
 	end
+	
+	if player:HasCollectible(Collectibles.CEILINGSTARS) and false then
+		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), player.Position, Vector.Zero, nil)
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
@@ -648,7 +684,9 @@ rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
 						-- POST RENDERING --
 						--------------------
 function rplus:OnGameRender()
+
 	DisplayErrorMessage()
+	
 	local player = Isaac.GetPlayer(0)
 	local level = game:GetLevel()
 	local room = game:GetRoom()
@@ -732,7 +770,8 @@ function rplus:CardUsed(Card, player, _)
 	if Card == PocketItems.SDDSHARD then
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Variant == PickupVariant.PICKUP_COLLECTIBLE then
-				local id = entity.SubType - 1
+				id = entity.SubType
+				if id ~= 1 then repeat id = id - 1 until IsCollectibleUnlocked(id) end
 				entity:ToPickup():Morph(EntityType.ENTITY_PICKUP, 100, id, true, true, false)
 			end
 		end
@@ -1217,6 +1256,12 @@ function rplus:PlayerCollision(Player, Collider, _)
 			end
 		end
 	end
+	
+	if Player:HasCollectible(Collectibles.CEILINGSTARS) and Collider.Type == 5 and Collider.Variant == 380 and not CustomData.Items.CEILINGSTARS.SleptInBed then
+		CustomData.Items.CEILINGSTARS.SleptInBed = true
+		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), Player.Position, Vector.Zero, nil)
+		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), Player.Position, Vector.Zero, nil)
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0)
 
@@ -1328,11 +1373,13 @@ if EID then
 	EID:addCollectible(Collectibles.BLACKDOLL, "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal half of that damage to another enemy in that pair")
 	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into a ghost, gain invincibility shield and a bird flies out of a room center in a random direction. Catching the bird in 5 seconds will revive you, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it harder to catch her #{{Warning}} Only works once per room!")
 	EID:addCollectible(Collectibles.ENRAGEDSOUL, "Double tap shooting button to launch a ghost familiar in the direction you are firing #The ghost will latch onto the first enemy it collides with, dealing damage over time for 10 seconds or until that enemy is killed #The ghost can latch onto bosses aswell #{{Warning}} Has a 10 seconds cooldown")
+	EID:addCollectible(Collectibles.CEILINGSTARS, "Grants you one Lemegeton wisp at the beginning of each floor and 2 wisps when sleeping in bed")
+	EID:addCollectible(Collectibles.QUASAR, "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
 	EID:addTrinket(Trinkets.JUDASKISS, "Enemies touching you become targeted by other enemies (effect similar to Rotten Tomato)")
-	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a 12% chance to not subtract it from your inventory count")
+	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a 12% chance to not subtract it from your inven tory count")
 	EID:addTrinket(Trinkets.BITTENPENNY, "Upon spawning, every coin has a 20% chance to be upgraded to a higher value: #penny -> doublepack pennies -> sticky nickel -> nickel -> golden penny -> dime -> lucky penny")
 	EID:addTrinket(Trinkets.GREEDSHEART, "Gives you one empty coin heart #It is depleted before any of your normal hearts and can only be refilled by directly picking up money")
 	EID:addTrinket(Trinkets.REDMAP, "Displays the location of Ultra Secret Room on all subsequent floors #Cracked Key drops on a room clear with 25% chance")
