@@ -29,10 +29,16 @@ local SLEIGHTOFHAND_CHANCE = 12		-- chance to save your consumable when using it
 local JACKOF_CHANCE = 50	-- chance for Jack cards to spawn their respective type of pickup
 local BITTENPENNY_UPGRADECHANCE = 20	-- chance to 'upgrade' coins via Bitten Penny
 local REDKEY_TURN_CHANCE = 25		-- chance for any card to turn into Cracked Key via Red Map trinket
+local PICKUP_WISP_SPAWN_CHANCE = 20 -- chance for pickups to turn into lemegeton wisps when using Quasar Shard
+local CEREM_DAGGER_LAUNCH_CHANCE = 4 -- chance to launch a dagger
 
 Costumes = {
 	ORDLIFE = Isaac.GetCostumeIdByPath("gfx/characters/costume_001_ordinarylife.anm2"),
 	CHERRYFRIENDS = Isaac.GetCostumeIdByPath("gfx/characters/costume_002_cherryfriends.anm2")
+}
+
+TearVariants = {
+	CEREMDAGGER = Isaac.GetEntityVariantByName("Ceremonial Dagger Tear")
 }
 
 Familiars = {
@@ -45,7 +51,6 @@ Familiars = {
 
 Collectibles = {
 	ORDLIFE = Isaac.GetItemIdByName("Ordinary Life"),
-	--MISSINGMEMORY = Isaac.GetItemIdByName("The Missing Memory"),
 	COOKIECUTTER = Isaac.GetItemIdByName("Cookie Cutter"),
 	RUBIKSCUBE = Isaac.GetItemIdByName("Rubik's Cube"),
 	MAGICCUBE = Isaac.GetItemIdByName("Magic Cube"),
@@ -59,8 +64,7 @@ Collectibles = {
 	BLACKDOLL = Isaac.GetItemIdByName("Black Doll"),
 	BIRDOFHOPE = Isaac.GetItemIdByName("Bird of Hope"),
 	ENRAGEDSOUL = Isaac.GetItemIdByName("Enraged Soul"),
-	CEREMDAGGER = Isaac.GetItemIdByName("Ceremonial Dagger"),	-- WIP
-	ADAMSRIB = Isaac.GetItemIdByName("Adam's Rib"),		-- WIP
+	CEREMDAGGER = Isaac.GetItemIdByName("Ceremonial Blade"),
 	CEILINGSTARS = Isaac.GetItemIdByName("Ceiling With Stars"),
 	QUASAR = Isaac.GetItemIdByName("Quasar")
 }
@@ -73,7 +77,9 @@ Trinkets = {
 	BITTENPENNY = Isaac.GetTrinketIdByName("Bitten Penny"),
 	GREEDSHEART = Isaac.GetTrinketIdByName("Greed's Heart"),
 	ANGELSCROWN = Isaac.GetTrinketIdByName("Angel's Crown"),
-	REDMAP = Isaac.GetTrinketIdByName("Red Map")
+	REDMAP = Isaac.GetTrinketIdByName("Red Map"),
+	--ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),		WIP
+	CHALKPIECE = Isaac.GetTrinketIdByName("Piece of Chalk")	-- WIP
 }
 
 PocketItems = {
@@ -90,7 +96,10 @@ PocketItems = {
 	JACKOFCLUBS = Isaac.GetCardIdByName("Jack of Clubs"),
 	JACKOFSPADES = Isaac.GetCardIdByName("Jack of Spades"),
 	JACKOFHEARTS = Isaac.GetCardIdByName("Jack of Hearts"),
-	BEDSIDEQUEEN = Isaac.GetCardIdByName("Bedside Queen")
+	BEDSIDEQUEEN = Isaac.GetCardIdByName("Bedside Queen"),
+	QUASARSHARD = Isaac.GetCardIdByName("Quasar Shard"),
+	BUSINESSCARD = Isaac.GetCardIdByName("Business Card"),
+	SACBLOOD = Isaac.GetCardIdByName("Sacrificial Blood")
 }
 
 PickUps = {
@@ -142,7 +151,11 @@ StatUps = {
 	--
 	MARKCAIN_DMG = 0.3,
 	--
-	LOADEDDICE_LUCK = 10
+	LOADEDDICE_LUCK = 10,
+	--
+	CEREMDAGGER_DMG_MUL = 0.85,
+	--
+	SACBLOOD_DMG = 1
 }
 
 PickupWeights = {
@@ -218,7 +231,7 @@ DIRECTION_VECTOR = {
 local function GetRandomCustomCard()
 	local keys = {}
 	for k in pairs(PocketItems) do
-	  if k ~= REDRUNE then table.insert(keys, k) end
+	  if k ~= REDRUNE and k ~= QUASARSHARD then table.insert(keys, k) end
 	end
 
 	local random_key = keys[math.random(1, #keys)]
@@ -295,10 +308,12 @@ function rplus:OnGameStart(Continued)
 			Cards = {
 				REVERSECARD = nil,
 				LOADEDDICE = {Data = false, Room = nil},
-				JACK = nil
+				JACK = nil,
+				SACBLOOD = {Data = false, NumUses = 0}
 			},
 			Trinkets = {
-				GREEDSHEART = "CoinHeartEmpty"
+				GREEDSHEART = "CoinHeartEmpty",
+				CHALKPIECE = {RoomEnterFrame = 0}
 			}
 		}
 		
@@ -314,8 +329,6 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
-		Isaac.Spawn(5, 100, Collectibles.CEILINGSTARS, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
-		Isaac.Spawn(5, 100, Collectibles.QUASAR, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		--]]
 	end
 end
@@ -404,6 +417,10 @@ function rplus:OnNewRoom()
 		local AngelItem = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), Vector(320,280), Vector.Zero, nil):ToPickup()
 		AngelItem.Price = 15
 	end 
+	
+	if player:HasTrinket(Trinkets.CHALKPIECE) and not room:IsClear() and room:IsFirstVisit() then
+		CustomData.Trinkets.CHALKPIECE.RoomEnterFrame = game:GetFrameCount()
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
 
@@ -509,9 +526,9 @@ function rplus:OnFrame()
 	end
 	
 	if CustomData and CustomData.Cards.REVERSECARD == "used" and sprite:IsFinished("PickupWalkDown") then
-		secondary_Card = player:GetCard(1)
+		local secondaryCard = player:GetCard(1)
 		player:SetCard(1, 0)
-		player:SetCard(0, secondary_Card)
+		player:SetCard(0, secondaryCard)
 		CustomData.Cards.REVERSECARD = nil
 	end
 	
@@ -620,8 +637,28 @@ function rplus:OnFrame()
 		end
 	end
 	
-	if player:HasCollectible(Collectibles.CEILINGSTARS) and false then
-		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), player.Position, Vector.Zero, nil)
+	if player:HasTrinket(Trinkets.CHALKPIECE) and CustomData then
+		if CustomData.Trinkets.CHALKPIECE.RoomEnterFrame and game:GetFrameCount() <= CustomData.Trinkets.CHALKPIECE.RoomEnterFrame + 90 then
+			local Powder = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_BLACKPOWDER, 5, player.Position, Vector.Zero, nil):ToEffect()
+			
+			Powder.Scale = 0.75
+			Powder:SetColor(Color(0, 1, 1, 1, 255, 255, 255), 200, 1, false, false)
+			Powder:Update()
+		end
+	end
+	
+	if CustomData and CustomData.Cards.SACBLOOD.Data then
+		if game:GetFrameCount() % 12 == 0 then
+			Step = Step + 1
+			player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+			player:EvaluateItems()
+			if Step == 50 * CustomData.Cards.SACBLOOD.NumUses then 
+				CustomData.Cards.SACBLOOD.Data = false 
+				CustomData.Cards.SACBLOOD.NumUses = 0
+			elseif Step % 50 == 0 then
+				CustomData.Cards.SACBLOOD.NumUses = CustomData.Cards.SACBLOOD.NumUses - 1
+			end
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
@@ -714,6 +751,10 @@ function rplus:OnNPCDeath(NPC)
 		Isaac.Spawn(3, Familiars.CHERRY, 1, NPC.Position, Vector.Zero, nil)
 		sfx:Play(SoundEffect.SOUND_BABY_HURT, 1, 2, false, 1, 0)
 	end
+	
+	if player:HasCollectible(Collectibles.CEREMDAGGER) and not NPC:IsBoss() and NPC:HasEntityFlags(EntityFlag.FLAG_BLEED_OUT) then
+		Isaac.Spawn(5, 300, PocketItems.SACBLOOD, NPC.Position, Vector.Zero, nil)
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 
@@ -754,7 +795,9 @@ function rplus:OnCardInit(_, _, PlayingCards, Runes, OnlyRunes)
 			GetRandomCustomCard()
 		end
 	end
-	if OnlyRunes and math.random(100) <= CARDRUNE_REPLACE_CHANCE then return PocketItems[REDRUNE] end
+	if OnlyRunes and math.random(100) <= CARDRUNE_REPLACE_CHANCE then 
+		if math.random(100) < 50 then return PocketItems[REDRUNE] else return PocketItems[QUASARSHARD] end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_GET_CARD, rplus.OnCardInit)
 
@@ -768,19 +811,18 @@ function rplus:CardUsed(Card, player, _)
 	end
 	
 	if Card == PocketItems.SDDSHARD then
-		for _, entity in pairs(Isaac.GetRoomEntities()) do
-			if entity.Variant == PickupVariant.PICKUP_COLLECTIBLE then
-				id = entity.SubType
-				if id ~= 1 then repeat id = id - 1 until IsCollectibleUnlocked(id) end
-				entity:ToPickup():Morph(EntityType.ENTITY_PICKUP, 100, id, true, true, false)
-			end
-		end
+		player:UseActiveItem(CollectibleType.COLLECTIBLE_SPINDOWN_DICE, UseFlag.USE_NOANIM, -1)
+	end
+	
+	if Card == PocketItems.BUSINESSCARD then
+		player:UseActiveItem(CollectibleType.COLLECTIBLE_FRIEND_FINDER, UseFlag.USE_NOANIM, -1)
 	end
 	
 	if Card == PocketItems.REDRUNE then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_ABYSS, false, false, true, false, -1)
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_NECRONOMICON, false, false, true, false, -1)
 		local locustRNG = RNG()
+		
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Type == EntityType.ENTITY_PICKUP then
 				if (entity.Variant < 100 and entity.Variant > 0) or entity.Variant == 300 or entity.Variant == 350 or entity.Variant == 360 then
@@ -913,6 +955,28 @@ function rplus:CardUsed(Card, player, _)
 			end
 		end
 	end
+	
+	if Card == PocketItems.QUASARSHARD then
+		player:UseActiveItem(CollectibleType.COLLECTIBLE_NECRONOMICON, UseFlag.USE_NOANIM, -1)
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity.Type == 5 and ((entity.Variant == 100 and entity.SubType > 0) or
+			(entity.Variant < 100 and math.random(100) <= PICKUP_WISP_SPAWN_CHANCE)) then
+				Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), player.Position, Vector.Zero, nil)
+				Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
+				entity:Remove()
+				sfx:Play(SoundEffect.SOUND_DEATH_CARD, 1, 2, false, 1, 0)
+			end
+		end
+	end
+	
+	if Card == PocketItems.SACBLOOD and CustomData then
+		CustomData.Cards.SACBLOOD.Data = true
+		CustomData.Cards.SACBLOOD.NumUses = CustomData.Cards.SACBLOOD.NumUses + 1
+		Step = 0
+		
+		sfx:Play(SoundEffect.SOUND_VAMP_GULP, 1, 2, false, 1, 0)
+		if player:HasCollectible(216) then player:AddHearts(2) end		-- bonus for ceremonial robes ;)
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 
@@ -936,13 +1000,13 @@ function rplus:PickupCollision(Pickup, Collider, _)
 			Isaac.Spawn(5, 100, Item, Pickup.Position, Vector(0, 0), Pickup)
 			Pickup:Remove()
 		elseif DieRoll < 80 then
-			local NumOfPickUps = rdm:RandomInt(4) + 1 -- 1 to 4 Pickups
+			local NumOfPickUps = modRNG:RandomInt(4) + 1 -- 1 to 4 Pickups
 			
 			for i = 1, NumOfPickUps do
 				local variant = nil
 				local subtype = nil
 				
-				if rdm:RandomInt(100) < 66 then
+				if modRNG:RandomInt(100) < 66 then
 					variant = 10
 					subtype = ScarletChestHearts[math.random(#ScarletChestHearts)]
 				else
@@ -986,8 +1050,38 @@ function rplus:OnTearUpdate(Tear)
 		CreepTrail.Scale = 0.4
 		CreepTrail:Update()
 	end
+	
+	if player:HasCollectible(Collectibles.CEREMDAGGER) and Tear.Variant == TearVariants.CEREMDAGGER then
+		local TX = Tear.Velocity:Normalized().X
+		local TY = Tear.Velocity:Normalized().Y
+		
+		if TY > 0 and TX <= TY and TX >= -TY then	-- down
+			Tear:GetSprite().FlipY = true
+		elseif TX > 0 and TY < TX and TY > -TX then		-- right
+			Tear:GetSprite().Rotation = 90.0
+		elseif TX <= 0 and TY < -TX and TY > TX then	-- left	
+			Tear:GetSprite().Rotation = -90.0
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
+
+						-- ON TEAR INIT --
+						------------------
+function rplus:OnTearInit(Tear)
+	local player = Isaac.GetPlayer(0)
+	
+	if player:HasCollectible(Collectibles.CEREMDAGGER) and EntityRef(Tear).Entity.SpawnerType == EntityType.ENTITY_PLAYER then
+		if math.random(100) <= CEREM_DAGGER_LAUNCH_CHANCE then
+			-- launching the dagger
+			local S = Isaac.Spawn(2, TearVariants.CEREMDAGGER, 0, player.Position, Tear.Velocity, nil):GetSprite()
+			S:Load("002.120_ceremonial_blade_tear", true)
+			S:Play("Idle")
+		end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, rplus.OnTearInit)
+
 
 						-- UPDATING PLAYER STATS (CACHE) --
 						-----------------------------------
@@ -1001,6 +1095,14 @@ function rplus:UpdateStats(player, Flag)
 		
 		if CustomData and CustomData.Items.MARKCAIN == "player revived" then
 			player.Damage = player.Damage + #MyFamiliars * StatUps.MARKCAIN_DMG
+		end
+		
+		if player:HasCollectible(Collectibles.CEREMDAGGER) then
+			player.Damage = player.Damage * StatUps.CEREMDAGGER_DMG_MUL
+		end
+		
+		if CustomData and CustomData.Cards.SACBLOOD.Data then
+			player.Damage = player.Damage + StatUps.SACBLOOD_DMG * (CustomData.Cards.SACBLOOD.NumUses - Step / 50)
 		end
 	end
 	
@@ -1094,6 +1196,13 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		sfx:Play(SoundEffect.SOUND_ULTRA_GREED_COIN_DESTROY, 1, 2, false, 1, 0)
 		CustomData.Trinkets.GREEDSHEART = "CoinHeartEmpty"
 		Entity:TakeDamage(1, DamageFlag.DAMAGE_FAKE, EntityRef(Entity), 24)
+		return false
+	end
+	
+	if player:HasCollectible(Collectibles.CEREMDAGGER) and Source.Entity and Source.Entity.Type == 2 and Source.Entity.Variant == TearVariants.CEREMDAGGER 
+	and Entity:IsActiveEnemy(true) and Entity:IsVulnerableEnemy() then
+		Entity:AddEntityFlags(EntityFlag.FLAG_BLEED_OUT)
+		sfx:Play(SoundEffect.SOUND_KNIFE_PULL, 1, 2, false, 1, 0)
 		return false
 	end
 end
@@ -1358,7 +1467,6 @@ rplus:AddCallback(ModCallbacks.MC_USE_PILL, rplus.UsePill)
 								-----------------------------------------
 								
 if EID then
-	--EID:addCollectible(Collectibles.MISSINGMEMORY, "{{BossRoom}} Allows to continue run past Mother, spawning a trapdoor or a beam of light if Isaac has Negative or Polaroid respectively")
 	EID:addCollectible(Collectibles.ORDLIFE, "On first use, Isaac enters a state where no enemies or pickups spawn and he can freely walk between rooms #On second use, the effect is deactivated, time is reverted to the previous room and the item discharges #{{Warning}} Travelling to the next floor will automatically deactivate the effect and discharge the item")	
 	EID:addCollectible(Collectibles.COOKIECUTTER, "Gives you one {{Heart}} heart container and one broken heart #{{Warning}} Having 12 broken hearts kills you!")
 	EID:addCollectible(Collectibles.SINNERSHEART, "{{ArrowUp}} Damage +2 then x1.5 #{{ArrowDown}} Shot speed down #Homing tears")
@@ -1373,7 +1481,8 @@ if EID then
 	EID:addCollectible(Collectibles.BLACKDOLL, "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal half of that damage to another enemy in that pair")
 	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into a ghost, gain invincibility shield and a bird flies out of a room center in a random direction. Catching the bird in 5 seconds will revive you, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it harder to catch her #{{Warning}} Only works once per room!")
 	EID:addCollectible(Collectibles.ENRAGEDSOUL, "Double tap shooting button to launch a ghost familiar in the direction you are firing #The ghost will latch onto the first enemy it collides with, dealing damage over time for 10 seconds or until that enemy is killed #The ghost can latch onto bosses aswell #{{Warning}} Has a 10 seconds cooldown")
-	EID:addCollectible(Collectibles.CEILINGSTARS, "Grants you one Lemegeton wisp at the beginning of each floor and 2 wisps when sleeping in bed")
+	EID:addCollectible(Collectibles.CEREMDAGGER, "{{ArrowDown}} Damage x0.85 #When shooting, 4% chance to launch a dagger that does no damage, but inflicts bleed on enemies #All enemies that die while bleeding will drop Sacrificial Blood Consumable that gives you temporary DMG up")
+	EID:addCollectible(Collectibles.CEILINGSTARS, "Grants you two Lemegeton wisps at the beginning of each floor and when sleeping in bed")
 	EID:addCollectible(Collectibles.QUASAR, "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
@@ -1386,7 +1495,7 @@ if EID then
 	EID:addTrinket(Trinkets.ANGELSCROWN, "All new treasure rooms will have an angel item for sale instead of a normal item #Angels spawned from statues will not drop Key Pieces!")
 	
 	EID:addCard(PocketItems.SDDSHARD, "Invokes the effect of Spindown Dice")
-	EID:addCard(PocketItems.REDRUNE, "Damages all enemies in a room, turns any item pedestals into red locusts and turns pickups into random locusts with a 50% chance")
+	EID:addCard(PocketItems.REDRUNE, "Damages all enemies in a room, turns item pedestals into red locusts and turns pickups into random locusts with a 50% chance")
 	EID:addCard(PocketItems.NEEDLEANDTHREAD, "Removes one broken heart and grants one {{Heart}} heart container")
 	EID:addCard(PocketItems.QUEENOFDIAMONDS, "Spawns 1-12 random {{Coin}} coins (those can be nickels or dimes as well)")
 	EID:addCard(PocketItems.KINGOFSPADES, "Lose all your keys and spawn a number of pickups proportional to the amount of keys lost #At least 12 {{Key}} keys is needed for a trinket, and at least 28 for an item #If Isaac has {{GoldenKey}} Golden key, it is removed too and significantly increases total value")
@@ -1399,6 +1508,9 @@ if EID then
 	EID:addCard(PocketItems.JACKOFDIAMONDS, "Coins will drop more often from clearing rooms for current floor, and the average quality of coins is increased")
 	EID:addCard(PocketItems.JACKOFSPADES, "Keys will drop more often from clearing rooms for current floor, and the average quality of keys is increased")
 	EID:addCard(PocketItems.JACKOFHEARTS, "Hearts will drop more often from clearing rooms for current floor, and the average quality of hearts is increased")
+	EID:addCard(PocketItems.QUASARSHARD, "Damages all enemies in a room, turns item pedestals and pickups (with a 20% chance) into lemegeton wisps")
+	EID:addCard(PocketItems.BUSINESSCARD, "Summons a random monster, like ones from Friend Finder")
+	EID:addCard(PocketItems.SACBLOOD, "Gives +1 DMG up that fades out over the span of 25 seconds #Stackable")
 
 	EID:addPill(Pills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at half-a-heart, doesn't affect soul/black hearts")
 end

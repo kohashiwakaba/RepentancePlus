@@ -13,28 +13,31 @@
 		<pilleffect id="0" name="Bad Gas" announcer="328" class="1+" mimiccharge="1" / 
 		
 		backs and secondary slot are done via pickup tag, custom backs need new pickup-numbers, which must have an entry in the entities2.xml
-		already existing backs need the assigned pickup-numbers (e.g. 2 for suit back, 17 for uno back, look into gamefiles if you need them
+		already existing backs need the assigned pickup-numbers (e.g. 2 for suit back, 17 for uno back, look into gamefiles if you need them)
 	-->
 	
 	<!-- custom backs -->
-	<rune type="rune" name="Red Rune" hud="Red Rune" mimiccharge="12" description="Abyss" pickup="160" /> <!-- T.Apollyon to Greed-->
-	<card type="object" name="Spindown Dice Shard" hud="Spindown Dice Shard" mimiccharge="6" description="-1?" pickup="161"/> <!--T.Isaac to Greed-->
+	<rune type="rune" name="Red Rune" hud="Red Rune" mimiccharge="12" description="Abyss" pickup="160" /> 
+	<card type="object" name="Spindown Dice Shard" hud="Spindown Dice Shard" mimiccharge="6" description="-1?" pickup="161"/> 
 	<card type="object" name="Needle and Thread" hud="Needle and Thread" mimiccharge="4" description="To cure my broken heart" pickup="162" />
 	<card type="object" name="Bag Tissue" hud="Bag Tissue" mimiccharge="12" description="Craft a piece of your destiny" pickup="163" />
-	<card type="object" name="Loaded Dice" hud="Loaded Dice" mimiccharge="2" description="Luck is on your side" pickup="164" /> <!-- T.Cain to BR -->
+	<card type="object" name="Loaded Dice" hud="Loaded Dice" mimiccharge="2" description="Luck is on your side" pickup="164" />
+	<card type="rune" name="Quasar Shard" hud="Quasar Shard" mimiccharge="6" description="Shards of knoweldge" pickup="165" />
+	<card type="special" name="Business Card" hud="Business Card" mimiccharge="4" description="Reusable partnership" pickup="166" />
+	<card type="object" name="Sacrificial Blood" hud="Sacrificial Blood" mimiccharge="12" description="Feed on their pain" pickup="167" />
 	
 	<!-- non-custom backs -->
-	<card type="suit" name="Joker?" hud="Joker?" mimiccharge="1" description="¿¿¿" pickup="2"/> <!--T.Azazel to BR-->
-	<card type="special" name="Reverse Card" hud="Reverse Card" mimiccharge="2" description="No, You!" pickup="17" /> <!--T.Isaac to BR-->
+	<card type="suit" name="Joker?" hud="Joker?" mimiccharge="1" description="¿¿¿" pickup="2"/>
+	<card type="special" name="Reverse Card" hud="Reverse Card" mimiccharge="2" description="No, You!" pickup="17" /> 
 	<card type="suit" name="King of Spades" hud="King of Spades" mimiccharge="6" description="Lose everything to get something" pickup="2" />
 	<card type="suit" name="Queen of Diamonds" hud="Queen of Diamonds" mimiccharge="6" description="$" pickup="2" />
-	<card type="suit" name="Jack of Diamonds" hud="Jack of Diamonds" mimiccharge="2" description="Increase your Wealth" pickup="2" /> <!-- T.Blue Baby to BR-->
+	<card type="suit" name="Jack of Diamonds" hud="Jack of Diamonds" mimiccharge="2" description="Increase your Wealth" pickup="2" /> 
 	<card type="suit" name="Jack of Clubs" hud="Jack of Clubs" mimiccharge="2" description="Increase your Blast" pickup="2" />
 	<card type="suit" name="Jack of Spades" hud="Jack of Spades" mimiccharge="2" description="Increase your Access" pickup="2" />
 	<card type="suit" name="Jack of Hearts" hud="Jack of Hearts" mimiccharge="2" description="Increase your Health" pickup="2" />
 	<card type="suit" name="Bedside Queen" hud="Bedside Queen" mimiccharge="6" description="0--&#34;" pickup="2" />
 	
 	<!-- pill effects -->
-	<pilleffect name="Estrogen" mimiccharge="4" class="1+" /> <!-- T.Eve to Greed -->
+	<pilleffect name="Estrogen" mimiccharge="4" class="1+" />
 	
 </pocketitems>
