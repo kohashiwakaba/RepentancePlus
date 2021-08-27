@@ -18,7 +18,7 @@
 	<!-- T. Judas -->
 	<passive name="Black Doll" description="Bound by blood" gfx="08_blackdoll.png" quality="2" devilprice="1" />
 	<trinket name="Judas' Kiss" description="One on the cheek" gfx="t05_judaskiss.png" />
-	<passive name="Ceremonial Blade" description="Just a drop of blood for our Gods" gfx="09_ceremonialblade.png" quality="3" cache="damage" />
+	<passive name="Ceremonial Blade" description="Just a drop of blood for our Gods" gfx="09_ceremonialblade.png" quality="3" cache="damage" devilprice="2" />
 	
 	<!-- T. ??? -->
 	<familiar name="Bag-o-Trash" description="Will you take it out already?!" gfx="10_bagotrash.png" quality="1" />
@@ -44,13 +44,13 @@
 	<trinket name="Greed's Heart" description="$$$" gfx="t06_greedsheart.png" />
 	
 	<!-- T. Apollyon -->
-	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2"/>
+	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2" />
 	<trinket name="Red Map" description="All secrets are unveiled to you" gfx="t08_redmap.png" />
 	
 	<!-- T. Forgor -->
 	<passive name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="2" />
 	
 	<!-- T. Bethany -->
-	<passive name="Ceiling With Stars" description="Look at the beauty" gfx="32_ceilingwithstars.png" quality="1" />
+	<passive name="Ceiling With Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
 	<active name="Quasar" description="Cosmic wisdom" gfx="33_quasar.png" quality="4" devilprice="2" maxcharges="6" />
 </items>

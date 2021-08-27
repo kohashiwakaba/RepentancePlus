@@ -19,7 +19,6 @@ local CustomData
 
 local BASEMENTKEY_CHANCE = 5	-- chance to replace golden chest with the old chest
 local HEARTKEY_CHANCE = 5	-- chance for enemy to drop Scarlet chest on death
-local SCARLETCHEST_CHANCE = 2	-- chance for Scarlet chest to appear normally
 local CARDRUNE_REPLACE_CHANCE = 2	-- chance to replace vanilla card with card from our mod
 local SUPERBERSERKSTATE_CHANCE = 25		-- chance to enter berserk state via Temper Tantrum
 local SUPERBERSERK_DELETE_CHANCE = 10	-- chance to erase enemies while in this state
@@ -30,11 +29,12 @@ local JACKOF_CHANCE = 50	-- chance for Jack cards to spawn their respective type
 local BITTENPENNY_UPGRADECHANCE = 20	-- chance to 'upgrade' coins via Bitten Penny
 local REDKEY_TURN_CHANCE = 25		-- chance for any card to turn into Cracked Key via Red Map trinket
 local PICKUP_WISP_SPAWN_CHANCE = 20 -- chance for pickups to turn into lemegeton wisps when using Quasar Shard
-local CEREM_DAGGER_LAUNCH_CHANCE = 4 -- chance to launch a dagger
+local CEREM_DAGGER_LAUNCH_CHANCE = 5 -- chance to launch a dagger
 
 Costumes = {
 	ORDLIFE = Isaac.GetCostumeIdByPath("gfx/characters/costume_001_ordinarylife.anm2"),
-	CHERRYFRIENDS = Isaac.GetCostumeIdByPath("gfx/characters/costume_002_cherryfriends.anm2")
+	CHERRYFRIENDS = Isaac.GetCostumeIdByPath("gfx/characters/costume_002_cherryfriends.anm2"),
+	BIRDOFHOPE = Isaac.GetCostumeIdByPath("gfx/characters/costume_004_birdofhope.anm2")
 }
 
 TearVariants = {
@@ -286,6 +286,19 @@ local function DisplayErrorMessage()
 		end
 	end
 end
+
+-- Helper to give proper IV frames on revival								
+local function GiveRevivalIVFrames(p)	
+	-- taking fake damage
+	p:TakeDamage(1, DamageFlag.DAMAGE_FAKE, EntityRef(p), 1)
+	-- stopping 'hit' animation
+	local Sprite = p:GetSprite()
+	if Sprite:IsPlaying("Hit") then Sprite:Stop() end
+	-- stopping hit sound
+	if sfx:IsPlaying(SoundEffect.SOUND_ISAAC_HURT_GRUNT) then sfx:Stop(SoundEffect.SOUND_ISAAC_HURT_GRUNT) end
+end
+								
+								
 								----------------------
 								-- GLOBAL FUNCTIONS --
 								----------------------
@@ -349,6 +362,7 @@ function rplus:OnNewLevel()
 		level:RemoveCurses(LevelCurse.CURSE_OF_DARKNESS)
 		music:Enable()
 		player:DischargeActiveItem(ActiveSlot.SLOT_PRIMARY)
+		player:TryRemoveNullCostume(Costumes.ORDLIFE)
 		CustomData.Items.ORDLIFE = nil
 	end
 	
@@ -436,7 +450,7 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			music:Disable()
 			level:AddCurse(LevelCurse.CURSE_OF_DARKNESS, false)
 			PlayerSprite = player:GetSprite()
-			PlayerSprite:Load("gfx/characters/costume_001_ordinarylife.anm2", true)
+			player:AddNullCostume(Costumes.ORDLIFE)
 			return {Discharge = false, Remove = false, ShowAnim = false}
 		elseif CustomData.Items.ORDLIFE == "used" then
 			player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, true, true, false, false, -1)
@@ -521,6 +535,7 @@ function rplus:OnFrame()
 			level:RemoveCurses(LevelCurse.CURSE_OF_DARKNESS)
 			music:Enable()
 			player:DischargeActiveItem(ActiveSlot.SLOT_PRIMARY)
+			player:TryRemoveNullCostume(Costumes.ORDLIFE)
 			CustomData.Items.ORDLIFE = nil
 		end
 	end
@@ -556,7 +571,7 @@ function rplus:OnFrame()
 	end
 	
 	if player:HasCollectible(Collectibles.MARKCAIN) then
-		if sprite:IsPlaying("Death") and sprite:GetFrame() > 25 then
+		if sprite:IsPlaying("Death") and sprite:GetFrame() > 50 then
 			MyFamiliars = {}
 			
 			for i = 1, 1000 do
@@ -569,9 +584,9 @@ function rplus:OnFrame()
 			if #MyFamiliars > 0 then
 				player:RemoveCollectible(Collectibles.MARKCAIN)
 				player:Revive()
-				sprite:Stop()
+				GiveRevivalIVFrames(player)
+				
 				CustomData.Items.MARKCAIN = "player revived"
-				player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, UseFlag.USE_NOANIM, -1)
 				sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
 				
 				for i = 1, #MyFamiliars do player:RemoveCollectible(MyFamiliars[i]) end
@@ -616,21 +631,23 @@ function rplus:OnFrame()
 	end
 	
 	if player:HasCollectible(Collectibles.BIRDOFHOPE) then
-		if sprite:IsPlaying("Death") and CustomData.Items.BIRDOFHOPE.BirdCaught then
+		if sprite:IsPlaying("Death") and CustomData.Items.BIRDOFHOPE.BirdCaught == true then
 			CustomData.Items.BIRDOFHOPE.BirdCaught = false
 			DieFrame = game:GetFrameCount()
+			DiePos = player.Position
 			CustomData.Items.BIRDOFHOPE.NumRevivals = CustomData.Items.BIRDOFHOPE.NumRevivals + 1
 			
 			player:Revive()
 			sprite:Stop()
-			player:UseCard(Card.CARD_SOUL_LOST, UseFlag.USE_NOANIM | UseFlag.USE_OWNED | UseFlag.USE_NOANNOUNCER)
-			player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, UseFlag.USE_NOANIM, -1)
+			player:AddCollectible(185, 0, false, 0, 0)
+			player:AddNullCostume(Costumes.BIRDOFHOPE)
 			
 			Birdy = Isaac.Spawn(3, Familiars.BIRD, 0, room:GetCenterPos(), Vector.FromAngle(math.random(360)) * CustomData.Items.BIRDOFHOPE.NumRevivals, nil) 
 			Birdy:GetSprite():Play("Flying")
 		elseif DieFrame and game:GetFrameCount() > DieFrame + 120 and not CustomData.Items.BIRDOFHOPE.BirdCaught then
 			player:Die()
-			CustomData.Items.BIRDOFHOPE.BirdCaught = "blah blah"	-- just so that it's not true and player doesn't die over and over until all his extra lives deplete
+			CustomData.Items.BIRDOFHOPE.BirdCaught = "blah blah"	-- just so that it's not true and player doesn't die over and over 
+			-- until all his extra lives are depleted
 			-- !!! THIS IS A SERIOUS CROTCH !!! since you end up near the door when reviving, and the bird familiar doesn't despawn if you don't catch her,
 			-- you automatically pick her up and this allows you to repeat the cycle (since it switches data to true) and doesn't take away your extra lives
 			-- so don't touch it if you don't think it through. like, for real.
@@ -648,15 +665,13 @@ function rplus:OnFrame()
 	end
 	
 	if CustomData and CustomData.Cards.SACBLOOD.Data then
-		if game:GetFrameCount() % 12 == 0 then
+		if game:GetFrameCount() % math.floor(1 + 11 / CustomData.Cards.SACBLOOD.NumUses) == 0 then
 			Step = Step + 1
 			player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
 			player:EvaluateItems()
 			if Step == 50 * CustomData.Cards.SACBLOOD.NumUses then 
 				CustomData.Cards.SACBLOOD.Data = false 
 				CustomData.Cards.SACBLOOD.NumUses = 0
-			elseif Step % 50 == 0 then
-				CustomData.Cards.SACBLOOD.NumUses = CustomData.Cards.SACBLOOD.NumUses - 1
 			end
 		end
 	end
@@ -715,6 +730,9 @@ function rplus:PostPlayerUpdate(Player)
 		
 		if CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown then CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown = CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown - 1 end
 	end
+	
+	-- ADD PERSISTENT PLAYER COSTUMES HERE
+	
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
 
@@ -763,9 +781,6 @@ rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 function rplus:OnPickupInit(Pickup)
 	local player = Isaac.GetPlayer(0)
 	
-	if Pickup.Variant > 49 and Pickup.Variant < 61 and math.random(100) <= SCARLETCHEST_CHANCE then
-		Pickup:Morph(5, PickUps.SCARLETCHEST, 0, 0, true, true, false)
-	end
 	if Pickup.Variant == PickUps.SCARLETCHEST and Pickup.SubType == 1 and type(Pickup:GetData()["IsRoom"]) == type(nil) then
 		Pickup:Remove()
 	end
@@ -1205,6 +1220,10 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		sfx:Play(SoundEffect.SOUND_KNIFE_PULL, 1, 2, false, 1, 0)
 		return false
 	end
+	
+	if player:HasCollectible(Collectibles.BIRDOFHOPE) and CustomData and CustomData.Items.BIRDOFHOPE.BirdCaught == false and Entity.Type == 1 then
+		return false
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
 
@@ -1299,11 +1318,17 @@ end
 rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.CherryCollision, Familiars.CHERRY)
 
 function rplus:BirdCollision(Familiar, Collider, _)
+	local player = Isaac.GetPlayer(0)
+	
 	if Collider.Type == 1 then
 		sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
 		Isaac.Spawn(1000, EffectVariant.POOF01, 0, Familiar.Position, Vector.Zero, nil)
 		Familiar:Remove()
+		player.Position = DiePos
+		player:TryRemoveNullCostume(Costumes.BIRDOFHOPE)
+		player:RemoveCollectible(185, true, 0, true)
 		CustomData.Items.BIRDOFHOPE.BirdCaught = true
+		GiveRevivalIVFrames(player)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.BirdCollision, Familiars.BIRD)
@@ -1479,9 +1504,9 @@ if EID then
 	EID:addCollectible(Collectibles.ZENBABY, "A familiar that shoots Godhead tears at a fast firerate")
 	EID:addCollectible(Collectibles.CHERRYFRIENDS, "Killing an enemy has a 20% chance to drop cherry familiar on the ground #Those cherries emit a charming fart when an enemy walks over them, and drop half a heart when a room is cleared")
 	EID:addCollectible(Collectibles.BLACKDOLL, "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal half of that damage to another enemy in that pair")
-	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into a ghost, gain invincibility shield and a bird flies out of a room center in a random direction. Catching the bird in 5 seconds will revive you, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it harder to catch her #{{Warning}} Only works once per room!")
+	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into invincible ghost and a bird flies out of room center in a random direction. Catching the bird in 5 seconds will save you and get you back to your death spot, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it harder to catch her")
 	EID:addCollectible(Collectibles.ENRAGEDSOUL, "Double tap shooting button to launch a ghost familiar in the direction you are firing #The ghost will latch onto the first enemy it collides with, dealing damage over time for 10 seconds or until that enemy is killed #The ghost can latch onto bosses aswell #{{Warning}} Has a 10 seconds cooldown")
-	EID:addCollectible(Collectibles.CEREMDAGGER, "{{ArrowDown}} Damage x0.85 #When shooting, 4% chance to launch a dagger that does no damage, but inflicts bleed on enemies #All enemies that die while bleeding will drop Sacrificial Blood Consumable that gives you temporary DMG up")
+	EID:addCollectible(Collectibles.CEREMDAGGER, "{{ArrowDown}} Damage x0.85 #When shooting, 5% chance to launch a dagger that does no damage, but inflicts bleed on enemies #All enemies that die while bleeding will drop Sacrificial Blood Consumable that gives you temporary DMG up")
 	EID:addCollectible(Collectibles.CEILINGSTARS, "Grants you two Lemegeton wisps at the beginning of each floor and when sleeping in bed")
 	EID:addCollectible(Collectibles.QUASAR, "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed")
 	
@@ -1510,7 +1535,7 @@ if EID then
 	EID:addCard(PocketItems.JACKOFHEARTS, "Hearts will drop more often from clearing rooms for current floor, and the average quality of hearts is increased")
 	EID:addCard(PocketItems.QUASARSHARD, "Damages all enemies in a room, turns item pedestals and pickups (with a 20% chance) into lemegeton wisps")
 	EID:addCard(PocketItems.BUSINESSCARD, "Summons a random monster, like ones from Friend Finder")
-	EID:addCard(PocketItems.SACBLOOD, "Gives +1 DMG up that fades out over the span of 25 seconds #Stackable")
+	EID:addCard(PocketItems.SACBLOOD, "{{ArrowUp}} Gives +1 DMG up that depletes over the span of 25 seconds #Stackable #{{Warning}} Damage depletes quicker the more Blood you used subsequently")
 
 	EID:addPill(Pills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at half-a-heart, doesn't affect soul/black hearts")
 end
