@@ -29,11 +29,15 @@ local JACKOF_CHANCE = 50	-- chance for Jack cards to spawn their respective type
 local BITTENPENNY_UPGRADECHANCE = 20	-- chance to 'upgrade' coins via Bitten Penny
 local REDKEY_TURN_CHANCE = 25		-- chance for any card to turn into Cracked Key via Red Map trinket
 local PICKUP_WISP_SPAWN_CHANCE = 20 -- chance for pickups to turn into lemegeton wisps when using Quasar Shard
+local ENRAGED_SOUL_COOLDOWN = 420	-- 7 seconds in 60 FPS callback; cooldown for Enraged Soul familiar
 local CEREM_DAGGER_LAUNCH_CHANCE = 5 -- chance to launch a dagger
+
+CustomBackDropEntity = Isaac.GetEntityVariantByName("CustomBackDropEntity")
 
 Costumes = {
 	ORDLIFE = Isaac.GetCostumeIdByPath("gfx/characters/costume_001_ordinarylife.anm2"),
 	CHERRYFRIENDS = Isaac.GetCostumeIdByPath("gfx/characters/costume_002_cherryfriends.anm2"),
+	MARKCAIN = Isaac.GetCostumeIdByPath("gfx/characters/costume_003_markcain.anm2"),
 	BIRDOFHOPE = Isaac.GetCostumeIdByPath("gfx/characters/costume_004_birdofhope.anm2")
 }
 
@@ -79,7 +83,9 @@ Trinkets = {
 	ANGELSCROWN = Isaac.GetTrinketIdByName("Angel's Crown"),
 	REDMAP = Isaac.GetTrinketIdByName("Red Map"),
 	--ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),		WIP
-	CHALKPIECE = Isaac.GetTrinketIdByName("Piece of Chalk")	-- WIP
+	CHALKPIECE = Isaac.GetTrinketIdByName("Piece of Chalk"),	-- WIP
+	MAGICSWORD = Isaac.GetTrinketIdByName("Magic Sword"),
+	WAITNO = Isaac.GetTrinketIdByName("Wait, No!")
 }
 
 PocketItems = {
@@ -155,7 +161,9 @@ StatUps = {
 	--
 	CEREMDAGGER_DMG_MUL = 0.85,
 	--
-	SACBLOOD_DMG = 1
+	SACBLOOD_DMG = 1,
+	--
+	MAGICSWORD_DMG_MUL = 2
 }
 
 PickupWeights = {
@@ -417,19 +425,38 @@ function rplus:OnNewRoom()
 		end
 	end
 	
-	if player:HasTrinket(Trinkets.ANGELSCROWN) and room:GetType() == RoomType.ROOM_TREASURE and room:IsFirstVisit() then
+	if player:HasTrinket(Trinkets.ANGELSCROWN) and room:GetType() == RoomType.ROOM_TREASURE then
+		if room:IsFirstVisit() then
+			for _, entity in pairs(Isaac.GetRoomEntities()) do
+				if entity.Type == 5 then entity:Remove() end
+			end
+			local AngelItem = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), Vector(320,280), Vector.Zero, nil):ToPickup()
+			AngelItem.Price = 15
+		end
+		
 		for i = 1, room:GetGridSize() do
-			if room:GetGridEntity(i) ~= nil and room:GetGridEntity(i):GetType() ~= GridEntityType.GRID_DOOR then
+			if room:GetGridEntity(i) ~= nil 
+			and room:GetGridEntity(i):GetType() ~= GridEntityType.GRID_DOOR and room:GetGridEntity(i):GetType() ~= GridEntityType.GRID_WALL then
 				room:RemoveGridEntity(i, 0, false)
 			end
 		end
-		Isaac.GridSpawn(GridEntityType.GRID_STATUE, 1, Vector(320,200), false)
-		for _, entity in pairs(Isaac.GetRoomEntities()) do
-			if entity.Type == 5 then entity:Remove() end
-		end
 		
-		local AngelItem = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), Vector(320,280), Vector.Zero, nil):ToPickup()
-		AngelItem.Price = 15
+		if room:GetRoomShape() == RoomShape.ROOMSHAPE_1x1 then
+			AngelPos = Vector(320, 200)
+			FloorPos = Vector(60, 140)
+			WallPos = Vector(-20, 60)
+		elseif room:GetRoomShape() == RoomShape.ROOMSHAPE_IH then
+			AngelPos = Vector(320, 240)
+			FloorPos = Vector(60, 220)
+			WallPos = Vector(-20, 138)
+		elseif room:GetRoomShape() == RoomShape.ROOMSHAPE_IV then
+			AngelPos = Vector(320, 200)
+			FloorPos = Vector(220, 140)
+			WallPos = Vector(145, 60)
+		end
+		Isaac.GridSpawn(GridEntityType.GRID_STATUE, 1, AngelPos, false)
+		FloorPiece = Isaac.Spawn(1000, CustomBackDropEntity, 0, FloorPos, Vector.Zero, nil)
+		WallPiece = Isaac.Spawn(1000, CustomBackDropEntity, 0, WallPos, Vector.Zero, nil)
 	end 
 	
 	if player:HasTrinket(Trinkets.CHALKPIECE) and not room:IsClear() and room:IsFirstVisit() then
@@ -473,7 +500,7 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 		
 		if SolveChance <= 5 or CustomData.Items.RUBIKSCUBE.Counter == 20 then
 			player:RemoveCollectible(Collectibles.RUBIKSCUBE, true, ActiveSlot.SLOT_PRIMARY, true)
-			Isaac.Spawn(5, 100, Collectibles.MAGICCUBE, player.Position + Vector(20, 20), Vector.Zero, nil)
+			player:AddCollectible(Collectibles.MAGICCUBE, 4, true, ActiveSlot.SLOT_PRIMARY, 0)
 			player:AnimateHappy()
 			CustomData.Items.RUBIKSCUBE.Counter = 0
 			return false
@@ -675,6 +702,15 @@ function rplus:OnFrame()
 			end
 		end
 	end
+	
+	-- prevent rerolling an item into red heart
+	if player:HasTrinket(Trinkets.ANGELSCROWN) and room:GetType() == RoomType.ROOM_TREASURE then
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity.Type == 5 and entity.Variant == 10 and entity.SubType == 1 and entity:ToPickup().Price > 0 then
+				entity:ToPickup():Morph(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), true, true, false)
+			end
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
@@ -714,7 +750,7 @@ function rplus:PostPlayerUpdate(Player)
 					Velocity = DIRECTION_VECTOR[Direction.DOWN]
 					DashAnim = "DashDown"
 				end
-				CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown = 600 -- so 10 seconds
+				CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown = ENRAGED_SOUL_COOLDOWN
 				local SoulSprite = Isaac.Spawn(3, Familiars.SOUL, 0, Player.Position, Velocity * 12, nil):GetSprite()
 				
 				SoulSprite:Load("gfx/003.214_enragedsoul.anm2", true)
@@ -728,11 +764,19 @@ function rplus:PostPlayerUpdate(Player)
 			ButtonState = nil
 		end
 		
-		if CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown then CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown = CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown - 1 end
+		if CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown then 
+			CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown = CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown - 1 
+			if CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown == 0 then
+				sfx:Play(SoundEffect.SOUND_ANIMA_BREAK, 1, 2, false, 1, 0)
+			end
+		end
 	end
 	
-	-- ADD PERSISTENT PLAYER COSTUMES HERE
+	if Player:HasTrinket(Trinkets.MAGICSWORD) then Player:AddCacheFlags(CacheFlag.CACHE_DAMAGE) Player:EvaluateItems() end
 	
+	-- ADD PERSISTENT PLAYER COSTUMES HERE
+	if Player:HasCollectible(Collectibles.CHERRYFRIENDS) then Player:AddNullCostume(Costumes.CHERRYFRIENDS) else Player:TryRemoveNullCostume(Costumes.CHERRYFRIENDS) end
+	if Player:HasCollectible(Collectibles.MARKCAIN) then Player:AddNullCostume(Costumes.MARKCAIN) else Player:TryRemoveNullCostume(Costumes.MARKCAIN) end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
 
@@ -752,6 +796,17 @@ function rplus:OnGameRender()
 		CoinHeartSprite:Load("gfx/ui/ui_coinhearts.anm2", true)
 		CoinHeartSprite:SetFrame(CustomData.Trinkets.GREEDSHEART, 0)
 		CoinHeartSprite:Render(Vector(134, 18), Vector.Zero, Vector.Zero)
+	end
+	
+	if player:HasTrinket(Trinkets.ANGELSCROWN) and room:GetType() == RoomType.ROOM_TREASURE then
+		FloorPiece:GetSprite().Scale = Vector(0.25, 0.25)
+		FloorPiece:AddEntityFlags(EntityFlag.FLAG_RENDER_FLOOR)
+		FloorPiece:GetSprite():Load("gfx/backdrop/angel_treasure_room_backdrops.anm2", true)
+		FloorPiece:GetSprite():Play("Floor_" .. room:GetRoomShape(), true)
+		
+		WallPiece:AddEntityFlags(EntityFlag.FLAG_RENDER_WALL)
+		WallPiece:GetSprite():Load("gfx/backdrop/angel_treasure_room_backdrops.anm2", true)
+		WallPiece:GetSprite():Play("Walls_" .. room:GetRoomShape(), true)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_RENDER, rplus.OnGameRender)
@@ -1119,6 +1174,10 @@ function rplus:UpdateStats(player, Flag)
 		if CustomData and CustomData.Cards.SACBLOOD.Data then
 			player.Damage = player.Damage + StatUps.SACBLOOD_DMG * (CustomData.Cards.SACBLOOD.NumUses - Step / 50)
 		end
+		
+		if player:HasTrinket(Trinkets.MAGICSWORD) then
+			player.Damage = player.Damage * StatUps.MAGICSWORD_DMG_MUL * player:GetTrinketMultiplier(Trinkets.MAGICSWORD)
+		end
 	end
 	
 	if Flag == CacheFlag.CACHE_TEARFLAG then
@@ -1223,6 +1282,12 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 	
 	if player:HasCollectible(Collectibles.BIRDOFHOPE) and CustomData and CustomData.Items.BIRDOFHOPE.BirdCaught == false and Entity.Type == 1 then
 		return false
+	end
+	
+	if player:HasTrinket(Trinkets.MAGICSWORD) and Entity.Type == 1 and not player:HasTrinket(TrinketType.TRINKET_DUCT_TAPE) then
+		sfx:Play(SoundEffect.SOUND_BONE_SNAP, 1, 2, false, 1, 0)
+		player:TryRemoveTrinket(Trinkets.MAGICSWORD)
+		player:AddTrinket(Trinkets.WAITNO, true)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
@@ -1334,10 +1399,10 @@ end
 rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.BirdCollision, Familiars.BIRD)
 
 function rplus:SoulCollision(Familiar, Collider, _)
-	if Collider:IsActiveEnemy(true) and not CustomData.Items.ENRAGEDSOUL.AttachedEnemy then
+	if Collider:IsActiveEnemy(true) and not Collider:HasEntityFlags(EntityFlag.FLAG_CHARM) and not CustomData.Items.ENRAGEDSOUL.AttachedEnemy then
 		Familiar.Velocity = Vector.Zero
 		CustomData.Items.ENRAGEDSOUL.AttachedEnemy = Collider
-		AttachFrames = 300
+		AttachFrames = ENRAGED_SOUL_COOLDOWN / 2
 		Familiar:GetSprite():Play("Idle", true)
 	end
 end
@@ -1505,7 +1570,7 @@ if EID then
 	EID:addCollectible(Collectibles.CHERRYFRIENDS, "Killing an enemy has a 20% chance to drop cherry familiar on the ground #Those cherries emit a charming fart when an enemy walks over them, and drop half a heart when a room is cleared")
 	EID:addCollectible(Collectibles.BLACKDOLL, "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal half of that damage to another enemy in that pair")
 	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into invincible ghost and a bird flies out of room center in a random direction. Catching the bird in 5 seconds will save you and get you back to your death spot, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it harder to catch her")
-	EID:addCollectible(Collectibles.ENRAGEDSOUL, "Double tap shooting button to launch a ghost familiar in the direction you are firing #The ghost will latch onto the first enemy it collides with, dealing damage over time for 10 seconds or until that enemy is killed #The ghost can latch onto bosses aswell #{{Warning}} Has a 10 seconds cooldown")
+	EID:addCollectible(Collectibles.ENRAGEDSOUL, "Double tap shooting button to launch a ghost familiar in the direction you are firing #The ghost will latch onto the first enemy it collides with, dealing damage over time for 7 seconds or until that enemy is killed #The ghost can latch onto bosses aswell #{{Warning}} Has a 7 seconds cooldown")
 	EID:addCollectible(Collectibles.CEREMDAGGER, "{{ArrowDown}} Damage x0.85 #When shooting, 5% chance to launch a dagger that does no damage, but inflicts bleed on enemies #All enemies that die while bleeding will drop Sacrificial Blood Consumable that gives you temporary DMG up")
 	EID:addCollectible(Collectibles.CEILINGSTARS, "Grants you two Lemegeton wisps at the beginning of each floor and when sleeping in bed")
 	EID:addCollectible(Collectibles.QUASAR, "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed")
@@ -1518,6 +1583,8 @@ if EID then
 	EID:addTrinket(Trinkets.GREEDSHEART, "Gives you one empty coin heart #It is depleted before any of your normal hearts and can only be refilled by directly picking up money")
 	EID:addTrinket(Trinkets.REDMAP, "Displays the location of Ultra Secret Room on all subsequent floors #Cracked Key drops on a room clear with 25% chance")
 	EID:addTrinket(Trinkets.ANGELSCROWN, "All new treasure rooms will have an angel item for sale instead of a normal item #Angels spawned from statues will not drop Key Pieces!")
+	EID:addTrinket(Trinkets.MAGICSWORD, "{{ArrowUp}} x2 DMG up while held #Breaks when you take damage #{{ArrowUp}} Having Duct Tape prevents it from breaking")
+	EID:addTrinket(Trinkets.WAITNO, "Does nothing, it's broken")
 	
 	EID:addCard(PocketItems.SDDSHARD, "Invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "Damages all enemies in a room, turns item pedestals into red locusts and turns pickups into random locusts with a 50% chance")
@@ -1535,7 +1602,7 @@ if EID then
 	EID:addCard(PocketItems.JACKOFHEARTS, "Hearts will drop more often from clearing rooms for current floor, and the average quality of hearts is increased")
 	EID:addCard(PocketItems.QUASARSHARD, "Damages all enemies in a room, turns item pedestals and pickups (with a 20% chance) into lemegeton wisps")
 	EID:addCard(PocketItems.BUSINESSCARD, "Summons a random monster, like ones from Friend Finder")
-	EID:addCard(PocketItems.SACBLOOD, "{{ArrowUp}} Gives +1 DMG up that depletes over the span of 25 seconds #Stackable #{{Warning}} Damage depletes quicker the more Blood you used subsequently")
+	EID:addCard(PocketItems.SACBLOOD, "{{ArrowUp}} Gives +1 DMG up that depletes over the span of 25 seconds #Stackable #{{ArrowUp}} Heals you for one red heart if you have Ceremonial Robes #{{Warning}} Damage depletes quicker the more Blood you used subsequently")
 
 	EID:addPill(Pills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at half-a-heart, doesn't affect soul/black hearts")
 end

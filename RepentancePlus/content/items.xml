@@ -29,6 +29,8 @@
 
 	<!-- T.Samson -->
 	<passive name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="13_tempertantrum.png" quality="3" /> 
+	<trinket name="Magic Sword" description=":-)" gfx="t10_magicsword.png" cache="damage" />
+	<trinket name="Wait, No!" description=":-(" gfx="t11_waitno.png" />
 	
 	<!-- T. Azazel -->
 	<trinket name="Angel's Crown" description="Patience is a virtue" gfx="t07_angelscrown.png" />
