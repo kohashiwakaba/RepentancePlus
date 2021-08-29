@@ -37,6 +37,7 @@
 	
 	<!-- T.Eden -->
 	<passive name="Magic Pen" description="I want to be an artist" gfx="14_magicpen.png" quality="1" /> 
+	<trinket name="Eden's Lock" description="???" gfx="t12_edenslock.png" />
 	
 	<!-- T. Lost -->
 	<familiar name="Zen Baby" description="He sees everything" gfx="15_zenbaby.png" quality="3" tags="baby angel" />

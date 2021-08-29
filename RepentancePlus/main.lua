@@ -82,10 +82,10 @@ Trinkets = {
 	GREEDSHEART = Isaac.GetTrinketIdByName("Greed's Heart"),
 	ANGELSCROWN = Isaac.GetTrinketIdByName("Angel's Crown"),
 	REDMAP = Isaac.GetTrinketIdByName("Red Map"),
-	--ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),		WIP
-	CHALKPIECE = Isaac.GetTrinketIdByName("Piece of Chalk"),	-- WIP
+	CHALKPIECE = Isaac.GetTrinketIdByName("Piece of Chalk"),
 	MAGICSWORD = Isaac.GetTrinketIdByName("Magic Sword"),
-	WAITNO = Isaac.GetTrinketIdByName("Wait, No!")
+	WAITNO = Isaac.GetTrinketIdByName("Wait, No!"),
+	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock")	
 }
 
 PocketItems = {
@@ -350,6 +350,8 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
+		Isaac.Spawn(5, 350, Trinkets.CHALKPIECE, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
+		Isaac.Spawn(5, 350, Trinkets.EDENSLOCK, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		--]]
 	end
 end
@@ -682,8 +684,9 @@ function rplus:OnFrame()
 	end
 	
 	if player:HasTrinket(Trinkets.CHALKPIECE) and CustomData then
-		if CustomData.Trinkets.CHALKPIECE.RoomEnterFrame and game:GetFrameCount() <= CustomData.Trinkets.CHALKPIECE.RoomEnterFrame + 90 then
-			local Powder = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_BLACKPOWDER, 5, player.Position, Vector.Zero, nil):ToEffect()
+		if CustomData.Trinkets.CHALKPIECE.RoomEnterFrame and game:GetFrameCount() <= CustomData.Trinkets.CHALKPIECE.RoomEnterFrame + 180
+		and game:GetFrameCount() >= CustomData.Trinkets.CHALKPIECE.RoomEnterFrame + 30	then
+			local Powder = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL, 5, player.Position, Vector.Zero, nil):ToEffect()
 			
 			Powder.Scale = 0.75
 			Powder:SetColor(Color(0, 1, 1, 1, 255, 255, 255), 200, 1, false, false)
@@ -1239,6 +1242,11 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		return false
 	end
 	
+	if player:HasTrinket(Trinkets.CHALKPIECE) and Source.Entity and Source.Entity.Type == 1000 and Source.Entity.SubType == 5 then
+		Entity.Velocity = Entity.Velocity:Resized(-2.5)
+		return false
+	end
+	
 	if player:HasCollectible(Collectibles.TEMPERTANTRUM) then 
 		if Entity.Type == 1 and math.random(100) <= SUPERBERSERKSTATE_CHANCE then
 			player:UseActiveItem(CollectibleType.COLLECTIBLE_BERSERK, true, true, false, true, -1)
@@ -1288,6 +1296,26 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		sfx:Play(SoundEffect.SOUND_BONE_SNAP, 1, 2, false, 1, 0)
 		player:TryRemoveTrinket(Trinkets.MAGICSWORD)
 		player:AddTrinket(Trinkets.WAITNO, true)
+	end
+	
+	if player:HasTrinket(Trinkets.EDENSLOCK) and Entity.Type == 1 then
+		repeat
+			ID = math.random(729)
+		until player:HasCollectible(ID, true)
+		and Isaac.GetItemConfig():GetCollectible(ID).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST
+		and Isaac.GetItemConfig():GetCollectible(ID).Type % 3 == 1	-- passive or familiar (1 or 4)
+		player:RemoveCollectible(ID, true, -1, true)
+		
+		repeat 
+			-- fuck this shit it doesn't want to work
+			--newID = game:GetItemPool():GetCollectible(game:GetItemPool():GetPoolForRoom(game:GetRoom():GetType(), Random()), false, Random(), CollectibleType.COLLECTIBLE_NULL)
+			newID = math.random(729)
+		until Isaac.GetItemConfig():GetCollectible(newID)
+		and Isaac.GetItemConfig():GetCollectible(newID).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST
+		and Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
+		player:AddCollectible(newID, 0, false, -1, 0)
+		
+		sfx:Play(SoundEffect.SOUND_EDEN_GLITCH, 1, 2, false, 1, 0)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
@@ -1585,6 +1613,8 @@ if EID then
 	EID:addTrinket(Trinkets.ANGELSCROWN, "All new treasure rooms will have an angel item for sale instead of a normal item #Angels spawned from statues will not drop Key Pieces!")
 	EID:addTrinket(Trinkets.MAGICSWORD, "{{ArrowUp}} x2 DMG up while held #Breaks when you take damage #{{ArrowUp}} Having Duct Tape prevents it from breaking")
 	EID:addTrinket(Trinkets.WAITNO, "Does nothing, it's broken")
+	EID:addTrinket(Trinkets.EDENSLOCK, "Upon taking damage, one of your items rerolls into another random item #Doesn't take away nor give you story items #{{Warning}} Do not use this with no items!")
+	EID:addTrinket(Trinkets.CHALKPIECE, "When entering uncleared room, you will leave a trail of powder underneath for 5 seconds #Enemies walking over this trail will be pushed back")
 	
 	EID:addCard(PocketItems.SDDSHARD, "Invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "Damages all enemies in a room, turns item pedestals into red locusts and turns pickups into random locusts with a 50% chance")
