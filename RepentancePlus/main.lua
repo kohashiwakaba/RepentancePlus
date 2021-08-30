@@ -70,7 +70,8 @@ Collectibles = {
 	ENRAGEDSOUL = Isaac.GetItemIdByName("Enraged Soul"),
 	CEREMDAGGER = Isaac.GetItemIdByName("Ceremonial Blade"),
 	CEILINGSTARS = Isaac.GetItemIdByName("Ceiling With Stars"),
-	QUASAR = Isaac.GetItemIdByName("Quasar")
+	QUASAR = Isaac.GetItemIdByName("Quasar"),
+	TWOPLUSONE = Isaac.GetItemIdByName("2+1")
 }
 
 Trinkets = {
@@ -85,7 +86,9 @@ Trinkets = {
 	CHALKPIECE = Isaac.GetTrinketIdByName("Piece of Chalk"),
 	MAGICSWORD = Isaac.GetTrinketIdByName("Magic Sword"),
 	WAITNO = Isaac.GetTrinketIdByName("Wait, No!"),
-	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock")	
+	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),
+	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),
+	TORNPAGE = Isaac.GetTrinketIdByName("Torn Page")
 }
 
 PocketItems = {
@@ -324,7 +327,8 @@ function rplus:OnGameStart(Continued)
 				BAGOTRASH = {Levels = 0},
 				TEMPERTANTRUM = {ErasedEnemies = {}},
 				ENRAGEDSOUL = {SoulLaunchCooldown = nil, AttachedEnemy = nil},
-				CEILINGSTARS = {SleptInBed = false}
+				CEILINGSTARS = {SleptInBed = false},
+				TWOPLUSONE = {ItemsBought = 0}
 			},
 			Cards = {
 				REVERSECARD = nil,
@@ -350,8 +354,6 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
-		Isaac.Spawn(5, 350, Trinkets.CHALKPIECE, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
-		Isaac.Spawn(5, 350, Trinkets.EDENSLOCK, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		--]]
 	end
 end
@@ -402,6 +404,7 @@ function rplus:OnNewRoom()
 	local player = Isaac.GetPlayer(0)
 	local level = game:GetLevel()
 	local room = game:GetRoom()
+	local roomtype = room:GetType()
 
 	if player:HasCollectible(Collectibles.BLACKDOLL) and room:IsFirstVisit() and Isaac.CountEnemies() > 1 then
 		ABSepNumber = math.floor(Isaac.CountEnemies() / 2)
@@ -427,7 +430,7 @@ function rplus:OnNewRoom()
 		end
 	end
 	
-	if player:HasTrinket(Trinkets.ANGELSCROWN) and room:GetType() == RoomType.ROOM_TREASURE then
+	if player:HasTrinket(Trinkets.ANGELSCROWN) and roomtype == RoomType.ROOM_TREASURE then
 		if room:IsFirstVisit() then
 			for _, entity in pairs(Isaac.GetRoomEntities()) do
 				if entity.Type == 5 then entity:Remove() end
@@ -463,6 +466,10 @@ function rplus:OnNewRoom()
 	
 	if player:HasTrinket(Trinkets.CHALKPIECE) and not room:IsClear() and room:IsFirstVisit() then
 		CustomData.Trinkets.CHALKPIECE.RoomEnterFrame = game:GetFrameCount()
+	end
+	
+	if CustomData and room:IsFirstVisit() and (roomtype == 14 or roomtype == 22) then
+		CustomData.Items.TWOPLUSONE.ItemsBought = 0
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
@@ -533,6 +540,40 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			end
 		end
 		return true
+	end
+	
+	if player:HasTrinket(Trinkets.TORNPAGE) then
+		if ItemUsed == CollectibleType.COLLECTIBLE_BIBLE then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_BELIAL then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_NECRONOMICON then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_ANARCHIST_COOKBOOK then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_REVELATIONS then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SIN then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_MONSTER_MANUAL then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_TELEPATHY_BOOK then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_HOW_TO_JUMP then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_SATANIC_BIBLE then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES then
+		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_LEMEGETON then
+		
+		end		
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
@@ -684,12 +725,12 @@ function rplus:OnFrame()
 	end
 	
 	if player:HasTrinket(Trinkets.CHALKPIECE) and CustomData then
-		if CustomData.Trinkets.CHALKPIECE.RoomEnterFrame and game:GetFrameCount() <= CustomData.Trinkets.CHALKPIECE.RoomEnterFrame + 180
-		and game:GetFrameCount() >= CustomData.Trinkets.CHALKPIECE.RoomEnterFrame + 30	then
+		if CustomData.Trinkets.CHALKPIECE.RoomEnterFrame and game:GetFrameCount() <= CustomData.Trinkets.CHALKPIECE.RoomEnterFrame + 150 then
 			local Powder = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL, 5, player.Position, Vector.Zero, nil):ToEffect()
 			
 			Powder.Scale = 0.75
-			Powder:SetColor(Color(0, 1, 1, 1, 255, 255, 255), 200, 1, false, false)
+			Powder.Timeout = 600
+			Powder:SetColor(Color(0, 1, 1, 1, 255, 255, 255), 610, 1, false, false)
 			Powder:Update()
 		end
 	end
@@ -711,6 +752,30 @@ function rplus:OnFrame()
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Type == 5 and entity.Variant == 10 and entity.SubType == 1 and entity:ToPickup().Price > 0 then
 				entity:ToPickup():Morph(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), true, true, false)
+			end
+		end
+	end
+	
+	if player:HasTrinket(Trinkets.ADAMSRIB) then
+		if sprite:IsPlaying("Death") and sprite:GetFrame() > 50 then
+			player:TryRemoveTrinket(Trinkets.ADAMSRIB)
+			player:Revive()
+			GiveRevivalIVFrames(player)
+			player:ChangePlayerType(PlayerType.PLAYER_EVE)
+			if not player:HasCollectible(CollectibleType.COLLECTIBLE_WHORE_OF_BABYLON) then player:AddCollectible(CollectibleType.COLLECTIBLE_WHORE_OF_BABYLON) end
+			player:AddMaxHearts(-24, false)
+			player:AddSoulHearts(6)
+		end
+	end
+	
+	if player:HasCollectible(Collectibles.TWOPLUSONE) and CustomData.Items.TWOPLUSONE.ItemsBought == 2 then
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity.Type == 5 then
+				if entity:ToPickup().Price > 0 then
+					entity:ToPickup().Price = 1
+				elseif entity:ToPickup().Price > -1000 and entity:ToPickup().Price < 0 then
+					entity:ToPickup().Price = 0
+				end
 			end
 		end
 	end
@@ -793,11 +858,11 @@ function rplus:OnGameRender()
 	local level = game:GetLevel()
 	local room = game:GetRoom()
 	
-	if player:HasTrinket(Trinkets.GREEDSHEART) and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 10)then
+	if player:HasTrinket(Trinkets.GREEDSHEART) and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) then
 		CoinHeartSprite = Sprite()
 		
 		CoinHeartSprite:Load("gfx/ui/ui_coinhearts.anm2", true)
-		CoinHeartSprite:SetFrame(CustomData.Trinkets.GREEDSHEART, 0)
+		CoinHeartSprite:SetFrame(CustomData.Trinkets.GREEDSHEART, 0)	-- custom data value is either "CoinHeartEmpty" or "CoinHeartFull"
 		CoinHeartSprite:Render(Vector(134, 18), Vector.Zero, Vector.Zero)
 	end
 	
@@ -811,6 +876,8 @@ function rplus:OnGameRender()
 		WallPiece:GetSprite():Load("gfx/backdrop/angel_treasure_room_backdrops.anm2", true)
 		WallPiece:GetSprite():Play("Walls_" .. room:GetRoomShape(), true)
 	end
+	
+	--Isaac.RenderText(tostring(CustomData.Items.TWOPLUSONE.ItemsBought), 75, 75, 1, 1, 1, 1)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_RENDER, rplus.OnGameRender)
 
@@ -1097,6 +1164,35 @@ function rplus:PickupCollision(Pickup, Collider, _)
 	and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 10) then
 		player:AddCoins(-1)
 		CustomData.Trinkets.GREEDSHEART = "CoinHeartFull"
+	end
+	
+	-- this monster is able to 100% (so far) detect whether we buy something and whether we don't
+	-- mad? cry about it
+	if player:HasCollectible(Collectibles.TWOPLUSONE) 
+	and Pickup.Price > -6 and Pickup.Price ~= 0 	-- this pickup costs something
+	and not player:IsHoldingItem()		-- we're not holding another pickup right now
+	and ((Pickup.Price > 0 and player:GetNumCoins() >= Pickup.Price)	-- this shop item is affordable
+	or (Pickup.Price == -1 and player:GetMaxHearts() >= 2)
+	or (Pickup.Price == -2 and player:GetMaxHearts() >= 4)
+	or (Pickup.Price == -3 and player:GetSoulHearts() >= 6)
+	or (Pickup.Price == -4 and player:GetMaxHearts() >= 2 and player:GetSoulHearts() >= 4))	-- or this devil deal is affordable
+	and not (Pickup.Variant == 90 and not (player:NeedsCharge(0) or player:NeedsCharge(1) or player:NeedsCharge(2)))	-- we're not trying to buy batteries with charged up actives
+	and not (Pickup.Variant == 10 and Pickup.SubType == 1 and player:GetHearts() == player:GetMaxHearts())
+	and not (Pickup.Variant == 10 and Pickup.SubType == 3 and player:GetMaxHearts() + player:GetSoulHearts() == 12)	-- we're not trying to buy hearts at full health
+	then
+		if CustomData.Items.TWOPLUSONE.ItemsBought == 2 then
+			CustomData.Items.TWOPLUSONE.ItemsBought = 0
+			for _, entity in pairs(Isaac.GetRoomEntities()) do
+				if entity.Type == 5 then
+					if entity:ToPickup().Price == 1 then
+						entity:ToPickup().AutoUpdatePrice = true
+					end
+				end
+			end
+			player:AddCoins(Pickup.Price - 1)
+		else
+			CustomData.Items.TWOPLUSONE.ItemsBought = CustomData.Items.TWOPLUSONE.ItemsBought + 1
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.PickupCollision)
@@ -1602,6 +1698,7 @@ if EID then
 	EID:addCollectible(Collectibles.CEREMDAGGER, "{{ArrowDown}} Damage x0.85 #When shooting, 5% chance to launch a dagger that does no damage, but inflicts bleed on enemies #All enemies that die while bleeding will drop Sacrificial Blood Consumable that gives you temporary DMG up")
 	EID:addCollectible(Collectibles.CEILINGSTARS, "Grants you two Lemegeton wisps at the beginning of each floor and when sleeping in bed")
 	EID:addCollectible(Collectibles.QUASAR, "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed")
+	EID:addCollectible(Collectibles.TWOPLUSONE, "Buying two items in the shop will allow you to buy third item for 1 {{Coin}} #Buying two items in a devil deal or a black market will make all other items free")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
@@ -1615,11 +1712,13 @@ if EID then
 	EID:addTrinket(Trinkets.WAITNO, "Does nothing, it's broken")
 	EID:addTrinket(Trinkets.EDENSLOCK, "Upon taking damage, one of your items rerolls into another random item #Doesn't take away nor give you story items #{{Warning}} Do not use this with no items!")
 	EID:addTrinket(Trinkets.CHALKPIECE, "When entering uncleared room, you will leave a trail of powder underneath for 5 seconds #Enemies walking over this trail will be pushed back")
+	EID:addTrinket(Trinkets.ADAMSRIB, "Revives you as Eve when you die")
+	EID:addTrinket(Trinkets.TORNPAGE, "Books now have additional effects on activation")
 	
 	EID:addCard(PocketItems.SDDSHARD, "Invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "Damages all enemies in a room, turns item pedestals into red locusts and turns pickups into random locusts with a 50% chance")
 	EID:addCard(PocketItems.NEEDLEANDTHREAD, "Removes one broken heart and grants one {{Heart}} heart container")
-	EID:addCard(PocketItems.QUEENOFDIAMONDS, "Spawns 1-12 random {{Coin}} coins (those can be nickels or dimes as well)")
+	EID:addCard(PocketItems.QUEENOFDIAMONDS, "Spawns  1-12 random {{Coin}} coins (those can be nickels or dimes as well)")
 	EID:addCard(PocketItems.KINGOFSPADES, "Lose all your keys and spawn a number of pickups proportional to the amount of keys lost #At least 12 {{Key}} keys is needed for a trinket, and at least 28 for an item #If Isaac has {{GoldenKey}} Golden key, it is removed too and significantly increases total value")
 	EID:addCard(PocketItems.BAGTISSUE, "All pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight; the item of such quality is then spawned #The most valuable pickups are the rarest ones, e.g. {{EthernalHeart}} Eternal hearts or {{Battery}} Mega batteries #{{Warning}} If used in a room with less then 8 pickups, no item will spawn!")
 	EID:addCard(PocketItems.RJOKER, "Teleports Isaac to a {{SuperSecretRoom}} Black Market")

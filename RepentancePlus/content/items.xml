@@ -25,7 +25,7 @@
 	
 	<!-- T. Eve -->
 	<passive name="Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="2" />
-	<passive name="Adam's Rib" description="Children of God" gfx="12_adamsrib.png" quality="2" />
+	<trinket name="Adam's Rib" description="Children of God" gfx="t13_adamsrib.png" />
 
 	<!-- T.Samson -->
 	<passive name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="13_tempertantrum.png" quality="3" /> 
@@ -34,6 +34,9 @@
 	
 	<!-- T. Azazel -->
 	<trinket name="Angel's Crown" description="Patience is a virtue" gfx="t07_angelscrown.png" />
+	
+	<!-- T. Lazarus -->
+	<trinket name="Torn Page" description="Books hold more than you can read" gfx="t14_tornpage.png" />
 	
 	<!-- T.Eden -->
 	<passive name="Magic Pen" description="I want to be an artist" gfx="14_magicpen.png" quality="1" /> 
@@ -45,6 +48,7 @@
 	
 	<!-- T. Keeper -->
 	<trinket name="Greed's Heart" description="$$$" gfx="t06_greedsheart.png" />
+	<passive name="2+1" description="Limited Offer!!!" gfx="12_2+1.png" quality="2" />
 	
 	<!-- T. Apollyon -->
 	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2" />

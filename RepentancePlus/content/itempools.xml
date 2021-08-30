@@ -9,6 +9,7 @@
 	</Pool>
 	<Pool Name="shop">
 		<Item Name="Ceiling With Stars" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="2+1" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="boss">
 		
@@ -29,6 +30,7 @@
 	<Pool Name="secret">
 		<Item Name="Ordinary Life" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Temper Tantrum" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="2+1" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="library">
 		
