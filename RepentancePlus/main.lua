@@ -88,7 +88,7 @@ Trinkets = {
 	WAITNO = Isaac.GetTrinketIdByName("Wait, No!"),
 	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),
 	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),
-	TORNPAGE = Isaac.GetTrinketIdByName("Torn Page")
+	TORNPAGE = Isaac.GetTrinketIdByName("Torn Page")	-- WIP
 }
 
 PocketItems = {
@@ -108,7 +108,8 @@ PocketItems = {
 	BEDSIDEQUEEN = Isaac.GetCardIdByName("Bedside Queen"),
 	QUASARSHARD = Isaac.GetCardIdByName("Quasar Shard"),
 	BUSINESSCARD = Isaac.GetCardIdByName("Business Card"),
-	SACBLOOD = Isaac.GetCardIdByName("Sacrificial Blood")
+	SACBLOOD = Isaac.GetCardIdByName("Sacrificial Blood"),
+	FLYPAPER = Isaac.GetCardIdByName("Flypaper")
 }
 
 PickUps = {
@@ -328,7 +329,7 @@ function rplus:OnGameStart(Continued)
 				TEMPERTANTRUM = {ErasedEnemies = {}},
 				ENRAGEDSOUL = {SoulLaunchCooldown = nil, AttachedEnemy = nil},
 				CEILINGSTARS = {SleptInBed = false},
-				TWOPLUSONE = {ItemsBought = 0}
+				TWOPLUSONE = {ItemsBought_COINS = 0, ItemsBought_HEARTS = 0}
 			},
 			Cards = {
 				REVERSECARD = nil,
@@ -338,13 +339,17 @@ function rplus:OnGameStart(Continued)
 			},
 			Trinkets = {
 				GREEDSHEART = "CoinHeartEmpty",
-				CHALKPIECE = {RoomEnterFrame = 0}
+				CHALKPIECE = {RoomEnterFrame = 0},
+				TORNPAGE = {SomeBookFlags = nil}
 			}
 		}
 		
 		-- recalculating cache, just in case
 		Isaac.GetPlayer(0):AddCacheFlags(CacheFlag.CACHE_ALL)
 		Isaac.GetPlayer(0):EvaluateItems()
+		
+		-- deleting Wait, No! from trinket pool
+		game:GetItemPool():RemoveTrinket(Trinkets.WAITNO)
 		
 		--[[ Spawn items/trinkets or turn on debug commands for testing here if necessary
 		! DEBUG: 3 - INFINITE HP, 4 - HIGH DAMAGE, 8 - INFINITE CHARGES, 10 - INSTAKILL ENEMIES !
@@ -394,6 +399,10 @@ function rplus:OnNewLevel()
 	if player:HasCollectible(Collectibles.CEILINGSTARS) then
 		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), player.Position, Vector.Zero, nil)
 		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), player.Position, Vector.Zero, nil)
+	end
+	
+	if player:HasCollectible(Collectibles.TWOPLUSONE) then
+		CustomData.Items.TWOPLUSONE.ItemsBought_COINS = 0
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
@@ -468,8 +477,8 @@ function rplus:OnNewRoom()
 		CustomData.Trinkets.CHALKPIECE.RoomEnterFrame = game:GetFrameCount()
 	end
 	
-	if CustomData and room:IsFirstVisit() and (roomtype == 14 or roomtype == 22) then
-		CustomData.Items.TWOPLUSONE.ItemsBought = 0
+	if player:HasCollectible(Collectibles.TWOPLUSONE) and CustomData then
+		CustomData.Items.TWOPLUSONE.ItemsBought_HEARTS = 0
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
@@ -542,35 +551,46 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 		return true
 	end
 	
-	if player:HasTrinket(Trinkets.TORNPAGE) then
-		if ItemUsed == CollectibleType.COLLECTIBLE_BIBLE then
-		
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_BELIAL then
-		
+	if player:HasTrinket(Trinkets.TORNPAGE) and CustomData then
+		if ItemUsed == CollectibleType.COLLECTIBLE_BIBLE then	-- Seraphim for one room
+			CustomData.Trinkets.TORNPAGE.SomeBookFlags = "OneRoom_Bible"
+			
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_BELIAL then	-- fear effect for enemies
+			for _, entity in pairs(Isaac.GetRoomEntities()) do
+				if entity:IsActiveEnemy(true) and not entity:IsBoss() and math.random(100) <= 33 then
+					entity:AddEntityFlags(EntityFlag.FLAG_FEAR)
+				end
+			end
+			
 		elseif ItemUsed == CollectibleType.COLLECTIBLE_NECRONOMICON then
-		
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS then
-		
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_ANARCHIST_COOKBOOK then
-		
+			
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS then		-- gives you spectral tears for one room
+			CustomData.Trinkets.TORNPAGE.SomeBookFlags = "OneRoom_BoS"
+			
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_ANARCHIST_COOKBOOK then	-- gives you 1 bomb
+			player:AddBombs(1)
+			
 		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_REVELATIONS then
 		
 		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SIN then
 		
 		elseif ItemUsed == CollectibleType.COLLECTIBLE_MONSTER_MANUAL then
-		
+			CustomData.Trinkets.TORNPAGE.SomeBookFlags = "OneRoom_Manual"
+			
 		elseif ItemUsed == CollectibleType.COLLECTIBLE_TELEPATHY_BOOK then
-		
+			CustomData.Trinkets.TORNPAGE.SomeBookFlags = "OneRoom_TeleBook"
+			
 		elseif ItemUsed == CollectibleType.COLLECTIBLE_HOW_TO_JUMP then
-		
+			CustomData.Trinkets.TORNPAGE.SomeBookFlags = "JumpEnd_HowToJump"
+			
 		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS then
 		
 		elseif ItemUsed == CollectibleType.COLLECTIBLE_SATANIC_BIBLE then
 		
 		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD then
 		
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES then
-		
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES then		-- gives you half of soul heart
+			player:AddSoulHearts(1)
 		elseif ItemUsed == CollectibleType.COLLECTIBLE_LEMEGETON then
 		
 		end		
@@ -768,13 +788,15 @@ function rplus:OnFrame()
 		end
 	end
 	
-	if player:HasCollectible(Collectibles.TWOPLUSONE) and CustomData.Items.TWOPLUSONE.ItemsBought == 2 then
+	if player:HasCollectible(Collectibles.TWOPLUSONE) then
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Type == 5 then
-				if entity:ToPickup().Price > 0 then
-					entity:ToPickup().Price = 1
-				elseif entity:ToPickup().Price > -1000 and entity:ToPickup().Price < 0 then
-					entity:ToPickup().Price = 0
+				EntPickup = entity:ToPickup()
+				if EntPickup.Price > 0 and CustomData.Items.TWOPLUSONE.ItemsBought_COINS == 2  then
+					EntPickup.Price = 1
+					EntPickup.AutoUpdatePrice = false
+				elseif EntPickup.Price > -1000 and EntPickup.Price < 0 and CustomData.Items.TWOPLUSONE.ItemsBought_HEARTS == 2  then
+					EntPickup.Price = 0
 				end
 			end
 		end
@@ -877,7 +899,8 @@ function rplus:OnGameRender()
 		WallPiece:GetSprite():Play("Walls_" .. room:GetRoomShape(), true)
 	end
 	
-	--Isaac.RenderText(tostring(CustomData.Items.TWOPLUSONE.ItemsBought), 75, 75, 1, 1, 1, 1)
+	-- Isaac.RenderText('items bought with coins:' .. tostring(CustomData.Items.TWOPLUSONE.ItemsBought_COINS), 75, 75, 1, 1, 1, 1)
+	-- Isaac.RenderText('items bought with hearts:' .. tostring(CustomData.Items.TWOPLUSONE.ItemsBought_HEARTS), 75, 100, 1, 1, 1, 1)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_RENDER, rplus.OnGameRender)
 
@@ -910,19 +933,21 @@ function rplus:OnPickupInit(Pickup)
 		Pickup:Remove()
 	end
 	
-	if player:HasTrinket(Trinkets.BASEMENTKEY) and Pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST 
-	and math.random(100) <= BASEMENTKEY_CHANCE * player:GetTrinketMultiplier(Trinkets.BASEMENTKEY) then
-		Pickup:Morph(5, PickupVariant.PICKUP_OLDCHEST, 0, true, true, false)
-	end
-	
-	local CoinSubTypesByVal = {1, 4, 6, 2, 7, 3, 5} -- penny, doublepack, sticky nickel, nickel, golden penny, dime, lucky penny
-	if Pickup.Type == 5 and Pickup.Variant == 20 and Pickup.SubType ~= 5 and player:HasTrinket(Trinkets.BITTENPENNY) 
-	and math.random(100) <= BITTENPENNY_UPGRADECHANCE * player:GetTrinketMultiplier(Trinkets.BITTENPENNY) then
-		player:AnimateHappy()
-		for i = 1, #CoinSubTypesByVal do
-			if CoinSubTypesByVal[i] == Pickup.SubType then CurType = i break end
+	if game:GetRoom():IsFirstVisit() then
+		if player:HasTrinket(Trinkets.BASEMENTKEY) and Pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST 
+		and math.random(100) <= BASEMENTKEY_CHANCE * player:GetTrinketMultiplier(Trinkets.BASEMENTKEY) then
+			Pickup:Morph(5, PickupVariant.PICKUP_OLDCHEST, 0, true, true, false)
 		end
-		Pickup:Morph(5, 20, CoinSubTypesByVal[CurType + 1], true, true, false)
+		
+		local CoinSubTypesByVal = {1, 4, 6, 2, 3, 5, 7} -- penny, doublepack, sticky nickel, nickel, golden penny, dime, lucky penny
+		if Pickup.Variant == 20 and Pickup.SubType ~= 7 and player:HasTrinket(Trinkets.BITTENPENNY) 
+		and math.random(100) <= BITTENPENNY_UPGRADECHANCE * player:GetTrinketMultiplier(Trinkets.BITTENPENNY) then
+			player:AnimateHappy()
+			for i = 1, #CoinSubTypesByVal do
+				if CoinSubTypesByVal[i] == Pickup.SubType then CurType = i break end
+			end
+			Pickup:Morph(5, 20, CoinSubTypesByVal[CurType + 1], true, true, false)
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, rplus.OnPickupInit)
@@ -1117,6 +1142,12 @@ function rplus:CardUsed(Card, player, _)
 		sfx:Play(SoundEffect.SOUND_VAMP_GULP, 1, 2, false, 1, 0)
 		if player:HasCollectible(216) then player:AddHearts(2) end		-- bonus for ceremonial robes ;)
 	end
+	
+	if Card == PocketItems.FLYPAPER then
+		for i = 1, 9 do
+			player:AddSwarmFlyOrbital(player.Position)
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 
@@ -1161,37 +1192,40 @@ function rplus:PickupCollision(Pickup, Collider, _)
 	end
 	
 	if player:HasTrinket(Trinkets.GREEDSHEART) and CustomData.Trinkets.GREEDSHEART == "CoinHeartEmpty" and Pickup.Variant == 20 and Pickup.SubType ~= 6 
-	and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 10) then
+	and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) then
 		player:AddCoins(-1)
 		CustomData.Trinkets.GREEDSHEART = "CoinHeartFull"
 	end
 	
 	-- this monster is able to 100% (so far) detect whether we buy something and whether we don't
-	-- mad? cry about it
+	-- mad? cry about it	
 	if player:HasCollectible(Collectibles.TWOPLUSONE) 
 	and Pickup.Price > -6 and Pickup.Price ~= 0 	-- this pickup costs something
 	and not player:IsHoldingItem()		-- we're not holding another pickup right now
-	and ((Pickup.Price > 0 and player:GetNumCoins() >= Pickup.Price)	-- this shop item is affordable
-	or (Pickup.Price == -1 and player:GetMaxHearts() >= 2)
-	or (Pickup.Price == -2 and player:GetMaxHearts() >= 4)
-	or (Pickup.Price == -3 and player:GetSoulHearts() >= 6)
-	or (Pickup.Price == -4 and player:GetMaxHearts() >= 2 and player:GetSoulHearts() >= 4))	-- or this devil deal is affordable
-	and not (Pickup.Variant == 90 and not (player:NeedsCharge(0) or player:NeedsCharge(1) or player:NeedsCharge(2)))	-- we're not trying to buy batteries with charged up actives
-	and not (Pickup.Variant == 10 and Pickup.SubType == 1 and player:GetHearts() == player:GetMaxHearts())
-	and not (Pickup.Variant == 10 and Pickup.SubType == 3 and player:GetMaxHearts() + player:GetSoulHearts() == 12)	-- we're not trying to buy hearts at full health
 	then
-		if CustomData.Items.TWOPLUSONE.ItemsBought == 2 then
-			CustomData.Items.TWOPLUSONE.ItemsBought = 0
-			for _, entity in pairs(Isaac.GetRoomEntities()) do
-				if entity.Type == 5 then
-					if entity:ToPickup().Price == 1 then
-						entity:ToPickup().AutoUpdatePrice = true
+		if (Pickup.Price == -1 and player:GetMaxHearts() >= 2)
+		or (Pickup.Price == -2 and player:GetMaxHearts() >= 4)
+		or (Pickup.Price == -3 and player:GetSoulHearts() >= 6)
+		or (Pickup.Price == -4 and player:GetMaxHearts() >= 2 and player:GetSoulHearts() >= 4)	-- this devil deal is affordable
+		then
+			CustomData.Items.TWOPLUSONE.ItemsBought_HEARTS = CustomData.Items.TWOPLUSONE.ItemsBought_HEARTS + 1
+		elseif Pickup.Price > 0 and player:GetNumCoins() >= Pickup.Price	-- this shop item is affordable
+		and not (Pickup.Variant == 90 and not (player:NeedsCharge(0) or player:NeedsCharge(1) or player:NeedsCharge(2)))
+		and not (Pickup.Variant == 10 and Pickup.SubType == 1 and player:GetHearts() == player:GetMaxHearts())
+		and not (Pickup.Variant == 10 and Pickup.SubType == 3 and player:GetMaxHearts() + player:GetSoulHearts() == 12)
+		then
+			if CustomData.Items.TWOPLUSONE.ItemsBought_COINS == 2 then
+				CustomData.Items.TWOPLUSONE.ItemsBought_COINS = 0
+				for _, entity in pairs(Isaac.GetRoomEntities()) do
+					if entity.Type == 5 then
+						if entity:ToPickup().Price == 1 then
+							entity:ToPickup().AutoUpdatePrice = true
+						end
 					end
 				end
+			else
+				CustomData.Items.TWOPLUSONE.ItemsBought_COINS = CustomData.Items.TWOPLUSONE.ItemsBought_COINS + 1
 			end
-			player:AddCoins(Pickup.Price - 1)
-		else
-			CustomData.Items.TWOPLUSONE.ItemsBought = CustomData.Items.TWOPLUSONE.ItemsBought + 1
 		end
 	end
 end
@@ -1698,13 +1732,13 @@ if EID then
 	EID:addCollectible(Collectibles.CEREMDAGGER, "{{ArrowDown}} Damage x0.85 #When shooting, 5% chance to launch a dagger that does no damage, but inflicts bleed on enemies #All enemies that die while bleeding will drop Sacrificial Blood Consumable that gives you temporary DMG up")
 	EID:addCollectible(Collectibles.CEILINGSTARS, "Grants you two Lemegeton wisps at the beginning of each floor and when sleeping in bed")
 	EID:addCollectible(Collectibles.QUASAR, "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed")
-	EID:addCollectible(Collectibles.TWOPLUSONE, "Buying two items in the shop will allow you to buy third item for 1 {{Coin}} #Buying two items in a devil deal or a black market will make all other items free")
+	EID:addCollectible(Collectibles.TWOPLUSONE, "Every third shop item on the current floor will cost 1 {{Coin}} penny #Buying two items with hearts in one room makes all other items free")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
 	EID:addTrinket(Trinkets.JUDASKISS, "Enemies touching you become targeted by other enemies (effect similar to Rotten Tomato)")
-	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a 12% chance to not subtract it from your inven tory count")
-	EID:addTrinket(Trinkets.BITTENPENNY, "Upon spawning, every coin has a 20% chance to be upgraded to a higher value: #penny -> doublepack pennies -> sticky nickel -> nickel -> golden penny -> dime -> lucky penny")
+	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a 12% chance to not subtract it from your inventory count")
+	EID:addTrinket(Trinkets.BITTENPENNY, "Upon spawning, every coin has a 20% chance to be upgraded to a higher value: #penny -> doublepack pennies -> sticky nickel -> nickel -> dime -> lucky penny -> golden penny")
 	EID:addTrinket(Trinkets.GREEDSHEART, "Gives you one empty coin heart #It is depleted before any of your normal hearts and can only be refilled by directly picking up money")
 	EID:addTrinket(Trinkets.REDMAP, "Displays the location of Ultra Secret Room on all subsequent floors #Cracked Key drops on a room clear with 25% chance")
 	EID:addTrinket(Trinkets.ANGELSCROWN, "All new treasure rooms will have an angel item for sale instead of a normal item #Angels spawned from statues will not drop Key Pieces!")
@@ -1713,7 +1747,7 @@ if EID then
 	EID:addTrinket(Trinkets.EDENSLOCK, "Upon taking damage, one of your items rerolls into another random item #Doesn't take away nor give you story items #{{Warning}} Do not use this with no items!")
 	EID:addTrinket(Trinkets.CHALKPIECE, "When entering uncleared room, you will leave a trail of powder underneath for 5 seconds #Enemies walking over this trail will be pushed back")
 	EID:addTrinket(Trinkets.ADAMSRIB, "Revives you as Eve when you die")
-	EID:addTrinket(Trinkets.TORNPAGE, "Books now have additional effects on activation")
+	EID:addTrinket(Trinkets.TORNPAGE, "Books have additional effects on activation")
 	
 	EID:addCard(PocketItems.SDDSHARD, "Invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "Damages all enemies in a room, turns item pedestals into red locusts and turns pickups into random locusts with a 50% chance")

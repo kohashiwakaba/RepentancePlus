@@ -25,6 +25,7 @@
 	<card type="rune" name="Quasar Shard" hud="Quasar Shard" mimiccharge="6" description="Shards of knoweldge" pickup="165" />
 	<card type="special" name="Business Card" hud="Business Card" mimiccharge="4" description="Reusable partnership" pickup="166" />
 	<card type="object" name="Sacrificial Blood" hud="Sacrificial Blood" mimiccharge="12" description="Feed on their pain" pickup="167" />
+	<card type="special" name="Flypaper" hud="Flypaper" mimiccharge="6" description="Sticky!" pickup="168" />
 	
 	<!-- non-custom backs -->
 	<card type="suit" name="Joker?" hud="Joker?" mimiccharge="1" description="¿¿¿" pickup="2"/>
