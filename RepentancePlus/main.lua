@@ -14,7 +14,6 @@ local game = Game()
 local rplus = RegisterMod("Repentance Plus", 1)
 local sfx = SFXManager()
 local music = MusicManager()
-local modRNG = RNG()
 local CustomData
 
 local BASEMENTKEY_CHANCE = 5	-- chance to replace golden chest with the old chest
@@ -87,8 +86,7 @@ Trinkets = {
 	MAGICSWORD = Isaac.GetTrinketIdByName("Magic Sword"),
 	WAITNO = Isaac.GetTrinketIdByName("Wait, No!"),
 	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),
-	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),
-	TORNPAGE = Isaac.GetTrinketIdByName("Torn Page")	-- WIP
+	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib")
 }
 
 PocketItems = {
@@ -252,37 +250,44 @@ end
 
 -- Is this collectible unlocked?
 local function IsCollectibleUnlocked(collectibleType)
-	local isUnlocked = false
-	local itemPool = game:GetItemPool()
-	local player = Isaac.GetPlayer(0)
-	local hasChaos = false
-	
-	itemPool:AddRoomBlacklist(CollectibleType.COLLECTIBLE_SAD_ONION)
-
-	if player:HasCollectible(CollectibleType.COLLECTIBLE_CHAOS) == true then
-		player:RemoveCollectible(CollectibleType.COLLECTIBLE_CHAOS)
-		hasChaos = true
-	end
-	local seed = game:GetSeeds():GetNextSeed()
-	local testCollectible = itemPool:GetCollectible(ItemPoolType.POOL_24, false, seed)
-	if testCollectible == collectibleType then
-		isUnlocked = true
-	end
-	if hasChaos == true then
-		player:AddCollectible(CollectibleType.COLLECTIBLE_CHAOS, 0, false)
-	end
-	itemPool:ResetRoomBlacklist()
-	
-	return isUnlocked	
+    local isUnlocked = false
+    local itemPool = game:GetItemPool()
+    local player = Isaac.GetPlayer(0)
+    
+    player:AddCollectible(CollectibleType.COLLECTIBLE_CHAOS, 0, false)
+    isUnlocked = itemPool:RemoveCollectible(collectibleType)
+    player:RemoveCollectible(CollectibleType.COLLECTIBLE_CHAOS)
+    
+    return isUnlocked    
 end
 
-local function GetUnlockedVanillaCollectible(ExcludeStoryItems)
-	repeat
-		ID = math.random(729)
-	until Isaac.GetItemConfig():GetCollectible(ID) 	-- item exists
-	and ((ExcludeStoryItems and Isaac.GetItemConfig():GetCollectible(ID).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST)
-	or not ExcludeStoryItems)	 -- not story related if the flag is set
-	and IsCollectibleUnlocked(ID)	-- and is unlocked
+local function GetUnlockedVanillaCollectible(AllPools)
+	AllPools = AllPools or false
+    local ID = 0
+    local itemPool = game:GetItemPool()
+    local player = Isaac.GetPlayer(0)
+    
+    if AllPools then 
+		player:AddCollectible(CollectibleType.COLLECTIBLE_CHAOS, 0, false) -- makes all items appear in the list
+		ID = itemPool:GetCollectible(1, false) -- gets an item without removing it from the item pool
+		player:RemoveCollectible(CollectibleType.COLLECTIBLE_CHAOS) -- removes chaos
+	else
+		local rt = game:GetRoom():GetType()
+		local ip
+		
+		if rt == 2 or rt == 22 then ip = 1
+		elseif rt == 5 then ip = 2
+		elseif rt == 7 or rt == 8 then ip = 5
+		elseif rt == 10 then ip = 12
+		elseif rt == 12 then ip = 6
+		elseif rt == 14 then ip = 3
+		elseif rt == 15 or rt == 29 then ip = 4
+		elseif rt == 24 then ip = 26
+		else ip = 0
+		end
+		
+		ID = itemPool:GetCollectible(ip, false)
+	end
 	
 	return ID
 end
@@ -397,8 +402,8 @@ function rplus:OnNewLevel()
 	end
 	
 	if player:HasCollectible(Collectibles.CEILINGSTARS) then
-		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), player.Position, Vector.Zero, nil)
-		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), player.Position, Vector.Zero, nil)
+		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(), player.Position, Vector.Zero, nil)
+		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(), player.Position, Vector.Zero, nil)
 	end
 	
 	if player:HasCollectible(Collectibles.TWOPLUSONE) then
@@ -541,7 +546,7 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Type == 5 and entity.Variant == 100 and entity.SubType > 0 then
 				for i = 1, 3 do
-					Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), player.Position, Vector.Zero, nil)
+					Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(false), player.Position, Vector.Zero, nil)
 					Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
 					entity:Remove()
 				end
@@ -549,51 +554,6 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			end
 		end
 		return true
-	end
-	
-	if player:HasTrinket(Trinkets.TORNPAGE) and CustomData then
-		if ItemUsed == CollectibleType.COLLECTIBLE_BIBLE then	-- Seraphim for one room
-			CustomData.Trinkets.TORNPAGE.SomeBookFlags = "OneRoom_Bible"
-			
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_BELIAL then	-- fear effect for enemies
-			for _, entity in pairs(Isaac.GetRoomEntities()) do
-				if entity:IsActiveEnemy(true) and not entity:IsBoss() and math.random(100) <= 33 then
-					entity:AddEntityFlags(EntityFlag.FLAG_FEAR)
-				end
-			end
-			
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_NECRONOMICON then
-			
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS then		-- gives you spectral tears for one room
-			CustomData.Trinkets.TORNPAGE.SomeBookFlags = "OneRoom_BoS"
-			
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_ANARCHIST_COOKBOOK then	-- gives you 1 bomb
-			player:AddBombs(1)
-			
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_REVELATIONS then
-		
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SIN then
-		
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_MONSTER_MANUAL then
-			CustomData.Trinkets.TORNPAGE.SomeBookFlags = "OneRoom_Manual"
-			
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_TELEPATHY_BOOK then
-			CustomData.Trinkets.TORNPAGE.SomeBookFlags = "OneRoom_TeleBook"
-			
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_HOW_TO_JUMP then
-			CustomData.Trinkets.TORNPAGE.SomeBookFlags = "JumpEnd_HowToJump"
-			
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS then
-		
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_SATANIC_BIBLE then
-		
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD then
-		
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES then		-- gives you half of soul heart
-			player:AddSoulHearts(1)
-		elseif ItemUsed == CollectibleType.COLLECTIBLE_LEMEGETON then
-		
-		end		
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
@@ -1080,9 +1040,8 @@ function rplus:CardUsed(Card, player, _)
 			
 			-- trying to get random (not story-related!!) item with desired quality
 			repeat
-				ID = math.random(729)
-			until Isaac.GetItemConfig():GetCollectible(ID).Quality == DesiredQuality and 
-			Isaac.GetItemConfig():GetCollectible(ID).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST
+				ID = GetUnlockedVanillaCollectible(true)
+			until Isaac.GetItemConfig():GetCollectible(ID).Quality == DesiredQuality
 			
 			-- spawning the item
 			player:AnimateHappy()
@@ -1126,7 +1085,7 @@ function rplus:CardUsed(Card, player, _)
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
 			if entity.Type == 5 and ((entity.Variant == 100 and entity.SubType > 0) or
 			(entity.Variant < 100 and math.random(100) <= PICKUP_WISP_SPAWN_CHANCE)) then
-				Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), player.Position, Vector.Zero, nil)
+				Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(false), player.Position, Vector.Zero, nil)
 				Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
 				entity:Remove()
 				sfx:Play(SoundEffect.SOUND_DEATH_CARD, 1, 2, false, 1, 0)
@@ -1198,7 +1157,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 	end
 	
 	-- this monster is able to 100% (so far) detect whether we buy something and whether we don't
-	-- mad? cry about it	
+	-- mad? cry about it
 	if player:HasCollectible(Collectibles.TWOPLUSONE) 
 	and Pickup.Price > -6 and Pickup.Price ~= 0 	-- this pickup costs something
 	and not player:IsHoldingItem()		-- we're not holding another pickup right now
@@ -1430,7 +1389,7 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 	
 	if player:HasTrinket(Trinkets.EDENSLOCK) and Entity.Type == 1 then
 		repeat
-			ID = math.random(729)
+			ID = player:GetDropRNG():RandomInt(728) + 1
 		until player:HasCollectible(ID, true)
 		and Isaac.GetItemConfig():GetCollectible(ID).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST
 		and Isaac.GetItemConfig():GetCollectible(ID).Type % 3 == 1	-- passive or familiar (1 or 4)
@@ -1439,10 +1398,8 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		repeat 
 			-- fuck this shit it doesn't want to work
 			--newID = game:GetItemPool():GetCollectible(game:GetItemPool():GetPoolForRoom(game:GetRoom():GetType(), Random()), false, Random(), CollectibleType.COLLECTIBLE_NULL)
-			newID = math.random(729)
-		until Isaac.GetItemConfig():GetCollectible(newID)
-		and Isaac.GetItemConfig():GetCollectible(newID).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST
-		and Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
+			newID = GetUnlockedVanillaCollectible(true)
+		until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
 		player:AddCollectible(newID, 0, false, -1, 0)
 		
 		sfx:Play(SoundEffect.SOUND_EDEN_GLITCH, 1, 2, false, 1, 0)
@@ -1616,8 +1573,8 @@ function rplus:PlayerCollision(Player, Collider, _)
 	
 	if Player:HasCollectible(Collectibles.CEILINGSTARS) and Collider.Type == 5 and Collider.Variant == 380 and not CustomData.Items.CEILINGSTARS.SleptInBed then
 		CustomData.Items.CEILINGSTARS.SleptInBed = true
-		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), Player.Position, Vector.Zero, nil)
-		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(true), Player.Position, Vector.Zero, nil)
+		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(false), Player.Position, Vector.Zero, nil)
+		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(false), Player.Position, Vector.Zero, nil)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0)
@@ -1721,7 +1678,7 @@ if EID then
 	EID:addCollectible(Collectibles.RUBIKSCUBE, "After each use, has a 5% (100% on 20-th use) chance to be 'solved', removed from the player and spawn a Magic Cube on the ground")
 	EID:addCollectible(Collectibles.MAGICCUBE, "{{DiceRoom}} Rerolls item pedestals #Rerolled items can be drawn from any item pool")
 	EID:addCollectible(Collectibles.MAGICPEN, "Tears leave {{ColorRainbow}}rainbow{{CR}} creep underneath them #Random permanent status effects is applied to enemies walking over that creep")
-	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers, gain +0.3 DMG for each consumed familiar and gain invincibility shield for 5 seconds #{{Warning}} Works only once!")
+	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers, gain +0.3 DMG for each consumed familiar and gain invincibility #{{Warning}} Works only once!")
 	EID:addCollectible(Collectibles.TEMPERTANTRUM, "Upon taking damage, there is a 25% chance to enter a Berserk state #While in this state, every enemy damaged has a 10% chance to be erased for the rest of the run")
 	EID:addCollectible(Collectibles.BAGOTRASH, "A familiar that creates blue flies upon clearing a room #Blocks enemy projectiles, and after blocking it has a 2% chance to be destroyed and drop Breakfast #The more floors it is not destroyed, the more flies it spawns")
 	EID:addCollectible(Collectibles.ZENBABY, "A familiar that shoots Godhead tears at a fast firerate")
@@ -1747,7 +1704,6 @@ if EID then
 	EID:addTrinket(Trinkets.EDENSLOCK, "Upon taking damage, one of your items rerolls into another random item #Doesn't take away nor give you story items #{{Warning}} Do not use this with no items!")
 	EID:addTrinket(Trinkets.CHALKPIECE, "When entering uncleared room, you will leave a trail of powder underneath for 5 seconds #Enemies walking over this trail will be pushed back")
 	EID:addTrinket(Trinkets.ADAMSRIB, "Revives you as Eve when you die")
-	EID:addTrinket(Trinkets.TORNPAGE, "Books have additional effects on activation")
 	
 	EID:addCard(PocketItems.SDDSHARD, "Invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "Damages all enemies in a room, turns item pedestals into red locusts and turns pickups into random locusts with a 50% chance")

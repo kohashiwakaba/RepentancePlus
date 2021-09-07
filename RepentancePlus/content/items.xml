@@ -35,9 +35,6 @@
 	<!-- T. Azazel -->
 	<trinket name="Angel's Crown" description="Patience is a virtue" gfx="t07_angelscrown.png" />
 	
-	<!-- T. Lazarus -->
-	<trinket name="Torn Page" description="Books hold more than you can read" gfx="t14_tornpage.png" />
-	
 	<!-- T.Eden -->
 	<passive name="Magic Pen" description="I want to be an artist" gfx="14_magicpen.png" quality="1" /> 
 	<trinket name="Eden's Lock" description="???" gfx="t12_edenslock.png" />
