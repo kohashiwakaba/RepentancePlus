@@ -34,9 +34,8 @@ local CEREM_DAGGER_LAUNCH_CHANCE = 5 -- chance to launch a dagger
 CustomBackDropEntity = Isaac.GetEntityVariantByName("CustomBackDropEntity")
 
 Costumes = {
+	-- add ONLY NON-PERSISTENT COSTUMES here, because persistent costumes now work without lua
 	ORDLIFE = Isaac.GetCostumeIdByPath("gfx/characters/costume_001_ordinarylife.anm2"),
-	CHERRYFRIENDS = Isaac.GetCostumeIdByPath("gfx/characters/costume_002_cherryfriends.anm2"),
-	MARKCAIN = Isaac.GetCostumeIdByPath("gfx/characters/costume_003_markcain.anm2"),
 	BIRDOFHOPE = Isaac.GetCostumeIdByPath("gfx/characters/costume_004_birdofhope.anm2")
 }
 
@@ -823,10 +822,6 @@ function rplus:PostPlayerUpdate(Player)
 	end
 	
 	if Player:HasTrinket(Trinkets.MAGICSWORD) then Player:AddCacheFlags(CacheFlag.CACHE_DAMAGE) Player:EvaluateItems() end
-	
-	-- ADD PERSISTENT PLAYER COSTUMES HERE
-	if Player:HasCollectible(Collectibles.CHERRYFRIENDS) then Player:AddNullCostume(Costumes.CHERRYFRIENDS) else Player:TryRemoveNullCostume(Costumes.CHERRYFRIENDS) end
-	if Player:HasCollectible(Collectibles.MARKCAIN) then Player:AddNullCostume(Costumes.MARKCAIN) else Player:TryRemoveNullCostume(Costumes.MARKCAIN) end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
 
@@ -859,8 +854,12 @@ function rplus:OnGameRender()
 		WallPiece:GetSprite():Play("Walls_" .. room:GetRoomShape(), true)
 	end
 	
-	-- Isaac.RenderText('items bought with coins:' .. tostring(CustomData.Items.TWOPLUSONE.ItemsBought_COINS), 75, 75, 1, 1, 1, 1)
-	-- Isaac.RenderText('items bought with hearts:' .. tostring(CustomData.Items.TWOPLUSONE.ItemsBought_HEARTS), 75, 100, 1, 1, 1, 1)
+	if player:HasCollectible(Collectibles.CEILINGSTARS) and (room:GetType() == 18 or room:GetType() == 19 or level:GetCurrentRoomIndex() == level:GetStartingRoomIndex()) then
+		if not StarCeiling then StarCeiling = Sprite() end
+		StarCeiling:Load("gfx/ui/ui_starceiling.anm2", true)
+		StarCeiling:SetFrame("SC", 0)
+		StarCeiling:Render(Vector(250, 35), Vector.Zero, Vector.Zero)
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_RENDER, rplus.OnGameRender)
 
@@ -899,7 +898,7 @@ function rplus:OnPickupInit(Pickup)
 			Pickup:Morph(5, PickupVariant.PICKUP_OLDCHEST, 0, true, true, false)
 		end
 		
-		local CoinSubTypesByVal = {1, 4, 6, 2, 3, 5, 7} -- penny, doublepack, sticky nickel, nickel, golden penny, dime, lucky penny
+		local CoinSubTypesByVal = {1, 4, 6, 2, 3, 5, 7} -- penny, doublepack, sticky nickel, nickel, dime, lucky penny, golden penny
 		if Pickup.Variant == 20 and Pickup.SubType ~= 7 and player:HasTrinket(Trinkets.BITTENPENNY) 
 		and math.random(100) <= BITTENPENNY_UPGRADECHANCE * player:GetTrinketMultiplier(Trinkets.BITTENPENNY) then
 			player:AnimateHappy()

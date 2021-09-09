@@ -1,4 +1,8 @@
 <items gfxroot="gfx/items/" version="1">
+	<!-- NOTE : if an item has a persistent costume, you can actually give it the local id to associate it with that costume. 
+		That ID won't mess with internal game ID of the item. (Thanks to Wofsauge for making the guide about that!)
+	>
+	
 	<!-- T.Isaac -->
 	<active name="Ordinary Life" description="What if it all's just a dream?" gfx="01_ordinarylife.png" quality="3" maxcharges="12" />
 	<trinket name="Basement Key" description="Open your memories" gfx="t01_basementkey.png" />
@@ -8,15 +12,15 @@
 	<!-- T.Maggy -->
 	<active name="Cookie Cutter" description="Cut your hearts!" gfx="05_cookiecutter.png" quality="1" maxcharges="0"/>
 	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="t02_keytotheheart.png" />
-	<passive name="Cherry Friends" description=":3" gfx="06_cherryfriends.png" quality="2" />
+	<passive id="1" name="Cherry Friends" description=":3" gfx="06_cherryfriends.png" quality="2" />
 	
 	<!-- T. Cain -->
-	<passive name="The Mark of Cain" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="3" devilprice="1" cache="damage" tags="devil" />
+	<passive id="2" name="The Mark of Cain" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="3" devilprice="1" cache="damage" tags="devil" />
 	<trinket name="Sleight of Hand" description="Faster than you'd think!" gfx="t03_sleightofhand.png" />
 	<trinket name="Bitten Penny" description="Wealth of risk" gfx="t04_bittenpenny.png" />
 
 	<!-- T. Judas -->
-	<passive name="Black Doll" description="Bound by blood" gfx="08_blackdoll.png" quality="2" devilprice="1" />
+	<passive id="3" name="Black Doll" description="Bound by blood" gfx="08_blackdoll.png" quality="2" devilprice="1" />
 	<trinket name="Judas' Kiss" description="One on the cheek" gfx="t05_judaskiss.png" />
 	<passive name="Ceremonial Blade" description="Just a drop of blood for our Gods" gfx="09_ceremonialblade.png" quality="3" cache="damage" devilprice="2" />
 	
@@ -55,6 +59,6 @@
 	<passive name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="2" />
 	
 	<!-- T. Bethany -->
-	<passive name="Ceiling With Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
+	<passive id="4" name="Ceiling With Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
 	<active name="Quasar" description="Cosmic wisdom" gfx="33_quasar.png" quality="4" devilprice="2" maxcharges="6" />
 </items>
