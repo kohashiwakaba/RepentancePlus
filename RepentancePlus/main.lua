@@ -11,7 +11,7 @@
 									---------------------
 
 local game = Game()
-local rplus = RegisterMod("Repentance Plus", 1)
+local rplus = RegisterMod("repentanceplus", 1)
 local sfx = SFXManager()
 local music = MusicManager()
 local CustomData
@@ -106,7 +106,8 @@ PocketItems = {
 	QUASARSHARD = Isaac.GetCardIdByName("Quasar Shard"),
 	BUSINESSCARD = Isaac.GetCardIdByName("Business Card"),
 	SACBLOOD = Isaac.GetCardIdByName("Sacrificial Blood"),
-	FLYPAPER = Isaac.GetCardIdByName("Flypaper")
+	FLYPAPER = Isaac.GetCardIdByName("Flypaper"),
+	LIBRARYCARD = Isaac.GetCardIdByName("Library Card")
 }
 
 PickUps = {
@@ -114,7 +115,8 @@ PickUps = {
 }
 
 Pills = {
-	ESTROGEN = Isaac.GetPillEffectByName("Estrogen")
+	ESTROGEN = Isaac.GetPillEffectByName("Estrogen"),
+	LAXATIVE = Isaac.GetPillEffectByName("Laxative")
 }
 
 ScarletChestItems = { 
@@ -146,9 +148,7 @@ ScarletChestItems = {
 	695  --Bloody Gust
 }
 
-ScarletChestHearts = {
-	1, 2, 5, 10 --every Heart with red in it which is automatically unlocked
-}
+ScarletChestHearts = {1, 2, 5, 10}
 
 StatUps = {
 	SINNERSHEART_DMG_MUL = 1.5,
@@ -226,6 +226,7 @@ DIRECTION_SHOOT_ANIM = {
 }
 
 DIRECTION_VECTOR = {
+	[Direction.NO_DIRECTION] = Vector(0, 1),
 	[Direction.LEFT] = Vector(-1, 0),
 	[Direction.UP] = Vector(0, -1),
 	[Direction.RIGHT] = Vector(1, 0),
@@ -760,6 +761,15 @@ function rplus:OnFrame()
 			end
 		end
 	end
+	
+	if LaxUseFrame and game:GetFrameCount() <= LaxUseFrame + 90 and game:GetFrameCount() % 4 == 0 then
+		local vector = Vector.FromAngle(DIRECTION_VECTOR[player:GetMovementDirection()]:GetAngleDegrees() + math.random(-30, 30)):Resized(-7.5)
+		local SCorn = Isaac.Spawn(2, 0, 0, player.Position, vector, nil):GetSprite()
+		
+		SCorn:Load("gfx/002.122_corn_tear.anm2", true)
+		SCorn:Play("Big0" .. math.random(4))
+		SCorn.Scale = Vector(0.75, 0.75)
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
@@ -1106,6 +1116,17 @@ function rplus:CardUsed(Card, player, _)
 			player:AddSwarmFlyOrbital(player.Position)
 		end
 	end
+	
+	if Card == PocketItems.LIBRARYCARD then
+		local books = {33, 34, 35, 58, 65, 78, 97, 123, 192, 287, 292, 545, 584, 712}
+		
+		repeat 
+			bookID = books[math.random(#books)]
+		until IsCollectibleUnlocked(bookID)
+		if bookID ~= 584 then
+			player:UseActiveItem(bookID, true, false, true, true, -1)
+		else Isaac.Spawn(3, 206, 0, player.Position, Vector.Zero, nil) end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 
@@ -1224,6 +1245,27 @@ function rplus:OnTearUpdate(Tear)
 			Tear:GetSprite().Rotation = -90.0
 		end
 	end
+	
+	if player:HasCollectible(Collectibles.SINNERSHEART) and Tear.Variant ~= TearVariants.CEREMDAGGER then
+		local SHeart = Tear:GetSprite()
+		SHeart.Scale = Vector(0.66, 0.66)
+		
+		SHeart:Load("gfx/002.121_sinners_heart_tear.anm2", true)
+		local TX = Tear.Velocity:Normalized().X
+		local TY = Tear.Velocity:Normalized().Y
+		
+		if TY > 0 and TX <= TY and TX >= -TY then	-- down
+			SHeart:Play("MoveVert")
+		elseif TX > 0 and TY < TX and TY > -TX then		-- right
+			SHeart:Play("MoveHori")
+		elseif TX <= 0 and TY < -TX and TY > TX then	-- left	
+			SHeart.FlipX = true
+			SHeart:Play("MoveHori")
+		else										-- up
+			SHeart.FlipY = true
+			SHeart:Play("MoveVert")
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
 
@@ -1235,9 +1277,9 @@ function rplus:OnTearInit(Tear)
 	if player:HasCollectible(Collectibles.CEREMDAGGER) and EntityRef(Tear).Entity.SpawnerType == EntityType.ENTITY_PLAYER then
 		if math.random(100) <= CEREM_DAGGER_LAUNCH_CHANCE then
 			-- launching the dagger
-			local S = Isaac.Spawn(2, TearVariants.CEREMDAGGER, 0, player.Position, Tear.Velocity, nil):GetSprite()
-			S:Load("002.120_ceremonial_blade_tear", true)
-			S:Play("Idle")
+			local SBlade = Isaac.Spawn(2, TearVariants.CEREMDAGGER, 0, player.Position, Tear.Velocity, nil):GetSprite()
+			SBlade:Load("gfx/002.120_ceremonial_blade_tear.anm2", true)
+			SBlade:Play("Idle")
 		end
 	end
 end
@@ -1287,12 +1329,6 @@ function rplus:UpdateStats(player, Flag)
 		-- Range currently not functioning, blame Edmund
 		if player:HasCollectible(Collectibles.SINNERSHEART)  then
 			player.TearHeight = player.TearHeight + StatUps.SINNERSHEART_TEARHEIGHT
-		end
-	end
-	
-	if Flag == CacheFlag.CACHE_TEARCOLOR then
-		if player:HasCollectible(Collectibles.SINNERSHEART) then
-			player.TearColor = Color(0.4, 0.1, 0.38, 1, 0.27843, 0, 0.4549)
 		end
 	end
 	
@@ -1662,6 +1698,12 @@ function rplus:UsePill(Pill, _)
 			Isaac.Spawn(3, FamiliarVariant.BLOOD_BABY, 0, player.Position, Vector.Zero, nil)
 		end
 	end
+	
+	if Pill == Pills.LAXATIVE then
+		LaxUseFrame = game:GetFrameCount()
+		sfx:Play(SoundEffect.SOUND_FART, 1, 2, false, 1, 0)
+		player:AnimateSad()
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_PILL, rplus.UsePill)
 
@@ -1721,8 +1763,10 @@ if EID then
 	EID:addCard(PocketItems.QUASARSHARD, "Damages all enemies in a room, turns item pedestals and pickups (with a 20% chance) into lemegeton wisps")
 	EID:addCard(PocketItems.BUSINESSCARD, "Summons a random monster, like ones from Friend Finder")
 	EID:addCard(PocketItems.SACBLOOD, "{{ArrowUp}} Gives +1 DMG up that depletes over the span of 25 seconds #Stackable #{{ArrowUp}} Heals you for one red heart if you have Ceremonial Robes #{{Warning}} Damage depletes quicker the more Blood you used subsequently")
-
+	EID:addCard(PocketItems.LIBRARYCARD, "Activates a random book effect")
+	
 	EID:addPill(Pills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at half-a-heart, doesn't affect soul/black hearts")
+	EID:addPill(Pills.LAXATIVE, "Makes you shoot out corn tears from behind for 3 seconds")
 end
 
 								-----------------------------------------
