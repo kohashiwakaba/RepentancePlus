@@ -22,7 +22,7 @@
 	<!-- T. Judas -->
 	<passive id="3" name="Black Doll" description="Bound by blood" gfx="08_blackdoll.png" quality="2" devilprice="1" />
 	<trinket name="Judas' Kiss" description="One on the cheek" gfx="t05_judaskiss.png" />
-	<passive name="Ceremonial Blade" description="Just a drop of blood for our Gods" gfx="09_ceremonialblade.png" quality="3" cache="damage" devilprice="2" />
+	<passive name="Ceremonial Blade" description="Just a drop of blood for our Gods" gfx="09_ceremonialblade.png" quality="3" cache="damage" devilprice="1" />
 	
 	<!-- T. ??? -->
 	<familiar name="Bag-o-Trash" description="Will you take it out already?!" gfx="10_bagotrash.png" quality="1" />
