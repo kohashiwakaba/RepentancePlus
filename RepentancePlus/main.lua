@@ -1118,14 +1118,7 @@ function rplus:CardUsed(Card, player, _)
 	end
 	
 	if Card == PocketItems.LIBRARYCARD then
-		local books = {33, 34, 35, 58, 65, 78, 97, 123, 192, 287, 292, 545, 584, 712}
-		
-		repeat 
-			bookID = books[math.random(#books)]
-		until IsCollectibleUnlocked(bookID)
-		if bookID ~= 584 then
-			player:UseActiveItem(bookID, true, false, true, true, -1)
-		else Isaac.Spawn(3, 206, 0, player.Position, Vector.Zero, nil) end
+		player:UseActiveItem(game:GetItemPool():GetCollectible(ItemPoolType.POOL_LIBRARY, false, Random(), 0), true, false, true, true, -1)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
@@ -1144,19 +1137,28 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		local DieRoll = math.random(100)
 		
 		if DieRoll < 15 then
+			local freezePreventChecker = 0
+			
 			repeat
 				Item = ScarletChestItems[math.random(#ScarletChestItems)]
-			until IsCollectibleUnlocked(Item)
-			Isaac.Spawn(5, 100, Item, Pickup.Position, Vector(0, 0), Pickup)
+				freezePreventChecker = freezePreventChecker + 1
+			until IsCollectibleUnlocked(Item) or freezePreventChecker == 1000
+			
+			if freezePreventChecker < 1000 then
+				Isaac.Spawn(5, 100, Item, Pickup.Position, Vector(0, 0), Pickup)
+			else 
+				EntityNPC.ThrowSpider(Pickup.Position, Pickup, Pickup.Position + Vector.FromAngle(math.random(360)) * 200, false, 0) 
+			end
+			
 			Pickup:Remove()
-		elseif DieRoll < 80 then
-			local NumOfPickUps = modRNG:RandomInt(4) + 1 -- 1 to 4 Pickups
+		elseif DieRoll < 85 then
+			local NumOfPickUps = RNG():RandomInt(4) + 1 -- 1 to 4 Pickups
 			
 			for i = 1, NumOfPickUps do
 				local variant = nil
 				local subtype = nil
 				
-				if modRNG:RandomInt(100) < 66 then
+				if math.random(100) < 66 then
 					variant = 10
 					subtype = ScarletChestHearts[math.random(#ScarletChestHearts)]
 				else
@@ -1423,16 +1425,23 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 	end
 	
 	if player:HasTrinket(Trinkets.EDENSLOCK) and Entity.Type == 1 then
+		local freezePreventChecker = 0
+			
 		repeat
 			ID = player:GetDropRNG():RandomInt(728) + 1
-		until player:HasCollectible(ID, true)
+			freezePreventChecker = freezePreventChecker + 1
+		until (player:HasCollectible(ID, true)
 		and Isaac.GetItemConfig():GetCollectible(ID).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST
-		and Isaac.GetItemConfig():GetCollectible(ID).Type % 3 == 1	-- passive or familiar (1 or 4)
-		player:RemoveCollectible(ID, true, -1, true)
+		and Isaac.GetItemConfig():GetCollectible(ID).Type % 3 == 1)	-- passive or familiar (1 or 4)
+		or freezePreventChecker == 10000
+		
+		if freezePreventChecker < 10000 then
+			player:RemoveCollectible(ID, true, -1, true)
+		else 
+			return true
+		end
 		
 		repeat 
-			-- fuck this shit it doesn't want to work
-			--newID = game:GetItemPool():GetCollectible(game:GetItemPool():GetPoolForRoom(game:GetRoom():GetType(), Random()), false, Random(), CollectibleType.COLLECTIBLE_NULL)
 			newID = GetUnlockedVanillaCollectible(true)
 		until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
 		player:AddCollectible(newID, 0, false, -1, 0)
@@ -1691,6 +1700,7 @@ function rplus:UsePill(Pill, _)
 	local player = Isaac.GetPlayer(0)
 	
 	if Pill == Pills.ESTROGEN then
+		sfx:Play(SoundEffect.SOUND_MEAT_JUMPS, 1, 2, false, 1, 0)
 		local BloodClots = player:GetHearts() - 1 
 		
 		player:AddHearts(-BloodClots)
@@ -1742,7 +1752,7 @@ if EID then
 	EID:addTrinket(Trinkets.ANGELSCROWN, "All new treasure rooms will have an angel item for sale instead of a normal item #Angels spawned from statues will not drop Key Pieces!")
 	EID:addTrinket(Trinkets.MAGICSWORD, "{{ArrowUp}} x2 DMG up while held #Breaks when you take damage #{{ArrowUp}} Having Duct Tape prevents it from breaking")
 	EID:addTrinket(Trinkets.WAITNO, "Does nothing, it's broken")
-	EID:addTrinket(Trinkets.EDENSLOCK, "Upon taking damage, one of your items rerolls into another random item #Doesn't take away nor give you story items #{{Warning}} Do not use this with no items!")
+	EID:addTrinket(Trinkets.EDENSLOCK, "Upon taking damage, one of your items rerolls into another random item #Doesn't take away nor give you story items")
 	EID:addTrinket(Trinkets.CHALKPIECE, "When entering uncleared room, you will leave a trail of powder underneath for 5 seconds #Enemies walking over this trail will be pushed back")
 	EID:addTrinket(Trinkets.ADAMSRIB, "Revives you as Eve when you die")
 	
