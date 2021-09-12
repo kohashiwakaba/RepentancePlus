@@ -16,18 +16,18 @@ local sfx = SFXManager()
 local music = MusicManager()
 local CustomData
 
-local BASEMENTKEY_CHANCE = 5	-- chance to replace golden chest with the old chest
-local HEARTKEY_CHANCE = 5	-- chance for enemy to drop Scarlet chest on death
+local BASEMENTKEY_CHANCE = 5		-- chance to replace golden chest with the old chest
+local HEARTKEY_CHANCE = 5			-- chance for enemy to drop Scarlet chest on death
 local CARDRUNE_REPLACE_CHANCE = 2	-- chance to replace vanilla card with card from our mod
 local SUPERBERSERKSTATE_CHANCE = 25		-- chance to enter berserk state via Temper Tantrum
-local SUPERBERSERK_DELETE_CHANCE = 10	-- chance to erase enemies while in this state
+local SUPERBERSERK_DELETE_CHANCE = 7	-- chance to erase enemies while in this state
 local TRASHBAG_BREAK_CHANCE = 1		-- chance of Bag o' Trash breaking
 local CHERRY_SPAWN_CHANCE = 20		-- chance to spawn cherry friend on enemy death
-local SLEIGHTOFHAND_CHANCE = 12		-- chance to save your consumable when using it via Sleight of Hand
-local JACKOF_CHANCE = 50	-- chance for Jack cards to spawn their respective type of pickup
-local BITTENPENNY_UPGRADECHANCE = 20	-- chance to 'upgrade' coins via Bitten Penny
-local REDKEY_TURN_CHANCE = 25		-- chance for any card to turn into Cracked Key via Red Map trinket
-local PICKUP_WISP_SPAWN_CHANCE = 20 -- chance for pickups to turn into lemegeton wisps when using Quasar Shard
+local SLEIGHTOFHAND_CHANCE = 17		-- chance to save your consumable when using it via Sleight of Hand
+local JACKOF_CHANCE = 60			-- chance for Jack cards to spawn their respective type of pickup
+local BITTENPENNY_UPGRADECHANCE = 17	-- chance to 'upgrade' coins via Bitten Penny
+local REDKEY_TURN_CHANCE = 12		-- chance for any pickup to turn into Cracked Key via Red Map trinket
+local PICKUP_WISP_SPAWN_CHANCE = 17 -- chance for pickups to turn into lemegeton wisps when using Quasar Shard
 local ENRAGED_SOUL_COOLDOWN = 420	-- 7 seconds in 60 FPS callback; cooldown for Enraged Soul familiar
 local CEREM_DAGGER_LAUNCH_CHANCE = 5 -- chance to launch a dagger
 
@@ -957,14 +957,14 @@ function rplus:CardUsed(Card, player, _)
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_NECRONOMICON, false, false, true, false, -1)
 		local locustRNG = RNG()
 		
-		for _, entity in pairs(Isaac.GetRoomEntities()) do
-			if entity.Type == EntityType.ENTITY_PICKUP then
-				if (entity.Variant < 100 and entity.Variant > 0) or entity.Variant == 300 or entity.Variant == 350 or entity.Variant == 360 then
-					local pos = entity.Position
-					entity:Remove()
-					if math.random(100) <= 50 then
-						Isaac.Spawn(EntityType.ENTITY_FAMILIAR, FamiliarVariant.BLUE_FLY, locustRNG:RandomInt(5) + 1, pos, Vector.Zero, nil)
-					end
+		for _, entity in pairs(Isaac.FindInRadius(player.Position, 1000, EntityPartition.PICKUP)) do
+			if ((entity.Variant < 100 and entity.Variant > 0) or entity.Variant == 300 or entity.Variant == 350 or entity.Variant == 360) 
+			and entity:ToPickup() and entity:ToPickup().Price % 10 == 0 then
+				local pos = entity.Position
+				
+				entity:Remove()
+				if math.random(100) <= 50 then
+					Isaac.Spawn(EntityType.ENTITY_FAMILIAR, FamiliarVariant.BLUE_FLY, locustRNG:RandomInt(5) + 1, pos, Vector.Zero, nil)
 				end
 			end
 		end
@@ -999,11 +999,11 @@ function rplus:CardUsed(Card, player, _)
 		for i = 1, math.random(12) do
 			local QueenOfDiamondsRandom = math.random(100)
 			if QueenOfDiamondsRandom <= 92 then
-				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 1, game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
+				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 1, game:GetRoom():FindFreePickupSpawnPosition (player.Position, 0, true, false), Vector.Zero, nil)
 			elseif QueenOfDiamondsRandom <= 98 then
-				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 2, game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
+				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 2, game:GetRoom():FindFreePickupSpawnPosition (player.Position, 0, true, false), Vector.Zero, nil)
 			else
-				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 3, game:GetRoom():FindFreePickupSpawnPosition ( player.Position, 0, true, false ), Vector.Zero, nil)
+				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 3, game:GetRoom():FindFreePickupSpawnPosition (player.Position, 0, true, false), Vector.Zero, nil)
 			end
 		end
 	end
@@ -1014,8 +1014,8 @@ function rplus:CardUsed(Card, player, _)
 		local EnoughConsumables = true
 		
 		-- getting total weight of 8 most valuable pickups in a room
-		for _, entity in pairs(Isaac.GetRoomEntities()) do
-			if entity.Type == 5 then
+		for _, entity in pairs(Isaac.FindInRadius(player.Position, 1000, EntityPartition.PICKUP)) do
+			if entity:ToPickup() and entity:ToPickup().Price % 10 == 0 then
 				if PickupWeights[entity.Variant] and PickupWeights[entity.Variant][entity.SubType] then
 					table.insert(Weights, PickupWeights[entity.Variant][entity.SubType])
 					Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
@@ -1031,6 +1031,7 @@ function rplus:CardUsed(Card, player, _)
 				end
 			end
 		end
+		
 		table.sort(Weights, function(a,b) return a>b end)
 		for i = 1, 8 do
 			if not Weights[i] then
@@ -1091,9 +1092,11 @@ function rplus:CardUsed(Card, player, _)
 	
 	if Card == PocketItems.QUASARSHARD then
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_NECRONOMICON, UseFlag.USE_NOANIM, -1)
-		for _, entity in pairs(Isaac.GetRoomEntities()) do
-			if entity.Type == 5 and ((entity.Variant == 100 and entity.SubType > 0) or
-			(entity.Variant < 100 and math.random(100) <= PICKUP_WISP_SPAWN_CHANCE)) then
+		
+		for _, entity in pairs(Isaac.FindInRadius(player.Position, 1000, EntityPartition.PICKUP)) do
+			if ((entity.Variant == 100 and entity.SubType > 0) or
+			(entity.Variant < 100 and math.random(100) <= PICKUP_WISP_SPAWN_CHANCE)) 
+			and entity:ToPickup() and entity:ToPickup().Price % 10 == 0 then
 				Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(false), player.Position, Vector.Zero, nil)
 				Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
 				entity:Remove()
