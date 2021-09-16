@@ -64,10 +64,10 @@ Collectibles = {
 	CHERRYFRIENDS = Isaac.GetItemIdByName("Cherry Friends"),
 	ZENBABY = Isaac.GetItemIdByName("Zen Baby"),
 	BLACKDOLL = Isaac.GetItemIdByName("Black Doll"),
-	BIRDOFHOPE = Isaac.GetItemIdByName("Bird of Hope"),
+	BIRDOFHOPE = Isaac.GetItemIdByName("A Bird of Hope"),
 	ENRAGEDSOUL = Isaac.GetItemIdByName("Enraged Soul"),
 	CEREMDAGGER = Isaac.GetItemIdByName("Ceremonial Blade"),
-	CEILINGSTARS = Isaac.GetItemIdByName("Ceiling With Stars"),
+	CEILINGSTARS = Isaac.GetItemIdByName("Ceiling With the Stars"),
 	QUASAR = Isaac.GetItemIdByName("Quasar"),
 	TWOPLUSONE = Isaac.GetItemIdByName("2+1")
 }
@@ -81,7 +81,7 @@ Trinkets = {
 	GREEDSHEART = Isaac.GetTrinketIdByName("Greed's Heart"),
 	ANGELSCROWN = Isaac.GetTrinketIdByName("Angel's Crown"),
 	REDMAP = Isaac.GetTrinketIdByName("Red Map"),
-	CHALKPIECE = Isaac.GetTrinketIdByName("Piece of Chalk"),
+	CHALKPIECE = Isaac.GetTrinketIdByName("A Piece of Chalk"),
 	MAGICSWORD = Isaac.GetTrinketIdByName("Magic Sword"),
 	WAITNO = Isaac.GetTrinketIdByName("Wait, No!"),
 	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),
@@ -115,7 +115,7 @@ PickUps = {
 }
 
 Pills = {
-	ESTROGEN = Isaac.GetPillEffectByName("Estrogen"),
+	ESTROGEN = Isaac.GetPillEffectByName("Estrogen Up"),
 	LAXATIVE = Isaac.GetPillEffectByName("Laxative")
 }
 
@@ -1195,8 +1195,8 @@ function rplus:PickupCollision(Pickup, Collider, _)
 			CustomData.Items.TWOPLUSONE.ItemsBought_HEARTS = CustomData.Items.TWOPLUSONE.ItemsBought_HEARTS + 1
 		elseif Pickup.Price > 0 and player:GetNumCoins() >= Pickup.Price	-- this shop item is affordable
 		and not (Pickup.Variant == 90 and not (player:NeedsCharge(0) or player:NeedsCharge(1) or player:NeedsCharge(2)))
-		and not (Pickup.Variant == 10 and Pickup.SubType == 1 and player:GetHearts() == player:GetMaxHearts())
-		and not (Pickup.Variant == 10 and Pickup.SubType == 3 and player:GetMaxHearts() + player:GetSoulHearts() == 12)
+		and not (Pickup.Variant == 10 and Pickup.SubType == 1 and not player:CanPickRedHearts())
+		and not (Pickup.Variant == 10 and Pickup.SubType == 3 and not player:CanPickSoulHearts())
 		then
 			if CustomData.Items.TWOPLUSONE.ItemsBought_COINS == 2 then
 				CustomData.Items.TWOPLUSONE.ItemsBought_COINS = 0
@@ -1500,7 +1500,7 @@ function rplus:ZenBabyUpdate(Familiar)
 	if player:GetFireDirection() == Direction.NO_DIRECTION then
 		Sprite:Play(DIRECTION_FLOAT_ANIM[player:GetMovementDirection()], false)
 	else
-		local TearVector = DIRECTION_VECTOR[player:GetFireDirection()]:Normalized()
+		local TearVector = DIRECTION_VECTOR[player:GetFireDirection()]
 
 		if Familiar.FireCooldown <= 0 then
 			local Tear = Familiar:FireProjectile(TearVector):ToTear()
@@ -1508,9 +1508,9 @@ function rplus:ZenBabyUpdate(Familiar)
 			Tear:Update()
 
 			if player:HasTrinket(Isaac.GetTrinketIdByName("Forgotten Lullaby")) then
-				Familiar.FireCooldown = 8
+				Familiar.FireCooldown = 10
 			else
-				Familiar.FireCooldown = 14
+				Familiar.FireCooldown = 16
 			end
 		end
 
@@ -1611,7 +1611,7 @@ function rplus:PlayerCollision(Player, Collider, _)
 			local S = Collider:GetSprite()
 			
 			if S:GetFrame() == 1 and (S:IsPlaying("Open") or S:IsPlaying("UseKey")) and 	-- chests that require a key to open
-			(Collider.Variant == 53 or Collider.Variant == 55 or Collider.Variant == 57 or Collider.Variant == 60) and	-- no golden keys or lockpicks allowed!!
+			(Collider.Variant == 53 or Collider.Variant == 55 or Collider.Variant == 57 or Collider.Variant == 60) and	-- no golden keys or lockpicks allowed!
 			not Player:HasGoldenKey() and not Player:HasTrinket(TrinketType.TRINKET_PAPER_CLIP) then 
 				Player:AddKeys(1) 
 			end

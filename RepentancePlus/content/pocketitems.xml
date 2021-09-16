@@ -40,7 +40,7 @@
 	<card type="suit" name="Bedside Queen" hud="Bedside Queen" mimiccharge="6" description="0--&#34;" pickup="2" />
 	
 	<!-- pill effects -->
-	<pilleffect name="Estrogen" mimiccharge="4" class="2+" />
+	<pilleffect name="Estrogen Up" mimiccharge="4" class="2+" />
 	<pilleffect name="Laxative" mimiccharge="3" class="1+" />
 	
 </pocketitems>

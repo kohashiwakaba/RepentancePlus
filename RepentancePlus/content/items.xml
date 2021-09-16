@@ -28,7 +28,7 @@
 	<familiar name="Bag-o-Trash" description="Will you take it out already?!" gfx="10_bagotrash.png" quality="1" />
 	
 	<!-- T. Eve -->
-	<passive name="Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="2" />
+	<passive name="A Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="2" />
 	<trinket name="Adam's Rib" description="Children of God" gfx="t13_adamsrib.png" />
 
 	<!-- T.Samson -->
@@ -45,7 +45,7 @@
 	
 	<!-- T. Lost -->
 	<familiar name="Zen Baby" description="He sees everything" gfx="15_zenbaby.png" quality="3" tags="baby angel" />
-	<trinket name="Piece of Chalk" description="Stay out, unholy!" gfx="t09_pieceofchalk.png" />
+	<trinket name="A Piece of Chalk" description="Stay out, unholy!" gfx="t09_pieceofchalk.png" />
 	
 	<!-- T. Keeper -->
 	<trinket name="Greed's Heart" description="$$$" gfx="t06_greedsheart.png" />
@@ -59,6 +59,6 @@
 	<passive name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="2" />
 	
 	<!-- T. Bethany -->
-	<passive id="4" name="Ceiling With Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
+	<passive id="4" name="Ceiling With the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
 	<active name="Quasar" description="Cosmic wisdom" gfx="33_quasar.png" quality="4" devilprice="2" maxcharges="6" />
 </items>
