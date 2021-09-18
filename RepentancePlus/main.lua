@@ -15,6 +15,12 @@ local rplus = RegisterMod("repentanceplus", 1)
 local sfx = SFXManager()
 local music = MusicManager()
 local CustomData
+local json = require("json")
+
+achievement = Sprite()
+achievement:Load("gfx/ui/achievement/achievements.anm2", true)
+local idleTimer = 0
+local achievementTime = 60
 
 local BASEMENTKEY_CHANCE = 5		-- chance to replace golden chest with the old chest
 local HEARTKEY_CHANCE = 5			-- chance for enemy to drop Scarlet chest on death
@@ -117,6 +123,129 @@ PickUps = {
 Pills = {
 	ESTROGEN = Isaac.GetPillEffectByName("Estrogen Up"),
 	LAXATIVE = Isaac.GetPillEffectByName("Laxative")
+}
+
+local Unlocks = { 
+	["21"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.ORDLIFE}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["22"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["23"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["24"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["25"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["26"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["27"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["28"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["29"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["30"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["31"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["32"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["33"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["34"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["35"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["36"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["37"] = {
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	}
+
 }
 
 ScarletChestItems = { 
@@ -248,6 +377,57 @@ local function GetRandomCustomCard()
 	return PocketItems[random_key]
 end
 
+local function Unlock(checkmark)
+	local player = Isaac.GetPlayer(0)
+	local playerType = player:GetPlayerType()
+	local itemConfig = Isaac.GetItemConfig()
+	if playerType > 20 then
+		if playerType == 38 then 
+			playerType = 29
+		end
+		if playerType == 39 then
+			playerType = 37
+		end
+		playerType = tostring(playerType)
+		if not Unlocks[playerType][checkmark].Unlocked and Unlocks[playerType][checkmark].Variant then
+			Unlocks[playerType][checkmark].Unlocked = true
+			local Variant = Unlocks[playerType][checkmark].Variant
+			local SubType = Unlocks[playerType][checkmark].SubType
+			local name
+			if Variant == 100 then
+				name = itemConfig:GetCollectible(SubType).Name
+			elseif Variant == 300 then
+				name = itemConfig:GetCard(SubType).Name
+			elseif Variant == 70 then
+				name = itemConfig:GetPillEffect(SubType).Name
+			elseif Variant == 350 then
+				name = itemConfig:GetTrinket(SubType).Name
+			--elseif
+			--manual Name depending on which Pickup to choose from
+			end
+			local sprite = "gfx/ui/achievement/achievement_" .. name .. ".png"
+			achievement:ReplaceSpritesheet(3, sprite)
+			achievement:LoadGraphics()
+			idle_timer = achievementTime
+			achievement:Play("Appear", false)
+			Isaac.SaveModData(rplus, json.encode(Unlocks, "Unlocks"))
+		end
+	end
+end
+
+-- Is this Entity (eg collectible, Chest, pill, et c unlocked
+--Don't read if you want to live!!!
+local function IsModEntityUnlocked(Type, Variant, SubType)
+	for _, k in pairs(Unlocks) do
+		for _, data in pairs(k) do
+			if Type == data[2] and Variant == data[3] and SubType == data[4] then
+				return data[1]
+			end
+		end
+	end
+	return false
+end
+
 -- Is this collectible unlocked?
 local function IsCollectibleUnlocked(collectibleType)
     local isUnlocked = false
@@ -323,6 +503,12 @@ end
 						-- GAME STARTED --
 						------------------
 function rplus:OnGameStart(Continued)
+	if Isaac.HasModData(rplus) then
+		local data = Isaac.LoadModData(rplus)
+		Unlocks = json.decode(data)
+	else
+		Isaac.SaveModData(rplus, json.encode(Unlocks, "Unlocks"))
+	end
 	if not Continued then
 		CustomData = {
 			Items = {
@@ -845,6 +1031,25 @@ function rplus:OnGameRender()
 	local level = game:GetLevel()
 	local room = game:GetRoom()
 	
+	local center = room:GetCenterPos()
+  	local topLeft = room:GetTopLeftPos()
+  	local pos = Isaac.WorldToRenderPosition(center, true)
+	
+	if achievement:GetFrame() == 7 then
+		achievement.PlaybackSpeed = 0.025
+	else
+		achievement.PlaybackSpeed = 1.0
+	end
+	if (room:GetRoomShape() == RoomShape.ROOMSHAPE_1x2 or room:GetRoomShape() == RoomShape.ROOMSHAPE_IIV) then
+  		pos = Isaac.WorldToRenderPosition(Vector(center.X, topLeft.Y*2.0), true)
+  	elseif (room:GetRoomShape() == RoomShape.ROOMSHAPE_2x1 or room:GetRoomShape() == RoomShape.ROOMSHAPE_IIH) then
+  		pos = Isaac.WorldToRenderPosition(Vector(topLeft.X*5.5, center.Y), true)
+  	elseif (room:GetRoomShape() >= RoomShape.ROOMSHAPE_2x2) then
+  		pos = Isaac.WorldToRenderPosition(Vector(topLeft.X*5.5, topLeft.Y*2.0), true)
+  	end
+	achievement:Render(pos, Vector(0, 0), Vector(0, 0))	
+	
+	
 	if player:HasTrinket(Trinkets.GREEDSHEART) and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) then
 		CoinHeartSprite = Sprite()
 		
@@ -877,6 +1082,8 @@ rplus:AddCallback(ModCallbacks.MC_POST_RENDER, rplus.OnGameRender)
 						-------------------
 function rplus:OnNPCDeath(NPC)
 	local player = Isaac.GetPlayer(0)
+	local level = game:GetLevel()
+	local room = game:GetRoom()
 	
 	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HEARTKEY_CHANCE * player:GetTrinketMultiplier(Trinkets.KEYTOTHEHEART) then
 		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.SCARLETCHEST, 0, NPC.Position, NPC.Velocity, nil)
@@ -890,6 +1097,24 @@ function rplus:OnNPCDeath(NPC)
 	if player:HasCollectible(Collectibles.CEREMDAGGER) and not NPC:IsBoss() and NPC:HasEntityFlags(EntityFlag.FLAG_BLEED_OUT) then
 		Isaac.Spawn(5, 300, PocketItems.SACBLOOD, NPC.Position, Vector.Zero, nil)
 	end
+	
+	if level:GetStage() == LevelStage.STAGE5 then --Sheol/Cathedral (It would unlock in VOID otherwise)
+		if NPC.Type == EntityType.ENTITY_SATAN and NPC.Variant == 10 then
+			Unlock("Satan")
+		end
+		if NPC.Type == EntityType.ENTITY_ISAAC then --since it is not The Chest, no need to check for Blue Baby
+			Unlock("Isaac")
+		end
+	elseif level:GetStage() == LevelStage.STAGE6 then
+		if NPC.Type == ENTITY_ISAAC then --Isaac can't spawn on the Chest
+			Unlock("Blue Baby")
+		end
+	end
+	
+	if NPC.Type == ENTITY_ULTRA_GREED and game.Difficulty == DIFFICULTY_GREED then
+		Unlock("Greed")
+	end
+		
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 
@@ -1693,6 +1918,10 @@ function rplus:PickupAwardSpawn(_, Pos)
 	if player:HasTrinket(Trinkets.REDMAP) and math.random(100) <= REDKEY_TURN_CHANCE and room:GetType() ~= RoomType.ROOM_BOSS then
 		Isaac.Spawn(5, 300, Card.CARD_CRACKED_KEY, game:GetRoom():FindFreePickupSpawnPosition(Pos, 0, true, false), Vector.Zero, nil)
 		return true
+	end
+	
+	if room:GetType() == RoomType.ROOM_BOSSRUSH then
+		Unlock("Boss Rush")
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
