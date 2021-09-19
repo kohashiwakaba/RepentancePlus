@@ -131,28 +131,28 @@ Pills = {
 }
 
 local Unlocks = { 
-	["21"] = {
+	["21"] = { --T.Isaac
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.REVERSECARD}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.ORDLIFE}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = Collectibles.RUBIKSCUBE}, 
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = Trinkets.BASEMENTKEY}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.SDDSHARD}
 	},
-	["22"] = {
+	["22"] = { --T.Maggy
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.QUEENOFDIAMONDS}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.CHERRYFRIENDS}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.COOKIECUTTER}, 
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.KEYTOTHEHEART}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.NEEDLEANDTHREAD}
 	},
-	["23"] = {
+	["23"] = { --T.Cain
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.JACKOFDIAMONDS}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.MARKCAIN}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.BITTENPENNY}, 
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.SLEIGHTOFHAND}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.BAGTISSUE}
 	},
-	["24"] = {
+	["24"] = { --T.Judas
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.JACKOFHEARTS}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.CEREMDAGGER}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Collectibles.BLACKDOLL}, 
@@ -419,6 +419,7 @@ local function Unlock(checkmark)
 end
 
 local function RenderAchievementPapers()
+	local room = game:GetRoom()
 	local roomCenter = room:GetCenterPos()
   	local roomTopLeft = room:GetTopLeftPos()
 	local roomTypeToRenderPos = {
@@ -792,6 +793,12 @@ function rplus:OnFrame()
 	local stage = level:GetStage()
 	local sprite = player:GetSprite()
 	
+	for _, entity in pairs(Isaac.GetRoomEntities()) do
+		if entity.Type == EntityType.ENTITY_ULTRA_GREED and entity:GetSprite():IsFinished("Death") and (game.Difficulty == 2 and entity.Variant == 0 or entity.Variant == 1) then
+				Unlock("Greed")
+		end
+	end
+	
 	if player:HasCollectible(Collectibles.ORDLIFE) and CustomData.Items.ORDLIFE == "used" then
 		for i = 0,7 do
 			door = room:GetDoor(i)
@@ -1130,8 +1137,8 @@ function rplus:OnNPCDeath(NPC)
 		if NPC.Type == EntityType.ENTITY_ISAAC then -- Isaac can't spawn on Chest
 			Unlock("Blue Baby")
 		end
-	elseif NPC.Type == EntityType.ENTITY_ULTRA_GREED and game.Difficulty == Difficulty.DIFFICULTY_GREED then
-		Unlock("Greed")
+	--elseif NPC.Type == EntityType.ENTITY_ULTRA_GREED then
+	--	Unlock("Greed")
 	end
 	
 	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HEARTKEY_CHANCE * player:GetTrinketMultiplier(Trinkets.KEYTOTHEHEART) then
