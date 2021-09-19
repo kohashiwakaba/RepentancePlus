@@ -32,12 +32,15 @@
 	<card type="suit" name="Joker?" hud="Joker?" mimiccharge="1" description="¿¿¿" pickup="2"/>
 	<card type="special" name="Reverse Card" hud="Reverse Card" mimiccharge="2" description="No, You!" pickup="17" /> 
 	<card type="suit" name="King of Spades" hud="King of Spades" mimiccharge="6" description="Lose everything to get something" pickup="2" />
+	<card type="suit" name="King of Clubs" hud="King of Clubs" mimiccharge="6" description="Lose everything to get something" pickup="2" />
+	<card type="suit" name="King of Diamonds" hud="King of Diamonds" mimiccharge="6" description="Lose everything to get something" pickup="2" />
 	<card type="suit" name="Queen of Diamonds" hud="Queen of Diamonds" mimiccharge="6" description="$" pickup="2" />
+	<card type="suit" name="Queen of Clubs" hud="Queen of Clubs" mimiccharge="6" description="!" pickup="2" />
+	<card type="suit" name="Bedside Queen" hud="Bedside Queen" mimiccharge="6" description="0--&#34;" pickup="2" />
 	<card type="suit" name="Jack of Diamonds" hud="Jack of Diamonds" mimiccharge="2" description="Increase your Wealth" pickup="2" /> 
 	<card type="suit" name="Jack of Clubs" hud="Jack of Clubs" mimiccharge="2" description="Increase your Blast" pickup="2" />
 	<card type="suit" name="Jack of Spades" hud="Jack of Spades" mimiccharge="2" description="Increase your Access" pickup="2" />
 	<card type="suit" name="Jack of Hearts" hud="Jack of Hearts" mimiccharge="2" description="Increase your Health" pickup="2" />
-	<card type="suit" name="Bedside Queen" hud="Bedside Queen" mimiccharge="6" description="0--&#34;" pickup="2" />
 	
 	<!-- pill effects -->
 	<pilleffect name="Estrogen Up" mimiccharge="4" class="2+" />

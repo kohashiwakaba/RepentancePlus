@@ -77,7 +77,8 @@ Collectibles = {
 	CEILINGSTARS = Isaac.GetItemIdByName("Ceiling With the Stars"),
 	QUASAR = Isaac.GetItemIdByName("Quasar"),
 	TWOPLUSONE = Isaac.GetItemIdByName("2+1"),
-	REDMAP = Isaac.GetItemIdByName("Red Map")
+	REDMAP = Isaac.GetItemIdByName("Red Map"),
+	CHEESEGRATER = Isaac.GetItemIdByName("Cheese Grater")
 }
 
 Trinkets = {
@@ -101,8 +102,11 @@ PocketItems = {
 	REVERSECARD = Isaac.GetCardIdByName("Reverse Card"),
 	REDRUNE = Isaac.GetCardIdByName("Red Rune"),
 	KINGOFSPADES = Isaac.GetCardIdByName("King of Spades"),
+	KINGOFCLUBS = Isaac.GetCardIdByName("King of Clubs"),
+	KINGOFDIAMONDS = Isaac.GetCardIdByName("King of Diamonds"),
 	NEEDLEANDTHREAD = Isaac.GetCardIdByName("Needle and Thread"),
 	QUEENOFDIAMONDS = Isaac.GetCardIdByName("Queen of Diamonds"),
+	QUEENOFCLUBS = Isaac.GetCardIdByName("Queen of Clubs"),
 	BAGTISSUE = Isaac.GetCardIdByName("Bag Tissue"),
 	LOADEDDICE = Isaac.GetCardIdByName("Loaded Dice"),
 	JACKOFDIAMONDS = Isaac.GetCardIdByName("Jack of Diamonds"),
@@ -128,32 +132,32 @@ Pills = {
 
 local Unlocks = { 
 	["21"] = {
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.REVERSECARD}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.ORDLIFE}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = Collectibles.RUBIKSCUBE}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = Trinkets.BASEMENTKEY}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.SDDSHARD}
 	},
 	["22"] = {
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.QUEENOFDIAMONDS}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.CHERRYFRIENDS}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.COOKIECUTTER}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.KEYTOTHEHEART}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.NEEDLEANDTHREAD}
 	},
 	["23"] = {
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.JACKOFDIAMONDS}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.MARKCAIN}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.BITTENPENNY}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.SLEIGHTOFHAND}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.BAGTISSUE}
 	},
 	["24"] = {
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.JACKOFHEARTS}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.CEREMDAGGER}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Collectibles.BLACKDOLL}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.JUDASKISS}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.SACBLOOD}
 	},
 	["25"] = {
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
@@ -283,17 +287,13 @@ StatUps = {
 	SINNERSHEART_DMG_MUL = 1.5,
 	SINNERSHEART_DMG_ADD = 2,
 	SINNERSHEART_SHSP = -0.3,
-	SINNERSHEART_TEARHEIGHT = -3, --negative TearHeight = positive Range
-	--
+	SINNERSHEART_TEARHEIGHT = -3, -- negative TearHeight = positive Range
 	MARKCAIN_DMG = 0.3,
-	--
 	LOADEDDICE_LUCK = 10,
-	--
 	CEREMDAGGER_DMG_MUL = 0.85,
-	--
 	SACBLOOD_DMG = 1,
-	--
-	MAGICSWORD_DMG_MUL = 2
+	MAGICSWORD_DMG_MUL = 2,
+	GRATER_DMG = 0.3
 }
 
 -- used by Bag Tissue
@@ -543,7 +543,8 @@ function rplus:OnGameStart(Continued)
 				TEMPERTANTRUM = {ErasedEnemies = {}},
 				ENRAGEDSOUL = {SoulLaunchCooldown = nil, AttachedEnemy = nil},
 				CEILINGSTARS = {SleptInBed = false},
-				TWOPLUSONE = {ItemsBought_COINS = 0, ItemsBought_HEARTS = 0}
+				TWOPLUSONE = {ItemsBought_COINS = 0, ItemsBought_HEARTS = 0},
+				CHEESEGRATER = {NumUses = 0}
 			},
 			Cards = {
 				REVERSECARD = nil,
@@ -555,6 +556,9 @@ function rplus:OnGameStart(Continued)
 				GREEDSHEART = "CoinHeartEmpty",
 				CHALKPIECE = {RoomEnterFrame = 0},
 				TORNPAGE = {SomeBookFlags = nil}
+			},
+			Pills = {
+				LAXATIVE = {LaxUseFrame = nil}
 			}
 		}
 		
@@ -573,11 +577,6 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
-		Isaac.ExecuteCommand("debug 4")
-		Isaac.ExecuteCommand("debug 3")
-		Isaac.ExecuteCommand("g k5")
-		Isaac.ExecuteCommand("g soy")
-		Isaac.ExecuteCommand("stage 10")
 		--]]
 	end
 end
@@ -731,6 +730,17 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			player:Die()
 		end
 		return true
+	end
+	
+	if ItemUsed == Collectibles.CHEESEGRATER and player:GetMaxHearts() > 0 then
+		player:AddMaxHearts(-2, false)
+		player:AddMinisaac(player.Position, true)
+		player:AddMinisaac(player.Position, true)
+		sfx:Play(SoundEffect.SOUND_BLOODBANK_SPAWN, 1, 2, false, 1, 0)
+		
+		CustomData.Items.CHEESEGRATER.NumUses = CustomData.Items.CHEESEGRATER.NumUses + 1
+		player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+		player:EvaluateItems()
 	end
 	
 	if ItemUsed == Collectibles.RUBIKSCUBE then
@@ -977,7 +987,7 @@ function rplus:OnFrame()
 		end
 	end
 	
-	if LaxUseFrame and game:GetFrameCount() <= LaxUseFrame + 90 and game:GetFrameCount() % 4 == 0 then
+	if CustomData and CustomData.Pills.LAXATIVE.LaxUseFrame and game:GetFrameCount() <= CustomData.Pills.LAXATIVE.LaxUseFrame + 90 and game:GetFrameCount() % 4 == 0 then
 		local vector = Vector.FromAngle(DIRECTION_VECTOR[player:GetMovementDirection()]:GetAngleDegrees() + math.random(-30, 30)):Resized(-7.5)
 		local SCorn = Isaac.Spawn(2, 0, 0, player.Position, vector, nil):GetSprite()
 		
@@ -1233,6 +1243,27 @@ function rplus:CardUsed(Card, player, _)
 		if NumPickups >= 7 then Isaac.Spawn(5, 100, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
 	end
 	
+	if Card == PocketItems.KINGOFCLUBS then
+		local NumPickups = math.floor(player:GetNumBombs() / 4)
+		player:AddBombs(-player:GetNumBombs())
+		if player:HasGoldenBomb() then player:RemoveGoldenBomb() NumPickups = NumPickups + 2 end
+		for i = 1, NumPickups do
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SIN, false, false, true, false, -1)
+		end
+		if NumPickups >= 3 then Isaac.Spawn(5, 350, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
+		if NumPickups >= 7 then Isaac.Spawn(5, 100, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
+	end
+	
+	if Card == PocketItems.KINGOFDIAMONDS then
+		local NumPickups = math.floor(player:GetNumCoins() / 5)
+		player:AddCoins(-player:GetNumCoins())
+		for i = 1, NumPickups do
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_BOOK_OF_SIN, false, false, true, false, -1)
+		end
+		if NumPickups >= 3 then Isaac.Spawn(5, 350, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
+		if NumPickups >= 7 then Isaac.Spawn(5, 100, 0, player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
+	end
+	
 	if Card == PocketItems.NEEDLEANDTHREAD then
 		if player:GetBrokenHearts() > 0 then
 			player:AddBrokenHearts(-1)
@@ -1244,12 +1275,27 @@ function rplus:CardUsed(Card, player, _)
 	if Card == PocketItems.QUEENOFDIAMONDS then
 		for i = 1, math.random(12) do
 			local QueenOfDiamondsRandom = math.random(100)
+			local spawnPos = game:GetRoom():FindFreePickupSpawnPosition(player.Position, 0, true, false)
+			
 			if QueenOfDiamondsRandom <= 92 then
-				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 1, game:GetRoom():FindFreePickupSpawnPosition (player.Position, 0, true, false), Vector.Zero, nil)
+				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 1, spawnPos, Vector.Zero, nil)
 			elseif QueenOfDiamondsRandom <= 98 then
-				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 2, game:GetRoom():FindFreePickupSpawnPosition (player.Position, 0, true, false), Vector.Zero, nil)
+				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 2, spawnPos, Vector.Zero, nil)
 			else
-				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 3, game:GetRoom():FindFreePickupSpawnPosition (player.Position, 0, true, false), Vector.Zero, nil)
+				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 3, spawnPos, Vector.Zero, nil)
+			end
+		end
+	end
+	
+	if Card == PocketItems.QUEENOFCLUBS then
+		for i = 1, math.random(12) do
+			local QueenOfClubsRandom = math.random(100)
+			local spawnPos = game:GetRoom():FindFreePickupSpawnPosition(player.Position, 0, true, false)
+			
+			if QueenOfClubsRandom <= 92 then
+				Isaac.Spawn(5, PickupVariant.PICKUP_BOMB, 1, spawnPos, Vector.Zero, nil)
+			else
+				Isaac.Spawn(5, PickupVariant.PICKUP_BOMB, 2, spawnPos, Vector.Zero, nil)
 			end
 		end
 	end
@@ -1561,6 +1607,10 @@ function rplus:UpdateStats(player, Flag)
 		
 		if player:HasTrinket(Trinkets.MAGICSWORD) then
 			player.Damage = player.Damage * StatUps.MAGICSWORD_DMG_MUL * player:GetTrinketMultiplier(Trinkets.MAGICSWORD)
+		end
+		
+		if CustomData and CustomData.Items.CHEESEGRATER.NumUses then
+			player.Damage = player.Damage + CustomData.Items.CHEESEGRATER.NumUses * StatUps.GRATER_DMG
 		end
 	end
 	
@@ -1958,7 +2008,7 @@ function rplus:UsePill(Pill, _)
 	end
 	
 	if Pill == Pills.LAXATIVE then
-		LaxUseFrame = game:GetFrameCount()
+		CustomData.Pills.LAXATIVE.LaxUseFrame = game:GetFrameCount()
 		sfx:Play(SoundEffect.SOUND_FART, 1, 2, false, 1, 0)
 		player:AnimateSad()
 	end
@@ -1990,6 +2040,7 @@ if EID then
 	EID:addCollectible(Collectibles.QUASAR, "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed")
 	EID:addCollectible(Collectibles.TWOPLUSONE, "Every third shop item on the current floor will cost 1 {{Coin}} penny #Buying two items with hearts in one room makes all other items free")
 	EID:addCollectible(Collectibles.REDMAP, "Reveals location of Ultra Secret Room on all subsequent floors #Any trinket left in a boss or treasure room will turn into Cracked Key")
+	EID:addCollectible(Collectibles.CHEESEGRATER, "Removes one red heart container and gives you {{ArrowUp}} +0.3 Damage up and two Minisaacs")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
@@ -2009,11 +2060,14 @@ if EID then
 	EID:addCard(PocketItems.NEEDLEANDTHREAD, "Removes one broken heart and grants one {{Heart}} heart container")
 	EID:addCard(PocketItems.QUEENOFDIAMONDS, "Spawns  1-12 random {{Coin}} coins (those can be nickels or dimes as well)")
 	EID:addCard(PocketItems.KINGOFSPADES, "Lose all your keys and spawn a number of pickups proportional to the amount of keys lost #At least 12 {{Key}} keys is needed for a trinket, and at least 28 for an item #If Isaac has {{GoldenKey}} Golden key, it is removed too and significantly increases total value")
+	EID:addCard(PocketItems.KINGOFCLUBS, "Lose all your bombs and spawn a number of pickups proportional to the amount of bombs lost #At least 12 {{Bomb}} bombs is needed for a trinket, and at least 28 for an item #If Isaac has {{GoldenBomb}} Golden bomb, it is removed too and significantly increases total value")
+	EID:addCard(PocketItems.KINGOFDIAMONDS, "Lose all your coins and spawn a number of pickups proportional to the amount of coins lost #At least 12 {{Coin}} coins is needed for a trinket, and at least 28 for an item")
 	EID:addCard(PocketItems.BAGTISSUE, "All pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight; the item of such quality is then spawned #The most valuable pickups are the rarest ones, e.g. {{EthernalHeart}} Eternal hearts or {{Battery}} Mega batteries #{{Warning}} If used in a room with less then 8 pickups, no item will spawn!")
 	EID:addCard(PocketItems.RJOKER, "Teleports Isaac to a {{SuperSecretRoom}} Black Market")
 	EID:addCard(PocketItems.REVERSECARD, "Invokes the effect of Glowing Hourglass")
 	EID:addCard(PocketItems.LOADEDDICE, "{{ArrowUp}}  grants 10 Luck for the current room")
 	EID:addCard(PocketItems.BEDSIDEQUEEN, "Spawns 1-12 random {{Key}} keys #There is a small chance to spawn a charged key")
+	EID:addCard(PocketItems.QUEENOFCLUBS, "Spawns 1-12 random {{Bomb}} bombs #There is a small chance to spawn a double-pack bomb")
 	EID:addCard(PocketItems.JACKOFCLUBS, "Bombs will drop more often from clearing rooms for current floor, and the average quality of bombs is increased")
 	EID:addCard(PocketItems.JACKOFDIAMONDS, "Coins will drop more often from clearing rooms for current floor, and the average quality of coins is increased")
 	EID:addCard(PocketItems.JACKOFSPADES, "Keys will drop more often from clearing rooms for current floor, and the average quality of keys is increased")

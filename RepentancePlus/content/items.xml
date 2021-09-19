@@ -53,7 +53,7 @@
 	
 	<!-- T. Apollyon -->
 	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2" />
-	<passive name="Red Map" description="All secrets are unveiled to you" gfx="18_redmap.png" quality="3" />
+	<passive name="Red Map" description="All secrets are unveiled to you" gfx="18_redmap.png" quality="2" />
 	
 	<!-- T. Forgor -->
 	<passive name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="2" />
@@ -61,4 +61,7 @@
 	<!-- T. Bethany -->
 	<passive id="4" name="Ceiling With the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
 	<active name="Quasar" description="Cosmic wisdom" gfx="33_quasar.png" quality="4" devilprice="2" maxcharges="6" />
+	
+	<!-- T. Jacob -->
+	<active name="Cheese Grater" description="A pound of... cheese?" gfx="22_cheesegrater.png" quality="2" maxcharges="0" cache="damage" />
 </items>
