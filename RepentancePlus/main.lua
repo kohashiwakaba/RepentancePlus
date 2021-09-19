@@ -17,10 +17,12 @@ local music = MusicManager()
 local CustomData
 local json = require("json")
 
+-- for displaying achievement papers
 achievement = Sprite()
 achievement:Load("gfx/ui/achievement/achievements.anm2", true)
-local idleTimer = 0
-local achievementTime = 60
+
+-- used for rendering sprites on the floor/walls
+CustomBackDropEntity = Isaac.GetEntityVariantByName("CustomBackDropEntity")
 
 local BASEMENTKEY_CHANCE = 5		-- chance to replace golden chest with the old chest
 local HEARTKEY_CHANCE = 5			-- chance for enemy to drop Scarlet chest on death
@@ -37,7 +39,6 @@ local PICKUP_WISP_SPAWN_CHANCE = 17 -- chance for pickups to turn into lemegeton
 local ENRAGED_SOUL_COOLDOWN = 420	-- 7 seconds in 60 FPS callback; cooldown for Enraged Soul familiar
 local CEREM_DAGGER_LAUNCH_CHANCE = 5 -- chance to launch a dagger
 
-CustomBackDropEntity = Isaac.GetEntityVariantByName("CustomBackDropEntity")
 
 Costumes = {
 	-- add ONLY NON-PERSISTENT COSTUMES here, because persistent costumes now work without lua
@@ -75,7 +76,8 @@ Collectibles = {
 	CEREMDAGGER = Isaac.GetItemIdByName("Ceremonial Blade"),
 	CEILINGSTARS = Isaac.GetItemIdByName("Ceiling With the Stars"),
 	QUASAR = Isaac.GetItemIdByName("Quasar"),
-	TWOPLUSONE = Isaac.GetItemIdByName("2+1")
+	TWOPLUSONE = Isaac.GetItemIdByName("2+1"),
+	REDMAP = Isaac.GetItemIdByName("Red Map")
 }
 
 Trinkets = {
@@ -86,7 +88,6 @@ Trinkets = {
 	BITTENPENNY = Isaac.GetTrinketIdByName("Bitten Penny"),
 	GREEDSHEART = Isaac.GetTrinketIdByName("Greed's Heart"),
 	ANGELSCROWN = Isaac.GetTrinketIdByName("Angel's Crown"),
-	REDMAP = Isaac.GetTrinketIdByName("Red Map"),
 	CHALKPIECE = Isaac.GetTrinketIdByName("A Piece of Chalk"),
 	MAGICSWORD = Isaac.GetTrinketIdByName("Magic Sword"),
 	WAITNO = Isaac.GetTrinketIdByName("Wait, No!"),
@@ -276,7 +277,6 @@ ScarletChestItems = {
 	688, --Inner Child
 	695  --Bloody Gust
 }
-
 ScarletChestHearts = {1, 2, 5, 10}
 
 StatUps = {
@@ -296,6 +296,7 @@ StatUps = {
 	MAGICSWORD_DMG_MUL = 2
 }
 
+-- used by Bag Tissue
 PickupWeights = {
 	[PickupVariant.PICKUP_HEART] = {
 		[HeartSubType.HEART_FULL] = 1,
@@ -355,7 +356,7 @@ DIRECTION_SHOOT_ANIM = {
 }
 
 DIRECTION_VECTOR = {
-	[Direction.NO_DIRECTION] = Vector(0, 1),
+	[Direction.NO_DIRECTION] = Vector(0, 1),	-- when you don't shoot or move, you default to HeadDown
 	[Direction.LEFT] = Vector(-1, 0),
 	[Direction.UP] = Vector(0, -1),
 	[Direction.RIGHT] = Vector(1, 0),
@@ -377,10 +378,12 @@ local function GetRandomCustomCard()
 	return PocketItems[random_key]
 end
 
+-- Helpers for rendering unlock papers
 local function Unlock(checkmark)
 	local player = Isaac.GetPlayer(0)
 	local playerType = player:GetPlayerType()
 	local itemConfig = Isaac.GetItemConfig()
+	
 	if playerType > 20 then
 		if playerType == 38 then 
 			playerType = 29
@@ -403,30 +406,48 @@ local function Unlock(checkmark)
 			elseif Variant == 350 then
 				name = itemConfig:GetTrinket(SubType).Name
 			--elseif
-			--manual Name depending on which Pickup to choose from
+				-- manual Name depending on which Pickup to choose from
 			end
-			local sprite = "gfx/ui/achievement/achievement_" .. name .. ".png"
-			achievement:ReplaceSpritesheet(3, sprite)
+			
+			achievement:ReplaceSpritesheet(3, "gfx/ui/achievement/achievement_" .. name .. ".png")
 			achievement:LoadGraphics()
-			idle_timer = achievementTime
-			achievement:Play("Appear", false)
+			flagRenderPaper = true
+			paperRenderFrame = 0
 			Isaac.SaveModData(rplus, json.encode(Unlocks, "Unlocks"))
 		end
 	end
 end
 
--- Is this Entity (eg collectible, Chest, pill, et c unlocked
---Don't read if you want to live!!!
-local function IsModEntityUnlocked(Type, Variant, SubType)
-	for _, k in pairs(Unlocks) do
-		for _, data in pairs(k) do
-			if Type == data[2] and Variant == data[3] and SubType == data[4] then
-				return data[1]
-			end
-		end
+local function RenderAchievementPapers()
+	local roomCenter = room:GetCenterPos()
+  	local roomTopLeft = room:GetTopLeftPos()
+	local roomTypeToRenderPos = {
+		[RoomShape.ROOMSHAPE_1x2] = {roomCenter.X, roomTopLeft.Y * 2},
+		[RoomShape.ROOMSHAPE_1x1] = {roomCenter.X, roomCenter.Y},
+		[RoomShape.ROOMSHAPE_2x2] = {roomTopLeft.X * 5.5, roomTopLeft.Y * 2.0}
+	}
+	
+	pos = Isaac.WorldToRenderPosition(Vector(roomTypeToRenderPos[room:GetRoomShape()][1], roomTypeToRenderPos[room:GetRoomShape()][2]), true)
+	if paperRenderFrame % 2 == 0 then
+		achievement:SetFrame("Appear", paperRenderFrame / 2)
 	end
-	return false
+	achievement:Render(pos, Vector.Zero, Vector.Zero)
+	paperRenderFrame = paperRenderFrame + 1
+	if paperRenderFrame >= 75 * 2 then flagRenderPaper = false end
 end
+
+-- -- Is this Entity (eg collectible, Chest, pill, etc) unlocked
+-- -- Don't read if you want to live!!!
+-- local function IsModEntityUnlocked(Type, Variant, SubType)
+	-- for _, k in pairs(Unlocks) do
+		-- for _, data in pairs(k) do
+			-- if Type == data[2] and Variant == data[3] and SubType == data[4] then
+				-- return data[1]
+			-- end
+		-- end
+	-- end
+	-- return false
+-- end
 
 -- Is this collectible unlocked?
 local function IsCollectibleUnlocked(collectibleType)
@@ -503,12 +524,14 @@ end
 						-- GAME STARTED --
 						------------------
 function rplus:OnGameStart(Continued)
+
 	if Isaac.HasModData(rplus) then
 		local data = Isaac.LoadModData(rplus)
 		Unlocks = json.decode(data)
 	else
 		Isaac.SaveModData(rplus, json.encode(Unlocks, "Unlocks"))
 	end
+	
 	if not Continued then
 		CustomData = {
 			Items = {
@@ -550,6 +573,11 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
+		Isaac.ExecuteCommand("debug 4")
+		Isaac.ExecuteCommand("debug 3")
+		Isaac.ExecuteCommand("g k5")
+		Isaac.ExecuteCommand("g soy")
+		Isaac.ExecuteCommand("stage 10")
 		--]]
 	end
 end
@@ -563,22 +591,23 @@ function rplus:OnNewLevel()
 	
 	if CustomData then 
 		CustomData.Cards.JACK = nil
+		
 		CustomData.Items.CEILINGSTARS.SleptInBed = false
+		
+		if player:HasCollectible(Collectibles.ORDLIFE) and CustomData.Items.ORDLIFE == "used" then
+			level:RemoveCurses(LevelCurse.CURSE_OF_DARKNESS)
+			music:Enable()
+			player:DischargeActiveItem(ActiveSlot.SLOT_PRIMARY)
+			player:TryRemoveNullCostume(Costumes.ORDLIFE)
+			CustomData.Items.ORDLIFE = nil
+		end
+		
+		if player:HasCollectible(Collectibles.BAGOTRASH) then
+			CustomData.Items.BAGOTRASH.Levels = CustomData.Items.BAGOTRASH.Levels + 1
+		end
 	end
 	
-	if player:HasCollectible(Collectibles.ORDLIFE) and CustomData.Items.ORDLIFE == "used" then
-		level:RemoveCurses(LevelCurse.CURSE_OF_DARKNESS)
-		music:Enable()
-		player:DischargeActiveItem(ActiveSlot.SLOT_PRIMARY)
-		player:TryRemoveNullCostume(Costumes.ORDLIFE)
-		CustomData.Items.ORDLIFE = nil
-	end
-	
-	if player:HasCollectible(Collectibles.BAGOTRASH) then
-		CustomData.Items.BAGOTRASH.Levels = CustomData.Items.BAGOTRASH.Levels + 1
-	end
-	
-	if player:HasTrinket(Trinkets.REDMAP) then
+	if player:HasCollectible(Collectibles.REDMAP) then
 		local USR = level:GetRoomByIdx(level:QueryRoomTypeIndex(RoomType.ROOM_ULTRASECRET, true, RNG(), true))
 		
 		if USR.Data and USR.Data.Type == RoomType.ROOM_ULTRASECRET and USR.DisplayFlags & 1 << 2 == 0 then
@@ -956,6 +985,14 @@ function rplus:OnFrame()
 		SCorn:Play("Big0" .. math.random(4))
 		SCorn.Scale = Vector(0.75, 0.75)
 	end
+	
+	if player:HasCollectible(Collectibles.REDMAP) and not room:IsFirstVisit() and room:GetType() < 6 and room:GetType() > 3 then
+		for _, entity in pairs(Isaac.FindInRadius(player.Position, 560, EntityPartition.PICKUP)) do
+			if entity.Variant == 350 then
+				entity:ToPickup():Morph(5, 300, Card.CARD_CRACKED_KEY, true, true, true)
+			end
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
@@ -973,7 +1010,7 @@ function rplus:PostPlayerUpdate(Player)
 			end
 		end
 		
-		if PressFrame and game:GetFrameCount() <= PressFrame + 4 then -- listening for next inputs in the next 4 frames
+		if PressFrame and game:GetFrameCount() <= PressFrame + 6 then -- listening for next inputs in the next 4 frames
 			if not Input.IsActionTriggered(ButtonPressed, 0) and ButtonState == "listening for second tap" then
 				ButtonState = "button released"
 			end
@@ -1017,7 +1054,10 @@ function rplus:PostPlayerUpdate(Player)
 		end
 	end
 	
-	if Player:HasTrinket(Trinkets.MAGICSWORD) then Player:AddCacheFlags(CacheFlag.CACHE_DAMAGE) Player:EvaluateItems() end
+	if Player:HasTrinket(Trinkets.MAGICSWORD) then 
+		Player:AddCacheFlags(CacheFlag.CACHE_DAMAGE) 
+		Player:EvaluateItems() 
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
 
@@ -1026,29 +1066,12 @@ rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
 function rplus:OnGameRender()
 
 	DisplayErrorMessage()
+	-- rendering achievement papers
+	if flagRenderPaper then RenderAchievementPapers() end
 	
 	local player = Isaac.GetPlayer(0)
 	local level = game:GetLevel()
-	local room = game:GetRoom()
-	
-	local center = room:GetCenterPos()
-  	local topLeft = room:GetTopLeftPos()
-  	local pos = Isaac.WorldToRenderPosition(center, true)
-	
-	if achievement:GetFrame() == 7 then
-		achievement.PlaybackSpeed = 0.025
-	else
-		achievement.PlaybackSpeed = 1.0
-	end
-	if (room:GetRoomShape() == RoomShape.ROOMSHAPE_1x2 or room:GetRoomShape() == RoomShape.ROOMSHAPE_IIV) then
-  		pos = Isaac.WorldToRenderPosition(Vector(center.X, topLeft.Y*2.0), true)
-  	elseif (room:GetRoomShape() == RoomShape.ROOMSHAPE_2x1 or room:GetRoomShape() == RoomShape.ROOMSHAPE_IIH) then
-  		pos = Isaac.WorldToRenderPosition(Vector(topLeft.X*5.5, center.Y), true)
-  	elseif (room:GetRoomShape() >= RoomShape.ROOMSHAPE_2x2) then
-  		pos = Isaac.WorldToRenderPosition(Vector(topLeft.X*5.5, topLeft.Y*2.0), true)
-  	end
-	achievement:Render(pos, Vector(0, 0), Vector(0, 0))	
-	
+	local room = game:GetRoom()	
 	
 	if player:HasTrinket(Trinkets.GREEDSHEART) and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) then
 		CoinHeartSprite = Sprite()
@@ -1072,8 +1095,9 @@ function rplus:OnGameRender()
 	if player:HasCollectible(Collectibles.CEILINGSTARS) and (room:GetType() == 18 or room:GetType() == 19 or level:GetCurrentRoomIndex() == level:GetStartingRoomIndex()) then
 		if not StarCeiling then StarCeiling = Sprite() end
 		StarCeiling:Load("gfx/ui/ui_starceiling.anm2", true)
-		StarCeiling:SetFrame("SC", 0)
-		StarCeiling:Render(Vector(250, 35), Vector.Zero, Vector.Zero)
+		StarCeiling:SetFrame("Idle", game:GetFrameCount() % 65)
+		StarCeiling.Scale = Vector(1.5, 1.5)
+		StarCeiling:Render(Vector(300, 200), Vector.Zero, Vector.Zero)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_RENDER, rplus.OnGameRender)
@@ -1084,6 +1108,21 @@ function rplus:OnNPCDeath(NPC)
 	local player = Isaac.GetPlayer(0)
 	local level = game:GetLevel()
 	local room = game:GetRoom()
+	
+	if level:GetStage() == LevelStage.STAGE5 and game.Difficulty < 2 then -- Sheol/Cathedral (It would unlock in VOID otherwise)
+		if NPC.Type == EntityType.ENTITY_SATAN and NPC.Variant == 10 then
+			Unlock("Satan")
+		end
+		if NPC.Type == EntityType.ENTITY_ISAAC then -- since it is not Chest, no need to check for Blue Baby
+			Unlock("Isaac")
+		end
+	elseif level:GetStage() == LevelStage.STAGE6 and game.Difficulty < 2 then
+		if NPC.Type == EntityType.ENTITY_ISAAC then -- Isaac can't spawn on Chest
+			Unlock("Blue Baby")
+		end
+	elseif NPC.Type == EntityType.ENTITY_ULTRA_GREED and game.Difficulty == Difficulty.DIFFICULTY_GREED then
+		Unlock("Greed")
+	end
 	
 	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HEARTKEY_CHANCE * player:GetTrinketMultiplier(Trinkets.KEYTOTHEHEART) then
 		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.SCARLETCHEST, 0, NPC.Position, NPC.Velocity, nil)
@@ -1097,24 +1136,6 @@ function rplus:OnNPCDeath(NPC)
 	if player:HasCollectible(Collectibles.CEREMDAGGER) and not NPC:IsBoss() and NPC:HasEntityFlags(EntityFlag.FLAG_BLEED_OUT) then
 		Isaac.Spawn(5, 300, PocketItems.SACBLOOD, NPC.Position, Vector.Zero, nil)
 	end
-	
-	if level:GetStage() == LevelStage.STAGE5 then --Sheol/Cathedral (It would unlock in VOID otherwise)
-		if NPC.Type == EntityType.ENTITY_SATAN and NPC.Variant == 10 then
-			Unlock("Satan")
-		end
-		if NPC.Type == EntityType.ENTITY_ISAAC then --since it is not The Chest, no need to check for Blue Baby
-			Unlock("Isaac")
-		end
-	elseif level:GetStage() == LevelStage.STAGE6 then
-		if NPC.Type == ENTITY_ISAAC then --Isaac can't spawn on the Chest
-			Unlock("Blue Baby")
-		end
-	end
-	
-	if NPC.Type == ENTITY_ULTRA_GREED and game.Difficulty == DIFFICULTY_GREED then
-		Unlock("Greed")
-	end
-		
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 
@@ -1155,7 +1176,7 @@ function rplus:OnCardInit(_, _, PlayingCards, Runes, OnlyRunes)
 		end
 	end
 	if OnlyRunes and math.random(100) <= CARDRUNE_REPLACE_CHANCE then 
-		if math.random(100) < 50 then return PocketItems[REDRUNE] else return PocketItems[QUASARSHARD] end
+		if math.random(10) <= 5 then return PocketItems[REDRUNE] else return PocketItems[QUASARSHARD] end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_GET_CARD, rplus.OnCardInit)
@@ -1857,6 +1878,10 @@ function rplus:PickupAwardSpawn(_, Pos)
 	local player = Isaac.GetPlayer(0)
 	local room = game:GetRoom()
 	
+	if room:GetType() == RoomType.ROOM_BOSSRUSH then
+		Unlock("Boss Rush")
+	end
+	
 	if CustomData and math.random(100) < JACKOF_CHANCE and CustomData.Cards.JACK and room:GetType() ~= RoomType.ROOM_BOSS then
 		local Variant = nil
 		local SubType = nil
@@ -1914,15 +1939,6 @@ function rplus:PickupAwardSpawn(_, Pos)
 		Isaac.Spawn(5, Variant, SubType, game:GetRoom():FindFreePickupSpawnPosition(Pos, 0, true, false), Vector.Zero, nil)
 		return true
 	end
-	
-	if player:HasTrinket(Trinkets.REDMAP) and math.random(100) <= REDKEY_TURN_CHANCE and room:GetType() ~= RoomType.ROOM_BOSS then
-		Isaac.Spawn(5, 300, Card.CARD_CRACKED_KEY, game:GetRoom():FindFreePickupSpawnPosition(Pos, 0, true, false), Vector.Zero, nil)
-		return true
-	end
-	
-	if room:GetType() == RoomType.ROOM_BOSSRUSH then
-		Unlock("Boss Rush")
-	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
 
@@ -1973,6 +1989,7 @@ if EID then
 	EID:addCollectible(Collectibles.CEILINGSTARS, "Grants you two Lemegeton wisps at the beginning of each floor and when sleeping in bed")
 	EID:addCollectible(Collectibles.QUASAR, "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed")
 	EID:addCollectible(Collectibles.TWOPLUSONE, "Every third shop item on the current floor will cost 1 {{Coin}} penny #Buying two items with hearts in one room makes all other items free")
+	EID:addCollectible(Collectibles.REDMAP, "Reveals location of Ultra Secret Room on all subsequent floors #Any trinket left in a boss or treasure room will turn into Cracked Key")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
@@ -1980,7 +1997,6 @@ if EID then
 	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a 12% chance to not subtract it from your inventory count")
 	EID:addTrinket(Trinkets.BITTENPENNY, "Upon spawning, every coin has a 20% chance to be upgraded to a higher value: #penny -> doublepack pennies -> sticky nickel -> nickel -> dime -> lucky penny -> golden penny")
 	EID:addTrinket(Trinkets.GREEDSHEART, "Gives you one empty coin heart #It is depleted before any of your normal hearts and can only be refilled by directly picking up money")
-	EID:addTrinket(Trinkets.REDMAP, "Displays the location of Ultra Secret Room on all subsequent floors #Cracked Key drops on a room clear with 25% chance")
 	EID:addTrinket(Trinkets.ANGELSCROWN, "All new treasure rooms will have an angel item for sale instead of a normal item #Angels spawned from statues will not drop Key Pieces!")
 	EID:addTrinket(Trinkets.MAGICSWORD, "{{ArrowUp}} x2 DMG up while held #Breaks when you take damage #{{ArrowUp}} Having Duct Tape prevents it from breaking")
 	EID:addTrinket(Trinkets.WAITNO, "Does nothing, it's broken")
