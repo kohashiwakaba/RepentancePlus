@@ -146,7 +146,7 @@ local Unlocks = {
 		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.NEEDLEANDTHREAD}
 	},
 	["23"] = { --T.Cain
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.JACKOFDIAMONDS}, 
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.MARKCAIN}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.BITTENPENNY}, 
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.SLEIGHTOFHAND}, 
@@ -159,91 +159,91 @@ local Unlocks = {
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.JUDASKISS}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.SACBLOOD}
 	},
-	["25"] = {
+	["25"] = {	--T.???
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.FLYPAPER}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.BAGOTRASH}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["26"] = {	--T.Eve
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.BEDSIDEQUEEN}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["27"] = {	--T.Samson
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.JACKOFCLUBS}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.TEMPERTANTRUM}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["28"] = {	--T.Azazel
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
-	["26"] = {
+	["29"] = {	--T.Lazarus
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.JACKOFSPADES}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["30"] = {	--T.Eden
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
-	["27"] = {
+	["31"] = {	--T.Lost
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
-	["28"] = {
+	["32"] = {	--T.Lilith
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.QUEENOFCLUBS}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["33"] = {	--T.Keeper
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
-	["29"] = {
+	["34"] = {	--T.Appolyon
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.SINNERSHEART}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	},
+	["35"] = {	--T.Forgor
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
-	["30"] = {
+	["36"] = {	--T.Bethany
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.CEILINGSTARS}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
-	["31"] = {
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
-	},
-	["32"] = {
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
-	},
-	["33"] = {
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
-	},
-	["34"] = {
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
-	},
-	["35"] = {
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
-	},
-	["36"] = {
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
-	},
-	["37"] = {
+	["37"] = {	--T.Jacob
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
@@ -419,7 +419,6 @@ local function Unlock(checkmark)
 end
 
 local function RenderAchievementPapers()
-	local room = game:GetRoom()
 	local roomCenter = room:GetCenterPos()
   	local roomTopLeft = room:GetTopLeftPos()
 	local roomTypeToRenderPos = {
@@ -437,18 +436,10 @@ local function RenderAchievementPapers()
 	if paperRenderFrame >= 75 * 2 then flagRenderPaper = false end
 end
 
--- -- Is this Entity (eg collectible, Chest, pill, etc) unlocked
--- -- Don't read if you want to live!!!
--- local function IsModEntityUnlocked(Type, Variant, SubType)
-	-- for _, k in pairs(Unlocks) do
-		-- for _, data in pairs(k) do
-			-- if Type == data[2] and Variant == data[3] and SubType == data[4] then
-				-- return data[1]
-			-- end
-		-- end
-	-- end
-	-- return false
--- end
+function isUltraGreedRoom()
+	return game.Difficulty >= 2 and game:GetRoom():GetRoomShape() == RoomShape.ROOMSHAPE_1x2 and game:GetLevel():GetStage() == LevelStage.STAGE7_GREED
+end
+
 
 -- Is this collectible unlocked?
 local function IsCollectibleUnlocked(collectibleType)
@@ -793,12 +784,6 @@ function rplus:OnFrame()
 	local stage = level:GetStage()
 	local sprite = player:GetSprite()
 	
-	for _, entity in pairs(Isaac.GetRoomEntities()) do
-		if entity.Type == EntityType.ENTITY_ULTRA_GREED and entity:GetSprite():IsFinished("Death") and (game.Difficulty == 2 and entity.Variant == 0 or entity.Variant == 1) then
-				Unlock("Greed")
-		end
-	end
-	
 	if player:HasCollectible(Collectibles.ORDLIFE) and CustomData.Items.ORDLIFE == "used" then
 		for i = 0,7 do
 			door = room:GetDoor(i)
@@ -1081,14 +1066,13 @@ rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
 						-- POST RENDERING --
 						--------------------
 function rplus:OnGameRender()
-
+	local player = Isaac.GetPlayer(0)
+	local level = game:GetLevel()
+	local room = game:GetRoom()
+	
 	DisplayErrorMessage()
 	-- rendering achievement papers
 	if flagRenderPaper then RenderAchievementPapers() end
-	
-	local player = Isaac.GetPlayer(0)
-	local level = game:GetLevel()
-	local room = game:GetRoom()	
 	
 	if player:HasTrinket(Trinkets.GREEDSHEART) and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) then
 		CoinHeartSprite = Sprite()
@@ -1125,21 +1109,6 @@ function rplus:OnNPCDeath(NPC)
 	local player = Isaac.GetPlayer(0)
 	local level = game:GetLevel()
 	local room = game:GetRoom()
-	
-	if level:GetStage() == LevelStage.STAGE5 and game.Difficulty < 2 then -- Sheol/Cathedral (It would unlock in VOID otherwise)
-		if NPC.Type == EntityType.ENTITY_SATAN and NPC.Variant == 10 then
-			Unlock("Satan")
-		end
-		if NPC.Type == EntityType.ENTITY_ISAAC then -- since it is not Chest, no need to check for Blue Baby
-			Unlock("Isaac")
-		end
-	elseif level:GetStage() == LevelStage.STAGE6 and game.Difficulty < 2 then
-		if NPC.Type == EntityType.ENTITY_ISAAC then -- Isaac can't spawn on Chest
-			Unlock("Blue Baby")
-		end
-	--elseif NPC.Type == EntityType.ENTITY_ULTRA_GREED then
-	--	Unlock("Greed")
-	end
 	
 	if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HEARTKEY_CHANCE * player:GetTrinketMultiplier(Trinkets.KEYTOTHEHEART) then
 		Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.SCARLETCHEST, 0, NPC.Position, NPC.Velocity, nil)
@@ -1934,9 +1903,23 @@ rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0
 function rplus:PickupAwardSpawn(_, Pos)
 	local player = Isaac.GetPlayer(0)
 	local room = game:GetRoom()
+	local level = game:GetLevel()
 	
-	if room:GetType() == RoomType.ROOM_BOSSRUSH then
+	-- Unlocking stuff
+	if room:GetType() == RoomType.ROOM_BOSS and game.Difficulty <= 1 then
+		if level:GetStage() == LevelStage.STAGE5 then
+			if level:GetStageType() == StageType.STAGETYPE_ORIGINAL then
+				Unlock("Satan")
+			else
+				Unlock("Isaac")
+			end
+		elseif level:GetStage() == LevelStage.STAGE6 and level:GetStageType() == StageType.STAGETYPE_WOTL then
+			Unlock("Blue Baby")
+		end
+	elseif room:GetType() == RoomType.ROOM_BOSSRUSH then
 		Unlock("Boss Rush")
+	elseif isUltraGreedRoom() then
+		Unlock("Greed")
 	end
 	
 	if CustomData and math.random(100) < JACKOF_CHANCE and CustomData.Cards.JACK and room:GetType() ~= RoomType.ROOM_BOSS then
