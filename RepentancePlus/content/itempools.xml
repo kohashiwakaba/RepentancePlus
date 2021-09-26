@@ -6,6 +6,7 @@
 		<Item Name="Magic Pen" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Bag O' Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Cherry Friends" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Tower of Babel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="shop">
 		<Item Name="Ceiling With the Stars" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -34,6 +35,7 @@
 		<Item Name="Temper Tantrum" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="2+1" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Red Map" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="DNA Redactor" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="library">
 		
@@ -49,6 +51,7 @@
 	</Pool>
 	<Pool Name="demonBeggar">
 		<Item Name="Cookie Cutter" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="DNA Redactor" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="curse">
 		<Item Name="Cookie Cutter" Weight="1" DecreaseBy="1" RemoveOn="0.1" />

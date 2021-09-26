@@ -78,7 +78,9 @@ Collectibles = {
 	QUASAR = Isaac.GetItemIdByName("Quasar"),
 	TWOPLUSONE = Isaac.GetItemIdByName("2+1"),
 	REDMAP = Isaac.GetItemIdByName("Red Map"),
-	CHEESEGRATER = Isaac.GetItemIdByName("Cheese Grater")
+	CHEESEGRATER = Isaac.GetItemIdByName("Cheese Grater"),
+	DNAREDACTOR = Isaac.GetItemIdByName("DNA Redactor"),
+	TOWEROFBABEL = Isaac.GetItemIdByName("Tower of Babel")
 }
 
 Trinkets = {
@@ -699,6 +701,7 @@ rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
 function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 	local level = game:GetLevel()
 	local player = Isaac.GetPlayer(0)
+	local room = game:GetRoom()
 	
 	if ItemUsed == Collectibles.ORDLIFE then
 		if not CustomData.Items.ORDLIFE then
@@ -771,6 +774,13 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 			end
 		end
 		return true
+	end
+	
+	if ItemUsed == Collectibles.TOWEROFBABEL then
+		for g = 1, room:GetGridSize() do
+			if room:GetGridEntity(g) then room:GetGridEntity(g):Destroy() end
+		end
+		return {Discharge = true, Remove = false, ShowAnim = true}
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
@@ -1984,7 +1994,7 @@ rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
 
 						-- ON USING PILL --
 						-------------------
-function rplus:UsePill(Pill, _)
+function rplus:usePill(Pill, _)
 	local player = Isaac.GetPlayer(0)
 	
 	if Pill == Pills.ESTROGEN then
@@ -2002,8 +2012,24 @@ function rplus:UsePill(Pill, _)
 		sfx:Play(SoundEffect.SOUND_FART, 1, 2, false, 1, 0)
 		player:AnimateSad()
 	end
+	
+	if player:HasCollectible(Collectibles.DNAREDACTOR) then
+		local dnaRoll = math.random(100)
+		
+		if dnaRoll <= 33 then
+			player:UsePill(math.random(0, 48), 0, UseFlag.USE_NOANIM)
+		elseif dnaRoll <= 36 then
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_CLICKER, true, true, false, false, -1)
+		elseif dnaRoll <= 39 then
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_R_KEY, true, true, false, false, -1)
+		elseif dnaRoll <= 42 then
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_FORGET_ME_NOW, true, true, false, false, -1)
+		elseif dnaRoll <= 45 then
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_D100, true, true, false, false, -1)
+		end
+	end
 end
-rplus:AddCallback(ModCallbacks.MC_USE_PILL, rplus.UsePill)
+rplus:AddCallback(ModCallbacks.MC_USE_PILL, rplus.usePill)
 
 
 								-----------------------------------------
@@ -2031,6 +2057,8 @@ if EID then
 	EID:addCollectible(Collectibles.TWOPLUSONE, "Every third shop item on the current floor will cost 1 {{Coin}} penny #Buying two items with hearts in one room makes all other items free")
 	EID:addCollectible(Collectibles.REDMAP, "Reveals location of Ultra Secret Room on all subsequent floors #Any trinket left in a boss or treasure room will turn into Cracked Key")
 	EID:addCollectible(Collectibles.CHEESEGRATER, "Removes one red heart container and gives you {{ArrowUp}} +0.3 Damage up and two Minisaacs")
+	EID:addCollectible(Collectibles.DNAREDACTOR, "Using a pill has a chance to use another random pill, change your character, restart the floor, reset the run (R-key-style) or use a D100 item")
+	EID:addCollectible(Collectibles.TOWEROFBABEL, "Destroys all obstacles in the current room #Also blows the doors open and opens secret room entrances")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
