@@ -35,7 +35,6 @@ local SLEIGHTOFHAND_CHANCE = 17		-- chance to save your consumable when using it
 local JACKOF_CHANCE = 60			-- chance for Jack cards to spawn their respective type of pickup
 local BITTENPENNY_UPGRADECHANCE = 17	-- chance to 'upgrade' coins via Bitten Penny
 local REDKEY_TURN_CHANCE = 12		-- chance for any pickup to turn into Cracked Key via Red Map trinket
-local PICKUP_WISP_SPAWN_CHANCE = 17 -- chance for pickups to turn into lemegeton wisps when using Quasar Shard
 local ENRAGED_SOUL_COOLDOWN = 420	-- 7 seconds in 60 FPS callback; cooldown for Enraged Soul familiar
 local CEREM_DAGGER_LAUNCH_CHANCE = 5 -- chance to launch a dagger
 
@@ -426,7 +425,7 @@ local function RenderAchievementPapers()
 	local roomTypeToRenderPos = {
 		[RoomShape.ROOMSHAPE_1x2] = {roomCenter.X, roomTopLeft.Y * 2},
 		[RoomShape.ROOMSHAPE_1x1] = {roomCenter.X, roomCenter.Y},
-		[RoomShape.ROOMSHAPE_2x2] = {roomTopLeft.X * 5.5, roomTopLeft.Y * 2.0}
+		[RoomShape.ROOMSHAPE_2x2] = {roomTopLeft.X * 5.5, roomTopLeft.Y * 2}
 	}
 	
 	pos = Isaac.WorldToRenderPosition(Vector(roomTypeToRenderPos[room:GetRoomShape()][1], roomTypeToRenderPos[room:GetRoomShape()][2]), true)
@@ -442,7 +441,6 @@ function isUltraGreedRoom()
 	return game.Difficulty >= 2 and game:GetRoom():GetRoomShape() == RoomShape.ROOMSHAPE_1x2 and game:GetLevel():GetStage() == LevelStage.STAGE7_GREED
 end
 
-
 -- Is this collectible unlocked?
 local function IsCollectibleUnlocked(collectibleType)
     local isUnlocked = false
@@ -456,13 +454,13 @@ local function IsCollectibleUnlocked(collectibleType)
     return isUnlocked    
 end
 
-local function GetUnlockedVanillaCollectible(AllPools)
-	AllPools = AllPools or false
+local function GetUnlockedVanillaCollectible(allPools)
+	allPools = allPools or false
     local ID = 0
     local itemPool = game:GetItemPool()
     local player = Isaac.GetPlayer(0)
     
-    if AllPools then 
+    if allPools then 
 		player:AddCollectible(CollectibleType.COLLECTIBLE_CHAOS, 0, false) -- makes all items appear in the list
 		ID = itemPool:GetCollectible(1, false) -- gets an item without removing it from the item pool
 		player:RemoveCollectible(CollectibleType.COLLECTIBLE_CHAOS) -- removes chaos
@@ -556,6 +554,8 @@ function rplus:OnGameStart(Continued)
 			}
 		}
 		
+		if CustomData then print("Repentance+ Mod v1.0 Initialized") end
+
 		-- recalculating cache, just in case
 		Isaac.GetPlayer(0):AddCacheFlags(CacheFlag.CACHE_ALL)
 		Isaac.GetPlayer(0):EvaluateItems()
@@ -571,6 +571,7 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
+
 		--]]
 	end
 end
@@ -610,8 +611,12 @@ function rplus:OnNewLevel()
 	end
 	
 	if player:HasCollectible(Collectibles.CEILINGSTARS) then
-		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(), player.Position, Vector.Zero, nil)
-		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(), player.Position, Vector.Zero, nil)
+		for i = 1, 2 do
+			repeat 
+				newID = GetUnlockedVanillaCollectible()
+			until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
+			Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, newID, player.Position, Vector.Zero, nil)
+		end
 	end
 	
 	if player:HasCollectible(Collectibles.TWOPLUSONE) then
@@ -764,15 +769,20 @@ function rplus:OnItemUse(ItemUsed, _, player, _, _, _)
 	
 	if ItemUsed == Collectibles.QUASAR then
 		for _, entity in pairs(Isaac.GetRoomEntities()) do
-			if entity.Type == 5 and entity.Variant == 100 and entity.SubType > 0 then
+			if entity.Type == 5 and entity.Variant == 100 and entity.SubType > 0 
+			and entity:ToPickup() and entity:ToPickup().Price % 10 == 0 then
 				for i = 1, 3 do
-					Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(false), player.Position, Vector.Zero, nil)
+					repeat 
+						newID = GetUnlockedVanillaCollectible()
+					until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
+					Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, newID, player.Position, Vector.Zero, nil)
 					Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
 					entity:Remove()
 				end
 				sfx:Play(SoundEffect.SOUND_DEATH_CARD, 1, 2, false, 1, 0)
 			end
 		end
+
 		return true
 	end
 	
@@ -1372,13 +1382,17 @@ function rplus:CardUsed(Card, player, _)
 		player:UseActiveItem(CollectibleType.COLLECTIBLE_NECRONOMICON, UseFlag.USE_NOANIM, -1)
 		
 		for _, entity in pairs(Isaac.FindInRadius(player.Position, 1000, EntityPartition.PICKUP)) do
-			if ((entity.Variant == 100 and entity.SubType > 0) or
-			(entity.Variant < 100 and math.random(100) <= PICKUP_WISP_SPAWN_CHANCE)) 
+			if entity.Variant == 100 and entity.SubType > 0
 			and entity:ToPickup() and entity:ToPickup().Price % 10 == 0 then
-				Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(false), player.Position, Vector.Zero, nil)
-				Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
-				entity:Remove()
-				sfx:Play(SoundEffect.SOUND_DEATH_CARD, 1, 2, false, 1, 0)
+				for i = 1, 3 do
+					repeat 
+						newID = GetUnlockedVanillaCollectible()
+					until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
+					Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, newID, player.Position, Vector.Zero, nil)
+					Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
+					entity:Remove()
+					sfx:Play(SoundEffect.SOUND_DEATH_CARD, 1, 2, false, 1, 0)
+				end
 			end
 		end
 	end
@@ -1902,8 +1916,12 @@ function rplus:PlayerCollision(Player, Collider, _)
 	
 	if Player:HasCollectible(Collectibles.CEILINGSTARS) and Collider.Type == 5 and Collider.Variant == 380 and not CustomData.Items.CEILINGSTARS.SleptInBed then
 		CustomData.Items.CEILINGSTARS.SleptInBed = true
-		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(false), Player.Position, Vector.Zero, nil)
-		Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, GetUnlockedVanillaCollectible(false), Player.Position, Vector.Zero, nil)
+		for i = 1, 2 do
+			repeat 
+				newID = GetUnlockedVanillaCollectible()
+			until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
+			Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, newID, player.Position, Vector.Zero, nil)
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0)
@@ -1994,10 +2012,10 @@ rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
 
 						-- ON USING PILL --
 						-------------------
-function rplus:usePill(Pill, _)
+function rplus:usePill(pillEffect, _)
 	local player = Isaac.GetPlayer(0)
 	
-	if Pill == Pills.ESTROGEN then
+	if pillEffect == Pills.ESTROGEN then
 		sfx:Play(SoundEffect.SOUND_MEAT_JUMPS, 1, 2, false, 1, 0)
 		local BloodClots = player:GetHearts() - 1 
 		
@@ -2007,25 +2025,41 @@ function rplus:usePill(Pill, _)
 		end
 	end
 	
-	if Pill == Pills.LAXATIVE then
+	if pillEffect == Pills.LAXATIVE then
 		CustomData.Pills.LAXATIVE.LaxUseFrame = game:GetFrameCount()
 		sfx:Play(SoundEffect.SOUND_FART, 1, 2, false, 1, 0)
 		player:AnimateSad()
 	end
 	
 	if player:HasCollectible(Collectibles.DNAREDACTOR) then
-		local dnaRoll = math.random(100)
-		
-		if dnaRoll <= 33 then
-			player:UsePill(math.random(0, 48), 0, UseFlag.USE_NOANIM)
-		elseif dnaRoll <= 36 then
-			player:UseActiveItem(CollectibleType.COLLECTIBLE_CLICKER, true, true, false, false, -1)
-		elseif dnaRoll <= 39 then
-			player:UseActiveItem(CollectibleType.COLLECTIBLE_R_KEY, true, true, false, false, -1)
-		elseif dnaRoll <= 42 then
-			player:UseActiveItem(CollectibleType.COLLECTIBLE_FORGET_ME_NOW, true, true, false, false, -1)
-		elseif dnaRoll <= 45 then
-			player:UseActiveItem(CollectibleType.COLLECTIBLE_D100, true, true, false, false, -1)
+		local pillColor = game:GetItemPool():ForceAddPillEffect(pillEffect) % 2407 -- include horse pills too
+
+		if pillColor == PillColor.PILL_BLUE_BLUE then
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_CLICKER, true, true, false, false, -1)			-- change character
+		elseif pillColor == PillColor.PILL_WHITE_BLUE then
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_FORGET_ME_NOW, true, true, false, false, -1)	-- restart the floor
+		elseif pillColor == PillColor.PILL_ORANGE_ORANGE then
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_D100, true, true, false, false, -1)			-- D100 use
+		elseif pillColor == PillColor.PILL_WHITE_WHITE then
+			player:AddPill(pillColor)																		-- the pill replicates itself constantly
+		elseif pillColor == PillColor.PILL_REDDOTS_RED then
+			Isaac.Explode(player.Position, player, 110)														-- eplosion
+		elseif pillColor == PillColor.PILL_PINK_RED then
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_BERSERK, true, true, false, false, -1)			-- Berserk mode
+		elseif pillColor == PillColor.PILL_BLUE_CADETBLUE then
+			game:StartRoomTransition(-2, -1, RoomTransitionAnim.TELEPORT, player, -1)						-- teleport to the Error room
+		elseif pillColor == PillColor.PILL_YELLOW_ORANGE then
+			player:DischargeActiveItem(ActiveSlot.SLOT_PRIMARY)												-- discharge your active item
+		elseif pillColor == PillColor.PILL_ORANGEDOTS_WHITE then
+			player:UseCard(Card.CARD_GET_OUT_OF_JAIL, UseFlag.USE_NOANIM)									-- open all doors
+		elseif pillColor == PillColor.PILL_WHITE_AZURE then
+			player:UseCard(Card.CARD_REVERSE_FOOL, UseFlag.USE_NOANIM)										-- reverse Fool (drop all your stuff)
+		elseif pillColor == PillColor.PILL_BLACK_YELLOW then
+			player:UseCard(Card.CARD_HUMANITY, UseFlag.USE_NOANIM)											-- Card against humanity (shit on the floor)
+		elseif pillColor == PillColor.PILL_WHITE_BLACK then
+			Isaac.Spawn(5, 350, 0, player.Position, Vector.Zero, nil)										-- spawn a random trinket
+		elseif pillColor == PillColor.PILL_WHITE_YELLOW then
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_R_KEY, true, true, false, false, -1)			-- restart the run (R key)
 		end
 	end
 end
@@ -2057,7 +2091,7 @@ if EID then
 	EID:addCollectible(Collectibles.TWOPLUSONE, "Every third shop item on the current floor will cost 1 {{Coin}} penny #Buying two items with hearts in one room makes all other items free")
 	EID:addCollectible(Collectibles.REDMAP, "Reveals location of Ultra Secret Room on all subsequent floors #Any trinket left in a boss or treasure room will turn into Cracked Key")
 	EID:addCollectible(Collectibles.CHEESEGRATER, "Removes one red heart container and gives you {{ArrowUp}} +0.3 Damage up and two Minisaacs")
-	EID:addCollectible(Collectibles.DNAREDACTOR, "Using a pill has a chance to use another random pill, change your character, restart the floor, reset the run (R-key-style) or use a D100 item")
+	EID:addCollectible(Collectibles.DNAREDACTOR, "Pills now have additional effects based on their color")
 	EID:addCollectible(Collectibles.TOWEROFBABEL, "Destroys all obstacles in the current room #Also blows the doors open and opens secret room entrances")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
@@ -2090,7 +2124,7 @@ if EID then
 	EID:addCard(PocketItems.JACKOFDIAMONDS, "Coins will drop more often from clearing rooms for current floor, and the average quality of coins is increased")
 	EID:addCard(PocketItems.JACKOFSPADES, "Keys will drop more often from clearing rooms for current floor, and the average quality of keys is increased")
 	EID:addCard(PocketItems.JACKOFHEARTS, "Hearts will drop more often from clearing rooms for current floor, and the average quality of hearts is increased")
-	EID:addCard(PocketItems.QUASARSHARD, "Damages all enemies in a room, turns item pedestals and pickups (with a 20% chance) into lemegeton wisps")
+	EID:addCard(PocketItems.QUASARSHARD, "Damages all enemies in a room and turns every item pedestal into 3 Lemegeton wisps")
 	EID:addCard(PocketItems.BUSINESSCARD, "Summons a random monster, like ones from Friend Finder")
 	EID:addCard(PocketItems.SACBLOOD, "{{ArrowUp}} Gives +1 DMG up that depletes over the span of 25 seconds #Stackable #{{ArrowUp}} Heals you for one red heart if you have Ceremonial Robes #{{Warning}} Damage depletes quicker the more Blood you used subsequently")
 	EID:addCard(PocketItems.LIBRARYCARD, "Activates a random book effect")

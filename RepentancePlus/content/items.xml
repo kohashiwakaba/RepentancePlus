@@ -1,7 +1,7 @@
 <items gfxroot="gfx/items/" version="1">
 	<!-- NOTE : if an item has a persistent costume, you can actually give it the local id to associate it with that costume. 
 		That ID won't mess with internal game ID of the item. (Thanks to Wofsauge for making the guide about that!)
-	>
+	-->
 	
 	<!-- T.Isaac -->
 	<active name="Ordinary Life" description="What if it all's just a dream?" gfx="01_ordinarylife.png" quality="3" maxcharges="12" />
@@ -38,7 +38,7 @@
 	<trinket name="Wait, No!" description=":-(" gfx="t11_waitno.png" />
 	
 	<!-- T. Lazarus -->
-	<passive name="DNA Redactor" description="It runs in your genes" gfx="20_dnaredactor.png" quality="1" /> 
+	<passive name="DNA Redactor" description="It runs in your genes" gfx="20_dnaredactor.png" quality="3" /> 
 	
 	<!-- T. Azazel -->
 	<trinket name="Angel's Crown" description="Patience is a virtue" gfx="t07_angelscrown.png" />
@@ -60,7 +60,7 @@
 	<passive name="Red Map" description="All secrets are unveiled to you" gfx="18_redmap.png" quality="2" />
 	
 	<!-- T. Forgor -->
-	<passive name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="2" />
+	<passive name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="1" />
 	
 	<!-- T. Bethany -->
 	<passive id="4" name="Ceiling With the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
