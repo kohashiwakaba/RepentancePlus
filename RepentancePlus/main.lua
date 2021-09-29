@@ -37,7 +37,7 @@ local BITTENPENNY_UPGRADECHANCE = 17	-- chance to 'upgrade' coins via Bitten Pen
 local REDKEY_TURN_CHANCE = 12		-- chance for any pickup to turn into Cracked Key via Red Map trinket
 local ENRAGED_SOUL_COOLDOWN = 420	-- 7 seconds in 60 FPS callback; cooldown for Enraged Soul familiar
 local CEREM_DAGGER_LAUNCH_CHANCE = 5 -- chance to launch a dagger
-
+local NIGHT_SOIL_CHANCE = 40 --chance to negate curse
 
 Costumes = {
 	-- add ONLY NON-PERSISTENT COSTUMES here, because persistent costumes now work without lua
@@ -79,7 +79,8 @@ Collectibles = {
 	REDMAP = Isaac.GetItemIdByName("Red Map"),
 	CHEESEGRATER = Isaac.GetItemIdByName("Cheese Grater"),
 	DNAREDACTOR = Isaac.GetItemIdByName("DNA Redactor"),
-	TOWEROFBABEL = Isaac.GetItemIdByName("Tower of Babel")
+	TOWEROFBABEL = Isaac.GetItemIdByName("Tower of Babel"),
+	BLESSOTDEAD = Isaac.GetItemIdByName("Bless of the Dead")
 }
 
 Trinkets = {
@@ -94,7 +95,8 @@ Trinkets = {
 	MAGICSWORD = Isaac.GetTrinketIdByName("Magic Sword"),
 	WAITNO = Isaac.GetTrinketIdByName("Wait, No!"),
 	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),
-	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib")
+	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),
+	NIGHTSOIL = Isaac.GetTrinketIdByName("Night Soil")
 }
 
 PocketItems = {
@@ -294,7 +296,8 @@ StatUps = {
 	CEREMDAGGER_DMG_MUL = 0.85,
 	SACBLOOD_DMG = 1,
 	MAGICSWORD_DMG_MUL = 2,
-	GRATER_DMG = 0.3
+	GRATER_DMG = 0.3,
+	BLESS_DMG = 1
 }
 
 -- used by Bag Tissue
@@ -536,7 +539,8 @@ function rplus:OnGameStart(Continued)
 				ENRAGEDSOUL = {SoulLaunchCooldown = nil, AttachedEnemy = nil},
 				CEILINGSTARS = {SleptInBed = false},
 				TWOPLUSONE = {ItemsBought_COINS = 0, ItemsBought_HEARTS = 0},
-				CHEESEGRATER = {NumUses = 0}
+				CHEESEGRATER = {NumUses = 0},
+				BLESSOTDEAD = 0
 			},
 			Cards = {
 				REVERSECARD = nil,
@@ -583,7 +587,22 @@ function rplus:OnNewLevel()
 	local player = Isaac.GetPlayer(0)
 	local level = game:GetLevel()
 	
+	if level:GetCurses() ~= 0 and player:HasTrinket(Trinkets.NIGHTSOIL) and math.random(100) < NIGHT_SOIL_CHANCE then
+		level:RemoveCurses(level:GetCurses())
+		game:GetHUD():ShowFortuneText("Night Soil protected you!")
+		player:AnimateHappy()
+	end
+	
 	if CustomData then 
+		
+		if level:GetCurses() ~= 0 and player:HasCollectible(Collectibles.BLESSOTDEAD) then 
+			CustomData.Items.BLESSOTDEAD = CustomData.Items.BLESSOTDEAD + 1
+			game:GetHUD():ShowFortuneText("The Dead protected you!")
+			level:RemoveCurses(level:GetCurses())
+			player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+			player:EvaluateItems()
+		end
+		
 		CustomData.Cards.JACK = nil
 		
 		CustomData.Items.CEILINGSTARS.SleptInBed = false
@@ -1611,6 +1630,9 @@ function rplus:UpdateStats(player, Flag)
 		
 		if CustomData and CustomData.Items.CHEESEGRATER.NumUses then
 			player.Damage = player.Damage + CustomData.Items.CHEESEGRATER.NumUses * StatUps.GRATER_DMG
+		end
+		if CustomData and CustomData.Items.BLESSOTDEAD then
+			player.Damage = player.Damage + CustomData.Items.BLESSOTDEAD * StatUps.BLESS_DMG
 		end
 	end
 	

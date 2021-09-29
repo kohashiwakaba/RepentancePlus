@@ -26,6 +26,9 @@
 	
 	<!-- T. ??? -->
 	<familiar name="Bag-o-Trash" description="Will you take it out already?!" gfx="10_bagotrash.png" quality="1" />
+	<trinket name="Night Soil" description="Eww.." gfx="t14_nightsoil.png"/>
+	<passive name="Bless of the Dead" description="What doesn't kill you makes you stronger" gfx="40_blessofthedead.png" quality="4"/>
+	
 	
 	<!-- T. Eve -->
 	<passive name="A Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="2" />
