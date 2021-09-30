@@ -15,7 +15,7 @@
 		<Item Name="Cheese Grater" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="boss">
-		
+		<Item Name="Ordinary Life" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="devil">
 		<Item Name="Sinner's Heart" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
@@ -31,11 +31,11 @@
 		<Item Name="Quasar" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 	</Pool>
 	<Pool Name="secret">
-		<Item Name="Ordinary Life" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Temper Tantrum" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="2+1" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Red Map" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="DNA Redactor" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bless of the Dead" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="library">
 		

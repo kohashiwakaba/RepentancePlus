@@ -4,7 +4,7 @@
 	-->
 	
 	<!-- T.Isaac -->
-	<active name="Ordinary Life" description="What if it all's just a dream?" gfx="01_ordinarylife.png" quality="3" maxcharges="12" />
+	<passive name="Ordinary Life" description="Tears Up" gfx="01_ordinarylife.png" quality="3" cache="firedelay" />
 	<trinket name="Basement Key" description="Open your memories" gfx="t01_basementkey.png" />
 	<active name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="03_rubikscube.png" quality="0" maxcharges="2" />
 	<active name="Magic Cube" description="Did you set the world record?" gfx="04_magiccube.png" quality="4" maxcharges="4" />  
@@ -26,10 +26,9 @@
 	
 	<!-- T. ??? -->
 	<familiar name="Bag-o-Trash" description="Will you take it out already?!" gfx="10_bagotrash.png" quality="1" />
-	<trinket name="Night Soil" description="Eww.." gfx="t14_nightsoil.png"/>
-	<passive name="Bless of the Dead" description="What doesn't kill you makes you stronger" gfx="40_blessofthedead.png" quality="4"/>
-	
-	
+	<trinket name="Night Soil" description="Eww.." gfx="t14_nightsoil.png" />
+	<passive name="Bless of the Dead" description="What doesn't kill you makes you stronger" gfx="21_blessofthedead.png" quality="4" />
+
 	<!-- T. Eve -->
 	<passive name="A Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="2" />
 	<trinket name="Adam's Rib" description="Children of God" gfx="t13_adamsrib.png" />
