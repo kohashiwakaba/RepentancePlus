@@ -62,9 +62,9 @@ Collectibles = {
 	COOKIECUTTER = Isaac.GetItemIdByName("Cookie Cutter"),
 	RUBIKSCUBE = Isaac.GetItemIdByName("Rubik's Cube"),
 	MAGICCUBE = Isaac.GetItemIdByName("Magic Cube"),
-	MAGICPEN = Isaac.GetItemIdByName("Magic Pen"),
+	MAGICPEN = Isaac.GetItemIdByName("Magic Pen"),					
 	SINNERSHEART = Isaac.GetItemIdByName("Sinner's Heart"),
-	MARKCAIN = Isaac.GetItemIdByName("The Mark of Cain"),
+	MARKCAIN = Isaac.GetItemIdByName("The Mark of Cain"),			
 	BAGOTRASH = Isaac.GetItemIdByName("Bag-o-Trash"),
 	TEMPERTANTRUM = Isaac.GetItemIdByName("Temper Tantrum"),
 	CHERRYFRIENDS = Isaac.GetItemIdByName("Cherry Friends"),
@@ -72,12 +72,12 @@ Collectibles = {
 	BLACKDOLL = Isaac.GetItemIdByName("Black Doll"),
 	BIRDOFHOPE = Isaac.GetItemIdByName("A Bird of Hope"),
 	ENRAGEDSOUL = Isaac.GetItemIdByName("Enraged Soul"),
-	CEREMDAGGER = Isaac.GetItemIdByName("Ceremonial Blade"),
+	CEREMDAGGER = Isaac.GetItemIdByName("Ceremonial Blade"),		-- LIMITED SECONDARY PLAYERS FUNCTIONALITY
 	CEILINGSTARS = Isaac.GetItemIdByName("Ceiling With the Stars"),
 	QUASAR = Isaac.GetItemIdByName("Quasar"),
 	TWOPLUSONE = Isaac.GetItemIdByName("2+1"),
 	REDMAP = Isaac.GetItemIdByName("Red Map"),
-	CHEESEGRATER = Isaac.GetItemIdByName("Cheese Grater"),
+	CHEESEGRATER = Isaac.GetItemIdByName("Cheese Grater"),			-- MINOR COMPATIBILITY ISSUES
 	DNAREDACTOR = Isaac.GetItemIdByName("DNA Redactor"),
 	TOWEROFBABEL = Isaac.GetItemIdByName("Tower of Babel"),
 	BLESSOTDEAD = Isaac.GetItemIdByName("Bless of the Dead")
@@ -87,15 +87,15 @@ Trinkets = {
 	BASEMENTKEY = Isaac.GetTrinketIdByName("Basement Key"),
 	KEYTOTHEHEART = Isaac.GetTrinketIdByName("Key to the Heart"),
 	SLEIGHTOFHAND = Isaac.GetTrinketIdByName("Sleight of Hand"),
-	JUDASKISS = Isaac.GetTrinketIdByName("Judas' Kiss"),
+	JUDASKISS = Isaac.GetTrinketIdByName("Judas' Kiss"),			-- MINOR COMPATIBILITY ISSUES
 	BITTENPENNY = Isaac.GetTrinketIdByName("Bitten Penny"),
-	GREEDSHEART = Isaac.GetTrinketIdByName("Greed's Heart"),
+	GREEDSHEART = Isaac.GetTrinketIdByName("Greed's Heart"),		-- MINOR COMPATIBILITY ISSUES
 	ANGELSCROWN = Isaac.GetTrinketIdByName("Angel's Crown"),
 	CHALKPIECE = Isaac.GetTrinketIdByName("A Piece of Chalk"),
-	MAGICSWORD = Isaac.GetTrinketIdByName("Magic Sword"),
+	MAGICSWORD = Isaac.GetTrinketIdByName("Magic Sword"),			-- MINOR COMPATIBILITY ISSUES
 	WAITNO = Isaac.GetTrinketIdByName("Wait, No!"),
-	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),
-	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),
+	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),			-- MINOR COMPATIBILITY ISSUES
+	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),				-- MINOR COMPATIBILITY ISSUES
 	NIGHTSOIL = Isaac.GetTrinketIdByName("Night Soil")
 }
 
@@ -119,7 +119,7 @@ PocketItems = {
 	BEDSIDEQUEEN = Isaac.GetCardIdByName("Bedside Queen"),
 	QUASARSHARD = Isaac.GetCardIdByName("Quasar Shard"),
 	BUSINESSCARD = Isaac.GetCardIdByName("Business Card"),
-	SACBLOOD = Isaac.GetCardIdByName("Sacrificial Blood"),
+	SACBLOOD = Isaac.GetCardIdByName("Sacrificial Blood"),			-- MINOR COMPATIBILITY ISSUES
 	FLYPAPER = Isaac.GetCardIdByName("Flypaper"),
 	LIBRARYCARD = Isaac.GetCardIdByName("Library Card")
 }
@@ -517,7 +517,7 @@ end
 								-- GLOBAL FUNCTIONS --
 								----------------------
 
-						-- GAME STARTED --											-- doesn't need a player argument
+						-- GAME STARTED --											
 						------------------
 function rplus:OnGameStart(Continued)
 
@@ -544,7 +544,6 @@ function rplus:OnGameStart(Continued)
 			},
 			Cards = {
 				REVERSECARD = nil,
-				LOADEDDICE = {Data = false, Room = nil},
 				JACK = nil,
 				SACBLOOD = {Data = false, NumUses = 0}
 			},
@@ -575,13 +574,14 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
-
+		Isaac.ExecuteCommand("debug 8")
+		Isaac.ExecuteCommand("g black candle")
 		--]]
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
 
-						-- EVERY NEW LEVEL --										-- should work fine
+						-- EVERY NEW LEVEL --										
 						---------------------
 function rplus:OnNewLevel()
 	local level = game:GetLevel()
@@ -613,7 +613,7 @@ function rplus:OnNewLevel()
 				repeat 
 					newID = GetUnlockedVanillaCollectible()
 				until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
-				Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, newID, player.Position, Vector.Zero, nil)
+				player:AddItemWisp(newID, player.Position, true)
 			end
 		end
 		
@@ -624,7 +624,7 @@ function rplus:OnNewLevel()
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 
-						-- EVERY NEW ROOM --										-- should work fine
+						-- EVERY NEW ROOM --										
 						--------------------
 function rplus:OnNewRoom()
 	local level = game:GetLevel()
@@ -699,11 +699,15 @@ function rplus:OnNewRoom()
 		if player:HasCollectible(Collectibles.TWOPLUSONE) and CustomData then
 			CustomData.Items.TWOPLUSONE.ItemsBought_HEARTS = 0
 		end
+		
+		player:GetData()['usedLoadedDice'] = false
+		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
+		player:EvaluateItems()
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
 
-						-- ACTIVE ITEM USED --										-- has a built-in player argument
+						-- ACTIVE ITEM USED --										
 						----------------------
 function rplus:OnItemUse(ItemUsed, _, Player, _, _, _)
 	local level = game:GetLevel()
@@ -724,6 +728,7 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, _, _)
 		Player:AddMinisaac(Player.Position, true)
 		Player:AddMinisaac(Player.Position, true)
 		sfx:Play(SoundEffect.SOUND_BLOODBANK_SPAWN, 1, 2, false, 1, 0)
+		Player:GetData()['graterUsed'] = true
 		
 		CustomData.Items.CHEESEGRATER.NumUses = CustomData.Items.CHEESEGRATER.NumUses + 1
 		Player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
@@ -762,7 +767,7 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, _, _)
 					repeat 
 						newID = GetUnlockedVanillaCollectible()
 					until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
-					Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, newID, Player.Position, Vector.Zero, nil)
+					Player:AddItemWisp(newID, Player.Position, true)
 					Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
 					entity:Remove()
 				end
@@ -782,7 +787,7 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, _, _)
 end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
 
-						-- EVERY FRAME --											-- I'm worried
+						-- EVERY FRAME --											
 						-----------------
 function rplus:OnFrame()
 	local room = game:GetRoom()
@@ -836,8 +841,10 @@ function rplus:OnFrame()
 				end
 				if #MyFamiliars > 0 then
 					player:RemoveCollectible(Collectibles.MARKCAIN)
-					player:Revive()
-					GiveRevivalIVFrames(player)
+					for i = 0, game:GetNumPlayers() - 1 do
+						Isaac.GetPlayer(i):Revive()
+						GiveRevivalIVFrames(Isaac.GetPlayer(i))
+					end
 					
 					CustomData.Items.MARKCAIN = "player revived"
 					sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
@@ -851,24 +858,16 @@ function rplus:OnFrame()
 		
 		if player:HasCollectible(Collectibles.TEMPERTANTRUM) then
 			if SUPERBERSERKSTATE and sfx:IsPlaying(SoundEffect.SOUND_BERSERK_END) then SUPERBERSERKSTATE = false end
-			
-			for _, entity in pairs(Isaac.GetRoomEntities()) do
-				if entity:IsActiveEnemy() and CustomData.Items.TEMPERTANTRUM.ErasedEnemies ~= nil then
-					for i = 1, #CustomData.Items.TEMPERTANTRUM.ErasedEnemies do
-						if entity.Type == CustomData.Items.TEMPERTANTRUM.ErasedEnemies[i] then
-							entity:Kill()
-							break
-						end
+		end
+		for _, entity in pairs(Isaac.GetRoomEntities()) do
+			if entity:IsActiveEnemy() and CustomData.Items.TEMPERTANTRUM.ErasedEnemies ~= nil then
+				for i = 1, #CustomData.Items.TEMPERTANTRUM.ErasedEnemies do
+					if entity.Type == CustomData.Items.TEMPERTANTRUM.ErasedEnemies[i] then
+						entity:Kill()
+						break
 					end
 				end
 			end
-		end
-		
-		if CustomData and CustomData.Cards.LOADEDDICE.Data and (game:GetLevel():GetCurrentRoomIndex() ~= CustomData.Cards.LOADEDDICE.Room) then
-			CustomData.Cards.LOADEDDICE.Room = nil
-			CustomData.Cards.LOADEDDICE.Data = false
-			player:AddCacheFlags(CacheFlag.CACHE_LUCK)
-			player:EvaluateItems()
 		end
 		
 		if player:HasCollectible(Collectibles.CHERRYFRIENDS) and room:IsClear() then
@@ -943,8 +942,10 @@ function rplus:OnFrame()
 		if player:HasTrinket(Trinkets.ADAMSRIB) then
 			if sprite:IsPlaying("Death") and sprite:GetFrame() > 50 then
 				player:TryRemoveTrinket(Trinkets.ADAMSRIB)
-				player:Revive()
-				GiveRevivalIVFrames(player)
+				for i = 0, game:GetNumPlayers() - 1 do
+					Isaac.GetPlayer(i):Revive()
+					GiveRevivalIVFrames(Isaac.GetPlayer(i))
+				end
 				player:ChangePlayerType(PlayerType.PLAYER_EVE)
 				if not player:HasCollectible(CollectibleType.COLLECTIBLE_WHORE_OF_BABYLON) then player:AddCollectible(CollectibleType.COLLECTIBLE_WHORE_OF_BABYLON) end
 				player:AddMaxHearts(-24, false)
@@ -991,7 +992,7 @@ function rplus:OnFrame()
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
-						-- POST PLAYER UPDATE --									-- has a built-in player argument
+						-- POST PLAYER UPDATE --									
 						------------------------
 function rplus:PostPlayerUpdate(Player)
 	-- this callback handles inputs, because it rolls in 60 fps, unlike MC_POST_UPDATE, so inputs won't be missed out
@@ -1077,7 +1078,7 @@ function rplus:PostPlayerUpdate(Player)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate)
 
-						-- POST RENDERING --										-- should work fine
+						-- POST RENDERING --										
 						--------------------
 function rplus:OnGameRender()
 	local level = game:GetLevel()
@@ -1120,7 +1121,7 @@ function rplus:OnGameRender()
 end
 rplus:AddCallback(ModCallbacks.MC_POST_RENDER, rplus.OnGameRender)
 
-						-- WHEN NPC DIES --											-- should work fine
+						-- WHEN NPC DIES --											
 						-------------------
 function rplus:OnNPCDeath(NPC)
 	local level = game:GetLevel()
@@ -1145,7 +1146,7 @@ function rplus:OnNPCDeath(NPC)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 
-						-- ON PICKUP INIT -- 										-- should work fine
+						-- ON PICKUP INIT -- 										
 						--------------------
 function rplus:OnPickupInit(Pickup)	
 	for i = 0, game:GetNumPlayers() - 1 do
@@ -1175,7 +1176,7 @@ function rplus:OnPickupInit(Pickup)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, rplus.OnPickupInit)
 
-						-- ON GETTING A CARD --										-- doesn't need a player argument
+						-- ON GETTING A CARD --										
 						-----------------------
 function rplus:OnCardInit(_, _, PlayingCards, Runes, OnlyRunes)
 	if (PlayingCards or Runes) and not OnlyRunes then
@@ -1189,7 +1190,7 @@ function rplus:OnCardInit(_, _, PlayingCards, Runes, OnlyRunes)
 end
 rplus:AddCallback(ModCallbacks.MC_GET_CARD, rplus.OnCardInit)
 
-						-- ON USING CARD -- 										-- has a built-in player argument
+						-- ON USING CARD -- 										
 						-------------------
 function rplus:CardUsed(Card, Player, _)	
 	if Card == PocketItems.RJOKER then
@@ -1348,8 +1349,7 @@ function rplus:CardUsed(Card, Player, _)
 	end
 	
 	if Card == PocketItems.LOADEDDICE then
-		CustomData.Cards.LOADEDDICE.Data = true
-		CustomData.Cards.LOADEDDICE.Room = game:GetLevel():GetCurrentRoomIndex()
+		Player:GetData()['usedLoadedDice'] = true
 		
 		Player:AddCacheFlags(CacheFlag.CACHE_LUCK)
 		Player:EvaluateItems()
@@ -1388,7 +1388,7 @@ function rplus:CardUsed(Card, Player, _)
 					repeat 
 						newID = GetUnlockedVanillaCollectible()
 					until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
-					Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, newID, Player.Position, Vector.Zero, nil)
+					Player:AddItemWisp(newID, Player.Position, true)
 				end
 				Isaac.Spawn(1000, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
 				entity:Remove()
@@ -1401,6 +1401,7 @@ function rplus:CardUsed(Card, Player, _)
 		CustomData.Cards.SACBLOOD.Data = true
 		CustomData.Cards.SACBLOOD.NumUses = CustomData.Cards.SACBLOOD.NumUses + 1
 		Step = 0
+		Player:GetData()['usedBlood'] = true
 		
 		sfx:Play(SoundEffect.SOUND_VAMP_GULP, 1, 2, false, 1, 0)
 		if Player:HasCollectible(216) then Player:AddHearts(2) end		-- bonus for ceremonial robes ;)
@@ -1418,55 +1419,11 @@ function rplus:CardUsed(Card, Player, _)
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 
-						-- ON PICKUP COLLISION --									-- I'm worried
+						-- ON PICKUP COLLISION --									
 						-------------------------
 function rplus:PickupCollision(Pickup, Collider, _)	
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
-		
-		if Collider.Type == 1 and Pickup.Variant == PickUps.SCARLETCHEST and Pickup.SubType == 0 then
-			Pickup.SubType = 1
-			Pickup:GetSprite():Play("Open")
-			Pickup:GetData()["IsRoom"] = true
-			sfx:Play(SoundEffect.SOUND_CHEST_OPEN, 1, 2, false, 1, 0)
-			player:TakeDamage(1, DamageFlag.DAMAGE_RED_HEARTS | DamageFlag.DAMAGE_NO_PENALTIES, EntityRef(Pickup), 30)
-			local DieRoll = math.random(100)
-			
-			if DieRoll < 15 then
-				local freezePreventChecker = 0
-				
-				repeat
-					Item = ScarletChestItems[math.random(#ScarletChestItems)]
-					freezePreventChecker = freezePreventChecker + 1
-				until IsCollectibleUnlocked(Item) or freezePreventChecker == 1000
-				
-				if freezePreventChecker < 1000 then
-					Isaac.Spawn(5, 100, Item, Pickup.Position, Vector(0, 0), Pickup)
-				else 
-					EntityNPC.ThrowSpider(Pickup.Position, Pickup, Pickup.Position + Vector.FromAngle(math.random(360)) * 200, false, 0) 
-				end
-				
-				Pickup:Remove()
-			elseif DieRoll < 85 then
-				local NumOfPickUps = RNG():RandomInt(4) + 1 -- 1 to 4 Pickups
-				
-				for i = 1, NumOfPickUps do
-					local variant = nil
-					local subtype = nil
-					
-					if math.random(100) < 66 then
-						variant = 10
-						subtype = ScarletChestHearts[math.random(#ScarletChestHearts)]
-					else
-						variant = 70
-						subtype = 0
-					end
-					Isaac.Spawn(5, variant, subtype, Pickup.Position, Vector.FromAngle(math.random(360)) * 5, Pickup)
-				end
-			else
-				EntityNPC.ThrowSpider(Pickup.Position, Pickup, Pickup.Position + Vector.FromAngle(math.random(360)) * 200, false, 0)
-			end
-		end
 		
 		if player:HasTrinket(Trinkets.GREEDSHEART) and CustomData.Trinkets.GREEDSHEART == "CoinHeartEmpty" and Pickup.Variant == 20 and Pickup.SubType ~= 6 
 		and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) then
@@ -1509,7 +1466,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.PickupCollision)
 
-						-- ON UPDATING PICKUPS --									-- doesn't need a player argument
+						-- ON UPDATING PICKUPS --									
 						-------------------------
 function rplus:PickupUpdate(Pickup)
 	if Pickup.Type == 5 and Pickup.Variant == 100 and Pickup.SpawnerVariant == 392 then
@@ -1521,19 +1478,16 @@ function rplus:PickupUpdate(Pickup)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, rplus.PickupUpdate)
 
-						-- ON TEAR UPDATE --										-- I'm worried
+						-- ON TEAR UPDATE --
 						--------------------
-function rplus:OnTearUpdate(Tear)
-	--if Tear.Parent then local player = Tear.Parent:ToPlayer() end
-	local player = Isaac.GetPlayer(0)
-	
-	if player:HasCollectible(Collectibles.MAGICPEN) and EntityRef(Tear).Entity.SpawnerType == EntityType.ENTITY_PLAYER then
+function rplus:OnTearUpdate(Tear)	
+	if Tear.Parent:ToPlayer() and Tear.Parent:ToPlayer():HasCollectible(Collectibles.MAGICPEN) then
 		local CreepTrail = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL, 4, Tear.Position, Vector.Zero, nil):ToEffect()
 		CreepTrail.Scale = 0.4
 		CreepTrail:Update()
 	end
 	
-	if player:HasCollectible(Collectibles.CEREMDAGGER) and Tear.Variant == TearVariants.CEREMDAGGER then
+	if Tear.Variant == TearVariants.CEREMDAGGER then
 		local TX = Tear.Velocity:Normalized().X
 		local TY = Tear.Velocity:Normalized().Y
 		
@@ -1546,7 +1500,7 @@ function rplus:OnTearUpdate(Tear)
 		end
 	end
 	
-	if player:HasCollectible(Collectibles.SINNERSHEART) and Tear.Variant ~= TearVariants.CEREMDAGGER then
+	if Tear.Parent:ToPlayer() and Tear.Parent:ToPlayer():HasCollectible(Collectibles.SINNERSHEART) and Tear.Variant ~= TearVariants.CEREMDAGGER then
 		local SHeart = Tear:GetSprite()
 		SHeart.Scale = Vector(0.66, 0.66)
 		
@@ -1569,10 +1523,10 @@ function rplus:OnTearUpdate(Tear)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
 
-						-- ON TEAR INIT --											-- I'm worried
+						-- ON TEAR INIT --											
 						------------------
 function rplus:OnTearInit(Tear)
-	--if Tear.Parent then local player = Tear.Parent:ToPlayer() end
+	-- if Tear.Parent then local player = Tear.Parent:ToPlayer() end
 	local player = Isaac.GetPlayer(0)
 	
 	if player:HasCollectible(Collectibles.CEREMDAGGER) and EntityRef(Tear).Entity.SpawnerType == EntityType.ENTITY_PLAYER then
@@ -1587,7 +1541,7 @@ end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, rplus.OnTearInit)
 
 
-						-- UPDATING PLAYER STATS (CACHE) --							-- has a built-in player argument
+						-- UPDATING PLAYER STATS (CACHE) --							
 						-----------------------------------
 function rplus:UpdateStats(Player, Flag) 
 	-- If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml)
@@ -1597,7 +1551,7 @@ function rplus:UpdateStats(Player, Flag)
 			Player.Damage = Player.Damage * StatUps.SINNERSHEART_DMG_MUL
 		end
 		
-		if CustomData and CustomData.Items.MARKCAIN == "Player revived" then
+		if CustomData and CustomData.Items.MARKCAIN == "player revived" then
 			Player.Damage = Player.Damage + #MyFamiliars * StatUps.MARKCAIN_DMG
 		end
 		
@@ -1606,7 +1560,9 @@ function rplus:UpdateStats(Player, Flag)
 		end
 		
 		if CustomData and CustomData.Cards.SACBLOOD.Data then
-			Player.Damage = Player.Damage + StatUps.SACBLOOD_DMG * (CustomData.Cards.SACBLOOD.NumUses - Step / 50)
+			if Player:GetData()['usedBlood'] then
+				Player.Damage = Player.Damage + StatUps.SACBLOOD_DMG * (CustomData.Cards.SACBLOOD.NumUses - Step / 50)
+			end
 		end
 		
 		if Player:HasTrinket(Trinkets.MAGICSWORD) then
@@ -1614,7 +1570,9 @@ function rplus:UpdateStats(Player, Flag)
 		end
 		
 		if CustomData and CustomData.Items.CHEESEGRATER.NumUses then
-			Player.Damage = Player.Damage + CustomData.Items.CHEESEGRATER.NumUses * StatUps.GRATER_DMG
+			if Player:GetData()['graterUsed'] == true then
+				Player.Damage = Player.Damage + CustomData.Items.CHEESEGRATER.NumUses * StatUps.GRATER_DMG
+			end
 		end
 		if Player:HasCollectible(Collectibles.BLESSOTDEAD) and CustomData then
 			Player.Damage = Player.Damage + CustomData.Items.BLESSOTDEAD * StatUps.BLESS_DMG
@@ -1652,14 +1610,14 @@ function rplus:UpdateStats(Player, Flag)
 	end
 	
 	if Flag == CacheFlag.CACHE_LUCK then
-		if CustomData and CustomData.Cards.LOADEDDICE.Data then
+		if Player:GetData()['usedLoadedDice'] then
 			Player.Luck = Player.Luck + StatUps.LOADEDDICE_LUCK
 		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, rplus.UpdateStats)
 
-						-- ENTITY TAKES DAMAGE --									-- should work fine
+						-- ENTITY TAKES DAMAGE --									
 						-------------------------
 function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)	
 	for i = 0, game:GetNumPlayers() - 1 do
@@ -1765,7 +1723,7 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
 
-						-- ON FAMILIAR INIT --										-- doesn't need a player argument
+						-- ON FAMILIAR INIT --										
 						----------------------
 function rplus:TrashBagInit(Familiar)
 	CustomData.Items.BAGOTRASH.Levels = 1
@@ -1782,7 +1740,7 @@ function rplus:ZenBabyInit(Familiar)
 end
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.ZenBabyInit, Familiars.ZENBABY)
 
-						-- ON FAMILIAR UPDATE --	 								-- should work fine
+						-- ON FAMILIAR UPDATE --	 								
 						------------------------
 function rplus:TrashBagUpdate(Familiar)
 	Familiar:FollowParent()
@@ -1850,7 +1808,7 @@ function rplus:SoulUpdate(Familiar)
 end
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.SoulUpdate, Familiars.SOUL)
 
-						-- FAMILIAR COLLISION --									-- should work fine
+						-- FAMILIAR COLLISION --									
 						------------------------
 function rplus:CherryCollision(Familiar, Collider, _)
 	if Collider:IsActiveEnemy(true) and not Collider:IsBoss() and game:GetFrameCount() % 10 == 0 then
@@ -1885,7 +1843,7 @@ function rplus:SoulCollision(Familiar, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.SoulCollision, Familiars.SOUL)
 
-						-- PROJECTILE COLLISION --									-- doesn't need a player argument
+						-- PROJECTILE COLLISION --									
 						--------------------------
 function rplus:ProjectileCollision(Projectile, Collider, _)
 	if Collider.Variant == Familiars.BAGOTRASH then
@@ -1904,9 +1862,53 @@ function rplus:ProjectileCollision(Projectile, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, rplus.ProjectileCollision)
 
-						-- PLAYER COLLISION --										-- has a built-in player argument
+						-- PLAYER COLLISION --										
 						----------------------
-function rplus:PlayerCollision(Player, Collider, _)
+function rplus:playerCollision(Player, Collider, _)
+	if Collider.Variant == PickUps.SCARLETCHEST and Collider.SubType == 0 then
+		Collider.SubType = 1
+		Collider:GetSprite():Play("Open")
+		Collider:GetData()["IsRoom"] = true
+		sfx:Play(SoundEffect.SOUND_CHEST_OPEN, 1, 2, false, 1, 0)
+		Player:TakeDamage(1, DamageFlag.DAMAGE_RED_HEARTS | DamageFlag.DAMAGE_NO_PENALTIES, EntityRef(Collider), 30)
+		local DieRoll = math.random(100)
+		
+		if DieRoll < 15 then
+			local freezePreventChecker = 0
+			
+			repeat
+				Item = ScarletChestItems[math.random(#ScarletChestItems)]
+				freezePreventChecker = freezePreventChecker + 1
+			until IsCollectibleUnlocked(Item) or freezePreventChecker == 1000
+			
+			if freezePreventChecker < 1000 then
+				Isaac.Spawn(5, 100, Item, Collider.Position, Vector(0, 0), Collider)
+			else 
+				EntityNPC.ThrowSpider(Collider.Position, Collider, Collider.Position + Vector.FromAngle(math.random(360)) * 200, false, 0) 
+			end
+			
+			Collider:Remove()
+		elseif DieRoll < 85 then
+			local NumOfPickups = RNG():RandomInt(4) + 1 -- 1 to 4 pickups
+			
+			for i = 1, NumOfPickups do
+				local variant = nil
+				local subtype = nil
+				
+				if math.random(100) < 66 then
+					variant = 10
+					subtype = ScarletChestHearts[math.random(#ScarletChestHearts)]
+				else
+					variant = 70
+					subtype = 0
+				end
+				Isaac.Spawn(5, variant, subtype, Collider.Position, Vector.FromAngle(math.random(360)) * 5, Collider)
+			end
+		else
+			EntityNPC.ThrowSpider(Collider.Position, Collider, Collider.Position + Vector.FromAngle(math.random(360)) * 200, false, 0)
+		end
+	end
+
 	if Player:HasTrinket(Trinkets.SLEIGHTOFHAND) and math.random(100) <= SLEIGHTOFHAND_CHANCE * Player:GetTrinketMultiplier(Trinkets.SLEIGHTOFHAND) then
 		-- cuz slots don't have their own collision callback, thanks api lmao
 		if Collider.Type == 6 then
@@ -1914,7 +1916,7 @@ function rplus:PlayerCollision(Player, Collider, _)
 			
 			-- make sure that we don't infinitely collide with them, results in infinite consumables!!!
 			if S:GetFrame() == 1 and 
-			(S:IsPlaying("PayPrize") or S:IsPlaying("PayNothing") or S:IsPlaying("PayShuffle") or S:IsPlaying("Wiggle")) then
+			(S:IsPlaying("PayPrize") or S:IsPlaying("PayNothing") or S:IsPlaying("PayShuffle") or S:IsPlaying("Initiate")) then
 				if Player:GetNumCoins() > 0 and		-- slots that take your money
 				(Collider.Variant == 1 or Collider.Variant == 3 or Collider.Variant == 4 or Collider.Variant == 6 or Collider.Variant == 10 or Collider.Variant == 13 or Collider.Variant == 18) then 
 					Player:AddCoins(1)
@@ -1943,13 +1945,13 @@ function rplus:PlayerCollision(Player, Collider, _)
 			repeat 
 				newID = GetUnlockedVanillaCollectible()
 			until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
-			Isaac.Spawn(3, FamiliarVariant.ITEM_WISP, newID, player.Position, Vector.Zero, nil)
+			Player:AddItemWisp(newID, Player.Position, true)
 		end
 	end
 end
-rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.PlayerCollision, 0)
+rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.playerCollision, 0)
 
-						-- PRE ROOM CLEAR AWARD SPAWN --							-- doesn't need a player argument
+						-- PRE ROOM CLEAR AWARD SPAWN --							
 						--------------------------------
 function rplus:PickupAwardSpawn(_, Pos)
 	local room = game:GetRoom()
@@ -2032,7 +2034,7 @@ function rplus:PickupAwardSpawn(_, Pos)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
 
-						-- ON USING PILL --											-- has a built-in player argument, but also I'm worried
+						-- ON USING PILL --	
 						-------------------
 function rplus:usePill(pillEffect, Player, _)	
 	if pillEffect == Pills.ESTROGEN then
@@ -2118,7 +2120,7 @@ if EID then
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
 	EID:addTrinket(Trinkets.JUDASKISS, "Enemies touching you become targeted by other enemies (effect similar to Rotten Tomato)")
-	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key has a 12% chance to not subtract it from your inventory count")
+	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key on slots, beggars or locked chests has a 17% chance to not subtract it from your inventory count")
 	EID:addTrinket(Trinkets.BITTENPENNY, "Upon spawning, every coin has a 20% chance to be upgraded to a higher value: #penny -> doublepack pennies -> sticky nickel -> nickel -> dime -> lucky penny -> golden penny")
 	EID:addTrinket(Trinkets.GREEDSHEART, "Gives you one empty coin heart #It is depleted before any of your normal hearts and can only be refilled by directly picking up money")
 	EID:addTrinket(Trinkets.ANGELSCROWN, "All new treasure rooms will have an angel item for sale instead of a normal item #Angels spawned from statues will not drop Key Pieces!")
