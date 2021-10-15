@@ -15,11 +15,12 @@ local rplus = RegisterMod("repentanceplus", 1)
 local sfx = SFXManager()
 local music = MusicManager()
 local CustomData
-local json = require("json")
+--local json = require("json")
 
--- for displaying achievement papers
+--[[ for displaying achievement papers
 achievement = Sprite()
 achievement:Load("gfx/ui/achievement/achievements.anm2", true)
+--]]
 
 -- used for rendering sprites on the floor/walls
 CustomBackDropEntity = Isaac.GetEntityVariantByName("CustomBackDropEntity")
@@ -133,6 +134,7 @@ Pills = {
 	LAXATIVE = Isaac.GetPillEffectByName("Laxative")
 }
 
+--[[
 local Unlocks = { 
 	["21"] = { --T.Isaac
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.REVERSECARD}, 
@@ -255,6 +257,7 @@ local Unlocks = {
 	}
 
 }
+--]]
 
 ScarletChestItems = { 
 	16, --Raw Liver
@@ -383,6 +386,7 @@ local function GetRandomCustomCard()
 	return PocketItems[random_key]
 end
 
+--[[
 -- Helpers for rendering unlock papers
 local function Unlock(checkmark)
 	local player = Isaac.GetPlayer(0)
@@ -444,6 +448,7 @@ end
 function isUltraGreedRoom()
 	return game.Difficulty >= 2 and game:GetRoom():GetRoomShape() == RoomShape.ROOMSHAPE_1x2 and game:GetLevel():GetStage() == LevelStage.STAGE7_GREED
 end
+--]]
 
 -- Is this collectible unlocked?
 local function IsCollectibleUnlocked(collectibleType)
@@ -520,13 +525,14 @@ end
 						-- GAME STARTED --											
 						------------------
 function rplus:OnGameStart(Continued)
-
+	--[[
 	if Isaac.HasModData(rplus) then
 		local data = Isaac.LoadModData(rplus)
 		Unlocks = json.decode(data)
 	else
 		Isaac.SaveModData(rplus, json.encode(Unlocks, "Unlocks"))
 	end
+	--]]
 	
 	if not Continued then
 		CustomData = {
@@ -573,9 +579,6 @@ function rplus:OnGameStart(Continued)
 		Isaac.Spawn(5, 100, Collectibles.TestCollectible, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		Isaac.ExecuteCommand("debug 0")
 		
-		--]]
-		Isaac.ExecuteCommand("debug 8")
-		Isaac.ExecuteCommand("g black candle")
 		--]]
 	end
 end
@@ -665,6 +668,7 @@ function rplus:OnNewRoom()
 				end
 				local AngelItem = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), Vector(320,280), Vector.Zero, nil):ToPickup()
 				AngelItem.Price = 15
+				AngelItem.ShopItemId = -777
 			end
 			
 			for i = 1, room:GetGridSize() do
@@ -930,15 +934,6 @@ function rplus:OnFrame()
 			end
 		end
 		
-		-- prevent rerolling an item into red heart
-		if player:HasTrinket(Trinkets.ANGELSCROWN) and room:GetType() == RoomType.ROOM_TREASURE then
-			for _, entity in pairs(Isaac.GetRoomEntities()) do
-				if entity.Type == 5 and entity.Variant == 10 and entity.SubType == 1 and entity:ToPickup().Price > 0 then
-					entity:ToPickup():Morph(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), true, true, false)
-				end
-			end
-		end
-		
 		if player:HasTrinket(Trinkets.ADAMSRIB) then
 			if sprite:IsPlaying("Death") and sprite:GetFrame() > 50 then
 				player:TryRemoveTrinket(Trinkets.ADAMSRIB)
@@ -1084,9 +1079,10 @@ function rplus:OnGameRender()
 	local level = game:GetLevel()
 	local room = game:GetRoom()
 	
-	DisplayErrorMessage()
-	-- rendering achievement papers
+	if game:GetFrameCount() % 540 < 180 then DisplayErrorMessage() end
+	--[[ rendering achievement papers
 	if flagRenderPaper then RenderAchievementPapers() end
+	--]]
 	
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
@@ -1116,6 +1112,19 @@ function rplus:OnGameRender()
 			StarCeiling:SetFrame("Idle", game:GetFrameCount() % 65)
 			StarCeiling.Scale = Vector(1.5, 1.5)
 			StarCeiling:Render(Vector(300, 200), Vector.Zero, Vector.Zero)
+		end
+		
+		if player:HasCollectible(Collectibles.DNAREDACTOR) then
+			for _, pickupPill in pairs(Isaac.FindInRadius(player.Position, 150, EntityPartition.PICKUP)) do
+				if pickupPill.Variant == 70 then
+					DNAPillIcon = Sprite()
+					DNAPillIcon:Load("gfx/ui/ui_dnapillhelper.anm2", true)
+					DNAPillIcon.Scale = Vector(0.5, 0.5)
+					
+					DNAPillIcon:SetFrame("pill_" .. tostring(pickupPill.SubType), 0)
+					DNAPillIcon:Render(Isaac.WorldToRenderPosition(pickupPill.Position + Vector(15, -15)), Vector.Zero, Vector.Zero)
+				end
+			end
 		end
 	end
 end
@@ -1481,7 +1490,7 @@ rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, rplus.PickupUpdate)
 						-- ON TEAR UPDATE --
 						--------------------
 function rplus:OnTearUpdate(Tear)	
-	if Tear.Parent:ToPlayer() and Tear.Parent:ToPlayer():HasCollectible(Collectibles.MAGICPEN) then
+	if Tear.Parent and Tear.Parent:ToPlayer() and Tear.Parent:ToPlayer():HasCollectible(Collectibles.MAGICPEN) then
 		local CreepTrail = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL, 4, Tear.Position, Vector.Zero, nil):ToEffect()
 		CreepTrail.Scale = 0.4
 		CreepTrail:Update()
@@ -1500,7 +1509,7 @@ function rplus:OnTearUpdate(Tear)
 		end
 	end
 	
-	if Tear.Parent:ToPlayer() and Tear.Parent:ToPlayer():HasCollectible(Collectibles.SINNERSHEART) and Tear.Variant ~= TearVariants.CEREMDAGGER then
+	if Tear.Parent and Tear.Parent:ToPlayer() and Tear.Parent:ToPlayer():HasCollectible(Collectibles.SINNERSHEART) and Tear.Variant ~= TearVariants.CEREMDAGGER then
 		local SHeart = Tear:GetSprite()
 		SHeart.Scale = Vector(0.66, 0.66)
 		
@@ -1541,8 +1550,8 @@ end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, rplus.OnTearInit)
 
 
-						-- UPDATING PLAYER STATS (CACHE) --							
-						-----------------------------------
+						-- UPDATING CACHE --							
+						--------------------
 function rplus:UpdateStats(Player, Flag) 
 	-- If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml)
 	if Flag == CacheFlag.CACHE_DAMAGE then
@@ -1957,7 +1966,7 @@ function rplus:PickupAwardSpawn(_, Pos)
 	local room = game:GetRoom()
 	local level = game:GetLevel()
 	
-	-- Unlocking stuff
+	--[[ Unlocking stuff
 	if room:GetType() == RoomType.ROOM_BOSS and game.Difficulty <= 1 then
 		if level:GetStage() == LevelStage.STAGE5 then
 			if level:GetStageType() == StageType.STAGETYPE_ORIGINAL then
@@ -1973,6 +1982,7 @@ function rplus:PickupAwardSpawn(_, Pos)
 	elseif isUltraGreedRoom() then
 		Unlock("Greed")
 	end
+	--]]
 	
 	if CustomData and math.random(100) < JACKOF_CHANCE and CustomData.Cards.JACK and room:GetType() ~= RoomType.ROOM_BOSS then
 		local Variant = nil
@@ -2039,7 +2049,7 @@ rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
 function rplus:usePill(pillEffect, Player, _)	
 	if pillEffect == Pills.ESTROGEN then
 		sfx:Play(SoundEffect.SOUND_MEAT_JUMPS, 1, 2, false, 1, 0)
-		local BloodClots = Player:GetHearts() - 1 
+		local BloodClots = Player:GetHearts() - 2 
 		
 		Player:AddHearts(-BloodClots)
 		for i = 1, BloodClots do
@@ -2066,7 +2076,8 @@ function rplus:usePill(pillEffect, Player, _)
 		elseif pillColor == PillColor.PILL_WHITE_WHITE then
 			Player:AddPill(pillColor)																		-- the pill replicates itself constantly
 		elseif pillColor == PillColor.PILL_REDDOTS_RED then
-			Isaac.Explode(Player.Position, Player, 110)														-- eplosion
+			Isaac.Explode(Player.Position, Player, 110)														-- explosion
+			Player:TakeDamage(1, 0, EntityRef(Player), 30)
 		elseif pillColor == PillColor.PILL_PINK_RED then
 			Player:UseActiveItem(CollectibleType.COLLECTIBLE_BERSERK, true, true, false, false, -1)			-- Berserk mode
 		elseif pillColor == PillColor.PILL_BLUE_CADETBLUE then
@@ -2153,25 +2164,8 @@ if EID then
 	EID:addCard(PocketItems.SACBLOOD, "{{ArrowUp}} Gives +1 DMG up that depletes over the span of 25 seconds #Stackable #{{ArrowUp}} Heals you for one red heart if you have Ceremonial Robes #{{Warning}} Damage depletes quicker the more Blood you used subsequently")
 	EID:addCard(PocketItems.LIBRARYCARD, "Activates a random book effect")
 	
-	EID:addPill(Pills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at half-a-heart, doesn't affect soul/black hearts")
+	EID:addPill(Pills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at one red heart, doesn't affect soul/black hearts")
 	EID:addPill(Pills.LAXATIVE, "Makes you shoot out corn tears from behind for 3 seconds")
-end
-
-								-----------------------------------------
-								----------- MINIMAP API COMPAT ----------
-								-----------------------------------------
-
-if MinimapAPI then
-	--MinimapAPI:AddPickup(id, Icon, EntityType, number variant, number subtype, function, icongroup, number priority)
-	--MinimapAPI:AddIcon(id, Sprite, string animationName, number frame, (optional) Color color)
-	
-	local Icons = Sprite()
-	Icons:Load("gfx/ui/minimap_icons_rplus.anm2", true)
-	
-	
-	-- scarlet chests
-	MinimapAPI:AddIcon("scarletchest", Icons, "scarletchest", 0)
-	MinimapAPI:AddPickup("scarletchest", "scarletchest", 5, 392, -1, MinimapAPI.PickupNotCollected, "chests", 7450)
 end
 
 
