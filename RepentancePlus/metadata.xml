@@ -28,10 +28,11 @@ This mod was designed to provide a more thorough Repentance experience, because 
 
 [h2]Wanna help or contribute?[/h2]
 If you want to join our team, no problem! We are desperately looking for great coders to help us along the way, because the amount of work put into this mod is already huge, and we feel kind of exhausted, but we want to continue developing this mod regardless and [b]nearly double[/b] the amount of content it currently provides!
+If you have no experience in making mods, but you have ideas to make the mod better, write them in discussions.
 
 [h2]Special thanks[/h2]
 [list]
-    [*] to AgentCucco for his Red Map trinket mod, from where I learned some usefull stuff for the Red Map item
+    [*] to Agent Cucco for her Red Map trinket mod, from where I learned some useful stuff for the Red Map item
     [*] to Woufsauge for providing a guide on how to apply persistent player costumes and Isaac Lua API docs
     [*] to KingBobson for his mod Run Continues Past Mother (the item we used this concept for was scrapped, so use his mod instead!)
     [*] to Onyx and his Achievement System mod for helping us understand how to implement the unlocks system!
@@ -46,7 +47,7 @@ Please refer to Bug Report discussion section and submit the bug here. This mod 
 Going in blind is never cool, so download this great mod by Wofsauge to see the descriptions for our items, trinkets and pocket items HERE: 
 
 https://steamcommunity.com/sharedfiles/filedetails/?id=836319872</description>
-    <version>1.4</version>
+    <version>1.5</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>

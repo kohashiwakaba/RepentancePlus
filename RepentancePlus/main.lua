@@ -1,4 +1,3 @@
-
 ----------------------------------------------------------------------------------------------
 -- Welcome to main.lua, please make yourself comfortable while reading all of this bullshit --
 -- Popcorn 100g: $5 350g: $10 ----------------------------------------------------------------
@@ -294,14 +293,14 @@ StatUps = {
 	SINNERSHEART_DMG_ADD = 2,
 	SINNERSHEART_SHSP = -0.3,
 	SINNERSHEART_TEARHEIGHT = -3, -- negative TearHeight = positive Range
-	MARKCAIN_DMG = 0.3,
+	MARKCAIN_DMG = 0.4,
 	LOADEDDICE_LUCK = 10,
 	CEREMDAGGER_DMG_MUL = 0.85,
 	SACBLOOD_DMG = 1,
 	MAGICSWORD_DMG_MUL = 2,
-	GRATER_DMG = 0.3,
+	GRATER_DMG = 0.5,
 	BLESS_DMG = 0.5,
-	ORDLIFE_TEARS = 1.5
+	ORDLIFE_TEARS = 0.8
 }
 
 -- used by Bag Tissue
@@ -463,27 +462,6 @@ local function IsCollectibleUnlocked(collectibleType)
     return isUnlocked    
 end
 
---returns true if the player has TrinketType as a gulped Trinket (eg gulp-pill, marbles, smelter)
-local function IsTrinketGulped(TrinketType, player)
-	player = player or Isaac.GetPlayer(0)
-	local isGulped = player:HasTrinket(TrinketType) and not (player:GetTrinket(0) == TrinketType or player:GetTrinket(1) == TrinketType)
-	return isGulped 
-end
-
---gives the item a trinket as a gulped trinket instantly
-local function GetTrinketGulped(TrinketType, player)
-	player = player or Isaac.GetPlayer(0)
-	local trinket = player:GetTrinket(0)
-	if trinket ~= 0 then
-		player:TryRemoveTrinket(trinket)
-	end
-	player:AddTrinket(TrinketType)
-	player:UseActiveItem(479, false, false, false, false)
-	if trinket ~= 0 then
-		player:AddTrinket(trinket)
-	end
-end
-
 local function GetUnlockedVanillaCollectible(allPools)
 	allPools = allPools or false
     local ID = 0
@@ -537,7 +515,24 @@ local function GiveRevivalIVFrames(p)
 	-- stopping hit sound
 	if sfx:IsPlaying(SoundEffect.SOUND_ISAAC_HURT_GRUNT) then sfx:Stop(SoundEffect.SOUND_ISAAC_HURT_GRUNT) end
 end
-								
+
+-- Helpers for handling gulped trinkets
+local function IsTrinketGulped(trinketType, player)
+	player = player or Isaac.GetPlayer(0)
+	return player:HasTrinket(trinketType) and player:GetTrinket(0) ~= trinketType and player:GetTrinket(1) ~= trinketType
+end
+
+local function GetTrinketGulped(trinketType, player)
+	player = player or Isaac.GetPlayer(0)
+	local currentTrinket = player:GetTrinket(0)
+	local currentTrinket2 = player:GetTrinket(1)
+	player:TryRemoveTrinket(currentTrinket)
+	player:TryRemoveTrinket(currentTrinket2)
+	player:AddTrinket(trinketType)
+	player:UseActiveItem(479, false, false, false, false)
+	player:AddTrinket(currentTrinket)
+	player:AddTrinket(currentTrinket2)
+end								
 								
 								----------------------
 								-- GLOBAL FUNCTIONS --
@@ -561,7 +556,7 @@ function rplus:OnGameStart(Continued)
 				BIRDOFHOPE = {NumRevivals = 0, BirdCaught = true},
 				RUBIKSCUBE = {Counter = 0},
 				MARKCAIN = nil,
-				BAGOTRASH = {s = 0},
+				BAGOTRASH = {Levels = 0},
 				TEMPERTANTRUM = {ErasedEnemies = {}},
 				ENRAGEDSOUL = {SoulLaunchCooldown = nil, AttachedEnemy = nil},
 				CEILINGSTARS = {SleptInBed = false},
@@ -584,7 +579,7 @@ function rplus:OnGameStart(Continued)
 			}
 		}
 		
-		if CustomData then print("Repentance+ Mod v1.0 Initialized") end
+		if CustomData then print("Repentance+ Mod v1.4 Initialized") end
 
 		-- recalculating cache, just in case
 		Isaac.GetPlayer(0):AddCacheFlags(CacheFlag.CACHE_ALL)
@@ -644,16 +639,6 @@ function rplus:OnNewLevel()
 		if player:HasCollectible(Collectibles.TWOPLUSONE) then
 			CustomData.Items.TWOPLUSONE.ItemsBought_COINS = 0
 		end
-		
-		--[[ if player:HasTrinket(Trinkets.WAITNO) then
-			if IsTrinketGulped(Trinkets.WAITNO, player) then
-				GetTrinketGulped(Trinkets.MAGICSWORD, player)
-				player:TryRemoveTrinket(Trinkets.WAITNO)
-			else
-				player:AddTrinket(Trinkets.MAGICSWORD)
-				player:TryRemoveTrinket(Trinkets.WAITNO)
-			end
-		end ]]--
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
@@ -817,6 +802,9 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, _, _)
 		for g = 1, room:GetGridSize() do
 			if room:GetGridEntity(g) then room:GetGridEntity(g):Destroy() end
 		end
+		for _, enemy in pairs(Isaac.FindInRadius(Player.Position, 200, EntityPartition.ENEMY)) do
+			if not enemy:IsBoss() then enemy:AddEntityFlags(EntityFlag.FLAG_CONFUSION) end
+		end
 		return {Discharge = true, Remove = false, ShowAnim = true}
 	end
 end
@@ -863,7 +851,8 @@ function rplus:OnFrame()
 			end
 		end
 		
-		if player:HasCollectible(Collectibles.MARKCAIN) then
+		if player:HasCollectible(Collectibles.MARKCAIN) 
+		and player:GetExtraLives() == 0 then
 			if sprite:IsPlaying("Death") and sprite:GetFrame() > 50 then
 				MyFamiliars = {}
 				
@@ -1024,7 +1013,7 @@ function rplus:PostPlayerUpdate(Player)
 	-- this callback handles inputs, because it rolls in 60 fps, unlike MC_POST_UPDATE, so inputs won't be missed out
 	if Player:HasCollectible(Collectibles.ENRAGEDSOUL) then
 		for i = 4, 7 do -- shooting left, right, up, down; reading first input
-			if Input.IsActionTriggered(i, 0) and not ButtonState then
+			if Input.IsActionTriggered(i, Player.ControllerIndex) and not ButtonState then
 				ButtonPressed = i
 				ButtonState = "listening for second tap"
 				PressFrame = game:GetFrameCount()
@@ -1033,11 +1022,11 @@ function rplus:PostPlayerUpdate(Player)
 		end
 		
 		if PressFrame and game:GetFrameCount() <= PressFrame + 6 then -- listening for next inputs in the next 4 frames
-			if not Input.IsActionTriggered(ButtonPressed, 0) and ButtonState == "listening for second tap" then
+			if not Input.IsActionTriggered(ButtonPressed, Player.ControllerIndex) and ButtonState == "listening for second tap" then
 				ButtonState = "button released"
 			end
 			
-			if ButtonState == "button released" and Input.IsActionTriggered(ButtonPressed, 0) and 
+			if ButtonState == "button released" and Input.IsActionTriggered(ButtonPressed, Player.ControllerIndex) and 
 			(not CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown or CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown <= 0) then
 				--print('button ' .. ButtonPressed .. ' double tapped')
 				-- spawning the soul
@@ -1122,7 +1111,11 @@ function rplus:OnGameRender()
 			CoinHeartSprite = Sprite()
 			
 			CoinHeartSprite:Load("gfx/ui/ui_coinhearts.anm2", true)
-			CoinHeartSprite:SetFrame(CustomData.Trinkets.GREEDSHEART, 0)	-- custom data value is either "CoinHeartEmpty" or "CoinHeartFull"
+			if level:GetCurses() & LevelCurse.CURSE_OF_THE_UNKNOWN ~= LevelCurse.CURSE_OF_THE_UNKNOWN then
+				CoinHeartSprite:SetFrame(CustomData.Trinkets.GREEDSHEART, 0)	-- custom data value is either "CoinHeartEmpty" or "CoinHeartFull"
+			else
+				CoinHeartSprite:SetFrame("CoinHeartUnknown", 0)
+			end
 			CoinHeartSprite:Render(Vector(134, 18), Vector.Zero, Vector.Zero)
 		end
 		
@@ -1466,7 +1459,9 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		local player = Isaac.GetPlayer(i)
 		
 		if player:HasTrinket(Trinkets.GREEDSHEART) and CustomData.Trinkets.GREEDSHEART == "CoinHeartEmpty" and Pickup.Variant == 20 and Pickup.SubType ~= 6 
-		and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) then
+		and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) 
+		-- if player's Keeper, they should be at full health to gain a new coin heart
+		and (player:GetHearts() == player:GetMaxHearts() or (player:GetPlayerType() ~= 14 and player:GetPlayerType() ~= 33)) then
 			player:AddCoins(-1)
 			CustomData.Trinkets.GREEDSHEART = "CoinHeartFull"
 		end
@@ -1580,7 +1575,6 @@ function rplus:OnTearInit(Tear)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, rplus.OnTearInit)
 
-
 						-- UPDATING CACHE --							
 						--------------------
 function rplus:UpdateStats(Player, Flag) 
@@ -1621,7 +1615,7 @@ function rplus:UpdateStats(Player, Flag)
 	
 	if Flag == CacheFlag.CACHE_FIREDELAY then
 		if Player:HasCollectible(Collectibles.ORDLIFE) then
-			Player.MaxFireDelay = Player.MaxFireDelay - StatUps.ORDLIFE_TEARS
+			Player.MaxFireDelay = Player.MaxFireDelay * StatUps.ORDLIFE_TEARS
 		end
 	end
 	
@@ -1732,11 +1726,11 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		if player:HasTrinket(Trinkets.MAGICSWORD, false) and Entity.Type == 1 and not player:HasTrinket(TrinketType.TRINKET_DUCT_TAPE) then
 			sfx:Play(SoundEffect.SOUND_BONE_SNAP, 1, 2, false, 1, 0)
 			if IsTrinketGulped(Trinkets.MAGICSWORD, player) then
+				player:TryRemoveTrinket(Trinkets.MAGICSWORD)
 				GetTrinketGulped(Trinkets.WAITNO, player)
-				player:TryRemoveTrinket(Trinkets.MAGICSWORD)
 			else
-				player:AddTrinket(Trinkets.WAITNO)
 				player:TryRemoveTrinket(Trinkets.MAGICSWORD)
+				player:AddTrinket(Trinkets.WAITNO)
 			end
 		end
 		
@@ -2130,6 +2124,7 @@ function rplus:usePill(pillEffect, Player, _)
 			Isaac.Spawn(5, 350, 0, Player.Position, Vector.Zero, nil)										-- spawn a random trinket
 		elseif pillColor == PillColor.PILL_WHITE_YELLOW then
 			Player:UseActiveItem(CollectibleType.COLLECTIBLE_R_KEY, true, true, false, false, -1)			-- restart the run (R key)
+			Player:RemoveCollectible(Collectibles.DNAREDACTOR)
 		end
 	end
 end
@@ -2143,10 +2138,10 @@ if EID then
 	EID:addCollectible(Collectibles.ORDLIFE, "{{ArrowUp}} Tears up")	
 	EID:addCollectible(Collectibles.COOKIECUTTER, "Gives you one {{Heart}} heart container and one broken heart #{{Warning}} Having 12 broken hearts kills you!")
 	EID:addCollectible(Collectibles.SINNERSHEART, "{{ArrowUp}} Damage +2 then x1.5 #{{ArrowDown}} Shot speed down #Homing tears")
-	EID:addCollectible(Collectibles.RUBIKSCUBE, "After each use, has a 5% (100% on 20-th use) chance to be 'solved', removed from the player and spawn a Magic Cube on the ground")
+	EID:addCollectible(Collectibles.RUBIKSCUBE, "After each use, has a 5% (100% on 20-th use) chance to be 'solved', removed from the player and be replaced with a Magic Cube item")
 	EID:addCollectible(Collectibles.MAGICCUBE, "{{DiceRoom}} Rerolls item pedestals #Rerolled items can be drawn from any item pool")
 	EID:addCollectible(Collectibles.MAGICPEN, "Tears leave {{ColorRainbow}}rainbow{{CR}} creep underneath them #Random permanent status effects is applied to enemies walking over that creep")
-	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers, gain +0.3 DMG for each consumed familiar and gain invincibility #{{Warning}} Works only once!")
+	EID:addCollectible(Collectibles.MARKCAIN, "On death, if you have any familiars, removes them instead and revives you #On revival, you keep your heart containers, gain +0.4 DMG for each consumed familiar and gain invincibility #{{Warning}} Works only once!")
 	EID:addCollectible(Collectibles.TEMPERTANTRUM, "Upon taking damage, there is a 25% chance to enter a Berserk state #While in this state, every enemy damaged has a 10% chance to be erased for the rest of the run")
 	EID:addCollectible(Collectibles.BAGOTRASH, "A familiar that creates blue flies upon clearing a room #Blocks enemy projectiles, and after blocking it has a chance to be destroyed and drop Breakfast or Nightsoil trinket #The more floors it is not destroyed, the more flies it spawns")
 	EID:addCollectible(Collectibles.ZENBABY, "A familiar that shoots Godhead tears at a fast firerate")
@@ -2159,9 +2154,9 @@ if EID then
 	EID:addCollectible(Collectibles.QUASAR, "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed")
 	EID:addCollectible(Collectibles.TWOPLUSONE, "Every third shop item on the current floor will cost 1 {{Coin}} penny #Buying two items with hearts in one room makes all other items free")
 	EID:addCollectible(Collectibles.REDMAP, "Reveals location of Ultra Secret Room on all subsequent floors #Any trinket left in a boss or treasure room will turn into Cracked Key")
-	EID:addCollectible(Collectibles.CHEESEGRATER, "Removes one red heart container and gives you {{ArrowUp}} +0.3 Damage up and two Minisaacs")
+	EID:addCollectible(Collectibles.CHEESEGRATER, "Removes one red heart container and gives you {{ArrowUp}} +0.5 Damage up and two Minisaacs")
 	EID:addCollectible(Collectibles.DNAREDACTOR, "Pills now have additional effects based on their color")
-	EID:addCollectible(Collectibles.TOWEROFBABEL, "Destroys all obstacles in the current room #Also blows the doors open and opens secret room entrances")
+	EID:addCollectible(Collectibles.TOWEROFBABEL, "Destroys all obstacles in the current room and applies confusion to enemies in small radius around you #Also blows the doors open and opens secret room entrances")
 	EID:addCollectible(Collectibles.BLESSOTDEAD, "Prevents curses from appearing for the rest of the run #Preventing a curse grants you {{ArrowUp}} +0.5 Damage up")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")

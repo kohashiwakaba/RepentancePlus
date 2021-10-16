@@ -12,7 +12,7 @@
 	<!-- T.Maggy -->
 	<active name="Cookie Cutter" description="Cut your hearts!" gfx="05_cookiecutter.png" quality="1" maxcharges="0"/>
 	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="t02_keytotheheart.png" />
-	<passive id="1" name="Cherry Friends" description=":3" gfx="06_cherryfriends.png" quality="2" />
+	<passive id="1" name="Cherry Friends" description=":3" gfx="06_cherryfriends.png" quality="1" />
 	
 	<!-- T. Cain -->
 	<passive id="2" name="The Mark of Cain" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="3" devilprice="1" cache="damage" tags="devil" />
@@ -32,7 +32,7 @@
 	<!-- T. Eve -->
 	<passive name="A Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="2" />
 	<trinket name="Adam's Rib" description="Children of God" gfx="t13_adamsrib.png" />
-	<active name="Tower of Babel" description="Divine wraith" gfx="19_towerofbabel.png" quality="1" maxcharges="4" />
+	<active name="Tower of Babel" description="Divine wraith" gfx="19_towerofbabel.png" quality="2" maxcharges="6" />
 
 	<!-- T.Samson -->
 	<passive name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="13_tempertantrum.png" quality="3" /> 
@@ -58,11 +58,11 @@
 	<passive name="2+1" description="Limited Offer!!!" gfx="12_2+1.png" quality="2" />
 	
 	<!-- T. Apollyon -->
-	<passive name="Sinner's Heart" description="Homing shots + shot speed down" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2" />
+	<passive id="5" name="Sinner's Heart" description="Homing shots + shot speed down" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2" />
 	<passive name="Red Map" description="All secrets are unveiled to you" gfx="18_redmap.png" quality="2" />
 	
 	<!-- T. Forgor -->
-	<passive name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="1" />
+	<passive name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="2" devilprice="1" />
 	
 	<!-- T. Bethany -->
 	<passive id="4" name="Ceiling With the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
