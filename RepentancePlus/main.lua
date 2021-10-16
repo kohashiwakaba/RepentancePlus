@@ -463,6 +463,27 @@ local function IsCollectibleUnlocked(collectibleType)
     return isUnlocked    
 end
 
+--returns true if the player has TrinketType as a gulped Trinket (eg gulp-pill, marbles, smelter)
+local function IsTrinketGulped(TrinketType, player)
+	player = player or Isaac.GetPlayer(0)
+	local isGulped = player:HasTrinket(TrinketType) and not (player:GetTrinket(0) == TrinketType or player:GetTrinket(1) == TrinketType)
+	return isGulped 
+end
+
+--gives the item a trinket as a gulped trinket instantly
+local function GetTrinketGulped(TrinketType, player)
+	player = player or Isaac.GetPlayer(0)
+	local trinket = player:GetTrinket(0)
+	if trinket ~= 0 then
+		player:TryRemoveTrinket(trinket)
+	end
+	player:AddTrinket(TrinketType)
+	player:UseActiveItem(479, false, false, false, false)
+	if trinket ~= 0 then
+		player:AddTrinket(trinket)
+	end
+end
+
 local function GetUnlockedVanillaCollectible(allPools)
 	allPools = allPools or false
     local ID = 0
@@ -540,7 +561,7 @@ function rplus:OnGameStart(Continued)
 				BIRDOFHOPE = {NumRevivals = 0, BirdCaught = true},
 				RUBIKSCUBE = {Counter = 0},
 				MARKCAIN = nil,
-				BAGOTRASH = {Levels = 0},
+				BAGOTRASH = {s = 0},
 				TEMPERTANTRUM = {ErasedEnemies = {}},
 				ENRAGEDSOUL = {SoulLaunchCooldown = nil, AttachedEnemy = nil},
 				CEILINGSTARS = {SleptInBed = false},
@@ -623,6 +644,16 @@ function rplus:OnNewLevel()
 		if player:HasCollectible(Collectibles.TWOPLUSONE) then
 			CustomData.Items.TWOPLUSONE.ItemsBought_COINS = 0
 		end
+		
+		--[[ if player:HasTrinket(Trinkets.WAITNO) then
+			if IsTrinketGulped(Trinkets.WAITNO, player) then
+				GetTrinketGulped(Trinkets.MAGICSWORD, player)
+				player:TryRemoveTrinket(Trinkets.WAITNO)
+			else
+				player:AddTrinket(Trinkets.MAGICSWORD)
+				player:TryRemoveTrinket(Trinkets.WAITNO)
+			end
+		end ]]--
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
@@ -1698,10 +1729,15 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 			return false
 		end
 		
-		if player:HasTrinket(Trinkets.MAGICSWORD) and Entity.Type == 1 and not player:HasTrinket(TrinketType.TRINKET_DUCT_TAPE) then
+		if player:HasTrinket(Trinkets.MAGICSWORD, false) and Entity.Type == 1 and not player:HasTrinket(TrinketType.TRINKET_DUCT_TAPE) then
 			sfx:Play(SoundEffect.SOUND_BONE_SNAP, 1, 2, false, 1, 0)
-			player:TryRemoveTrinket(Trinkets.MAGICSWORD)
-			player:AddTrinket(Trinkets.WAITNO, true)
+			if IsTrinketGulped(Trinkets.MAGICSWORD, player) then
+				GetTrinketGulped(Trinkets.WAITNO, player)
+				player:TryRemoveTrinket(Trinkets.MAGICSWORD)
+			else
+				player:AddTrinket(Trinkets.WAITNO)
+				player:TryRemoveTrinket(Trinkets.MAGICSWORD)
+			end
 		end
 		
 		if player:HasTrinket(Trinkets.EDENSLOCK) and Entity.Type == 1 then
