@@ -38,7 +38,7 @@ local REDKEY_TURN_CHANCE = 12			-- chance for any pickup to turn into Cracked Ke
 local ENRAGED_SOUL_COOLDOWN = 420		-- 7 seconds in 60 FPS callback; cooldown for Enraged Soul familiar
 local CEREM_DAGGER_LAUNCH_CHANCE = 5 	-- chance to launch a dagger
 local NIGHT_SOIL_CHANCE = 40 			-- chance to negate curse
-local TORNPAGE_CHANCE = 50				-- chance to trigger random book active on hit with Torn Page
+local TORNPAGE_CHANCE = 25				-- chance to trigger random book active on hit with Torn Page
 
 Costumes = {
 	-- add ONLY NON-PERSISTENT COSTUMES here, because persistent costumes now work without lua
