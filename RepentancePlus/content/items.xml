@@ -41,6 +41,7 @@
 	
 	<!-- T. Lazarus -->
 	<passive name="DNA Redactor" description="It runs in your genes" gfx="20_dnaredactor.png" quality="3" /> 
+	<trinket name="Torn Page" description="Knowledge when you need it most" gfx="t15_tornpage.png" />
 	
 	<!-- T. Azazel -->
 	<trinket name="Angel's Crown" description="Patience is a virtue" gfx="t07_angelscrown.png" />
