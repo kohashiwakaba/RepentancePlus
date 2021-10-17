@@ -14,7 +14,7 @@ local rplus = RegisterMod("repentanceplus", 1)
 local sfx = SFXManager()
 local music = MusicManager()
 local CustomData
---local json = require("json")
+local json = require("json")
 
 --[[ for displaying achievement papers
 achievement = Sprite()
@@ -480,7 +480,6 @@ local function GetUnlockedVanillaCollectible(allPools)
 		elseif rt == 5 then ip = 2
 		elseif rt == 7 or rt == 8 then ip = 5
 		elseif rt == 10 then ip = 12
-		elseif rt == 12 then ip = 6
 		elseif rt == 14 then ip = 3
 		elseif rt == 15 or rt == 29 then ip = 4
 		elseif rt == 24 then ip = 26
@@ -596,9 +595,24 @@ function rplus:OnGameStart(Continued)
 		Isaac.ExecuteCommand("debug 0")
 		
 		--]]
+	else
+		local customDataLoaded = Isaac.LoadModData(rplus)
+		CustomData = json.decode(customDataLoaded)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
+						
+						-- PRE GAME EXIT --											
+						-------------------
+function rplus:PreGameExit(ShouldSave)
+	if ShouldSave then
+		Isaac.SaveModData(rplus, json.encode(CustomData, "CustomData"))
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, rplus.PreGameExit)
+
+
+
 
 						-- EVERY NEW LEVEL --										
 						---------------------
