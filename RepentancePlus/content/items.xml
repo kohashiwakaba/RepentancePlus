@@ -70,4 +70,7 @@
 	
 	<!-- T. Jacob -->
 	<active name="Cheese Grater" description="A pound of... cheese?" gfx="22_cheesegrater.png" quality="2" maxcharges="0" cache="damage" />
+	
+	<!-- Organise to character upon merge :) -->
+	<trinket name="Torn Page" description="Knowledge when you need it most" gfx="t15_tornpage.png" />
 </items>
