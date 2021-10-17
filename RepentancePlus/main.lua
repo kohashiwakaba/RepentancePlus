@@ -38,6 +38,7 @@ local REDKEY_TURN_CHANCE = 12			-- chance for any pickup to turn into Cracked Ke
 local ENRAGED_SOUL_COOLDOWN = 420		-- 7 seconds in 60 FPS callback; cooldown for Enraged Soul familiar
 local CEREM_DAGGER_LAUNCH_CHANCE = 5 	-- chance to launch a dagger
 local NIGHT_SOIL_CHANCE = 40 			-- chance to negate curse
+local TORNPAGE_CHANCE = 50				-- chance to trigger random book active on hit with Torn Page
 
 Costumes = {
 	-- add ONLY NON-PERSISTENT COSTUMES here, because persistent costumes now work without lua
@@ -96,7 +97,8 @@ Trinkets = {
 	WAITNO = Isaac.GetTrinketIdByName("Wait, No!"),
 	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),			-- MINOR COMPATIBILITY ISSUES
 	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),				-- MINOR COMPATIBILITY ISSUES
-	NIGHTSOIL = Isaac.GetTrinketIdByName("Night Soil")
+	NIGHTSOIL = Isaac.GetTrinketIdByName("Night Soil"),
+	TORNPAGE = Isaac.GetTrinketIdByName("Torn Page")
 }
 
 PocketItems = {
@@ -346,6 +348,12 @@ PickupWeights = {
 	}
 }
 
+-- Used to animate book usage with Torn Page
+TornPageData = {
+	TIMER = {0,0,0,0},
+	BOOK = nil
+}
+
 DIRECTION_FLOAT_ANIM = {
 	[Direction.NO_DIRECTION] = "FloatDown", 
 	[Direction.LEFT] = "FloatLeft",
@@ -571,8 +579,7 @@ function rplus:OnGameStart(Continued)
 			},
 			Trinkets = {
 				GREEDSHEART = "CoinHeartEmpty",
-				CHALKPIECE = {RoomEnterFrame = 0},
-				TORNPAGE = {SomeBookFlags = nil}
+				CHALKPIECE = {RoomEnterFrame = 0}
 			},
 			Pills = {
 				LAXATIVE = {LaxUseFrame = nil}
@@ -1002,6 +1009,16 @@ function rplus:OnFrame()
 					entity:ToPickup():Morph(5, 300, Card.CARD_CRACKED_KEY, true, true, true)
 				end
 			end
+		end
+		
+		-- delays Torn Page book usage animation by a frame so it overrides the damage taken animation
+		if TornPageData.TIMER[i + 1] == 1 then
+			if player:HasTrinket(Trinkets.TORNPAGE) then
+				player:AnimateCollectible(TornPageData.BOOK)
+			end
+		end
+		if TornPageData.TIMER[i + 1] > 0 then
+			TornPageData.TIMER[i + 1] = TornPageData.TIMER[i + 1] - 1
 		end
 	end
 end
@@ -1684,6 +1701,14 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 				SUPERBERSERKSTATE = true
 			elseif SUPERBERSERKSTATE and Entity:IsActiveEnemy(false) and not Entity:IsBoss() and math.random(100) <= SUPERBERSERK_DELETE_CHANCE then
 				table.insert(CustomData.Items.TEMPERTANTRUM.ErasedEnemies, Entity.Type)
+			end
+		end
+		
+		if player:HasTrinket(Trinkets.TORNPAGE) then
+			if Entity.Type == 1 and math.random(100) <= TORNPAGE_CHANCE then
+				TornPageData.BOOK = game:GetItemPool():GetCollectible(ItemPoolType.POOL_LIBRARY, false, Random(), 0)
+				TornPageData.TIMER[i + 1] = 2
+				player:UseActiveItem(TornPageData.BOOK, true, false, true, true, -1)
 			end
 		end
 		
