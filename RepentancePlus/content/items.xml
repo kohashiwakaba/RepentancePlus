@@ -41,6 +41,7 @@
 	
 	<!-- T. Lazarus -->
 	<passive name="DNA Redactor" description="It runs in your genes" gfx="20_dnaredactor.png" quality="3" /> 
+	<trinket name="Torn Page" description="Knowledge when you need it most" gfx="t15_tornpage.png" />
 	
 	<!-- T. Azazel -->
 	<trinket name="Angel's Crown" description="Patience is a virtue" gfx="t07_angelscrown.png" />
@@ -70,7 +71,4 @@
 	
 	<!-- T. Jacob -->
 	<active name="Cheese Grater" description="A pound of... cheese?" gfx="22_cheesegrater.png" quality="2" maxcharges="0" cache="damage" />
-	
-	<!-- Organise to character upon merge :) -->
-	<trinket name="Torn Page" description="Knowledge when you need it most" gfx="t15_tornpage.png" />
 </items>
