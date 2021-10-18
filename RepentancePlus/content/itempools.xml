@@ -9,7 +9,7 @@
 		<Item Name="Tower of Babel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="shop">
-		<Item Name="Ceiling With the Stars" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Ceiling with the Stars" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="2+1" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Red Map" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Cheese Grater" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
