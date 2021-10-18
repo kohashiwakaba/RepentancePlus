@@ -22,7 +22,7 @@
 	<!-- T. Judas -->
 	<passive id="3" name="Black Doll" description="Bound by blood" gfx="08_blackdoll.png" quality="2" devilprice="1" />
 	<trinket name="Judas' Kiss" description="One on the cheek" gfx="t05_judaskiss.png" />
-	<passive name="Ceremonial Blade" description="Just a drop of blood for our Gods" gfx="09_ceremonialblade.png" quality="3" cache="damage" devilprice="1" />
+	<passive name="Ceremonial Blade" description="Just a drop of blood for our God" gfx="09_ceremonialblade.png" quality="3" cache="damage" devilprice="1" />
 	
 	<!-- T. ??? -->
 	<familiar name="Bag-o-Trash" description="Will you take it out already?!" gfx="10_bagotrash.png" quality="1" />
@@ -66,7 +66,7 @@
 	<passive name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="2" devilprice="1" />
 	
 	<!-- T. Bethany -->
-	<passive id="4" name="Ceiling With the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
+	<passive id="4" name="Ceiling with the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
 	<active name="Quasar" description="Cosmic wisdom" gfx="33_quasar.png" quality="4" devilprice="2" maxcharges="6" />
 	
 	<!-- T. Jacob -->
