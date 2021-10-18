@@ -95,7 +95,8 @@ Trinkets = {
 	WAITNO = Isaac.GetTrinketIdByName("Wait, No!"),
 	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),			-- MINOR COMPATIBILITY ISSUES
 	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),				-- MINOR COMPATIBILITY ISSUES
-	NIGHTSOIL = Isaac.GetTrinketIdByName("Night Soil")
+	NIGHTSOIL = Isaac.GetTrinketIdByName("Night Soil"),
+	TORNPAGE = Isaac.GetTrinketIdByName("Torn Page")
 }
 
 PocketItems = {
@@ -344,6 +345,13 @@ PickupWeights = {
 		[BatterySubType.BATTERY_GOLDEN] = 5
 	}
 }
+
+-- Used to animate book usage with Torn Page
+TornPageData = {
+	TIMER = {0,0,0,0},
+	BOOK = nil
+}
+
 
 DIRECTION_FLOAT_ANIM = {
 	[Direction.NO_DIRECTION] = "FloatDown", 
@@ -1024,6 +1032,16 @@ function rplus:OnFrame()
 					entity:ToPickup():Morph(5, 300, Card.CARD_CRACKED_KEY, true, true, true)
 				end
 			end
+		end
+		
+		-- delays Torn Page book usage animation by a frame so it overrides the damage taken animation
+		if TornPageData.TIMER[i + 1] == 1 then
+			if player:HasTrinket(Trinkets.TORNPAGE) then
+				player:AnimateCollectible(TornPageData.BOOK)
+			end
+		end
+		if TornPageData.TIMER[i + 1] > 0 then
+			TornPageData.TIMER[i + 1] = TornPageData.TIMER[i + 1] - 1
 		end
 	end
 end
@@ -1788,6 +1806,14 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 			
 			sfx:Play(SoundEffect.SOUND_EDEN_GLITCH, 1, 2, false, 1, 0)
 		end
+		
+		if player:HasTrinket(Trinkets.TORNPAGE) then
+			if Entity.Type == 1 and math.random(100) <= TORNPAGE_CHANCE then
+				TornPageData.BOOK = game:GetItemPool():GetCollectible(ItemPoolType.POOL_LIBRARY, false, Random(), 0)
+				TornPageData.TIMER[i + 1] = 2
+				player:UseActiveItem(TornPageData.BOOK, true, false, true, true, -1)
+			end
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
@@ -2202,6 +2228,7 @@ if EID then
 	EID:addTrinket(Trinkets.CHALKPIECE, "When entering uncleared room, you will leave a trail of powder underneath for 5 seconds #Enemies walking over this trail will be pushed back")
 	EID:addTrinket(Trinkets.ADAMSRIB, "Revives you as Eve when you die")
 	EID:addTrinket(Trinkets.NIGHTSOIL, "40% chance to prevent a curse when entering a new floor")
+	EID:addTrinket(Trinkets.TORNPAGE, "25% chance to activate a random book effect upon taking damage")
 	
 	EID:addCard(PocketItems.SDDSHARD, "Invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "Damages all enemies in a room, turns item pedestals into red locusts and turns pickups into random locusts with a 50% chance")
