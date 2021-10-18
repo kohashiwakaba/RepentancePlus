@@ -31,14 +31,12 @@ local SUPERBERSERKSTATE_CHANCE = 25		-- chance to enter berserk state via Temper
 local SUPERBERSERK_DELETE_CHANCE = 7	-- chance to erase enemies while in this state
 local TRASHBAG_BREAK_CHANCE = 1			-- chance of Bag o' Trash breaking
 local CHERRY_SPAWN_CHANCE = 20			-- chance to spawn cherry friend on enemy death
-local SLEIGHTOFHAND_CHANCE = 17			-- chance to save your consumable when using it via Sleight of Hand
+local SLEIGHTOFHAND_UPGRADECHANCE = 17	-- chance to save your consumable when using it via Sleight of Hand
 local JACKOF_CHANCE = 60				-- chance for Jack cards to spawn their respective type of pickup
-local BITTENPENNY_UPGRADECHANCE = 17	-- chance to 'upgrade' coins via Bitten Penny
-local REDKEY_TURN_CHANCE = 12			-- chance for any pickup to turn into Cracked Key via Red Map trinket
+local TRICKPENNY_CHANCE = 17		-- chance to 'upgrade' coins via Trick Penny
 local ENRAGED_SOUL_COOLDOWN = 420		-- 7 seconds in 60 FPS callback; cooldown for Enraged Soul familiar
 local CEREM_DAGGER_LAUNCH_CHANCE = 5 	-- chance to launch a dagger
 local NIGHT_SOIL_CHANCE = 40 			-- chance to negate curse
-local TORNPAGE_CHANCE = 25				-- chance to trigger random book active on hit with Torn Page
 
 Costumes = {
 	-- add ONLY NON-PERSISTENT COSTUMES here, because persistent costumes now work without lua
@@ -87,9 +85,9 @@ Collectibles = {
 Trinkets = {
 	BASEMENTKEY = Isaac.GetTrinketIdByName("Basement Key"),
 	KEYTOTHEHEART = Isaac.GetTrinketIdByName("Key to the Heart"),
-	SLEIGHTOFHAND = Isaac.GetTrinketIdByName("Sleight of Hand"),
+	TRICKPENNY = Isaac.GetTrinketIdByName("Trick Penny"),
 	JUDASKISS = Isaac.GetTrinketIdByName("Judas' Kiss"),			-- MINOR COMPATIBILITY ISSUES
-	BITTENPENNY = Isaac.GetTrinketIdByName("Bitten Penny"),
+	SLEIGHTOFHAND = Isaac.GetTrinketIdByName("Sleight of Hand"),
 	GREEDSHEART = Isaac.GetTrinketIdByName("Greed's Heart"),		-- MINOR COMPATIBILITY ISSUES
 	ANGELSCROWN = Isaac.GetTrinketIdByName("Angel's Crown"),
 	CHALKPIECE = Isaac.GetTrinketIdByName("A Piece of Chalk"),
@@ -97,8 +95,7 @@ Trinkets = {
 	WAITNO = Isaac.GetTrinketIdByName("Wait, No!"),
 	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),			-- MINOR COMPATIBILITY ISSUES
 	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),				-- MINOR COMPATIBILITY ISSUES
-	NIGHTSOIL = Isaac.GetTrinketIdByName("Night Soil"),
-	TORNPAGE = Isaac.GetTrinketIdByName("Torn Page")
+	NIGHTSOIL = Isaac.GetTrinketIdByName("Night Soil")
 }
 
 PocketItems = {
@@ -154,8 +151,8 @@ local Unlocks = {
 	["23"] = { --T.Cain
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = Collectibles.MARKCAIN}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.BITTENPENNY}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.SLEIGHTOFHAND}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.SLEIGHTOFHAND}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = Trinkets.TRICKPENNY}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = PocketItems.BAGTISSUE}
 	},
 	["24"] = { --T.Judas
@@ -348,12 +345,6 @@ PickupWeights = {
 	}
 }
 
--- Used to animate book usage with Torn Page
-TornPageData = {
-	TIMER = {0,0,0,0},
-	BOOK = nil
-}
-
 DIRECTION_FLOAT_ANIM = {
 	[Direction.NO_DIRECTION] = "FloatDown", 
 	[Direction.LEFT] = "FloatLeft",
@@ -502,11 +493,11 @@ end
 
 -- Handle displaying error message advising players to restart
 local function DisplayErrorMessage()
-	local ErrorMessage = "! WARNING ! Custom Mod Data of Repentance Plus wasn't#loaded, the mod could work incorrectly. Our custom data#is loaded when starting a new run. Please restart#or turn off the mod."
-	if not CustomData then
+	local ErrorMessage = "Warning! Custom Mod Data of Repentance Plus #wasn't loaded, the mod could work incorrectly. #Custom Mod Data will be properly loaded next time you start a new run. #(Type 'hide' into the console or press H to hide this message)"
+	if not CustomData and not hideErrorMessage then
 		YOffset = 0
 		for line in string.gmatch(ErrorMessage, '([^#]+)') do 
-			Isaac.RenderText(line, 50, 150 + YOffset, 1, 0.2, 0.2, 1) 
+			Isaac.RenderText(line, 30, 220 + YOffset, 1, 0.2, 0.2, 1) 
 			YOffset = YOffset + 12
 		end
 	end
@@ -556,8 +547,16 @@ function rplus:OnGameStart(Continued)
 		Isaac.SaveModData(rplus, json.encode(Unlocks, "Unlocks"))
 	end
 	--]]
+	-- recalculating cache, just in case
+	Isaac.GetPlayer(0):AddCacheFlags(CacheFlag.CACHE_ALL)
+	Isaac.GetPlayer(0):EvaluateItems()
 	
+	-- deleting Wait, No! from trinket pool
+	game:GetItemPool():RemoveTrinket(Trinkets.WAITNO)
+		
 	if not Continued then
+		hideErrorMessage = false
+		
 		CustomData = {
 			Items = {
 				BIRDOFHOPE = {NumRevivals = 0, BirdCaught = true},
@@ -572,27 +571,20 @@ function rplus:OnGameStart(Continued)
 				BLESSOTDEAD = 0
 			},
 			Cards = {
-				REVERSECARD = nil,
 				JACK = nil,
 				SACBLOOD = {Data = false, NumUses = 0}
 			},
 			Trinkets = {
 				GREEDSHEART = "CoinHeartEmpty",
-				CHALKPIECE = {RoomEnterFrame = 0}
+				CHALKPIECE = {RoomEnterFrame = 0},
+				TORNPAGE = {SomeBookFlags = nil}
 			},
 			Pills = {
 				LAXATIVE = {LaxUseFrame = nil}
 			}
 		}
 		
-		if CustomData then print("Repentance+ Mod v1.4 Initialized") end
-
-		-- recalculating cache, just in case
-		Isaac.GetPlayer(0):AddCacheFlags(CacheFlag.CACHE_ALL)
-		Isaac.GetPlayer(0):EvaluateItems()
-		
-		-- deleting Wait, No! from trinket pool
-		game:GetItemPool():RemoveTrinket(Trinkets.WAITNO)
+		if CustomData then print("Repentance+ Mod v1.6 Initialized") end
 		
 		--[[ Spawn items/trinkets or turn on debug commands for testing here if necessary
 		! DEBUG: 3 - INFINITE HP, 4 - HIGH DAMAGE, 8 - INFINITE CHARGES, 10 - INSTAKILL ENEMIES !
@@ -618,8 +610,17 @@ function rplus:PreGameExit(ShouldSave)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, rplus.PreGameExit)
 
-
-
+						-- ON COMMAND EXECUTE --											
+						------------------------
+function rplus:OnCommandExecute(command, args)
+	if command == 'hide' then
+		hideErrorMessage = true
+		print('Error message hidden. To see it again, type *show* into the console')
+	elseif command == 'show' then
+		hideErrorMessage = false
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_EXECUTE_CMD, rplus.OnCommandExecute)
 
 						-- EVERY NEW LEVEL --										
 						---------------------
@@ -842,11 +843,11 @@ function rplus:OnFrame()
 		local player = Isaac.GetPlayer(i)
 		local sprite = player:GetSprite()
 		
-		if CustomData and CustomData.Cards.REVERSECARD == "used" and sprite:IsFinished("PickupWalkDown") then
+		if player:GetData()['reverseCardRoom'] and player:GetData()['reverseCardRoom'] ~= game:GetLevel():GetCurrentRoomIndex() then
 			local secondaryCard = player:GetCard(1)
 			player:SetCard(1, 0)
 			player:SetCard(0, secondaryCard)
-			CustomData.Cards.REVERSECARD = nil
+			player:GetData()['reverseCardRoom'] = nil
 		end
 		
 		if player:HasCollectible(Collectibles.MAGICPEN) then
@@ -1024,16 +1025,6 @@ function rplus:OnFrame()
 				end
 			end
 		end
-		
-		-- delays Torn Page book usage animation by a frame so it overrides the damage taken animation
-		if TornPageData.TIMER[i + 1] == 1 then
-			if player:HasTrinket(Trinkets.TORNPAGE) then
-				player:AnimateCollectible(TornPageData.BOOK)
-			end
-		end
-		if TornPageData.TIMER[i + 1] > 0 then
-			TornPageData.TIMER[i + 1] = TornPageData.TIMER[i + 1] - 1
-		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
@@ -1041,6 +1032,13 @@ rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 						-- POST PLAYER UPDATE --									
 						------------------------
 function rplus:PostPlayerUpdate(Player)
+	local level = game:GetLevel()
+	
+	if Input.IsButtonTriggered(Keyboard.KEY_H, Player.ControllerIndex) and not hideErrorMessage then
+		print('Error message hidden. To see it again, type *show* into the console')
+		hideErrorMessage = true
+	end	
+	
 	-- this callback handles inputs, because it rolls in 60 fps, unlike MC_POST_UPDATE, so inputs won't be missed out
 	if Player:HasCollectible(Collectibles.ENRAGEDSOUL) then
 		for i = 4, 7 do -- shooting left, right, up, down; reading first input
@@ -1096,7 +1094,8 @@ function rplus:PostPlayerUpdate(Player)
 		end
 	end
 	
-	if Player:GetSprite():IsPlaying("Appear") and Player:GetSprite():IsEventTriggered("FX") and level:GetCurses() ~= 0 then
+	if Player:GetSprite():IsPlaying("Appear") and Player:GetSprite():IsEventTriggered("FX") and level:GetCurses() ~= 0 
+	and level:GetCurses() & LevelCurse.CURSE_OF_LABYRINTH ~= LevelCurse.CURSE_OF_LABYRINTH then
 		if Player:HasTrinket(Trinkets.NIGHTSOIL) and math.random(100) < NIGHT_SOIL_CHANCE then
 			level:RemoveCurses(level:GetCurses())
 			game:GetHUD():ShowFortuneText("Night Soil protects you")
@@ -1130,7 +1129,7 @@ function rplus:OnGameRender()
 	local level = game:GetLevel()
 	local room = game:GetRoom()
 	
-	if game:GetFrameCount() % 540 < 180 then DisplayErrorMessage() end
+	DisplayErrorMessage()
 	--[[ rendering achievement papers
 	if flagRenderPaper then RenderAchievementPapers() end
 	--]]
@@ -1227,8 +1226,8 @@ function rplus:OnPickupInit(Pickup)
 			end
 			
 			local CoinSubTypesByVal = {1, 4, 6, 2, 3, 5, 7} -- penny, doublepack, sticky nickel, nickel, dime, lucky penny, golden penny
-			if Pickup.Variant == 20 and Pickup.SubType ~= 7 and player:HasTrinket(Trinkets.BITTENPENNY) 
-			and math.random(100) <= BITTENPENNY_UPGRADECHANCE * player:GetTrinketMultiplier(Trinkets.BITTENPENNY) then
+			if Pickup.Variant == 20 and Pickup.SubType ~= 7 and player:HasTrinket(Trinkets.SLEIGHTOFHAND) 
+			and math.random(100) <= SLEIGHTOFHAND_UPGRADECHANCE * player:GetTrinketMultiplier(Trinkets.SLEIGHTOFHAND) then
 				player:AnimateHappy()
 				for i = 1, #CoinSubTypesByVal do
 					if CoinSubTypesByVal[i] == Pickup.SubType then CurType = i break end
@@ -1289,7 +1288,7 @@ function rplus:CardUsed(Card, Player, _)
 	
 	if Card == PocketItems.REVERSECARD then
 		Player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false, false, true, false, -1)
-		CustomData.Cards.REVERSECARD = "used"
+		Player:GetData()["reverseCardRoom"] = game:GetLevel():GetCurrentRoomIndex()
 	end
 	
 	if Card == PocketItems.KINGOFSPADES then
@@ -1718,14 +1717,6 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 			end
 		end
 		
-		if player:HasTrinket(Trinkets.TORNPAGE) then
-			if Entity.Type == 1 and math.random(100) <= TORNPAGE_CHANCE then
-				TornPageData.BOOK = game:GetItemPool():GetCollectible(ItemPoolType.POOL_LIBRARY, false, Random(), 0)
-				TornPageData.TIMER[i + 1] = 2
-				player:UseActiveItem(TornPageData.BOOK, true, false, true, true, -1)
-			end
-		end
-		
 		if player:HasTrinket(Trinkets.JUDASKISS) and Entity.Type == 1 and Source.Entity:IsActiveEnemy(false) then
 			Source.Entity:AddEntityFlags(EntityFlag.FLAG_BAITED)
 		end
@@ -1987,7 +1978,7 @@ function rplus:playerCollision(Player, Collider, _)
 		end
 	end
 
-	if Player:HasTrinket(Trinkets.SLEIGHTOFHAND) and math.random(100) <= SLEIGHTOFHAND_CHANCE * Player:GetTrinketMultiplier(Trinkets.SLEIGHTOFHAND) then
+	if Player:HasTrinket(Trinkets.TRICKPENNY) and math.random(100) <= TRICKPENNY_CHANCE * Player:GetTrinketMultiplier(Trinkets.TRICKPENNY) then
 		-- cuz slots don't have their own collision callback, thanks api lmao
 		if Collider.Type == 6 then
 			local S = Collider:GetSprite()
@@ -2201,8 +2192,8 @@ if EID then
 	EID:addTrinket(Trinkets.BASEMENTKEY, "{{ChestRoom}} While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
 	EID:addTrinket(Trinkets.JUDASKISS, "Enemies touching you become targeted by other enemies (effect similar to Rotten Tomato)")
-	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Using coin, bomb or key on slots, beggars or locked chests has a 17% chance to not subtract it from your inventory count")
-	EID:addTrinket(Trinkets.BITTENPENNY, "Upon spawning, every coin has a 20% chance to be upgraded to a higher value: #penny -> doublepack pennies -> sticky nickel -> nickel -> dime -> lucky penny -> golden penny")
+	EID:addTrinket(Trinkets.TRICKPENNY, "Using coin, bomb or key on slots, beggars or locked chests has a 17% chance to not subtract it from your inventory count")
+	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Upon spawning, every coin has a 20% chance to be upgraded to a higher value: #penny -> doublepack pennies -> sticky nickel -> nickel -> dime -> lucky penny -> golden penny")
 	EID:addTrinket(Trinkets.GREEDSHEART, "Gives you one empty coin heart #It is depleted before any of your normal hearts and can only be refilled by directly picking up money")
 	EID:addTrinket(Trinkets.ANGELSCROWN, "All new treasure rooms will have an angel item for sale instead of a normal item #Angels spawned from statues will not drop Key Pieces!")
 	EID:addTrinket(Trinkets.MAGICSWORD, "{{ArrowUp}} x2 DMG up while held #Breaks when you take damage #{{ArrowUp}} Having Duct Tape prevents it from breaking")
@@ -2211,7 +2202,6 @@ if EID then
 	EID:addTrinket(Trinkets.CHALKPIECE, "When entering uncleared room, you will leave a trail of powder underneath for 5 seconds #Enemies walking over this trail will be pushed back")
 	EID:addTrinket(Trinkets.ADAMSRIB, "Revives you as Eve when you die")
 	EID:addTrinket(Trinkets.NIGHTSOIL, "40% chance to prevent a curse when entering a new floor")
-	EID:addTrinket(Trinkets.TORNPAGE, "25% chance to activate a random book effect upon taking damage")
 	
 	EID:addCard(PocketItems.SDDSHARD, "Invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "Damages all enemies in a room, turns item pedestals into red locusts and turns pickups into random locusts with a 50% chance")
