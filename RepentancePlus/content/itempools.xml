@@ -26,7 +26,7 @@
 		<Item Name="Quasar" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 	</Pool>
 	<Pool Name="angel">
-		<Item Name="Zen Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Cherubim" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="A Bird of Hope" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Quasar" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 	</Pool>
@@ -81,7 +81,7 @@
 		
 	</Pool>
 	<Pool Name="babyShop">
-		<Item Name="Zen Baby" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
+		<Item Name="Cherubim" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="woodenChest">
