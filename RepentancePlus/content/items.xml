@@ -51,7 +51,7 @@
 	<trinket name="Eden's Lock" description="???" gfx="t12_edenslock.png" />
 	
 	<!-- T. Lost -->
-	<familiar name="Zen Baby" description="He sees everything" gfx="15_zenbaby.png" quality="3" tags="baby angel" />
+	<familiar name="Cherubim" description="He sees everything" gfx="15_zenbaby.png" quality="3" tags="baby angel" />
 	<trinket name="A Piece of Chalk" description="Stay out, unholy!" gfx="t09_pieceofchalk.png" />
 	
 	<!-- T. Keeper -->
