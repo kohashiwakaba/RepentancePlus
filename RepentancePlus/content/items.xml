@@ -15,7 +15,7 @@
 	<passive id="1" name="Cherry Friends" description=":3" gfx="06_cherryfriends.png" quality="1" />
 	
 	<!-- T. Cain -->
-	<passive id="2" name="The Mark of Caifn" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="3" devilprice="1" cache="damage" tags="devil" />
+	<passive id="2" name="The Mark of Cain" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="3" devilprice="1" cache="damage" tags="devil" />
 	<trinket name="Sleight of Hand" description="Faster than you'd think!" gfx="t03_sleightofhand.png" />
 	<trinket name="Bitten Penny" description="Wealth of risk" gfx="t04_bittenpenny.png" />
 
