@@ -1650,7 +1650,7 @@ function rplus:OnTearInit(Tear)
 		if player:HasCollectible(Collectibles.CEREMDAGGER) and EntityRef(Tear).Entity.SpawnerType == EntityType.ENTITY_PLAYER then
 			if math.random(100) <= CEREM_DAGGER_LAUNCH_CHANCE then
 				-- launching the dagger
-				local SBlade = Isaac.Spawn(2, TearVariants.CEREMDAGGER, 0, player.Position, Tear.Velocity, nil):GetSprite()
+				local SBlade = Isaac.Spawn(2, TearVariants.CEREMDAGGER, 0, Tear.Position, Tear.Velocity, nil):GetSprite()
 				SBlade:Load("gfx/002.120_ceremonial_blade_tear.anm2", true)
 				SBlade:Play("Idle")
 			end
