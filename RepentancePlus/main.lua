@@ -80,7 +80,8 @@ Collectibles = {
 	CHEESEGRATER = Isaac.GetItemIdByName("Cheese Grater"),			-- MINOR COMPATIBILITY ISSUES
 	DNAREDACTOR = Isaac.GetItemIdByName("DNA Redactor"),
 	TOWEROFBABEL = Isaac.GetItemIdByName("Tower of Babel"),
-	BLESSOTDEAD = Isaac.GetItemIdByName("Bless of the Dead")
+	BLESSOTDEAD = Isaac.GetItemIdByName("Bless of the Dead"),
+	GUSTYBLOOD = Isaac.GetItemIdByName("Gusty Blood")
 }
 
 Trinkets = {
@@ -285,7 +286,8 @@ ScarletChestItems = {
 	657, --Vasculitis
 	676, --Empty Heart
 	688, --Inner Child
-	695  --Bloody Gust
+	695,  --Bloody Gust
+	Collectibles.GUSTYBLOOD
 }
 ScarletChestHearts = {1, 2, 5, 10}
 
@@ -301,7 +303,9 @@ StatUps = {
 	MAGICSWORD_DMG_MUL = 2,
 	GRATER_DMG = 0.5,
 	BLESS_DMG = 0.5,
-	ORDLIFE_TEARS = 0.8
+	ORDLIFE_TEARS = 0.8,
+	GUSTYBLOOD_SPEED = 0.1,
+	GUSTYBLOOD_TEARS = 0.25
 }
 
 -- used by Bag Tissue
@@ -353,6 +357,11 @@ TornPageData = {
 	BOOK = nil
 }
 
+-- Current room's stat ups from Gusty Blood
+GustyBloodCurrentStats = {
+	SPEED = 0,
+	TEARS = 0
+}
 
 DIRECTION_FLOAT_ANIM = {
 	[Direction.NO_DIRECTION] = "FloatDown", 
@@ -539,6 +548,15 @@ local function GetTrinketGulped(trinketType, player)
 	player:UseActiveItem(479, false, false, false, false)
 	player:AddTrinket(currentTrinket)
 	player:AddTrinket(currentTrinket2)
+end
+
+-- Helper functions to turn fire delay into equivalent tears up (since via api only fire delay is accessible, not tears)
+function GetTears(fireDelay)
+    return 30 / (fireDelay + 1)
+end
+
+function GetFireDelay(tears)
+    return math.max(30 / tears - 1, -0.9999)
 end								
 								
 								----------------------
@@ -749,6 +767,14 @@ function rplus:OnNewRoom()
 		
 		if player:HasCollectible(Collectibles.TWOPLUSONE) and CustomData then
 			CustomData.Items.TWOPLUSONE.ItemsBought_HEARTS = 0
+		end
+		
+		if player:HasCollectible(Collectibles.GUSTYBLOOD) then
+			GustyBloodCurrentStats.TEARS = 0
+			GustyBloodCurrentStats.SPEED = 0
+			player:AddCacheFlags(CacheFlag.CACHE_FIREDELAY)
+			player:AddCacheFlags(CacheFlag.CACHE_SPEED)
+			player:EvaluateItems()
 		end
 		
 		player:GetData()['usedLoadedDice'] = false
@@ -1224,6 +1250,15 @@ function rplus:OnNPCDeath(NPC)
 		if player:HasCollectible(Collectibles.CEREMDAGGER) and not NPC:IsBoss() and NPC:HasEntityFlags(EntityFlag.FLAG_BLEED_OUT) then
 			Isaac.Spawn(5, 300, PocketItems.SACBLOOD, NPC.Position, Vector.Zero, nil)
 		end
+		
+		if player:HasCollectible(Collectibles.GUSTYBLOOD) and NPC:IsEnemy() and GustyBloodCurrentStats.SPEED < 1 then
+			GustyBloodCurrentStats.TEARS = GustyBloodCurrentStats.TEARS + StatUps.GUSTYBLOOD_TEARS
+			GustyBloodCurrentStats.SPEED = GustyBloodCurrentStats.SPEED + StatUps.GUSTYBLOOD_SPEED
+			player:SetColor(Color(1, 0.5, 0.5, 1, 0, 0, 0), 15, 1, false, false)
+			player:AddCacheFlags(CacheFlag.CACHE_FIREDELAY)
+			player:AddCacheFlags(CacheFlag.CACHE_SPEED)
+			player:EvaluateItems()
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
@@ -1610,15 +1645,15 @@ rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
 						-- ON TEAR INIT --											
 						------------------
 function rplus:OnTearInit(Tear)
-	-- if Tear.Parent then local player = Tear.Parent:ToPlayer() end
-	local player = Isaac.GetPlayer(0)
-	
-	if player:HasCollectible(Collectibles.CEREMDAGGER) and EntityRef(Tear).Entity.SpawnerType == EntityType.ENTITY_PLAYER then
-		if math.random(100) <= CEREM_DAGGER_LAUNCH_CHANCE then
-			-- launching the dagger
-			local SBlade = Isaac.Spawn(2, TearVariants.CEREMDAGGER, 0, player.Position, Tear.Velocity, nil):GetSprite()
-			SBlade:Load("gfx/002.120_ceremonial_blade_tear.anm2", true)
-			SBlade:Play("Idle")
+	for i = 0, game:GetNumPlayers() - 1 do
+		local player = Isaac.GetPlayer(i)
+		if player:HasCollectible(Collectibles.CEREMDAGGER) and EntityRef(Tear).Entity.SpawnerType == EntityType.ENTITY_PLAYER then
+			if math.random(100) <= CEREM_DAGGER_LAUNCH_CHANCE then
+				-- launching the dagger
+				local SBlade = Isaac.Spawn(2, TearVariants.CEREMDAGGER, 0, player.Position, Tear.Velocity, nil):GetSprite()
+				SBlade:Load("gfx/002.120_ceremonial_blade_tear.anm2", true)
+				SBlade:Play("Idle")
+			end
 		end
 	end
 end
@@ -1666,6 +1701,10 @@ function rplus:UpdateStats(Player, Flag)
 		if Player:HasCollectible(Collectibles.ORDLIFE) then
 			Player.MaxFireDelay = Player.MaxFireDelay * StatUps.ORDLIFE_TEARS
 		end
+		
+		if Player:HasCollectible(Collectibles.GUSTYBLOOD) then
+			Player.MaxFireDelay = GetFireDelay(GetTears(Player.MaxFireDelay) + GustyBloodCurrentStats.TEARS)
+		end
 	end
 	
 	if Flag == CacheFlag.CACHE_TEARFLAG then
@@ -1695,6 +1734,12 @@ function rplus:UpdateStats(Player, Flag)
 	if Flag == CacheFlag.CACHE_LUCK then
 		if Player:GetData()['usedLoadedDice'] then
 			Player.Luck = Player.Luck + StatUps.LOADEDDICE_LUCK
+		end
+	end
+	
+	if Flag == CacheFlag.CACHE_SPEED then
+		if Player:HasCollectible(Collectibles.GUSTYBLOOD) then
+			Player.MoveSpeed = Player.MoveSpeed + GustyBloodCurrentStats.SPEED
 		end
 	end
 end
