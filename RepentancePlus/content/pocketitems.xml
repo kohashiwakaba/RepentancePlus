@@ -45,5 +45,7 @@
 	<!-- pill effects -->
 	<pilleffect name="Estrogen Up" mimiccharge="4" class="2+" />
 	<pilleffect name="Laxative" mimiccharge="3" class="1+" />
-	
+	<pilleffect name="Phantom Pill" mimiccharge="4" class="2+" />
+	<pilleffect name="Yum!" mimiccharge="12" class="4+" />
+	<pilleffect name="Yuck!" mimiccharge="6" class="4+" />
 </pocketitems>
