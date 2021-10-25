@@ -1,0 +1,10 @@
+<costumes anm2root="gfx/characters/" >
+	<costume id="1" anm2path="costume_002_cherryfriends.anm2" type="passive" />
+	<costume anm2path="costume_001_ordinarylife.anm2" type="none" />
+	<costume id="2" anm2path="costume_003_markcain.anm2" type="passive" />
+	<costume anm2path="costume_004_birdofhope.anm2" type="none" />
+	<costume id="3" anm2path="costume_005_blackdoll.anm2" type="passive" />
+	<costume id="4" anm2path="costume_006_ceilingwithstars.anm2" type="passive" />
+	<costume id="5" anm2path="costume_007_sinnersheart.anm2" type="passive" />
+	<costume id="6" anm2path="costume_008_gustyblood.anm2" type="passive" />
+</costumes>

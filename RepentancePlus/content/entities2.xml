@@ -1,0 +1,70 @@
+<entities anm2root="gfx/" version="5">
+
+<!-- CUSTOM BACKDROP ENTITY -->
+<entity anm2path="gfx/backdrop/blankanim.anm2" id="1000" name="CustomBackDropEntity" variant="69420" collisionRadius="0" numGridCollisionPoints="0">
+</entity>
+
+<!-- consumables -->
+
+<entity anm2path="005.390_redrune.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Red Rune" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="160">
+</entity>
+
+<entity anm2path="005.391_spindowndiceshard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Spindowndice Shard" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="161">
+</entity>
+
+<entity anm2path="005.392_scarletchest.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="6" collisionRadius="12" friction="0.8" id="5" name="Scarlet Chest" numGridCollisionPoints="24" shadowSize="28" stageHP="0" variant="392">
+</entity>
+
+<entity anm2path="005.393_needleandthread.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Needle and Thread" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="162">
+</entity>
+
+<entity anm2path="005.394_bagtissue.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Bag Tissue" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="163">
+</entity>
+
+<entity anm2path="005.395_loadeddice.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Loaded Dice" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="164">
+</entity>
+
+<entity anm2path="005.396_quasarshard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Quasar Shard" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="165">
+</entity>
+
+<entity anm2path="005.397_businesscard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Business Card" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="166">
+</entity>
+
+<entity anm2path="005.398_sacrificialblood.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Sacrificial Blood" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="167">
+</entity>
+
+<entity anm2path="005.399_flypaper.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Flypaper" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="168">
+</entity>
+
+<entity anm2path="005.400_librarycard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Library Card" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="169">
+</entity>
+
+<!-- familiars -->
+
+<entity anm2path="003.210_bagotrash.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Bag O' Trash" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2100">
+	</entity>
+
+<entity anm2path="003.211_zenbaby.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Zen Baby" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2101">
+	</entity>
+
+<entity anm2path="003.212_cherry.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Cherry" numGridCollisionPoints="24" shadowSize="14" stageHP="0" variant="2102" subtype="1">
+	</entity>
+
+<entity anm2path="003.213_bird.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Bird of Hope" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2103">
+    </entity>
+
+<entity anm2path="003.214_soul.anm2" baseHP="0" boss="0" champion="0" collisionDamage="5" collisionMass="50" collisionRadius="13" friction="1" id = "3" name="Enraged Soul" numGridCollisionPoints="12" shadowSize="14" stageHP="0" variant="2104">
+    </entity>
+	
+<entity anm2path="003.215_toytank_1.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id = "3" name="Toy Tank 1" numGridCollisionPoints="12" shadowSize="14" stageHP="0" variant="2105">
+    </entity>
+	
+<entity anm2path="003.215_toytank_2.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id = "3" name="Toy Tank 2" numGridCollisionPoints="12" shadowSize="14" stageHP="0" variant="2106">
+    </entity>
+	
+<!-- tears and weapons -->
+
+<entity anm2path="002.120_ceremonial_blade_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="8" friction="1" id="2" name="Ceremonial Dagger Tear" numGridCollisionPoints="8" shadowSize="7" stageHP="0" variant="120" />
+
+	
+</entities>
