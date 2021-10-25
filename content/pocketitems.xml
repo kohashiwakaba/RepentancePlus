@@ -1,0 +1,49 @@
+<pocketitems>
+	<!-- EXAMPLES FROM BASE GAME:
+		<card type="special" pickup="8" achievement="97" description="???" id="42" name="Chaos Card" announcer="334" mimiccharge="6" />
+		<card type="object" pickup="15" achievement="444" description="???" name="Cracked Key" id="78" mimiccharge="4" />
+	
+		!! Pill classes:
+			3: Major (a permanent effect, usually a stat modifier)
+			2: Medium (an effect with a significant impact, i.e. health or damage)
+			1: Minor (an effect which is only situationally useful)
+			0: Joke (an effect which is nigh useless)
+		!! Append a + or - at the end to denote a positive or negative effect, no suffix means a neutral effect
+
+		<pilleffect id="0" name="Bad Gas" announcer="328" class="1+" mimiccharge="1" / 
+		
+		backs and secondary slot are done via pickup tag, custom backs need new pickup-numbers, which must have an entry in the entities2.xml
+		already existing backs need the assigned pickup-numbers (e.g. 2 for suit back, 17 for uno back, look into gamefiles if you need them)
+	-->
+	
+	<!-- custom backs -->
+	<rune type="rune" name="Red Rune" hud="Red Rune" mimiccharge="12" description="Abyss" pickup="160" /> 
+	<card type="object" name="Spindown Dice Shard" hud="Spindown Dice Shard" mimiccharge="6" description="-1?" pickup="161"/> 
+	<card type="object" name="Needle and Thread" hud="Needle and Thread" mimiccharge="4" description="To cure my broken heart" pickup="162" />
+	<card type="object" name="Bag Tissue" hud="Bag Tissue" mimiccharge="12" description="Craft a piece of your destiny" pickup="163" />
+	<card type="object" name="Loaded Dice" hud="Loaded Dice" mimiccharge="2" description="Luck is on your side" pickup="164" />
+	<card type="rune" name="Quasar Shard" hud="Quasar Shard" mimiccharge="6" description="Shards of knoweldge" pickup="165" />
+	<card type="special" name="Business Card" hud="Business Card" mimiccharge="4" description="Reusable partnership" pickup="166" />
+	<card type="object" name="Sacrificial Blood" hud="Sacrificial Blood" mimiccharge="12" description="Feed on their pain" pickup="167" />
+	<card type="special" name="Flypaper" hud="Flypaper" mimiccharge="12" description="Sticky!" pickup="168" />
+	<card type="special" name="Library Card" hud="Library Card" mimiccharge="6" description="8-)" pickup="169" />
+	
+	<!-- non-custom backs -->
+	<card type="suit" name="Joker?" hud="Joker?" mimiccharge="1" description="¿¿¿" pickup="2"/>
+	<card type="special" name="Reverse Card" hud="Reverse Card" mimiccharge="2" description="No, You!" pickup="17" /> 
+	<card type="suit" name="King of Spades" hud="King of Spades" mimiccharge="6" description="Lose everything to get something" pickup="2" />
+	<card type="suit" name="King of Clubs" hud="King of Clubs" mimiccharge="6" description="Lose everything to get something" pickup="2" />
+	<card type="suit" name="King of Diamonds" hud="King of Diamonds" mimiccharge="6" description="Lose everything to get something" pickup="2" />
+	<card type="suit" name="Queen of Diamonds" hud="Queen of Diamonds" mimiccharge="6" description="$" pickup="2" />
+	<card type="suit" name="Queen of Clubs" hud="Queen of Clubs" mimiccharge="6" description="!" pickup="2" />
+	<card type="suit" name="Bedside Queen" hud="Bedside Queen" mimiccharge="6" description="0--&#34;" pickup="2" />
+	<card type="suit" name="Jack of Diamonds" hud="Jack of Diamonds" mimiccharge="2" description="Increase your Wealth" pickup="2" /> 
+	<card type="suit" name="Jack of Clubs" hud="Jack of Clubs" mimiccharge="2" description="Increase your Blast" pickup="2" />
+	<card type="suit" name="Jack of Spades" hud="Jack of Spades" mimiccharge="2" description="Increase your Access" pickup="2" />
+	<card type="suit" name="Jack of Hearts" hud="Jack of Hearts" mimiccharge="2" description="Increase your Health" pickup="2" />
+	
+	<!-- pill effects -->
+	<pilleffect name="Estrogen Up" mimiccharge="4" class="2+" />
+	<pilleffect name="Laxative" mimiccharge="3" class="1+" />
+	
+</pocketitems>
