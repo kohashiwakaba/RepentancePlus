@@ -132,7 +132,10 @@ PickUps = {
 
 Pills = {
 	ESTROGEN = Isaac.GetPillEffectByName("Estrogen Up"),
-	LAXATIVE = Isaac.GetPillEffectByName("Laxative")
+	LAXATIVE = Isaac.GetPillEffectByName("Laxative")"),
+	PHANTOM = Isaac.GetPillEffectByName("Phantom Pill"),
+	YUM = Isaac.GetPillEffectByName("Yum!"),
+	YUCK = Isaac.GetPillEffectByName("Yuck!")
 }
 
 --[[
@@ -305,7 +308,11 @@ StatUps = {
 	BLESS_DMG = 0.5,
 	ORDLIFE_TEARS = 0.8,
 	GUSTYBLOOD_SPEED = 0.1,
-	GUSTYBLOOD_TEARS = 0.25
+	GUSTYBLOOD_TEARS = 0.25,
+	YUM_DAMAGE = 0.05,
+	YUM_TEARS = 0.03,
+	YUM_SHOTSPEED = 0.02,
+	YUM_LUCK = 0.05 
 }
 
 -- used by Bag Tissue
@@ -659,7 +666,10 @@ function rplus:OnNewLevel()
 		
 		if CustomData then
 			CustomData.Cards.JACK = nil
-			
+			CustomData.Pills.YUCK.Data = false
+			CustomData.Pills.YUCK.NumUses = 0 
+			CustomData.Pills.YUM.Data = false
+			CustomData.Pills.YUM.NumUses = 0
 			CustomData.Items.CEILINGSTARS.SleptInBed = false
 			
 			if player:HasCollectible(Collectibles.BAGOTRASH) then
@@ -1038,7 +1048,18 @@ function rplus:OnFrame()
 				end
 			end
 		end
-		
+		if CustomData and CustomData.Pills.PHANTOM.Data then
+			if game:GetFrameCount() % math.floor(12) == 0 then
+				Phantom_Step = Phantom_Step + 1
+				--player:EvaluateItems()
+				if Phantom_Step % 6 == 0 then
+					player:UseActiveItem(CollectibleType.COLLECTIBLE_DULL_RAZOR, UseFlag.USE_NOANIM)
+				end		
+				if Phantom_Step == 20 then 
+					CustomData.Pills.PHANTOM.Data = false 
+				end
+			end
+		end
 		if CustomData and CustomData.Pills.LAXATIVE.LaxUseFrame and player:GetData()['pill'] == "used lax" then
 			if game:GetFrameCount() <= CustomData.Pills.LAXATIVE.LaxUseFrame + 90 and game:GetFrameCount() % 4 == 0 then
 				local vector = Vector.FromAngle(DIRECTION_VECTOR[player:GetMovementDirection()]:GetAngleDegrees() + math.random(-30, 30)):Resized(-7.5)
@@ -1541,7 +1562,38 @@ rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 function rplus:PickupCollision(Pickup, Collider, _)	
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
-		
+		if CustomData.Pills.YUCK.Data and CustomData and Pickup.Variant == 10 and player:GetHearts() ~= player:GetMaxHearts() then 
+			if Pickup.SubType == 1 or Pickup.SubType == 2 or Pickup.SubType == 5 or Pickup.SubType == 12 then
+				for i = 1, CustomData.Pills.YUCK.NumUses*2  do 
+					Isaac.Spawn(3, FamiliarVariant.BLUE_FLY, 0, player.Position, Vector.Zero, nil) 
+				end
+			end
+		end
+		if CustomData.Pills.YUM.Data and CustomData and Pickup.Variant == 10 and player:GetHearts() ~= player:GetMaxHearts() then
+			if Pickup.SubType == 1 or Pickup.SubType == 2 or Pickup.SubType == 5 or Pickup.SubType == 12 then
+				for i = 1, CustomData.Pills.YUM.NumUses do 
+					YumStat = math.random(4)
+					if YumStat == 1 then -- damage
+						player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+						CustomData.Pills.YUM.NumDamage=CustomData.Pills.YUM.NumDamage+1
+						player:GetData()['GetYumDamage'] = true						
+					elseif YumStat == 2 then -- tears
+						player:AddCacheFlags(CacheFlag.CACHE_FIREDELAY)
+						CustomData.Pills.YUM.NumTears=CustomData.Pills.YUM.NumTears+1
+						player:GetData()['GetYumTears'] = true						
+					elseif YumStat == 3 then -- shotspeed
+						player:AddCacheFlags(CacheFlag.CACHE_SHOTSPEED)
+						CustomData.Pills.YUM.NumShotSpeed=CustomData.Pills.YUM.NumShotSpeed+1
+						player:GetData()['GetYumShotSpeed'] = true
+					elseif YumStat == 4 then -- luck
+						player:AddCacheFlags(CacheFlag.CACHE_LUCK)
+						CustomData.Pills.YUM.NumLuck=CustomData.Pills.YUM.NumLuck+1
+						player:GetData()['GetYumLuck'] = true
+					end
+					player:EvaluateItems()
+				end
+			end
+		end 
 		if player:HasTrinket(Trinkets.GREEDSHEART) and CustomData.Trinkets.GREEDSHEART == "CoinHeartEmpty" and Pickup.Variant == 20 and Pickup.SubType ~= 6 
 		and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) 
 		-- if player's Keeper, they should be at full health to gain a new coin heart
@@ -1695,6 +1747,11 @@ function rplus:UpdateStats(Player, Flag)
 		if Player:HasCollectible(Collectibles.BLESSOTDEAD) and CustomData then
 			Player.Damage = Player.Damage + CustomData.Items.BLESSOTDEAD * StatUps.BLESS_DMG
 		end
+		if CustomData and CustomData.Pills.YUM.Data then
+			if Player:GetData()['GetYumDamage'] then
+				 Player.Damage = Player.Damage + CustomData.Pills.YUM.NumDamage* StatUps.YUM_DAMAGE
+			end
+		end
 	end
 	
 	if Flag == CacheFlag.CACHE_FIREDELAY then
@@ -1704,6 +1761,11 @@ function rplus:UpdateStats(Player, Flag)
 		
 		if Player:HasCollectible(Collectibles.GUSTYBLOOD) then
 			Player.MaxFireDelay = GetFireDelay(GetTears(Player.MaxFireDelay) + GustyBloodCurrentStats.TEARS)
+		end
+		if CustomData and CustomData.Pills.YUM.Data then
+			if Player:GetData()['GetYumTears'] then
+				 Player.MaxFireDelay = Player.MaxFireDelay - CustomData.Pills.YUM.NumTears * StatUps.YUM_TEARS
+			end
 		end
 	end
 	
@@ -1716,6 +1778,11 @@ function rplus:UpdateStats(Player, Flag)
 	if Flag == CacheFlag.CACHE_SHOTSPEED then
 		if Player:HasCollectible(Collectibles.SINNERSHEART)  then
 			Player.ShotSpeed = Player.ShotSpeed + StatUps.SINNERSHEART_SHSP
+		end
+		if CustomData and CustomData.Pills.YUM.Data then
+			if Player:GetData()['GetYumShotSpeed'] then
+				 Player.ShotSpeed = Player.ShotSpeed + CustomData.Pills.YUM.NumShotSpeed * StatUps.YUM_SHOTSPEED
+			end
 		end
 	end
 	
@@ -1735,6 +1802,11 @@ function rplus:UpdateStats(Player, Flag)
 		if Player:GetData()['usedLoadedDice'] then
 			Player.Luck = Player.Luck + StatUps.LOADEDDICE_LUCK
 		end
+		if CustomData and CustomData.Pills.YUM.Data then
+			if Player:GetData()['GetYumLuck'] then
+				 Player.Luck = Player.Luck + CustomData.Pills.YUM.NumLuck * StatUps.YUM_LUCK
+			end
+		end	
 	end
 	
 	if Flag == CacheFlag.CACHE_SPEED then
@@ -2195,7 +2267,25 @@ function rplus:usePill(pillEffect, Player, _)
 		sfx:Play(SoundEffect.SOUND_FART, 1, 2, false, 1, 0)
 		Player:AnimateSad()
 	end
-	
+	if pillEffect == Pills.PHANTOM and CustomData then
+		CustomData.Pills.PHANTOM.Data = true
+		Phantom_Step=5
+		sfx:Play(SoundEffect.SOUND_THUMBS_DOWN, 1, 1, false, 1, 0)
+	end
+	if pillEffect == Pills.YUCK and CustomData then
+		CustomData.Pills.YUCK.Data = true
+		Isaac.Spawn(5, 10, 12, Player.Position, Vector.Zero, nil)
+		Player:AnimateHappy()
+		CustomData.Pills.YUCK.NumUses = CustomData.Pills.YUCK.NumUses + 1
+		sfx:Play(SoundEffect.SOUND_MEAT_JUMPS, 1, 2, false, 1, 0)
+	end
+	if pillEffect == Pills.YUM and CustomData then
+		CustomData.Pills.YUM.Data = true
+		CustomData.Pills.YUM.NumUses = CustomData.Pills.YUM.NumUses + 1
+		Player:AnimateHappy()
+		Isaac.Spawn(5, 10, 1, Player.Position, Vector.Zero, nil)
+		sfx:Play(SoundEffect.SOUND_MEAT_JUMPS, 1, 2, false, 1, 0)
+	end
 	if Player:HasCollectible(Collectibles.DNAREDACTOR) then
 		local pillColor = game:GetItemPool():ForceAddPillEffect(pillEffect) % 2407 -- include horse pills too
 
