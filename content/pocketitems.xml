@@ -27,6 +27,9 @@
 	<card type="object" name="Sacrificial Blood" hud="Sacrificial Blood" mimiccharge="12" description="Feed on their pain" pickup="167" />
 	<card type="special" name="Flypaper" hud="Flypaper" mimiccharge="12" description="Sticky!" pickup="168" />
 	<card type="special" name="Library Card" hud="Library Card" mimiccharge="6" description="8-)" pickup="169" />
+	<card type="special" name="Antimaterial Card" hud="Antimaterial Card" mimiccharge="12" description="Erase thy enemy... once" pickup="170" />
+	<card type="special" name="Funeral Service" hud="Funeral Services" mimiccharge="12" description="My time has come..." pickup="171" />
+	<card type="special" name="Mom's ID" hud="Mom's ID" mimiccharge="12" description="..." pickup="172" />
 	
 	<!-- non-custom backs -->
 	<card type="suit" name="Joker?" hud="Joker?" mimiccharge="1" description="¿¿¿" pickup="2"/>
@@ -43,7 +46,10 @@
 	<card type="suit" name="Jack of Hearts" hud="Jack of Hearts" mimiccharge="2" description="Increase your Health" pickup="2" />
 	
 	<!-- pill effects -->
-	<pilleffect name="Estrogen Up" mimiccharge="4" class="2+" />
-	<pilleffect name="Laxative" mimiccharge="3" class="1+" />
+	<pilleffect name="Estrogen Up" mimiccharge="4" class="2" />
+	<pilleffect name="Laxative" mimiccharge="2" class="1+" />
+	<pilleffect name="Phantom Pains" mimiccharge="4" class="2" />
+	<pilleffect name="Yum!" mimiccharge="12" class="3+" />
+	<pilleffect name="Yuck!" mimiccharge="6" class="2+" />
 	
 </pocketitems>

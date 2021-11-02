@@ -6,4 +6,6 @@
 	<costume id="3" anm2path="costume_005_blackdoll.anm2" type="passive" />
 	<costume id="4" anm2path="costume_006_ceilingwithstars.anm2" type="passive" />
 	<costume id="5" anm2path="costume_007_sinnersheart.anm2" type="passive" />
+	<costume id="6" anm2path="costume_008_gustyblood.anm2" type="passive" />
+	<costume id="7" anm2path="costume_009_redbomber.anm2" type="passive" />
 </costumes>

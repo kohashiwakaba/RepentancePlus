@@ -8,6 +8,7 @@
 	<trinket name="Basement Key" description="Open your memories" gfx="t01_basementkey.png" />
 	<active name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="03_rubikscube.png" quality="0" maxcharges="2" />
 	<active name="Magic Cube" description="Did you set the world record?" gfx="04_magiccube.png" quality="4" maxcharges="4" />  
+	<passive id="7" name="Red Bomber" description="Can't hold 'em! +5 bombs" gfx="23_redbomber.png" quality="3" />
 	
 	<!-- T.Maggy -->
 	<active name="Cookie Cutter" description="Cut your hearts!" gfx="05_cookiecutter.png" quality="1" maxcharges="0"/>
@@ -38,6 +39,7 @@
 	<passive name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="13_tempertantrum.png" quality="3" /> 
 	<trinket name="Magic Sword" description=":-)" gfx="t10_magicsword.png" cache="damage" />
 	<trinket name="Wait, No!" description=":-(" gfx="t11_waitno.png" />
+	<passive id="6" name="Gusty Blood" description="Their blood brings haste" gfx="24_gustyblood.png" quality="3" devilprice="2"/>
 	
 	<!-- T. Lazarus -->
 	<passive name="DNA Redactor" description="It runs in your genes" gfx="20_dnaredactor.png" quality="3" /> 

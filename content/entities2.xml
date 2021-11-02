@@ -39,6 +39,15 @@
 <entity anm2path="005.400_librarycard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Library Card" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="169">
 </entity>
 
+<entity anm2path="005.402_funeralservices.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Funeral Services" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="171">
+</entity>
+
+<entity anm2path="005.401_momsid.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Mom's ID" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="172">
+</entity>
+
+<entity anm2path="005.403_antimaterialcard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Antimaterial Card" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="170">
+</entity>
+
 <!-- familiars -->
 
 <entity anm2path="003.210_bagotrash.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Bag O' Trash" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2100">
@@ -66,5 +75,6 @@
 
 <entity anm2path="002.120_ceremonial_blade_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="8" friction="1" id="2" name="Ceremonial Dagger Tear" numGridCollisionPoints="8" shadowSize="7" stageHP="0" variant="120" />
 
+<entity anm2path="002.123_antimaterial_card_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="10" friction="1" id="2" name="Antimaterial Card Tear" numGridCollisionPoints="8" shadowSize="7" stageHP="0" variant="123" />
 	
 </entities>
