@@ -11,7 +11,7 @@
 
 local game = Game()
 local rplus = RegisterMod("repentanceplus", 1)
-local MOD_VERSION = 1.8
+local MOD_VERSION = 1.10
 local sfx = SFXManager()
 local music = MusicManager()
 local CustomData
@@ -24,6 +24,24 @@ achievement:Load("gfx/ui/achievement/achievements.anm2", true)
 
 -- used for rendering sprites on the floor/walls
 CustomBackDropEntity = Isaac.GetEntityVariantByName("CustomBackDropEntity")
+
+-- helper sprites for rendering
+PenIcon = Sprite()
+PenIcon:Load("gfx/ui/ui_visual_clues.anm2", true)
+PenIcon:Play("PenReady", false)
+PenIcon.PlaybackSpeed = 0.5
+
+SoulIcon = Sprite()
+SoulIcon:Load("gfx/ui/ui_visual_clues.anm2", true)
+SoulIcon:Play("SoulReady", false)
+SoulIcon.PlaybackSpeed = 0.5
+
+RedMapIcon = Sprite()
+RedMapIcon:Load("gfx/ui/ui_visual_clues.anm2", true)
+
+DNAPillIcon = Sprite()
+DNAPillIcon:Load("gfx/ui/ui_dnapillhelper.anm2", true)
+--
 
 local BASEMENTKEY_CHANCE = 5			-- chance to replace golden chest with the old chest
 local HEARTKEY_CHANCE = 5				-- chance for enemy to drop Scarlet chest on death
@@ -564,6 +582,13 @@ end
 function GetFireDelay(tears)
     return math.max(30 / tears - 1, -0.9999)
 end									----------------------
+
+function isInGhostForm(player)
+	return (player:GetPlayerType() == 10 or player:GetPlayerType() == 31 or
+	player:GetPlayerType() == 39 or
+	player:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE))	-- after touching the white fire
+end								
+								
 								-- GLOBAL FUNCTIONS --
 								----------------------
 
@@ -750,12 +775,12 @@ function rplus:OnNewRoom()
 		
 		if player:HasTrinket(Trinkets.ANGELSCROWN) and roomtype == RoomType.ROOM_TREASURE then
 			if room:IsFirstVisit() then
-				for _, entity in pairs(Isaac.GetRoomEntities()) do
-					if entity.Type == 5 then entity:Remove() end
+				for _, collectible in pairs(Isaac.FindByType(5, 100, -1, false, false)) do
+					collectiblePickup = collectible:ToPickup()
+					collectiblePickup:ToPickup():Morph(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), false, false, false)
+					collectiblePickup.Price = 15
+					collectiblePickup.ShopItemId = -777
 				end
-				local AngelItem = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), Vector(320,280), Vector.Zero, nil):ToPickup()
-				AngelItem.Price = 15
-				AngelItem.ShopItemId = -777
 			end
 			
 			for i = 1, room:GetGridSize() do
@@ -1157,11 +1182,15 @@ function rplus:PostPlayerUpdate(Player)
 					DashAnim = "DashDown"
 				end
 				CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown = ENRAGED_SOUL_COOLDOWN
-				local SoulSprite = Isaac.Spawn(3, Familiars.SOUL, 0, Player.Position, Velocity * 12, nil):GetSprite()
+				local Soul = Isaac.Spawn(3, Familiars.SOUL, 0, Player.Position, Velocity * 12, nil)
+				Soul.CollisionDamage = 3.5 * (1 + math.sqrt(level:GetStage()))	-- new formula for calculacting the soul's damage
+				
+				local SoulSprite = Soul:GetSprite()
 				
 				SoulSprite:Load("gfx/003.214_enragedsoul.anm2", true)
 				if ButtonPressed == 4 then SoulSprite.FlipX = true end
 				SoulSprite:Play(DashAnim, true)
+				sfx:Play(SoundEffect.SOUND_ANIMA_BREAK, 1, 2, false, 1, 0)
 				sfx:Play(SoundEffect.SOUND_MONSTER_YELL_A, 1, 2, false, 1, 0)
 				
 				ButtonState = nil
@@ -1171,10 +1200,7 @@ function rplus:PostPlayerUpdate(Player)
 		end
 		
 		if CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown then 
-			CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown = CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown - 1 
-			if CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown == 0 then
-				sfx:Play(SoundEffect.SOUND_ANIMA_BREAK, 1, 2, false, 1, 0)
-			end
+			CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown = CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown - 1
 		end
 	end
 	
@@ -1250,6 +1276,7 @@ function rplus:PostPlayerUpdate(Player)
 					Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL, 4, Player.Position + creepDirection * i, Vector.Zero, nil)
 				end
 				
+				sfx:Play(SoundEffect.SOUND_BLOODSHOOT, 1, 2, false, 1, 0)
 				CustomData.Items.MAGICPEN.CreepSpewCooldown = MAGICPEN_CREEP_COOLDOWN
 				ButtonState0 = nil
 			end
@@ -1278,7 +1305,7 @@ function rplus:OnGameRender()
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
 		
-		if player:HasTrinket(Trinkets.GREEDSHEART) and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) then
+		if player:HasTrinket(Trinkets.GREEDSHEART) and not isInGhostForm(player) then
 			CoinHeartSprite = Sprite()
 			
 			CoinHeartSprite:Load("gfx/ui/ui_coinhearts.anm2", true)
@@ -1312,13 +1339,34 @@ function rplus:OnGameRender()
 		if player:HasCollectible(Collectibles.DNAREDACTOR) then
 			for _, pickupPill in pairs(Isaac.FindInRadius(player.Position, 150, EntityPartition.PICKUP)) do
 				if pickupPill.Variant == 70 then
-					DNAPillIcon = Sprite()
-					DNAPillIcon:Load("gfx/ui/ui_dnapillhelper.anm2", true)
 					DNAPillIcon.Scale = Vector(0.5, 0.5)
 					
 					DNAPillIcon:SetFrame("pill_" .. tostring(pickupPill.SubType), 0)
-					DNAPillIcon:Render(Isaac.WorldToRenderPosition(pickupPill.Position + Vector(15, -15)), Vector.Zero, Vector.Zero)
+					DNAPillIcon:Render(Isaac.WorldToScreen(pickupPill.Position + Vector(15, -15)), Vector.Zero, Vector.Zero)
 				end
+			end
+		end
+		
+		if player:HasCollectible(Collectibles.REDMAP) then
+			RedMapIcon:SetFrame("RedMap", 0)
+			RedMapIcon:Render(Vector(384, 50), Vector.Zero, Vector.Zero)
+		end
+		
+		if CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown then
+			if CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown <= 0 
+			and CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown >= -40 then
+				SoulIcon:Update()
+				--SoulIcon:SetFrame("SoulReady", CustomData.Items.ENRAGEDSOUL.SoulLaunchCooldown * (-1))
+				SoulIcon:Render(Isaac.WorldToScreen(player.Position + Vector(25, -45)), Vector.Zero, Vector.Zero)
+			end
+		end
+		
+		if CustomData.Items.MAGICPEN.CreepSpewCooldown then
+			if CustomData.Items.MAGICPEN.CreepSpewCooldown <= 0 
+			and CustomData.Items.MAGICPEN.CreepSpewCooldown >= -34 then
+				PenIcon:Update()
+				--PenIcon:SetFrame("PenReady", math.floor(CustomData.Items.MAGICPEN.CreepSpewCooldown * (-0.5)))
+				PenIcon:Render(Isaac.WorldToScreen(player.Position + Vector(25, -45)), Vector.Zero, Vector.Zero)
 			end
 		end
 	end
@@ -1640,7 +1688,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		local player = Isaac.GetPlayer(i)
 		
 		if player:HasTrinket(Trinkets.GREEDSHEART) and CustomData.Trinkets.GREEDSHEART == "CoinHeartEmpty" and Pickup.Variant == 20 and Pickup.SubType ~= 6 
-		and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) 
+		and not isInGhostForm(player) 
 		-- if player's Keeper, they should be at full health to gain a new coin heart
 		and (player:GetHearts() == player:GetMaxHearts() or (player:GetPlayerType() ~= 14 and player:GetPlayerType() ~= 33)) then
 			player:AddCoins(-1)
@@ -1958,7 +2006,7 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		end
 		
 		if player:HasTrinket(Trinkets.GREEDSHEART) and CustomData.Trinkets.GREEDSHEART == "CoinHeartFull" and Entity.Type == 1 
-		and not (player:GetPlayerType() == 10 or player:GetPlayerType() == 31) then
+		and not isInGhostForm(player) then
 			sfx:Play(SoundEffect.SOUND_ULTRA_GREED_COIN_DESTROY, 1, 2, false, 1, 0)
 			CustomData.Trinkets.GREEDSHEART = "CoinHeartEmpty"
 			Entity:TakeDamage(1, DamageFlag.DAMAGE_FAKE, EntityRef(Entity), 24)
@@ -2531,7 +2579,8 @@ function rplus:usePill(pillEffect, Player, _)
 		end
 	end
 	
-	if pillEffect == Pills.PHANTOM and CustomData then
+	if pillEffect == Pills.PHANTOM and CustomData 
+	and not isInGhostForm(Player) then
 		CustomData.Pills.PHANTOM.Data = true
 		CustomData.Pills.PHANTOM.NumProcs = 0
 		CustomData.Pills.PHANTOM.UseFrame = game:GetFrameCount()
@@ -2570,7 +2619,7 @@ if EID then
 	EID:addCollectible(Collectibles.CHERRYFRIENDS, "Killing an enemy has a 20% chance to drop cherry familiar on the ground #Those cherries emit a charming fart when an enemy walks over them, and drop half a heart when a room is cleared")
 	EID:addCollectible(Collectibles.BLACKDOLL, "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal half of that damage to another enemy in that pair")
 	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into invincible ghost and a bird flies out of room center in a random direction. Catching the bird in 5 seconds will save you and get you back to your death spot, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it harder to catch her")
-	EID:addCollectible(Collectibles.ENRAGEDSOUL, "Double tap shooting button to launch a ghost familiar in the direction you are firing #The ghost will latch onto the first enemy it collides with, dealing damage over time for 7 seconds or until that enemy is killed #The ghost can latch onto bosses aswell #{{Warning}} Has a 7 seconds cooldown")
+	EID:addCollectible(Collectibles.ENRAGEDSOUL, "Double tap shooting button to launch a ghost familiar in the direction you are firing #The ghost will latch onto the first enemy it collides with, dealing damage over time for 7 seconds or until that enemy is killed #The ghost's damage per hit starts at 7 and increases each floor #The ghost can latch onto bosses aswell #{{Warning}} Has a 7 seconds cooldown")
 	EID:addCollectible(Collectibles.CEREMDAGGER, "{{ArrowDown}} Damage x0.85 #When shooting, 5% chance to launch a dagger that does no damage, but inflicts bleed on enemies #All enemies that die while bleeding will drop Sacrificial Blood Consumable that gives you temporary DMG up")
 	EID:addCollectible(Collectibles.CEILINGSTARS, "Grants you two Lemegeton wisps at the beginning of each floor and when sleeping in bed")
 	EID:addCollectible(Collectibles.QUASAR, "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed")
@@ -2608,7 +2657,7 @@ if EID then
 	EID:addCard(PocketItems.BAGTISSUE, "All pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight; the item of such quality is then spawned #The most valuable pickups are the rarest ones, e.g. {{EthernalHeart}} Eternal hearts or {{Battery}} Mega batteries #{{Warning}} If used in a room with less then 8 pickups, no item will spawn!")
 	EID:addCard(PocketItems.RJOKER, "Teleports Isaac to a {{SuperSecretRoom}} Black Market")
 	EID:addCard(PocketItems.REVERSECARD, "Invokes the effect of Glowing Hourglass")
-	EID:addCard(PocketItems.LOADEDDICE, "{{ArrowUp}}  grants 10 Luck for the current room")
+	EID:addCard(PocketItems.LOADEDDICE, "{{ArrowUp}} Grants +10 Luck for the current room")
 	EID:addCard(PocketItems.BEDSIDEQUEEN, "Spawns 1-12 random {{Key}} keys #There is a small chance to spawn a charged key")
 	EID:addCard(PocketItems.QUEENOFCLUBS, "Spawns 1-12 random {{Bomb}} bombs #There is a small chance to spawn a double-pack bomb")
 	EID:addCard(PocketItems.JACKOFCLUBS, "Bombs will drop more often from clearing rooms for current floor, and the average quality of bombs is increased")
@@ -2653,7 +2702,7 @@ if EID then
 	EID:addCollectible(Collectibles.CHEESEGRATER, "Remueve un contenedor de corazón rojo y otorga {{ArrowUp}} +0.5 de daño y 2 mini Isaacs", "Rayador de Queso", "spa")
 	EID:addCollectible(Collectibles.DNAREDACTOR, "Ahora las píldoras reciben efectos adicionales en base a su color", "Redactor de ADN", "spa")
 	EID:addCollectible(Collectibles.TOWEROFBABEL, "Destruye los obstáculos de la habitación y aplica confusión a los enemigos cercanos #Destroza las puertas y abre la entrada a Salas Secretas", "La Torre de Babel", "spa")
-	EID:addCollectible(Collectibles.BLESSOTDEAD, "Previene las maldiciones durante toda la partida #Si se previene una maldición recibes {{ArrowUp}} +0.5 de daño")
+	EID:addCollectible(Collectibles.BLESSOTDEAD, "Previene las maldiciones durante toda la partida #Si se previene una maldición recibes {{ArrowUp}} +0.5 de daño", "Bendición de los muertos", "spa")
 	EID:addCollectible(Collectibles.TOYTANKS, "Genera 2 tanques de juguete que rondan por la habitación y atacan a los enemigos dentro de su linea de visión #Tanque verde: Dispara balas rápidamente a los enemigos a gran distancia y es de movimiento rápido #Tanque rojo: Dispara cohetes a corto rango, de movimiento lento", "Tanquesitos", "spa")
 	EID:addCollectible(Collectibles.GUSTYBLOOD, "Matar a los enemigos te da {{ArrowUp}} más lágrimas y velocidad #Se resetea al entrar a una nueva habitación", "Sangre Tempestuosa", "spa")
 	EID:addCollectible(Collectibles.REDBOMBER, "+5 bombas #Ganas inmunidad a explosiones #Ahora puedes arrojar las bombas en vez de simplemente ponerlas en el suelo", "Bombardero Rojo", "spa")
@@ -2680,9 +2729,9 @@ if EID then
 	EID:addCard(PocketItems.KINGOFCLUBS, "Pierdes todas tus bombas y se genera un número proporcional a la cantidad perdida en recolectables#Se necesitan al menos 12 {{Bomb}} bombas para generar un trinket y al menos 28 para un objeto#Si Isaac tiene una {{GoldenBomb}} Bomba Dorada, Será removida y aumentará el valor de la recompensa significativamente", "Rey de Tréboles", "spa")
 	EID:addCard(PocketItems.KINGOFDIAMONDS, "Pierdes todas tus monedas y se genera un número proporcional a la cantidad perdida en recolectables#Se necesitan al menos 12 {{Coin}} monedas para generar un trinket y al menos 28 para un objeto", "Rey de Diamantes", "spa")
 	EID:addCard(PocketItems.BAGTISSUE, "Destruye todos los recolectables, y los ocho recolectables de mayor valor generarán un objeto con una calidad basada en el valor de los recolectables#Los recolectables con mayor valor son los más raros, por ejemplo:{{EthernalHeart}} Corazones Eternos o {{Battery}} Mega Baterías#{{Warning}} Si se usa en una habitación sin recolectables, no generará nada", "Bolsa de tela", "spa")
-	EID:addCard(PocketItems.RJOKER, "Teletransporta a Isaac a un {{SuperSecretRoom}} Mercado Negro")
+	EID:addCard(PocketItems.RJOKER, "Teletransporta a Isaac a un {{SuperSecretRoom}} Mercado Negro", "bufón?", "spa")
 	EID:addCard(PocketItems.REVERSECARD, "Activa el efecto de {{Collectible422}} Reloj de arena brillante", "¿Comodín?", "spa")
-	EID:addCard(PocketItems.LOADEDDICE, "{{ArrowUp}} +10 de suerte durante una habitación")
+	EID:addCard(PocketItems.LOADEDDICE, "{{ArrowUp}} +10 de suerte durante una habitación", "dado cargado", "spa")
 	EID:addCard(PocketItems.BEDSIDEQUEEN, "Genera 1-12 {{Key}} llaves#Hay una posibilidad de generar una Llave Cargada", "Reina de Espadas", "spa")
 	EID:addCard(PocketItems.QUEENOFCLUBS, "Genera 1-12 {{Bomb}} bombas#Hay una posibilidad de generar una bomba doble", "Reina de Tréboles", "spa")
 	EID:addCard(PocketItems.JACKOFCLUBS, "Se generarán más bombas al limpiar habitaciones, la calidad general de las bombas aumenta", "Jota de Tréboles", "spa")
@@ -2816,6 +2865,7 @@ if Encyclopedia then
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
 				{str = "Double tap shooting button to launch a ghost familiar in the direction you are firing"},
 				{str = "The ghost will latch onto the first enemy it collides with, dealing damage over time for 7 seconds or until that enemy is killed"},
+				{str = "The ghost's damage per hit starts at 7 and increases each floor"},
 				{str = "The ghost can latch onto bosses aswell"},
 				{str = "Has a 7 seconds cooldown, and a sound is played when the soul is ready to launch again"},
 			},
