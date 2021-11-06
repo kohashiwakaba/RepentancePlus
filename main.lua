@@ -2232,13 +2232,13 @@ function rplus:BombUpdate(Bomb)
 	and not Bomb:GetData()['isNewBomb'] 
 	and not Bomb.IsFetus then
 		if (Bomb.Variant == 0 or Bomb.Variant == 19) and Bomb.FrameCount == 1 then
-			local throwableBomb = Isaac.Spawn(5, 41, 0, player.Position, Vector.Zero, nil)
+			local throwableBomb = Isaac.Spawn(5, 41, 0, Bomb.SpawnerEntity:ToPlayer().Position, Vector.Zero, nil)
 			throwableBomb:GetSprite():Stop()
 			bombFlags = Bomb.Flags
 			Bomb:Remove()
 		elseif Bomb.Variant == 13 and Bomb.FrameCount == 45 then
 			--local newBomb = Isaac.Spawn(4, 0, 0, Bomb.Position, Bomb.Velocity, nil):ToBomb()
-			local newBomb = player:FireBomb(Bomb.Position, Bomb.Velocity, nil)
+			local newBomb = Bomb.SpawnerEntity:ToPlayer():FireBomb(Bomb.Position, Bomb.Velocity, nil)
 			newBomb:AddTearFlags(bombFlags)
 			newBomb:SetExplosionCountdown(1)
 			newBomb:GetData()['isNewBomb'] = true
