@@ -4,11 +4,11 @@
 	-->
 	
 	<!-- T.Isaac -->
-	<passive name="Ordinary Life" description="Tears up + you feel nostalgic" gfx="01_ordinarylife.png" quality="4" cache="firedelay" />
+	<passive id="8" name="Ordinary Life" description="Tears up + you feel nostalgic" gfx="01_ordinarylife.png" quality="4" cache="firedelay" />
 	<trinket name="Basement Key" description="Open your memories" gfx="t01_basementkey.png" />
 	<active name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="03_rubikscube.png" quality="0" maxcharges="2" />
 	<active name="Magic Cube" description="Did you set the world record?" gfx="04_magiccube.png" quality="4" maxcharges="4" />  
-	<passive id="7" name="Red Bomber" description="Can't hold 'em! +5 bombs" gfx="23_redbomber.png" quality="3" />
+	<passive id="7" bombs="5" name="Red Bomber" description="Can't hold 'em! +5 bombs" gfx="23_redbomber.png" quality="3" />
 	
 	<!-- T.Maggy -->
 	<active name="Cookie Cutter" description="Cut your hearts!" gfx="05_cookiecutter.png" quality="1" maxcharges="0"/>
@@ -31,7 +31,7 @@
 	<passive name="Bless of the Dead" description="What doesn't kill you makes you stronger" gfx="21_blessofthedead.png" quality="3" />
 
 	<!-- T. Eve -->
-	<passive name="A Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="2" />
+	<passive name="A Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="2" cache="flying" />
 	<trinket name="Adam's Rib" description="Children of God" gfx="t13_adamsrib.png" />
 	<active name="Tower of Babel" description="Divine wraith" gfx="19_towerofbabel.png" quality="2" maxcharges="6" />
 
@@ -52,7 +52,7 @@
 	<trinket name="Eden's Lock" description="???" gfx="t12_edenslock.png" />
 	
 	<!-- T. Lost -->
-	<familiar name="Zen Baby" description="He sees everything" gfx="15_zenbaby.png" quality="3" tags="baby angel" />
+	<familiar name="Cherubim" description="He sees all" gfx="15_zenbaby.png" quality="3" tags="baby angel" />
 	<trinket name="A Piece of Chalk" description="Stay out, unholy!" gfx="t09_pieceofchalk.png" />
 	
 	<!-- T. Keeper -->
@@ -60,14 +60,14 @@
 	<passive name="2+1" description="Limited Offer!!!" gfx="12_2+1.png" quality="2" />
 	
 	<!-- T. Apollyon -->
-	<passive id="5" name="Sinner's Heart" description="DMG up + Homing tears + shot speed down" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2" />
+	<passive id="5" blackhearts="4" name="Sinner's Heart" description="DMG up + Homing tears + shot speed down" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2" />
 	<passive name="Red Map" description="All secrets are unveiled to you" gfx="18_redmap.png" quality="3" />
 	
 	<!-- T. Forgor -->
 	<passive name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="2" devilprice="1" />
 	
 	<!-- T. Bethany -->
-	<passive id="4" name="Ceiling With the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
+	<passive id="4" name="Ceiling with the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
 	<active name="Quasar" description="Cosmic wisdom" gfx="33_quasar.png" quality="4" devilprice="2" maxcharges="6" />
 	
 	<!-- T. Jacob -->

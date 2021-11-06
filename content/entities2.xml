@@ -53,7 +53,7 @@
 <entity anm2path="003.210_bagotrash.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Bag O' Trash" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2100">
 	</entity>
 
-<entity anm2path="003.211_zenbaby.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Zen Baby" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2101">
+<entity anm2path="003.211_zenbaby.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Cherubim" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2101">
 	</entity>
 
 <entity anm2path="003.212_cherry.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Cherry" numGridCollisionPoints="24" shadowSize="14" stageHP="0" variant="2102" subtype="1">
