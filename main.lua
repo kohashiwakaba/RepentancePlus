@@ -11,7 +11,7 @@
 
 local game = Game()
 local rplus = RegisterMod("repentanceplus", 1)
-local MOD_VERSION = 1.11
+local MOD_VERSION = 1.13
 local sfx = SFXManager()
 local music = MusicManager()
 local CustomData
@@ -93,12 +93,12 @@ Collectibles = {
 	BLACKDOLL = Isaac.GetItemIdByName("Black Doll"),
 	BIRDOFHOPE = Isaac.GetItemIdByName("A Bird of Hope"),
 	ENRAGEDSOUL = Isaac.GetItemIdByName("Enraged Soul"),
-	CEREMDAGGER = Isaac.GetItemIdByName("Ceremonial Blade"),		-- LIMITED SECONDARY PLAYERS FUNCTIONALITY
+	CEREMDAGGER = Isaac.GetItemIdByName("Ceremonial Blade"),
 	CEILINGSTARS = Isaac.GetItemIdByName("Ceiling with the Stars"),
 	QUASAR = Isaac.GetItemIdByName("Quasar"),
 	TWOPLUSONE = Isaac.GetItemIdByName("2+1"),
 	REDMAP = Isaac.GetItemIdByName("Red Map"),
-	CHEESEGRATER = Isaac.GetItemIdByName("Cheese Grater"),			-- MINOR COMPATIBILITY ISSUES
+	CHEESEGRATER = Isaac.GetItemIdByName("Cheese Grater"),
 	DNAREDACTOR = Isaac.GetItemIdByName("DNA Redactor"),
 	TOWEROFBABEL = Isaac.GetItemIdByName("Tower of Babel"),
 	BLESSOTDEAD = Isaac.GetItemIdByName("Bless of the Dead"),
@@ -111,15 +111,15 @@ Trinkets = {
 	BASEMENTKEY = Isaac.GetTrinketIdByName("Basement Key"),
 	KEYTOTHEHEART = Isaac.GetTrinketIdByName("Key to the Heart"),
 	TRICKPENNY = Isaac.GetTrinketIdByName("Trick Penny"),
-	JUDASKISS = Isaac.GetTrinketIdByName("Judas' Kiss"),			-- MINOR COMPATIBILITY ISSUES
+	JUDASKISS = Isaac.GetTrinketIdByName("Judas' Kiss"),
 	SLEIGHTOFHAND = Isaac.GetTrinketIdByName("Sleight of Hand"),
-	GREEDSHEART = Isaac.GetTrinketIdByName("Greed's Heart"),		-- MINOR COMPATIBILITY ISSUES
+	GREEDSHEART = Isaac.GetTrinketIdByName("Greed's Heart"),
 	ANGELSCROWN = Isaac.GetTrinketIdByName("Angel's Crown"),
 	CHALKPIECE = Isaac.GetTrinketIdByName("A Piece of Chalk"),
-	MAGICSWORD = Isaac.GetTrinketIdByName("Magic Sword"),			-- MINOR COMPATIBILITY ISSUES
+	MAGICSWORD = Isaac.GetTrinketIdByName("Magic Sword"),
 	WAITNO = Isaac.GetTrinketIdByName("Wait, No!"),
-	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),			-- MINOR COMPATIBILITY ISSUES
-	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),				-- MINOR COMPATIBILITY ISSUES
+	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),
+	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),
 	NIGHTSOIL = Isaac.GetTrinketIdByName("Night Soil")
 }
 
@@ -143,7 +143,7 @@ PocketItems = {
 	BEDSIDEQUEEN = Isaac.GetCardIdByName("Bedside Queen"),
 	QUASARSHARD = Isaac.GetCardIdByName("Quasar Shard"),
 	BUSINESSCARD = Isaac.GetCardIdByName("Business Card"),
-	SACBLOOD = Isaac.GetCardIdByName("Sacrificial Blood"),			-- MINOR COMPATIBILITY ISSUES
+	SACBLOOD = Isaac.GetCardIdByName("Sacrificial Blood"),
 	FLYPAPER = Isaac.GetCardIdByName("Flypaper"),
 	LIBRARYCARD = Isaac.GetCardIdByName("Library Card"),
 	MOMSID = Isaac.GetCardIdByName("Mom's ID"),
@@ -431,9 +431,9 @@ DIRECTION_VECTOR_SIMPLIFIED = {
 	Vector(1, 0)
 }						
 
-								---------------------
-								-- LOCAL FUNCTIONS --
-								---------------------
+						----------------------
+						-- HELPER FUNCTIONS --
+						----------------------
 --[[
 -- Helpers for rendering unlock papers
 local function Unlock(checkmark)
@@ -587,12 +587,13 @@ function isInGhostForm(player)
 	player:GetPlayerType() == 39 or
 	player:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE))	-- after touching the white fire
 end								
-								
-								-- GLOBAL FUNCTIONS --
-								----------------------
 
-						-- GAME STARTED --											
-						------------------
+						-----------------------------
+						-- CALLBACK TIED FUNCTIONS --
+						-----------------------------
+
+						-- MC_POST_GAME_STARTED --											
+						--------------------------
 function rplus:OnGameStart(Continued)
 	--[[
 	if Isaac.HasModData(rplus) then
@@ -638,10 +639,10 @@ function rplus:OnGameStart(Continued)
 				TORNPAGE = {SomeBookFlags = nil}
 			},
 			Pills = {
-				LAXATIVE = {LaxUseFrame = nil},
+				LAXATIVE = {UseFrame = nil},
 				YUCK = {UseFrame = -900},
 				YUM = {NumLuck = 0, NumDamage = 0, NumShotSpeed = 0, NumTears = 0, UseFrame = -900},
-				PHANTOM = {Data = false, UseFrame = -900, NumProcs = 0}
+				PHANTOM = {UseFrame = -900}
 			}
 		}
 		
@@ -662,8 +663,8 @@ function rplus:OnGameStart(Continued)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
 						
-						-- PRE GAME EXIT --											
-						-------------------
+						-- MC_PRE_GAME_EXIT --											
+						----------------------
 function rplus:PreGameExit(ShouldSave)
 	if ShouldSave then
 		Isaac.SaveModData(rplus, json.encode(CustomData, "CustomData"))
@@ -671,8 +672,8 @@ function rplus:PreGameExit(ShouldSave)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, rplus.PreGameExit)
 
-						-- ON COMMAND EXECUTE --											
-						------------------------
+						-- MC_EXECUTE_CMD --											
+						--------------------
 function rplus:OnCommandExecute(command, args)
 	if command == 'hide' then
 		hideErrorMessage = true
@@ -683,8 +684,8 @@ function rplus:OnCommandExecute(command, args)
 end
 rplus:AddCallback(ModCallbacks.MC_EXECUTE_CMD, rplus.OnCommandExecute)
 
-						-- EVERY NEW LEVEL --										
-						---------------------
+						-- MC_POST_NEW_LEVEL --										
+						-----------------------
 function rplus:OnNewLevel()
 	local level = game:GetLevel()
 	
@@ -726,8 +727,8 @@ function rplus:OnNewLevel()
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rplus.OnNewLevel)
 
-						-- EVERY NEW ROOM --										
-						--------------------
+						-- MC_POST_NEW_ROOM --										
+						----------------------
 function rplus:OnNewRoom()
 	local level = game:GetLevel()
 	local room = game:GetRoom()
@@ -812,6 +813,13 @@ function rplus:OnNewRoom()
 		
 		if player:HasCollectible(Collectibles.TWOPLUSONE) and CustomData then
 			CustomData.Items.TWOPLUSONE.ItemsBought_HEARTS = 0
+			if CustomData.Items.TWOPLUSONE.ItemsBought_COINS == 0 then
+				for _, pickup in pairs(Isaac.FindByType(5, -1, -1, false, false)) do
+					if pickup:ToPickup().Price == 1 then
+						pickup:ToPickup().AutoUpdatePrice = true
+					end
+				end
+			end
 		end
 		
 		if player:HasCollectible(Collectibles.GUSTYBLOOD) then
@@ -834,8 +842,8 @@ function rplus:OnNewRoom()
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
 
-						-- ACTIVE ITEM USED --										
-						----------------------
+						-- MC_USE_ITEM --										
+						-----------------
 function rplus:OnItemUse(ItemUsed, _, Player, _, _, _)
 	local level = game:GetLevel()
 	local room = game:GetRoom()
@@ -918,8 +926,8 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, _, _)
 end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
 
-						-- EVERY FRAME --											
-						-----------------
+						-- MC_POST_UPDATE --											
+						--------------------
 function rplus:OnFrame()
 	local room = game:GetRoom()
 	local level = game:GetLevel()
@@ -1096,17 +1104,20 @@ function rplus:OnFrame()
 			end
 		end
 		
-		if CustomData and CustomData.Pills.LAXATIVE.LaxUseFrame and player:GetData()['pill'] == "used lax" then
-			if game:GetFrameCount() <= CustomData.Pills.LAXATIVE.LaxUseFrame + 90 and game:GetFrameCount() % 4 == 0 then
-				local vector = Vector.FromAngle(DIRECTION_VECTOR[player:GetMovementDirection()]:GetAngleDegrees() + math.random(-30, 30)):Resized(-7.5)
+		if CustomData and CustomData.Pills.LAXATIVE.UseFrame and game:GetFrameCount() % 4 == 0 then
+			if (game:GetFrameCount() <= CustomData.Pills.LAXATIVE.UseFrame + 90 and player:GetData()['usedLax'])
+			or (game:GetFrameCount() <= CustomData.Pills.LAXATIVE.UseFrame + 360 and player:GetData()['usedHorseLax']) then
+				local vector = Vector.FromAngle(DIRECTION_VECTOR[player:GetMovementDirection()]:GetAngleDegrees() + math.random(-15, 15)):Resized(-7.5)
 				local SCorn = Isaac.Spawn(2, 0, 0, player.Position, vector, nil):GetSprite()
 				
 				SCorn:Load("gfx/002.122_corn_tear.anm2", true)
 				SCorn:Play("Big0" .. math.random(4))
-				SCorn.Scale = Vector(0.75, 0.75)
-			elseif game:GetFrameCount() > CustomData.Pills.LAXATIVE.LaxUseFrame + 90 then
-				CustomData.Pills.LAXATIVE.LaxUseFrame = nil
-				player:GetData()['pill'] = nil
+				cornScale = math.random(5, 10) / 10
+				SCorn.Scale = Vector(cornScale, cornScale)
+			else
+				CustomData.Pills.LAXATIVE.UseFrame = nil
+				player:GetData()['usedLax'] = false
+				player:GetData()['usedHorseLax'] = false
 			end
 		end
 		
@@ -1119,13 +1130,19 @@ function rplus:OnFrame()
 			end
 		end
 		
-		if CustomData and CustomData.Pills.PHANTOM.Data then
-			if (game:GetFrameCount() - CustomData.Pills.PHANTOM.UseFrame) % 600 == 1 then
+		if CustomData and CustomData.Pills.PHANTOM.UseFrame and (game:GetFrameCount() - CustomData.Pills.PHANTOM.UseFrame) % 600 == 1 then
+			if game:GetFrameCount() <= CustomData.Pills.PHANTOM.UseFrame + 1300 
+			and (player:GetData()['usedPhantom'] or player:GetData()['usedHorsePhantom']) then
 				player:TakeDamage(1, DamageFlag.DAMAGE_FAKE | DamageFlag.DAMAGE_NO_PENALTIES, EntityRef(player), 24)
-				CustomData.Pills.PHANTOM.NumProcs = CustomData.Pills.PHANTOM.NumProcs + 1
-				if CustomData.Pills.PHANTOM.NumProcs == 3 then
-					CustomData.Pills.PHANTOM.Data = false 
+				if player:GetData()['usedHorsePhantom'] then
+					for angle = 0, 360, 45 do
+						local boneTear = player:FireTear(player.Position, Vector.FromAngle(angle):Resized(7.5), false, true, false, player, 1)
+						boneTear:ChangeVariant(TearVariant.BONE)
+					end
 				end
+			else
+				player:GetData()['usedPhantom'] = false
+				player:GetData()['usedHorsePhantom'] = false
 			end
 		end
 		
@@ -1140,8 +1157,8 @@ function rplus:OnFrame()
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
-						-- POST PLAYER UPDATE --									
-						------------------------
+						-- MC_POST_PLAYER_UPDATE --									
+						---------------------------
 function rplus:PostPlayerUpdate(Player)
 	local level = game:GetLevel()
 	
@@ -1283,7 +1300,7 @@ function rplus:PostPlayerUpdate(Player)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate, 0)
 
-						-- POST RENDERING --										
+						-- MC_POST_RENDER --										
 						--------------------
 function rplus:OnGameRender()
 	local level = game:GetLevel()
@@ -1365,8 +1382,8 @@ function rplus:OnGameRender()
 end
 rplus:AddCallback(ModCallbacks.MC_POST_RENDER, rplus.OnGameRender)
 
-						-- WHEN NPC DIES --											
-						-------------------
+						-- MC_POST_NPC_DEATH --											
+						-----------------------
 function rplus:OnNPCDeath(NPC)
 	local level = game:GetLevel()
 	local room = game:GetRoom()
@@ -1399,8 +1416,8 @@ function rplus:OnNPCDeath(NPC)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 
-						-- ON PICKUP INIT -- 										
-						--------------------
+						-- MC_POST_PICKUP_INIT -- 										
+						-------------------------
 function rplus:OnPickupInit(Pickup)	
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
@@ -1429,8 +1446,8 @@ function rplus:OnPickupInit(Pickup)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, rplus.OnPickupInit)
 
-						-- ON USING CARD -- 										
-						-------------------
+						-- MC_USE_CARD -- 										
+						-----------------
 function rplus:CardUsed(Card, Player, _)	
 	if Card == PocketItems.RJOKER then
 		game:StartRoomTransition(-6, -1, RoomTransitionAnim.TELEPORT, Player, -1)
@@ -1673,8 +1690,8 @@ function rplus:CardUsed(Card, Player, _)
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 
-						-- ON PICKUP COLLISION --									
-						-------------------------
+						-- MC_PRE_PICKUP_COLLISION --									
+						-----------------------------
 function rplus:PickupCollision(Pickup, Collider, _)	
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
@@ -1706,11 +1723,9 @@ function rplus:PickupCollision(Pickup, Collider, _)
 			then
 				if CustomData.Items.TWOPLUSONE.ItemsBought_COINS == 2 then
 					CustomData.Items.TWOPLUSONE.ItemsBought_COINS = 0
-					for _, entity in pairs(Isaac.GetRoomEntities()) do
-						if entity.Type == 5 then
-							if entity:ToPickup().Price == 1 then
-								entity:ToPickup().AutoUpdatePrice = true
-							end
+					for _, pickup in pairs(Isaac.FindByType(5, -1, -1, false, false)) do
+						if pickup:ToPickup().Price == 1 then
+							pickup:ToPickup().AutoUpdatePrice = true
 						end
 					end
 				else
@@ -1719,16 +1734,20 @@ function rplus:PickupCollision(Pickup, Collider, _)
 			end
 		end
 		
-		if Pickup.Variant == 10 and player:CanPickRedHearts()
-		and Collider.Type == 1  
+		if Pickup.Variant == 10 and player:CanPickRedHearts() and Collider.Type == 1  
 		and (Pickup.SubType == 1 or Pickup.SubType == 2 or Pickup.SubType == 5 or Pickup.SubType == 12) then
-			if (game:GetFrameCount() - CustomData.Pills.YUCK.UseFrame) <= 900 then
+			if ((game:GetFrameCount() - CustomData.Pills.YUCK.UseFrame) <= 900 and player:GetData()['usedYuck'])
+			or ((game:GetFrameCount() - CustomData.Pills.YUCK.UseFrame) <= 1800 and player:GetData()['usedHorseYuck']) then
 				for i = 1, math.random(3) do 
 					Isaac.Spawn(3, FamiliarVariant.BLUE_FLY, 0, player.Position, Vector.Zero, nil) 
 				end
+			else
+				player:GetData()['usedHorseYuck'] = false
+				player:GetData()['usedYuck'] = false
 			end
 			
-			if (game:GetFrameCount() - CustomData.Pills.YUM.UseFrame) <= 900 then
+			if ((game:GetFrameCount() - CustomData.Pills.YUM.UseFrame) <= 900 and player:GetData()['usedYum'])
+			or ((game:GetFrameCount() - CustomData.Pills.YUM.UseFrame) <= 1800 and player:GetData()['usedHorseYum']) then
 				YumStat = math.random(4)
 				if YumStat == 1 then -- damage
 					player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
@@ -1748,14 +1767,17 @@ function rplus:PickupCollision(Pickup, Collider, _)
 					player:GetData()['GetYumLuck'] = true
 				end
 				player:EvaluateItems()
+			else
+				player:GetData()['usedHorseYum'] = false
+				player:GetData()['usedYum'] = false
 			end
 		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.PickupCollision)
 
-						-- ON UPDATING PICKUPS --									
-						-------------------------
+						-- MC_POST_PICKUP_UPDATE --									
+						---------------------------
 function rplus:PickupUpdate(Pickup)
 	if Pickup.Type == 5 and Pickup.Variant == 100 and Pickup.SpawnerVariant == 392 then
 		for i = 3, 5 do 
@@ -1766,8 +1788,8 @@ function rplus:PickupUpdate(Pickup)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, rplus.PickupUpdate)
 
-						-- ON TEAR UPDATE --
-						--------------------
+						-- MC_POST_TEAR_UPDATE --
+						-------------------------
 function rplus:OnTearUpdate(Tear)
 	if Tear.Variant == TearVariants.CEREMDAGGER then
 		local TX = Tear.Velocity:Normalized().X
@@ -1801,8 +1823,8 @@ function rplus:OnTearUpdate(Tear)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
 
-						-- ON TEAR INIT --											
-						------------------
+						-- MC_POST_TEAR_INIT --											
+						-----------------------
 function rplus:OnTearInit(Tear)
 	-- if Tear.Parent then local player = Tear.Parent:ToPlayer() end
 	local player = Isaac.GetPlayer(0)
@@ -1818,8 +1840,8 @@ function rplus:OnTearInit(Tear)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, rplus.OnTearInit)
 
-						-- UPDATING CACHE --							
-						--------------------
+						-- MC_EVALUATE_CACHE --							
+						-----------------------
 function rplus:UpdateStats(Player, Flag) 
 	-- If any Stat-Changes are done, just check for the collectible in the cacheflag (be sure to set the cacheflag in the items.xml)
 	if Flag == CacheFlag.CACHE_DAMAGE then
@@ -1937,8 +1959,8 @@ function rplus:UpdateStats(Player, Flag)
 end
 rplus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, rplus.UpdateStats)
 
-						-- ENTITY TAKES DAMAGE --									
-						-------------------------
+						-- MC_ENTITY_TAKE_DMG --									
+						------------------------
 function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)	
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
@@ -2050,7 +2072,7 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
 
-						-- ON FAMILIAR INIT --										
+						-- MC_FAMILIAR_INIT --										
 						----------------------
 function rplus:TrashBagInit(Familiar)
 	CustomData.Items.BAGOTRASH.Levels = 1
@@ -2082,7 +2104,7 @@ end
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.ToyTanksInit, Familiars.TOYTANK1)
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.ToyTanksInit, Familiars.TOYTANK2)
 
-						-- ON FAMILIAR UPDATE --	 								
+						-- MC_FAMILIAR_UPDATE --	 								
 						------------------------
 function rplus:TrashBagUpdate(Familiar)
 	Familiar:FollowParent()
@@ -2203,8 +2225,8 @@ end
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.ToyTanksUpdate, Familiars.TOYTANK1)
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.ToyTanksUpdate, Familiars.TOYTANK2)
 
-						-- BOMB UPDATE --									
-						-----------------
+						-- MC_POST_BOMB_UPDATE --									
+						-------------------------
 -- helper function for pointing toy tank's rockets in a right direction
 function rplus:TankRocketUpdate(rocket)
   if rocket:GetData().forcedRocketTargetVel then
@@ -2239,8 +2261,8 @@ function rplus:BombUpdate(Bomb)
 end
 rplus:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, rplus.BombUpdate)
 
-						-- FAMILIAR COLLISION --									
-						------------------------
+						-- MC_PRE_FAMILIAR_COLLISION --									
+						-------------------------------
 function rplus:CherryCollision(Familiar, Collider, _)
 	if Collider:IsActiveEnemy(true) and not Collider:IsBoss() and game:GetFrameCount() % 10 == 0 then
 		game:CharmFart(Familiar.Position, 10.0, Familiar)
@@ -2281,8 +2303,8 @@ function rplus:SoulCollision(Familiar, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.SoulCollision, Familiars.SOUL)
 
-						-- PROJECTILE COLLISION --									
-						--------------------------
+						-- MC_PRE_PROJECTILE_COLLISION --									
+						---------------------------------
 function rplus:ProjectileCollision(Projectile, Collider, _)
 	if Collider.Variant == Familiars.BAGOTRASH then
 		Projectile:Remove()
@@ -2300,9 +2322,8 @@ function rplus:ProjectileCollision(Projectile, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, rplus.ProjectileCollision)
 
-						-- TEAR COLLISION --										
-						--------------------
-						
+						-- MC_PRE_TEAR_COLLISION --										
+						---------------------------					
 -- made specifically for antimaterial card, jeez
 function rplus:TearCollision(Tear, Collider, _)
 	if Collider:IsVulnerableEnemy() and not Collider:IsBoss() then
@@ -2311,8 +2332,8 @@ function rplus:TearCollision(Tear, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_TEAR_COLLISION, rplus.TearCollision, TearVariants.ANTIMATERIALCARD)
 
-						-- PLAYER COLLISION --										
-						----------------------
+						-- MC_PRE_PLAYER_COLLISION --										
+						-----------------------------
 function rplus:playerCollision(Player, Collider, _)
 	if Collider.Variant == PickUps.SCARLETCHEST and Collider.SubType == 0 then
 		Collider.SubType = 1
@@ -2401,8 +2422,8 @@ function rplus:playerCollision(Player, Collider, _)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, rplus.playerCollision, 0)
 
-						-- PRE ROOM CLEAR AWARD SPAWN --							
-						--------------------------------
+						-- MC_PRE_SPAWN_CLEAN_AWARD --							
+						------------------------------
 function rplus:PickupAwardSpawn(_, Pos)
 	local room = game:GetRoom()
 	local level = game:GetLevel()
@@ -2485,10 +2506,18 @@ function rplus:PickupAwardSpawn(_, Pos)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
 
-						-- ON USING PILL --	
-						-------------------
-function rplus:usePill(pillEffect, Player, _)	
-	if pillEffect == Pills.ESTROGEN then
+						-- MC_USE_PILL --	
+						-----------------
+function rplus:usePill(pillEffect, Player, _)
+	-- a way to distinguish the "horse-ness" of the pill:
+	-- if the player holds a horse pill in the main slot at the moment of using the pill,
+	-- it is most likely a horse pill (thanks API)
+	local pillColor = game:GetItemPool():ForceAddPillEffect(pillEffect)
+	if Player:GetPill(0) >= 2048 then 
+		pillColor = pillColor + 2048 
+	end
+		
+	if pillEffect == Pills.ESTROGEN then	-- no horse bonus effects
 		sfx:Play(SoundEffect.SOUND_MEAT_JUMPS, 1, 2, false, 1, 0)
 		local BloodClots = Player:GetHearts() - 2 
 		
@@ -2499,21 +2528,18 @@ function rplus:usePill(pillEffect, Player, _)
 	end
 	
 	if pillEffect == Pills.LAXATIVE then
-		Player:GetData()['pill'] = "used lax"
-		CustomData.Pills.LAXATIVE.LaxUseFrame = game:GetFrameCount()
+		if pillColor < 2048 then
+			Player:GetData()['usedLax'] = true
+		else
+			Player:GetData()['usedHorseLax'] = true	-- increased duration for horse pill
+		end
+		CustomData.Pills.LAXATIVE.UseFrame = game:GetFrameCount()
 		sfx:Play(SoundEffect.SOUND_FART, 1, 2, false, 1, 0)
 		Player:AnimateSad()
 	end
 	
 	if Player:HasCollectible(Collectibles.DNAREDACTOR) then
-		local pillColor = game:GetItemPool():ForceAddPillEffect(pillEffect)
-		-- if the player holds a horse pill in the main slot at the moment of using the pill,
-		-- it is most likely a horse pill (thanks API)
-		if Player:GetPill(0) >= 2048 then 
-			pillColor = pillColor + 2048 
-		end
-
-		-- I honestly don't want to look at it ever again
+		-- I honestly don't want to look at this ever again
 		if pillColor % 2048 == PillColor.PILL_BLUE_BLUE then
 			Player:UseActiveItem(CollectibleType.COLLECTIBLE_CLICKER, true, true, false, false, -1)			-- change character
 		elseif pillColor == PillColor.PILL_WHITE_BLUE then
@@ -2577,20 +2603,33 @@ function rplus:usePill(pillEffect, Player, _)
 		end
 	end
 	
-	if pillEffect == Pills.PHANTOM and CustomData 
+	if pillEffect == Pills.PHANTOM and CustomData
 	and not isInGhostForm(Player) then
-		CustomData.Pills.PHANTOM.Data = true
-		CustomData.Pills.PHANTOM.NumProcs = 0
+		if pillColor < 2048 then
+			Player:GetData()['usedPhantom'] = true
+		else
+			Player:GetData()['usedHorsePhantom'] = true	-- taking fake damage will also cause to shoot 8 bone tears in all directions
+		end
 		CustomData.Pills.PHANTOM.UseFrame = game:GetFrameCount()
 	end
 	
 	if pillEffect == Pills.YUCK and CustomData then
-		Isaac.Spawn(5, 10, 12, Player.Position, Vector.Zero, nil)
+		if pillColor < 2048 then
+			Player:GetData()['usedYuck'] = true
+		else
+			Player:GetData()['usedHorseYuck'] = true	-- increased duration for horse pill
+		end
 		CustomData.Pills.YUCK.UseFrame = game:GetFrameCount()
+		Isaac.Spawn(5, 10, 12, Player.Position, Vector.Zero, nil)
 		sfx:Play(SoundEffect.SOUND_MEAT_JUMPS, 1, 2, false, 1, 0)
 	end
 	
 	if pillEffect == Pills.YUM and CustomData then
+		if pillColor < 2048 then
+			Player:GetData()['usedYum'] = true
+		else
+			Player:GetData()['usedHorseYum'] = true	-- increased duration for horse pill
+		end
 		CustomData.Pills.YUM.UseFrame = game:GetFrameCount()
 		Isaac.Spawn(5, 10, 1, Player.Position, Vector.Zero, nil)
 		sfx:Play(SoundEffect.SOUND_MEAT_JUMPS, 1, 2, false, 1, 0)
@@ -2598,9 +2637,9 @@ function rplus:usePill(pillEffect, Player, _)
 end
 rplus:AddCallback(ModCallbacks.MC_USE_PILL, rplus.usePill)
 
-								-----------------------------------------
-								--- EXTERNAL ITEM DESCRIPTIONS COMPAT ---
-								-----------------------------------------
+								----------------------------------
+								--- EXTERNAL ITEM DESCRIPTIONS ---
+								----------------------------------
 								
 if EID then
 	-- Enlish EID
@@ -2749,9 +2788,9 @@ if EID then
 	EID:addPill(Pills.YUM, "Genera un corazón rojo #Por, cada corazón rojo que consigas te dará un pequeño aumento permantente de estadísticas, Igual al efecto de {{Collectible671}} Corazón de Caramelo", "Mmm~", "spa")
 end
 
-								---------------------------
-								--- ENCYCLOPEDIA COMPAT ---
-								---------------------------
+								---------------------
+								--- ENCYCLOPEDIA  ---
+								---------------------
 
 if Encyclopedia then	
 	local ItemsWiki = {
@@ -3319,9 +3358,9 @@ if Encyclopedia then
 	end
 end
 
-								-----------------------------
-								--- SEWING MACHINE COMPAT ---
-								-----------------------------
+								----------------------
+								--- SEWING MACHINE ---
+								----------------------
 
 -- siraxtas actually said that the API for this mod is getting reworked soon-ish,
 -- so I won't mess with it for now
@@ -3336,6 +3375,20 @@ end
 --]]
 
 
+-- blacklisting some stuff for Sodom & Gomorrah characters
+if XalumMods.SodomAndGomorrah then
+	XalumMods.SodomAndGomorrah.AddBlacklistedSodomGomorrahItems({
+		Collectibles.CEILINGSTARS,
+		Collectibles.BIRDOFHOPE,
+		Collectibles.MARKCAIN
+	})
+	
+	XalumMods.SodomAndGomorrah.AddBlacklistedSodomGomorrahTrinkets({
+		Trinkets.KEYTOTHEHEART,
+		Trinkets.TRICKPENNY,
+		Trinkets.ADAMSRIB
+	})
+end
 
 
 
