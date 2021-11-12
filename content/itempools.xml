@@ -10,12 +10,14 @@
 		<item Name="Tank Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Gusty Blood" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Red Bomber" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="A Cat in the Box" Weight="1" DecreaseBy="1" RemoveOn="0.5" />
 	</Pool>
 	<Pool Name="shop">
-		<Item Name="Ceiling With the Stars" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Ceiling with the Stars" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="2+1" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Red Map" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Cheese Grater" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Mother's Love" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="boss">
 		<Item Name="Ordinary Life" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
@@ -30,7 +32,7 @@
 		<Item Name="Gusty Blood" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="angel">
-		<Item Name="Zen Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Cherubim" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="A Bird of Hope" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Quasar" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Book of Genesis" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -43,7 +45,7 @@
 		<Item Name="Bless of the Dead" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="library">
-		<Item Name="Book of Genesis" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Book of Genesis" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 	</Pool>
 	<Pool Name="goldenChest">
 		
@@ -53,6 +55,7 @@
 	</Pool>
 	<Pool Name="beggar">
 		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Mother's Love" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="demonBeggar">
 		<Item Name="Cookie Cutter" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -86,7 +89,7 @@
 		<Item Name="Ordinary Life" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 	</Pool>
 	<Pool Name="babyShop">
-		<Item Name="Zen Baby" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
+		<Item Name="Cherubim" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<item Name="Tank Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
@@ -95,5 +98,15 @@
 	</Pool>
 	<Pool Name="rottenBeggar">
 		
+	</Pool>
+	<Pool Name="ultraSecret">
+		<Item Name="Cherry Friends" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
+		<Item Name="Gusty Blood" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
+		<Item Name="Red Bomber" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
+		<Item Name="Red Map" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
+		<Item Name="Mother's Love" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
+		<Item Name="The Mark of Cain" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
+		<Item Name="Quasar" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
+		<Item Name="Temper Tantrum" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
 	</Pool>
 </ItemPools>

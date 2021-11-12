@@ -43,19 +43,24 @@
 	
 	<!-- T. Lazarus -->
 	<passive name="DNA Redactor" description="It runs in your genes" gfx="20_dnaredactor.png" quality="3" /> 
+	<passive name="A Cat in the Box" description="(DEAD + ALIVE) / 2" gfx="36_catinabox.png" quality="3" tags="guppy" />
+	<trinket name="Torn Page" description="There's gold in them books!" gfx="t15_tornpage.png" />
 	
 	<!-- T. Azazel -->
 	<trinket name="Angel's Crown" description="Patience is a virtue" gfx="t07_angelscrown.png" />
 	
 	<!-- T.Eden -->
 	<passive name="Magic Pen" description="I want to be an artist" gfx="14_magicpen.png" quality="1" /> 
-	<active name="Book of Genesis" description="Let there be light" gfx="37_bookofgenesis.png" quality="3" maxcharges="6" />
+	<active name="Book of Genesis" description="A new chapter" gfx="37_bookofgenesis.png" quality="4" maxcharges="12" tags="book" />
 	<trinket name="Eden's Lock" description="???" gfx="t12_edenslock.png" />
 	
 	<!-- T. Lost -->
 	<familiar name="Cherubim" description="He sees all" gfx="15_zenbaby.png" quality="3" tags="baby angel" />
 	<trinket name="A Piece of Chalk" description="Stay out, unholy!" gfx="t09_pieceofchalk.png" />
 	
+	<!-- T. Lilith -->
+	<passive name="Mother's Love" description="Feed them love" gfx="38_motherslove.png" quality="2" cache="damage luck firedelay speed range" />
+
 	<!-- T. Keeper -->
 	<trinket name="Greed's Heart" description="$$$" gfx="t06_greedsheart.png" />
 	<passive name="2+1" description="Limited Offer!!!" gfx="12_2+1.png" quality="2" />
@@ -66,6 +71,7 @@
 	
 	<!-- T. Forgor -->
 	<passive name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="2" devilprice="1" />
+	<trinket name="Bone Meal" description="Your bones grow stronger" gfx="t16_bonemeal.png" />
 	
 	<!-- T. Bethany -->
 	<passive id="4" name="Ceiling with the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
