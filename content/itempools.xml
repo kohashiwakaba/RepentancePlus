@@ -30,6 +30,7 @@
 		<Item Name="Ceremonial Blade" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Quasar" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Gusty Blood" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Blood Vessel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="angel">
 		<Item Name="Cherubim" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -65,6 +66,7 @@
 		<Item Name="Cookie Cutter" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="The Mark of Cain" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Black Doll" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Blood Vessel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="keyMaster">
 		
