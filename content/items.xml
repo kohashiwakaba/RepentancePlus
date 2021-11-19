@@ -53,7 +53,7 @@
 	
 	<!-- T.Eden -->
 	<passive name="Magic Pen" description="I want to be an artist" gfx="14_magicpen.png" quality="1" /> 
-	<active name="Book of Genesis" description="A new chapter" gfx="37_bookofgenesis.png" quality="4" maxcharges="12" tags="book" />
+	<active name="Book of Genesis" description="A new chapter" gfx="37_bookofgenesis.png" quality="4" maxcharges="6" tags="book" />
 	<trinket name="Eden's Lock" description="???" gfx="t12_edenslock.png" />
 	
 	<!-- T. Lost -->

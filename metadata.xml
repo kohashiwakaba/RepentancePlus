@@ -1,62 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-    <name>[REP] Repentance Plus - New Items, Trinkets and Pockets!</name>
-    <directory>repentanceplus</directory>
-    <id>2627014611</id>
-    <description>[h1]Welcome![/h1]
-Repentance+ is a mod that adds (for now):
-[list]
-    [*] [strike]23[/strike] 26 new items;
-    [*] 13 new trinkets;
-    [*] [strike]22[/strike] 25 new cards;
-    [*] [strike]2[/strike] 5 new pills;
-    [*] 1 new chest
-[/list] 
-into the game!
-
-This mod was designed to provide a more thorough Repentance experience, because it does what devs didn't want to do: brings [b]all remaining unlocks[/b], thematically fitting for tainted characters, into the game (awarding players new content for beating Greed mode, Boss Rush, Satan, Isaac and Blue Baby)!
-[i]Please note[/i] that all new content is currently available from the get-go and isn't locked behind any achievements; making an achievement system will be our last step, we want to implement the content first.
-[b]This mod doesn't unlock any vanilla achievement, and it won't even when the unlock system is introduced! [/b]
-
-[h2]Our little team[/h2]
-[list]
-    [*] Mr. SeemsGood - lead programmer
-    [*] erawalks - sprite artist and the man behind this whole idea for the mod (this mod exists only thanks to[url=https://www.reddit.com/r/bindingofisaac/comments/ommys1/had_the_idea_for_the_mod_but_then_i_realized_that/] this[/url] reddit post of his)
-    [*] Kartoschka - programmer
-    [*] people from our Discord server - small help with the code and organizing our work
-[/list] 
-
-[h2]Special thanks[/h2]
-[list]
-    [*] to Agent Cucco for her Red Map trinket mod, from where I learned some useful stuff for the Red Map item
-    [*] to Woufsauge for providing a guide on how to apply persistent player costumes and Isaac Lua API docs
-    [*] to KingBobson for his mod Run Continues Past Mother (the item we used this concept for was scrapped, so use his mod instead!)
-    [*] to Onyx and his Achievement System mod for helping us understand how to implement the unlocks system!
-    [*] to everyone from #modding-dev channel of Isaac Discord who helped create this mod!
-    [*] to reddit user u/pijon95 for[url=https://www.reddit.com/r/bindingofisaac/comments/oodrci/all_missing_tainted_character_unlocks/] this post[/url] with ideas for all unlocks (we used these great ideas for couple of items, namely Temper Tantrum, Cherry Friends and Enraged Soul)
-[/list]
-
-[h2]I found a bug![/h2]
-Please refer to Bug Report discussion section and submit the bug here. This mod is currently in beta-state, and in parallel to making new content, we will try to polish the existing pieces of the mod!
-Also feel free to write suggestions for the new content. Creative and original entries will make it into the mod!
-
-[h2]And don't forget to use EID (or Encyclopedia), yo![/h2]
-Going in blind is never cool, so download this great mod by Wofsauge to see the descriptions for our items, trinkets and pocket items HERE: 
-
-https://steamcommunity.com/sharedfiles/filedetails/?id=836319872
-
-Since version 1.7, our mod now supports (not fully) Spanish EID! Thanks to Discord user Kotry for that!
-Also, the mod now supports the Encyclopedia mod by Agent Cucco, so get it HERE:
-
-https://steamcommunity.com/sharedfiles/filedetails/?id=2376005362</description>
+    <name>!Repentance Plus - dev build</name>
+    <directory>repentance_plus_dev_build</directory>
+    <description></description>
     <version>1.14</version>
-    <visibility>Public</visibility>
-    <tag id="Lua"/>
-    <tag id="Items"/>
-    <tag id="Active Items"/>
-    <tag id="Trinkets"/>
-    <tag id="Pills"/>
-    <tag id="Cards"/>
-    <tag id="Pickups"/>
-    <tag id="Familiars"/>
 </metadata>
