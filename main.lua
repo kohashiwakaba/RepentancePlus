@@ -168,7 +168,9 @@ PocketItems = {
 	LIBRARYCARD = Isaac.GetCardIdByName("Library Card"),
 	MOMSID = Isaac.GetCardIdByName("Mom's ID"),
 	FUNERALSERVICES = Isaac.GetCardIdByName("Funeral Services"),
-	ANTIMATERIALCARD = Isaac.GetCardIdByName("Antimaterial Card")
+	ANTIMATERIALCARD = Isaac.GetCardIdByName("Antimaterial Card"),
+	FIENDFIRE = Isaac.GetCardIdByName("Fiend Fire"),
+	DEMONFORM = Isaac.GetCardIdByName("Demon Form")
 }
 
 PickUps = {
@@ -382,7 +384,8 @@ StatUps = {
 	MOTHERSLOVE_TEARS = 0.1,
 	MOTHERSLOVE_SPEED = 0.05,
 	MOTHERSLOVE_RANGE = 0.25,
-	NERVEPINCH_SPEED = -0.03
+	NERVEPINCH_SPEED = -0.03,
+	DEMONFORM_DAMAGE = 0.5
 }
 
 -- used by Bag Tissue
@@ -797,7 +800,8 @@ function rplus:OnGameStart(Continued)
 			},
 			Cards = {
 				JACK = nil,
-				SACBLOOD = {Data = false, NumUses = 0}
+				SACBLOOD = {Data = false, NumUses = 0},
+				DEMONFORM = {NumUses = 0, NumDamage = 0}
 			},
 			Trinkets = {
 				GREEDSHEART = "CoinHeartEmpty",
@@ -861,7 +865,9 @@ function rplus:OnNewLevel()
 		
 		if CustomData then
 			CustomData.Cards.JACK = nil
-			
+			CustomData.Cards.DEMONFORM.NumUses = 0
+			CustomData.Cards.DEMONFORM.NumDamage = 0
+			player:GetData()['usedDemonForm'] = false
 			CustomData.Items.CEILINGSTARS.SleptInBed = false
 			
 			if player:HasCollectible(Collectibles.BAGOTRASH) then
@@ -1080,6 +1086,11 @@ function rplus:OnNewRoom()
 					Item.ShopItemId = -13 * i
 				end
 			end
+		end
+		if player:GetData()['usedDemonForm'] == true and not room:IsClear() and room:IsFirstVisit() then
+			CustomData.Cards.DEMONFORM.NumDamage = CustomData.Cards.DEMONFORM.NumDamage + CustomData.Cards.DEMONFORM.NumUses
+			player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+			player:EvaluateItems()
 		end
 	end
 end
@@ -2076,6 +2087,58 @@ function rplus:CardUsed(Card, Player, _)
 		local antimaterialCardTear = Isaac.Spawn(2, TearVariants.ANTIMATERIALCARD, 0, Player.Position, DIRECTION_VECTOR[Player:GetMovementDirection()]:Resized(10), nil)
 		antimaterialCardTear:GetSprite():Play("Rotate")
 	end
+	if Card == PocketItems.FIENDFIRE then 
+		local Counter = 0
+		for i = 1, 300 do 
+			RandomPickup = math.random(3)
+			if RandomPickup == 1 and Player:GetNumCoins()>0 then
+				Player:AddCoins(-1)
+				Counter = Counter+1
+			elseif RandomPickup == 2 and Player:GetNumKeys()>0 then
+				Player:AddKeys(-1)
+				Counter = Counter+1
+			elseif RandomPickup == 3 and Player:GetNumBombs()>0 then
+				Player:AddBombs(-1)
+				Counter = Counter+1
+			end
+			if Counter==15 or Player:GetNumKeys()+Player:GetNumBombs()+Player:GetNumCoins()==0 then 
+				break 
+			end 
+		end
+		if Counter >= 1 and Counter <= 5 then 
+			for _, enemy in pairs(Isaac.GetRoomEntities()) do
+				if enemy:IsVulnerableEnemy() then 
+					enemy:TakeDamage(70, 1, EntityRef(Player), 0)
+					enemy:AddBurn(EntityRef(Player), 180, Player.Damage)
+				end
+			end
+		elseif  Counter >= 6 and Counter <= 10 then 
+			for _, enemy in pairs(Isaac.GetRoomEntities()) do
+				if enemy:IsVulnerableEnemy() then 
+					enemy:TakeDamage(140, 1, EntityRef(Player), 0) 
+					enemy:AddEntityFlags(EntityFlag.FLAG_BURN) 
+					enemy:AddBurn(EntityRef(Player), 360, 2 * Player.Damage)
+				end
+			end
+			for g = 1, room:GetGridSize() do
+				if room:GetGridEntity(g) then room:GetGridEntity(g):Destroy() end
+			end
+		elseif Counter == 15 then 
+			Isaac.Spawn(1000, 127, 0, Player.Position, Vector.Zero, nil) -- mama mega explosion
+			for _, enemy in pairs(Isaac.GetRoomEntities()) do
+				if enemy:IsVulnerableEnemy() then 
+					enemy:AddBurn(EntityRef(Player), 540, 4 * Player.Damage)
+				end
+			end 
+		end
+		sfx:Play(SoundEffect.SOUND_DEATH_CARD, 1, 2, false, 1, 0)
+		Game():ShakeScreen(30)
+	end
+	if Card == PocketItems.DEMONFORM and CustomData then
+		CustomData.Cards.DEMONFORM.NumUses = CustomData.Cards.DEMONFORM.NumUses + 1
+		sfx:Play(SoundEffect.SOUND_DEATH_CARD, 1, 2, false, 1, 0)
+		Player:GetData()['usedDemonForm'] = true
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 
@@ -2283,6 +2346,9 @@ function rplus:UpdateStats(Player, Flag)
 		
 		if Player:HasCollectible(Collectibles.MOTHERSLOVE) then
 			Player.Damage = Player.Damage + StatUps.MOTHERSLOVE_DMG * CustomData.Items.MOTHERSLOVE.NumDamage
+		end
+		if  CustomData and Player:GetData()['usedDemonForm'] then 
+			Player.Damage = Player.Damage + CustomData.Cards.DEMONFORM.NumDamage * StatUps.DEMONFORM_DAMAGE
 		end
 	end
 	
