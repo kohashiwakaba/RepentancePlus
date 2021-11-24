@@ -86,8 +86,10 @@
 	<active quality="4" gfx="47_4_bloodvessel.png" description="Delay the inevitable" name="Brimming Blood Vessel" maxcharges="0" chargetype="special"/>
 	<active quality="4" gfx="47_5_bloodvessel.png" description="Delay the inevitable" name="Full Blood Vessel" maxcharges="0" chargetype="special"/>
 	<active quality="4" gfx="47_6_bloodvessel.png" description="Delay the inevitable" name="Overflowing Blood Vessel" maxcharges="0" chargetype="special"/>
+	<trinket name="Empty Page" description="Write on it" gfx="t17_emptypage.png" />
 	
 	<!-- T. Jacob -->
 	<active name="Cheese Grater" description="A pound of... cheese?" gfx="22_cheesegrater.png" quality="2" maxcharges="0" cache="damage" />
 	<familiar name="Tank Boys" description="You and what army?.." gfx="55_tankboys.png" quality="3" />
+	<familiar name="Sibling Rivalry" description="I can't stand you!" gfx="27_siblingrivalry.png" quality="3" tags="baby" />
 </items>

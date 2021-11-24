@@ -6,11 +6,13 @@
 -- Water, sparkling or still  0.5l: $2 1l: $3 ------------------ staff -----------------------
 -- Beer 0.33l: $3 ------------------------------------------ Enjoy the show! -----------------
 ----------------------------------------------------------------------------------------------
+
+									---------------------
 									----- VARIABLES -----
 									---------------------
 
 local game = Game()
-local rplus = RegisterMod("repentance_plus_dev_build", 1)
+local rplus = RegisterMod("rplus_DB", 1)
 local MOD_VERSION = 1.13
 local sfx = SFXManager()
 local music = MusicManager()
@@ -41,7 +43,6 @@ RedMapIcon:Load("gfx/ui/ui_visual_clues.anm2", true)
 
 DNAPillIcon = Sprite()
 DNAPillIcon:Load("gfx/ui/ui_dnapillhelper.anm2", true)
---
 
 local BASEMENTKEY_CHANCE = 5			-- chance to replace golden chest with the old chest
 local HEARTKEY_CHANCE = 5				-- chance for enemy to drop Scarlet chest on death
@@ -58,6 +59,10 @@ local NIGHT_SOIL_CHANCE = 75 			-- chance to negate curse
 local REDBOMBLAUNCHCOOLDOWN = 60 		-- cooldown for launching red bombs (1 second)
 local MAGICPEN_CREEP_COOLDOWN = 240 	-- coldown for magic pen creep
 local NERVEPINCH_USE_CHANCE = 75		-- chance to activate your active item for free via Nerve Pinch
+
+									-----------------
+									----- ENUMS -----
+									-----------------
 
 Costumes = {
 	-- add ONLY NON-PERSISTENT COSTUMES here, because persistent costumes work without lua
@@ -76,7 +81,10 @@ Familiars = {
 	BIRD = Isaac.GetEntityVariantByName("Bird of Hope"),
 	SOUL = Isaac.GetEntityVariantByName("Enraged Soul"),
 	TOYTANK1 = Isaac.GetEntityVariantByName("Toy Tank 1"),
-	TOYTANK2 = Isaac.GetEntityVariantByName("Toy Tank 2")
+	TOYTANK2 = Isaac.GetEntityVariantByName("Toy Tank 2"),
+	SIBLING1 = Isaac.GetEntityVariantByName("Peaceful Sibling 1"),
+	SIBLING2 = Isaac.GetEntityVariantByName("Peaceful Sibling 2"),
+	FIGHTINGSIBLINGS = Isaac.GetEntityVariantByName("Fighting Siblings")
 }
 
 Collectibles = {
@@ -106,7 +114,6 @@ Collectibles = {
 	TOYTANKS = Isaac.GetItemIdByName("Tank Boys"),
 	GUSTYBLOOD = Isaac.GetItemIdByName("Gusty Blood"),
 	REDBOMBER = Isaac.GetItemIdByName("Red Bomber"),
-	--
 	MOTHERSLOVE = Isaac.GetItemIdByName("Mother's Love"),
 	CATINBOX = Isaac.GetItemIdByName("A Cat in the Box"),
 	BOOKOFGENESIS = Isaac.GetItemIdByName("Book of Genesis"),
@@ -121,7 +128,8 @@ Collectibles = {
 		Isaac.GetItemIdByName("Brimming Blood Vessel"),
 		Isaac.GetItemIdByName("Full Blood Vessel"),
 		Isaac.GetItemIdByName("Overflowing Blood Vessel") 
-	}
+	},
+	SIBLINGRIVALRY = Isaac.GetItemIdByName("Sibling Rivalry")
 }
 
 Trinkets = {
@@ -138,9 +146,9 @@ Trinkets = {
 	EDENSLOCK = Isaac.GetTrinketIdByName("Eden's Lock"),
 	ADAMSRIB = Isaac.GetTrinketIdByName("Adam's Rib"),
 	NIGHTSOIL = Isaac.GetTrinketIdByName("Night Soil"),
-	--
 	TORNPAGE = Isaac.GetTrinketIdByName("Torn Page"),
-	BONEMEAL = Isaac.GetTrinketIdByName("Bone Meal")
+	BONEMEAL = Isaac.GetTrinketIdByName("Bone Meal"),
+	EMPTYPAGE = Isaac.GetTrinketIdByName("Empty Page")
 }
 
 PocketItems = {
@@ -356,6 +364,52 @@ ItemPools = {
 		217, -- Mom's Wig
 		546, -- Dad's Ring
 		732  -- Mom's Ring (added in v1.7.5 patch)
+	},
+	-- not technically an itempool, but still useful
+	EMPTYPAGEACTIVES = {
+		130, -- pony
+		136, -- best friends
+		42,	 -- bob's head
+		288, -- box of spiders
+		160, -- crack the sky
+		158, -- crystal ball
+		166, -- D20
+		175, -- dad's key
+		85,  -- deck of cards
+		291, -- flush
+		145, -- guppy's head
+		293, -- head of krampus
+		102, -- bottle of pills
+		39,  -- bra
+		41,  -- pad
+		37,  -- mr. boom
+		77,  -- my little unicorn
+		146, -- prayer card
+		49,  -- shoop
+		171, -- spider button
+		38,  -- tammy's head
+		93,  -- gamekid
+		66,  -- hourglass
+		83,  -- nail
+		107, -- pinking shears
+		181, -- white pony
+		45,  -- yum heart
+		357, -- box of friends
+		347, -- diplopia
+		422, -- glowing hourglass
+		439, -- mom's box
+		521, -- coupon
+		476, -- D1
+		479, -- smelter
+		516, -- sprinkler
+		722, -- anima sola
+		557, -- fortune cookie
+		687, -- friend finder
+		719, -- keeper's box
+		650, -- plum flute
+		556, -- sulfur
+		605, -- the scooper
+		638  -- yuck heart
 	}
 }
 
@@ -378,14 +432,14 @@ StatUps = {
 	YUM_TEARS = 0.04,
 	YUM_RANGE = 0.07,
 	YUM_LUCK = 0.07,
-	BONEMEAL_DMG_MUL = 1.05,
+	BONEMEAL_DMG_MUL = 1.1,
 	MOTHERSLOVE_LUCK = 0.2,
 	MOTHERSLOVE_DMG = 0.2,
 	MOTHERSLOVE_TEARS = 0.1,
 	MOTHERSLOVE_SPEED = 0.05,
 	MOTHERSLOVE_RANGE = 0.25,
 	NERVEPINCH_SPEED = -0.03,
-	DEMONFORM_DAMAGE = 0.5
+	DEMONFORM_DAMAGE = 0.15
 }
 
 -- used by Bag Tissue
@@ -749,6 +803,54 @@ function isInGhostForm(player)
 	player:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE))	-- after touching the white fire
 end								
 
+function SilentUseCard(p, card)
+	p:UseCard(card, UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)
+end
+
+function isPlayerDying(player)
+	-- and by 'dying' I (unfortunately) mean 'playing death animation'
+	local sprite = player:GetSprite()
+	
+	return (sprite:IsPlaying("Death") and sprite:GetFrame() > 50) or
+	(sprite:IsPlaying("LostDeath") and sprite:GetFrame() > 30)
+end
+
+function isSelfDamage(damageFlags, data)
+	-- `damageFlags` (int): damage flags passed from MC_ENTITY_TAKE_DMG callback
+	-- `data` (string): can be used to specify what sources you want to include on checking (to ignore the rest)
+	
+	local selfDamageFlags = {
+		['IVBag'] = DamageFlag.DAMAGE_RED_HEARTS | DamageFlag.DAMAGE_INVINCIBLE | DamageFlag.DAMAGE_IV_BAG,
+		['Confessional'] = DamageFlag.DAMAGE_RED_HEARTS,
+		['DemonBeggar'] = DamageFlag.DAMAGE_RED_HEARTS,
+		['BloodDonationMachine'] = DamageFlag.DAMAGE_RED_HEARTS,
+		['HellGame'] = DamageFlag.DAMAGE_RED_HEARTS,
+		['CurseRoom'] = DamageFlag.DAMAGE_NO_PENALTIES | DamageFlag.DAMAGE_CURSED_DOOR,
+		['MausoleumDoor'] = DamageFlag.DAMAGE_SPIKES | DamageFlag.DAMAGE_NO_PENALTIES | DamageFlag.DAMAGE_INVINCIBLE | DamageFlag.DAMAGE_NO_MODIFIERS,
+		['SacrificeRoom'] = DamageFlag.DAMAGE_SPIKES | DamageFlag.DAMAGE_NO_PENALTIES
+	}
+	
+	if data == "greedsheart" then
+		selfDamageFlags = {
+			selfDamageFlags['IVBag'],
+			selfDamageFlags['SacrificeRoom']
+		}
+	elseif data == "bloodvessel" then
+		selfDamageFlags = {
+			selfDamageFlags['SacrificeRoom'],
+			selfDamageFlags['MausoleumDoor']
+		}
+	end
+	
+	for source, flags in pairs(selfDamageFlags) do
+		if damageFlags & flags == flags then
+			return true
+		end
+	end
+	return false
+end
+
+
 						-----------------------------
 						-- CALLBACK TIED FUNCTIONS --
 						-----------------------------
@@ -769,9 +871,7 @@ function rplus:OnGameStart(Continued)
 	Isaac.GetPlayer(0):EvaluateItems()
 	
 	-- deleting Wait, No! from trinket pool
-	-- temporarily delete the unfinished trinkets too in case we accidentaly publish the mod like this
 	game:GetItemPool():RemoveTrinket(Trinkets.WAITNO)
-	game:GetItemPool():RemoveTrinket(Trinkets.BONEMEAL)
 	game:GetItemPool():RemoveTrinket(Trinkets.TORNPAGE)
 		
 	if not Continued then
@@ -801,13 +901,13 @@ function rplus:OnGameStart(Continued)
 			Cards = {
 				JACK = nil,
 				SACBLOOD = {Data = false, NumUses = 0},
-				DEMONFORM = {NumUses = 0, NumDamage = 0}
+				DEMONFORM = {NumUses = 0}
 			},
 			Trinkets = {
 				GREEDSHEART = "CoinHeartEmpty",
 				CHALKPIECE = {RoomEnterFrame = 0},
-				TORNPAGE = {SomeBookFlags = nil},
-				BONEMEAL = {Levels = 1}
+				TORNPAGE = {},
+				BONEMEAL = {Levels = 0}
 			},
 			Pills = {
 				LAXATIVE = {UseFrame = nil},
@@ -865,9 +965,14 @@ function rplus:OnNewLevel()
 		
 		if CustomData then
 			CustomData.Cards.JACK = nil
-			CustomData.Cards.DEMONFORM.NumUses = 0
-			CustomData.Cards.DEMONFORM.NumDamage = 0
-			player:GetData()['usedDemonForm'] = false
+			
+			if player:GetData()['usedDemonForm'] then
+				CustomData.Cards.DEMONFORM.NumUses = 0
+				player:GetData()['usedDemonForm'] = false
+				player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+				player:EvaluateItems()
+			end
+			
 			CustomData.Items.CEILINGSTARS.SleptInBed = false
 			
 			if player:HasCollectible(Collectibles.BAGOTRASH) then
@@ -899,8 +1004,7 @@ function rplus:OnNewLevel()
 		
 		if player:HasTrinket(Trinkets.BONEMEAL) then
 			CustomData.Trinkets.BONEMEAL.Levels = CustomData.Trinkets.BONEMEAL.Levels + 1
-			local playerSpriteScale = 1.1 ^ (((CustomData.Trinkets.BONEMEAL.Levels) - 1) * player:GetTrinketMultiplier(Trinkets.BONEMEAL))
-			player.SpriteScale = Vector(playerSpriteScale, playerSpriteScale)
+			player:UsePill(PillEffect.PILLEFFECT_LARGER, PillColor.PILL_NULL, UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)
 		end
 		
 		if player:HasCollectible(Collectibles.KEEPERSPENNY) then
@@ -922,21 +1026,34 @@ function rplus:OnNewRoom()
 		
 		-- it turns out that more and more items 
 		-- behave in unintentional ways together, 
-		-- so let's blacklist them HERE ---------
+		-- so let's BLACKLIST THEM HERE ---------
 		-----------------------------------------
 		
-		-- there's just no nice synergy yet, it looks wack
+		-- there's just no nice synergy yet, it looks wacky
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR) then
 			game:GetItemPool():RemoveCollectible(Collectibles.REDBOMBER)
 		elseif player:HasCollectible(Collectibles.REDBOMBER) then
 			game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)
 		end
 		
-		-- stats are applied every time Lil' Delirium changes forms, and they do not go away, AND Lil' Delirium is not a separate familiar variant
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_LIL_DELIRIUM) then
+		-- stats are applied every time Lil' Delirium changes forms, and they do not go away, and Lil' Delirium is not a separate familiar variant
+		-- so I can't control him in any way, shape or form
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_LIL_DELIRIUM) 
+		or player:HasCollectible(Collectibles.SIBLINGRIVALRY) then
 			game:GetItemPool():RemoveCollectible(Collectibles.MOTHERSLOVE)
 		elseif player:HasCollectible(Collectibles.MOTHERSLOVE) then
 			game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_LIL_DELIRIUM)
+			game:GetItemPool():RemoveCollectible(Collectibles.SIBLINGRIVALRY)
+		end
+		
+		-- some differently colored pills have same effects with PHD/False PHD, and since the MC_USE_PILL asks for pill effect, there's no way to distinguish
+		-- them and apply the DNA redactor effect correctly
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_PHD) 
+		or player:HasCollectible(CollectibleType.COLLECTIBLE_FALSE_PHD) then
+			game:GetItemPool():RemoveCollectible(Collectibles.DNAREDACTOR)
+		elseif player:HasCollectible(Collectibles.DNAREDACTOR) then
+			game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_PHD)
+			game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_FALSE_PHD)
 		end
 		
 		-----------------------------------------
@@ -976,7 +1093,8 @@ function rplus:OnNewRoom()
 			end
 		end
 		
-		if player:HasTrinket(Trinkets.ANGELSCROWN) and roomtype == RoomType.ROOM_TREASURE then
+		if player:HasTrinket(Trinkets.ANGELSCROWN) and roomtype == RoomType.ROOM_TREASURE 
+		and not isMirrorItemRoom() then
 			if room:IsFirstVisit() then
 				for _, collectible in pairs(Isaac.FindByType(5, 100, -1, false, false)) do
 					collectiblePickup = collectible:ToPickup()
@@ -1087,10 +1205,31 @@ function rplus:OnNewRoom()
 				end
 			end
 		end
-		if player:GetData()['usedDemonForm'] == true and not room:IsClear() and room:IsFirstVisit() then
-			CustomData.Cards.DEMONFORM.NumDamage = CustomData.Cards.DEMONFORM.NumDamage + CustomData.Cards.DEMONFORM.NumUses
+		
+		if player:HasTrinket(Trinkets.TORNPAGE) then
+			if player:GetData()['enhancedBoB'] then				
+				player:GetData()['enhancedBoB'] = false
+				player:AddCacheFlags(CacheFlag.CACHE_TEARFLAG)
+				player:EvaluateItems()
+			end		
+		end
+	
+		if player:GetData()['usedDemonForm'] 
+		and not room:IsClear() and room:IsFirstVisit() then
+			CustomData.Cards.DEMONFORM.NumUses = CustomData.Cards.DEMONFORM.NumUses + 1
 			player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
 			player:EvaluateItems()
+		end
+	end
+	
+	if room:GetType() == RoomType.ROOM_LIBRARY and
+	room:IsFirstVisit() then
+		local pageSpawnRoll = math.random(100)
+		
+		if pageSpawnRoll < 33 then
+			Isaac.Spawn(5, 350, Trinkets.TORNPAGE, Isaac.GetFreeNearPosition(Vector(320, 280), 10), Vector.Zero, nil)
+		elseif pageSpawnRoll < 66 then
+			Isaac.Spawn(5, 350, Trinkets.EMPTYPAGE, Isaac.GetFreeNearPosition(Vector(320, 280), 10), Vector.Zero, nil)
 		end
 	end
 end
@@ -1098,7 +1237,7 @@ rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
 
 						-- MC_USE_ITEM --										
 						-----------------
-function rplus:OnItemUse(ItemUsed, _, Player, _, _, _)
+function rplus:OnItemUse(ItemUsed, _, Player, _, Slot, _)
 	local level = game:GetLevel()
 	local room = game:GetRoom()
 	
@@ -1194,7 +1333,7 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, _, _)
 			Player:RemoveCollectible(ID, true, -1, true)
 		
 			local Q = Isaac.GetItemConfig():GetCollectible(ID).Quality
-			for i = 1, 3 do
+			for i = 1, (Player:HasTrinket(Trinkets.TORNPAGE) and 4 or 3) do
 				repeat 
 					newID = GetUnlockedVanillaCollectible(true)
 				until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1 and Isaac.GetItemConfig():GetCollectible(newID).Quality == Q
@@ -1223,8 +1362,98 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, _, _)
 			end
 		end
 	end
+	
+	if Player:HasTrinket(Trinkets.TORNPAGE) then
+		-- bible removes one broken heart
+		if ItemUsed == CollectibleType.COLLECTIBLE_BIBLE then
+			Player:AddBrokenHearts(-2)
+		-- book of the dead gives you a bone heart
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD then
+			Player:AddBoneHearts(1)
+		-- book of belial also grants eye of belial effect for the room
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_BELIAL then
+			Player:GetData()['enhancedBoB'] = true
+			Player:AddCacheFlags(CacheFlag.CACHE_TEARFLAG)
+			Player:EvaluateItems()		
+		-- telepathy for dummies also grants range up for the room
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_TELEPATHY_BOOK then
+			Player:GetEffects():AddCollectibleEffect(CollectibleType.COLLECTIBLE_THE_WIZ, true, 1)
+		-- monster manual spawns weaker familiars when used (dips, flies and spiders)
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_MONSTER_MANUAL then
+			for n = 1, 6 do
+				local roll = math.random(100)
+				
+				if roll <= 33 then
+					Isaac.Spawn(3, FamiliarVariant.BLUE_FLY, 0, Player.Position, Vector.Zero, nil)
+				elseif roll <= 67 then
+					Isaac.Spawn(3, FamiliarVariant.BLUE_SPIDER, 0, Player.Position, Vector.Zero, nil)
+				else
+					Isaac.Spawn(3, FamiliarVariant.DIP, 0, Player.Position, Vector.Zero, nil)
+				end
+			end
+		-- other books get a complimentary charge decrease
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS or
+		ItemUsed == CollectibleType.COLLECTIBLE_LEMEGETON or
+		ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES or
+		ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS then
+			Player:SetActiveCharge(Player:GetActiveCharge(Slot) + 1, Slot)
+		end
+	end
+	
+	if Player:HasTrinket(Trinkets.EMPTYPAGE) then
+		if ItemUsed == CollectibleType.COLLECTIBLE_BIBLE
+		or ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD
+		or ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_BELIAL
+		or ItemUsed == CollectibleType.COLLECTIBLE_NECRONOMICON
+		or ItemUsed == CollectibleType.COLLECTIBLE_TELEPATHY_BOOK
+		or ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_REVELATIONS
+		or ItemUsed == CollectibleType.COLLECTIBLE_SATANIC_BIBLE
+		or ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SIN
+		or ItemUsed == CollectibleType.COLLECTIBLE_ANARCHIST_COOKBOOK
+		or ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS
+		or ItemUsed == CollectibleType.COLLECTIBLE_MONSTER_MANUAL
+		or ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES
+		or ItemUsed == CollectibleType.COLLECTIBLE_LEMEGETON
+		or ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS
+		or ItemUsed == Collectibles.BOOKOFGENESIS
+		then
+			Player:UseActiveItem(ItemPools.EMPTYPAGEACTIVES[math.random(#ItemPools.EMPTYPAGEACTIVES)], UseFlag.USE_NOANIM, -1)
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
+
+						-- MC_PRE_USE_ITEM --											
+						---------------------
+-- helper for Torn Page	(if you want to override the book's certain gimmick, not just add something)				
+function rplus:PreUseItem(ItemUsed, RNG, Player, UseFlags, ActiveSlot, CustomVarData)
+	if Player:HasTrinket(Trinkets.TORNPAGE) then
+		-- book of revelations doesn't cause harbingers to spawn
+		if ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_REVELATIONS then
+			Player:AddSoulHearts(2)
+			Player:AnimateCollectible(ItemUsed, "Pickup", "PlayerPickupSparkle")
+			return true
+		-- satanic bible doesn't cause devil deal items to appear in boss rooms
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_SATANIC_BIBLE then
+			Player:AddBlackHearts(2)
+			Player:AnimateCollectible(ItemUsed, "Pickup", "PlayerPickupSparkle")
+			return true
+		-- book of sin has a small chance to spawn an item instead of pickup
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SIN and math.random(100) == 1 then
+			Isaac.Spawn(5, 100, 0, Isaac.GetFreeNearPosition(Player.Position, 10), Vector.Zero, nil)
+			Player:AnimateCollectible(ItemUsed, "Pickup", "PlayerPickupSparkle")
+			return true
+		-- anarchist cookbook spawns red bombs instead of troll bombs
+		elseif ItemUsed == CollectibleType.COLLECTIBLE_ANARCHIST_COOKBOOK then
+			for s = 1, 6 do
+				Isaac.Spawn(5, 41, 0, game:GetRoom():GetRandomPosition(10), Vector.Zero, nil)
+			end
+			Player:AnimateCollectible(ItemUsed, "Pickup", "PlayerPickupSparkle")
+			return true
+		end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, rplus.PreUseItem)
 
 						-- MC_POST_UPDATE --											
 						--------------------
@@ -1238,6 +1467,7 @@ function rplus:OnFrame()
 		local sprite = player:GetSprite()
 		
 		if player:GetData()['reverseCardRoom'] and player:GetData()['reverseCardRoom'] ~= game:GetLevel():GetCurrentRoomIndex() then
+			player:AnimateCard(PocketItems.REVERSECARD, "Pickup")
 			local secondaryCard = player:GetCard(1)
 			player:SetCard(1, 0)
 			player:SetCard(0, secondaryCard)
@@ -1269,7 +1499,7 @@ function rplus:OnFrame()
 		
 		if player:HasCollectible(Collectibles.MARKCAIN) 
 		and player:GetExtraLives() == 0 then
-			if sprite:IsPlaying("Death") and sprite:GetFrame() > 50 then
+			if isPlayerDying(player) then
 				MyFamiliars = {}
 				
 				for i = 1, 1000 do
@@ -1326,7 +1556,8 @@ function rplus:OnFrame()
 		end
 		
 		if player:HasCollectible(Collectibles.BIRDOFHOPE) then
-			if sprite:IsPlaying("Death") and CustomData.Items.BIRDOFHOPE.BirdCaught == true then
+			if isPlayerDying(player)
+			and CustomData.Items.BIRDOFHOPE.BirdCaught == true then
 				CustomData.Items.BIRDOFHOPE.BirdCaught = false
 				DieFrame = game:GetFrameCount()
 				DiePos = player.Position
@@ -1377,7 +1608,7 @@ function rplus:OnFrame()
 		end
 		
 		if player:HasTrinket(Trinkets.ADAMSRIB) then
-			if sprite:IsPlaying("Death") and sprite:GetFrame() > 50 then
+			if isPlayerDying(player) then
 				player:TryRemoveTrinket(Trinkets.ADAMSRIB)
 				for i = 0, game:GetNumPlayers() - 1 do
 					Isaac.GetPlayer(i):Revive()
@@ -1460,8 +1691,7 @@ function rplus:OnFrame()
 				if not friend:GetData()['appliedStat'] then
 					-- all modded familiar gives x1 stat up multiplier by default, and vanilla familiars have their own table at the top of the file
 					if friend.Variant > 244 then 
-						if friend.Variant == Familiars.SOUL or friend.Variant == Familiars.CHERRY then 
-							print('yes')
+						if friend.Variant == Familiars.SOUL or friend.Variant == Familiars.CHERRY then
 							LoveStatMulGiven = 0
 						else
 							LoveStatMulGiven = 1
@@ -1504,21 +1734,65 @@ function rplus:OnFrame()
 				player:UseActiveItem(player:GetActiveItem(ActiveSlot.SLOT_PRIMARY), 0, -1)
 			end
 		end
+		
+		if game:GetFrameCount() % 450 == 0 then
+			if player:GetData()['fightingSiblings'] == true then
+				for _, f in pairs(Isaac.GetRoomEntities()) do
+					if f.Type == 3 and
+					(f.Variant == Familiars.SIBLING1 or f.Variant == Familiars.SIBLING2) then
+						f:Remove()
+					end
+				end
+				sfx:Play(SoundEffect.SOUND_CHILD_ANGRY_ROAR, 1, 2, false, 1, 0)
+				if player:HasCollectible(Collectibles.SIBLINGRIVALRY) then 
+					Isaac.Spawn(3, Familiars.FIGHTINGSIBLINGS, 0, player.Position, Vector.Zero, nil)
+					player:GetData()['fightingSiblings'] = false
+				end
+			elseif player:GetData()['fightingSiblings'] == false then
+				for _, f in pairs(Isaac.GetRoomEntities()) do
+					if f.Type == 3 and f.Variant == Familiars.FIGHTINGSIBLINGS then
+						f:Remove()
+					end
+				end
+				if player:HasCollectible(Collectibles.SIBLINGRIVALRY) then 				
+					Isaac.Spawn(3, Familiars.SIBLING1, 0, player.Position, Vector.Zero, nil)
+					Isaac.Spawn(3, Familiars.SIBLING2, 0, player.Position, Vector.Zero, nil)
+					player:GetData()['fightingSiblings'] = true
+				end
+			elseif player:GetData()['fightingSiblings'] == nil 
+			and player:HasCollectible(Collectibles.SIBLINGRIVALRY) then
+				player:GetData()['fightingSiblings'] = true
+			end
+		end
+		
+		if player:HasTrinket(Trinkets.TORNPAGE) and player:HasCollectible(CollectibleType.COLLECTIBLE_HOW_TO_JUMP)
+		and sprite:IsPlaying("Jump") and sprite:GetFrame() == 18 then
+			local roll = math.random(10)
+			local Angles
+			if roll <= 5 then
+				Angles = {0, 90, 180, 270}
+			else
+				Angles = {45, 135, 225, 315}
+			end
+			
+			for _, angle in pairs(Angles) do
+				player:FireTear(player.Position, Vector.FromAngle(angle):Resized(7.5), true, true, false, player, 0.75)
+			end
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_UPDATE, rplus.OnFrame)
 
 						-- MC_POST_ENTITY_REMOVE --									
 						---------------------------
--- helper for mother's love (I am slowly going insane)
+-- helper for Mother's Love (I am slowly going insane)
 function rplus:OnEntityRemove(Entity)
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
 		
 		if player:HasCollectible(Collectibles.MOTHERSLOVE) then
 			if Entity.Variant > 244 then 
-				if Entity.Variant == Familiars.SOUL or Entity.Variant == Familiars.CHERRY then 
-					print('no')
+				if Entity.Variant == Familiars.SOUL or Entity.Variant == Familiars.CHERRY then
 					LoveStatMulRemoved = 0
 				else
 					LoveStatMulRemoved = 1
@@ -1623,8 +1897,10 @@ function rplus:PostPlayerUpdate(Player)
 		end
 	end
 	
-	Player:AddCacheFlags(CacheFlag.CACHE_DAMAGE) 
-	Player:EvaluateItems() 
+	if Player:HasTrinket(Trinkets.MAGICSWORD) or Player:HasTrinket(Trinkets.BONEMEAL) then
+		Player:AddCacheFlags(CacheFlag.CACHE_DAMAGE) 
+		Player:EvaluateItems() 
+	end
 	
 	if Player:HasCollectible(Collectibles.ORDLIFE) then 
 		Player:AddCacheFlags(CacheFlag.CACHE_FIREDELAY) 
@@ -1725,7 +2001,8 @@ function rplus:OnGameRender()
 			CoinHeartSprite:Render(HeartRenderPos + HeartRenderOffset, Vector.Zero, Vector.Zero)
 		end
 		
-		if player:HasTrinket(Trinkets.ANGELSCROWN) and room:GetType() == RoomType.ROOM_TREASURE then
+		if player:HasTrinket(Trinkets.ANGELSCROWN) and room:GetType() == RoomType.ROOM_TREASURE 
+		and not isMirrorItemRoom() then
 			FloorPiece:GetSprite().Scale = Vector(0.25, 0.25)
 			FloorPiece:AddEntityFlags(EntityFlag.FLAG_RENDER_FLOOR)
 			FloorPiece:GetSprite():Load("gfx/backdrop/angel_treasure_room_backdrops.anm2", true)
@@ -2087,57 +2364,67 @@ function rplus:CardUsed(Card, Player, _)
 		local antimaterialCardTear = Isaac.Spawn(2, TearVariants.ANTIMATERIALCARD, 0, Player.Position, DIRECTION_VECTOR[Player:GetMovementDirection()]:Resized(10), nil)
 		antimaterialCardTear:GetSprite():Play("Rotate")
 	end
+	
+	if Card == PocketItems.DEMONFORM and CustomData then
+		Player:GetData()['usedDemonForm'] = true
+	end
+	
 	if Card == PocketItems.FIENDFIRE then 
 		local Counter = 0
+		
 		for i = 1, 300 do 
-			RandomPickup = math.random(3)
-			if RandomPickup == 1 and Player:GetNumCoins()>0 then
+			local RandomPickup = math.random(3)
+			
+			if RandomPickup == 1 and Player:GetNumCoins() > 0 then
 				Player:AddCoins(-1)
-				Counter = Counter+1
-			elseif RandomPickup == 2 and Player:GetNumKeys()>0 then
+				Counter = Counter + 1
+			elseif RandomPickup == 2 and Player:GetNumKeys() > 0 then
 				Player:AddKeys(-1)
-				Counter = Counter+1
-			elseif RandomPickup == 3 and Player:GetNumBombs()>0 then
+				Counter = Counter + 1
+			elseif RandomPickup == 3 and Player:GetNumBombs() > 0 then
 				Player:AddBombs(-1)
-				Counter = Counter+1
+				Counter = Counter + 1
 			end
-			if Counter==15 or Player:GetNumKeys()+Player:GetNumBombs()+Player:GetNumCoins()==0 then 
+			
+			if Counter == 150 or Player:GetNumKeys() + Player:GetNumBombs() + Player:GetNumCoins() == 0 then 
 				break 
 			end 
 		end
-		if Counter >= 1 and Counter <= 5 then 
+		
+		if Counter >= 10 and Counter <= 50 then 
+		-- enemies take damage and are set on fire
 			for _, enemy in pairs(Isaac.GetRoomEntities()) do
 				if enemy:IsVulnerableEnemy() then 
-					enemy:TakeDamage(70, 1, EntityRef(Player), 0)
-					enemy:AddBurn(EntityRef(Player), 180, Player.Damage)
+					enemy:TakeDamage(15, 1, EntityRef(Player), 0)
+					enemy:AddBurn(EntityRef(Player), 120, Player.Damage)
 				end
 			end
-		elseif  Counter >= 6 and Counter <= 10 then 
+		elseif Counter >= 51 and Counter <= 125 then 
+		-- more damage, longer burn duration, destroy grid entities around you
 			for _, enemy in pairs(Isaac.GetRoomEntities()) do
 				if enemy:IsVulnerableEnemy() then 
-					enemy:TakeDamage(140, 1, EntityRef(Player), 0) 
-					enemy:AddEntityFlags(EntityFlag.FLAG_BURN) 
-					enemy:AddBurn(EntityRef(Player), 360, 2 * Player.Damage)
+					enemy:TakeDamage(30, 1, EntityRef(Player), 0)
+					enemy:AddBurn(EntityRef(Player), 240, 2 * Player.Damage)
 				end
 			end
 			for g = 1, room:GetGridSize() do
-				if room:GetGridEntity(g) then room:GetGridEntity(g):Destroy() end
+				if room:GetGridEntity(g) 
+				and room:GetGridPosition(g):Distance(Player.Position) < 150 then 
+					room:GetGridEntity(g):Destroy() 
+				end
 			end
-		elseif Counter == 15 then 
+		elseif Counter >= 126 and Counter <= 150 then 
+		-- produce mama mega explosion, longer burn duration
 			Isaac.Spawn(1000, 127, 0, Player.Position, Vector.Zero, nil) -- mama mega explosion
 			for _, enemy in pairs(Isaac.GetRoomEntities()) do
 				if enemy:IsVulnerableEnemy() then 
-					enemy:AddBurn(EntityRef(Player), 540, 4 * Player.Damage)
+					enemy:AddBurn(EntityRef(Player), 480, 4 * Player.Damage)
 				end
 			end 
 		end
-		sfx:Play(SoundEffect.SOUND_DEATH_CARD, 1, 2, false, 1, 0)
+		
+		sfx:Play(SoundEffect.SOUND_WAR_HORSE_DEATH, 1, 2, false, 1, 0)
 		Game():ShakeScreen(30)
-	end
-	if Card == PocketItems.DEMONFORM and CustomData then
-		CustomData.Cards.DEMONFORM.NumUses = CustomData.Cards.DEMONFORM.NumUses + 1
-		sfx:Play(SoundEffect.SOUND_DEATH_CARD, 1, 2, false, 1, 0)
-		Player:GetData()['usedDemonForm'] = true
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
@@ -2347,8 +2634,9 @@ function rplus:UpdateStats(Player, Flag)
 		if Player:HasCollectible(Collectibles.MOTHERSLOVE) then
 			Player.Damage = Player.Damage + StatUps.MOTHERSLOVE_DMG * CustomData.Items.MOTHERSLOVE.NumDamage
 		end
-		if  CustomData and Player:GetData()['usedDemonForm'] then 
-			Player.Damage = Player.Damage + CustomData.Cards.DEMONFORM.NumDamage * StatUps.DEMONFORM_DAMAGE
+		
+		if CustomData and Player:GetData()['usedDemonForm'] then 
+			Player.Damage = Player.Damage + CustomData.Cards.DEMONFORM.NumUses * StatUps.DEMONFORM_DAMAGE
 		end
 	end
 	
@@ -2375,6 +2663,10 @@ function rplus:UpdateStats(Player, Flag)
 	if Flag == CacheFlag.CACHE_TEARFLAG then
 		if Player:HasCollectible(Collectibles.SINNERSHEART) then
 			Player.TearFlags = Player.TearFlags | TearFlags.TEAR_PIERCING | TearFlags.TEAR_SPECTRAL
+		end
+		
+		if Player:HasTrinket(Trinkets.TORNPAGE) and Player:GetData()['enhancedBoB'] then
+			Player.TearFlags = Player.TearFlags | TearFlags.TEAR_BELIAL | TearFlags.TEAR_PIERCING
 		end
 	end
 	
@@ -2407,6 +2699,8 @@ function rplus:UpdateStats(Player, Flag)
 		Player:CheckFamiliar(Familiars.CHERUBIM, Player:GetCollectibleNum(Collectibles.CHERUBIM), Player:GetCollectibleRNG(Collectibles.CHERUBIM))
 		Player:CheckFamiliar(Familiars.TOYTANK1, Player:GetCollectibleNum(Collectibles.TOYTANKS), Player:GetCollectibleRNG(Collectibles.TOYTANKS))
 		Player:CheckFamiliar(Familiars.TOYTANK2, Player:GetCollectibleNum(Collectibles.TOYTANKS), Player:GetCollectibleRNG(Collectibles.TOYTANKS))
+		Player:CheckFamiliar(Familiars.SIBLING1, Player:GetCollectibleNum(Collectibles.SIBLINGRIVALRY), Player:GetCollectibleRNG(Collectibles.SIBLINGRIVALRY))
+		Player:CheckFamiliar(Familiars.SIBLING2, Player:GetCollectibleNum(Collectibles.SIBLINGRIVALRY), Player:GetCollectibleRNG(Collectibles.SIBLINGRIVALRY))
 	end
 	
 	if Flag == CacheFlag.CACHE_LUCK then
@@ -2485,7 +2779,8 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 			table.insert(CustomData.Items.TEMPERTANTRUM.ErasedEnemies, Entity.Type)
 		end
 		
-		if player:HasTrinket(Trinkets.JUDASKISS) and Entity.Type == 1 and Source.Entity:IsActiveEnemy(false) then
+		if player:HasTrinket(Trinkets.JUDASKISS) and Entity.Type == 1 
+		and Soruce.Entity and Source.Entity:IsActiveEnemy(false) then
 			Source.Entity:AddEntityFlags(EntityFlag.FLAG_BAITED)
 		end
 		
@@ -2503,7 +2798,8 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		end
 		
 		if player:HasTrinket(Trinkets.GREEDSHEART) and CustomData.Trinkets.GREEDSHEART == "CoinHeartFull" and Entity.Type == 1 
-		and not isInGhostForm(player) and Flags & DamageFlag.DAMAGE_FAKE ~= DamageFlag.DAMAGE_FAKE then
+		and not isInGhostForm(player) and Flags & DamageFlag.DAMAGE_FAKE ~= DamageFlag.DAMAGE_FAKE 
+		and not isSelfDamage(Flags, "greedsheart") then
 			sfx:Play(SoundEffect.SOUND_ULTRA_GREED_COIN_DESTROY, 1, 2, false, 1, 0)
 			CustomData.Trinkets.GREEDSHEART = "CoinHeartEmpty"
 			Entity:TakeDamage(1, DamageFlag.DAMAGE_FAKE, EntityRef(Entity), 24)
@@ -2522,13 +2818,14 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		end
 		
 		if player:HasTrinket(Trinkets.MAGICSWORD, false) and Entity.Type == 1 and not player:HasTrinket(TrinketType.TRINKET_DUCT_TAPE) 
-		and Flags & DamageFlag.DAMAGE_FAKE ~= DamageFlag.DAMAGE_FAKE then
+		and Flags & DamageFlag.DAMAGE_FAKE ~= DamageFlag.DAMAGE_FAKE and not isSelfDamage(Flags) then
 			sfx:Play(SoundEffect.SOUND_BONE_SNAP, 1, 2, false, 1, 0)
 			player:TryRemoveTrinket(Trinkets.MAGICSWORD)
 			Isaac.Spawn(5, 350, Trinkets.WAITNO, player.Position, Vector.Zero, nil)
 		end
 		
-		if player:HasTrinket(Trinkets.EDENSLOCK) and Entity.Type == 1 then
+		if player:HasTrinket(Trinkets.EDENSLOCK) and Entity.Type == 1 
+		and not isSelfDamage(Flags) then
 			local freezePreventChecker = 0
 				
 			repeat
@@ -2559,7 +2856,8 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		end
 		
 		if Entity.Type == 1 and Flags & DamageFlag.DAMAGE_FAKE ~= DamageFlag.DAMAGE_FAKE 
-		and not isInGhostForm(player) and CustomData.Items.BLOODVESSEL.DamageFlag == false then
+		and not isInGhostForm(player) and CustomData.Items.BLOODVESSEL.DamageFlag == false 
+		and not isSelfDamage(Flags, "bloodvessel") then
 			for i = 1, #Collectibles.BLOODVESSELS do
 				if Entity:ToPlayer():HasCollectible(Collectibles.BLOODVESSELS[i]) then
 					if i == 7 then
@@ -2612,6 +2910,14 @@ function rplus:ToyTanksInit(Familiar)
 end
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.ToyTanksInit, Familiars.TOYTANK1)
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.ToyTanksInit, Familiars.TOYTANK2)
+
+function rplus:SiblingsInit(Familiar)
+	Familiar:AddToOrbit(25)
+	Familiar:GetSprite():Play("Idle")
+end
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.SiblingsInit, Familiars.SIBLING1)
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.SiblingsInit, Familiars.SIBLING2)
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.SiblingsInit, Familiars.FIGHTINGSIBLINGS)
 
 						-- MC_FAMILIAR_UPDATE --	 								
 						------------------------
@@ -2734,6 +3040,32 @@ end
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.ToyTanksUpdate, Familiars.TOYTANK1)
 rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.ToyTanksUpdate, Familiars.TOYTANK2)
 
+function rplus:SiblingsUpdate(Familiar)
+	Familiar.Velocity = Familiar:GetOrbitPosition(Familiar.Player.Position + Familiar.Player.Velocity) - Familiar.Position
+	
+	if Familiar.Variant == Familiars.SIBLING1 or Familiar.Variant == Familiars.SIBLING2 then
+		Familiar.OrbitDistance = Vector(75, 75)
+		Familiar.OrbitSpeed = 0.04
+	else
+		Familiar.OrbitDistance = Vector(60, 60)
+		Familiar.OrbitSpeed = 0.03
+		
+		-- randomly shooting tooth tears and spawning blood creep
+		if game:GetFrameCount() % 12 == 0 then
+			local toothTear = Familiar:FireProjectile(Vector.FromAngle(math.random(360)))
+			toothTear:ChangeVariant(TearVariant.TOOTH)
+			toothTear.Velocity = toothTear.Velocity / 2
+		end
+		
+		if game:GetFrameCount() % 18 == 0 then
+			local creepPuddle = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_RED, 0, Familiar.Position, Vector.Zero, nil):ToEffect()
+		end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.SiblingsUpdate, Familiars.SIBLING1)
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.SiblingsUpdate, Familiars.SIBLING2)
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.SiblingsUpdate, Familiars.FIGHTINGSIBLINGS)
+
 						-- MC_POST_BOMB_UPDATE --									
 						-------------------------
 -- helper function for pointing toy tank's rockets in a right direction
@@ -2827,6 +3159,12 @@ function rplus:ProjectileCollision(Projectile, Collider, _)
 				Isaac.Spawn(5, 350, Trinkets.NIGHTSOIL, Collider.Position, Vector.Zero, nil)
 			end
 		end
+	end
+	
+	if Collider.Variant == Familiars.SIBLING1 or
+	Collider.Variant == Familiars.SIBLING2 or 
+	Collider.Variant == Familiars.FIGHTINGSIBLINGS then
+		Projectile:Remove()
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, rplus.ProjectileCollision)
@@ -3079,19 +3417,19 @@ function rplus:usePill(pillEffect, Player, _)
 		elseif pillColor == PillColor.PILL_YELLOW_ORANGE + 2048 then
 			Player:SetActiveCharge(12, ActiveSlot.SLOT_PRIMARY)
 		elseif pillColor % 2048 == PillColor.PILL_ORANGEDOTS_WHITE then
-			Player:UseCard(Card.CARD_GET_OUT_OF_JAIL, UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)			-- open all doors
+			SilentUseCard(Player, Card.CARD_GET_OUT_OF_JAIL)												-- open all doors
 			if pillColor == PillColor.PILL_ORANGEDOTS_WHITE + 2048 then
-				Player:UseCard(Card.CARD_SOUL_CAIN, UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)			-- and the red doors too
+				SilentUseCard(Player, Card.CARD_SOUL_CAIN)													-- and the red doors too
 			end
 		elseif pillColor % 2048 == PillColor.PILL_WHITE_AZURE then
 			local myPocketItem = Player:GetActiveItem(ActiveSlot.SLOT_POCKET)
 			Player:SetPill(0, 0)
-			Player:UseCard(Card.CARD_REVERSE_FOOL, UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)			-- reverse Fool (drop all your stuff)
+			SilentUseCard(Player, Card.CARD_REVERSE_FOOL)													-- reverse Fool (drop all your stuff)
 			if myPocketItem ~= 0 then 
 				Player:AddCollectible(myPocketItem, 12, false, ActiveSlot.SLOT_POCKET, 0)
 			end
 			if pillColor == PillColor.PILL_WHITE_AZURE + 2048 then
-				Player:UseCard(Card.CARD_JUSTICE, UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)				-- add some more stuff
+				SilentUseCard(Player, Card.CARD_JUSTICE)													-- add some more stuff
 			end
 		elseif pillColor % 2048 == PillColor.PILL_BLACK_YELLOW then
 			if pillColor == PillColor.PILL_BLACK_YELLOW + 2048 then
@@ -3099,7 +3437,7 @@ function rplus:usePill(pillEffect, Player, _)
 					Isaac.GridSpawn(GridEntityType.GRID_POOP, 3, game:GetRoom():FindFreeTilePosition(Player.Position, 500), true)
 				end
 			end
-			Player:UseCard(Card.CARD_HUMANITY, UseFlag.USE_NOANIM)											-- Card against humanity (shit on the floor)
+			SilentUseCard(Player, Card.CARD_HUMANITY)														-- Card against humanity (shit on the floor)
 		elseif pillColor == PillColor.PILL_WHITE_BLACK then
 			Isaac.Spawn(5, 350, 0, Player.Position, Vector.Zero, nil)										-- spawn a random trinket
 		elseif pillColor == PillColor.PILL_WHITE_BLACK + 2048 then
@@ -3186,6 +3524,7 @@ if EID then
 	EID:addCollectible(Collectibles.KEEPERSPENNY, "Spawns a golden penny upon entering a new floor #Shops will now sell 1-4 additional items that are drawn from shop, treasure or boss itempools")
 	EID:addCollectible(Collectibles.NERVEPINCH, "Shooting or moving in one direction for 5 seconds will trigger a nerve pinch #{{ArrowDown}} You take fake damage and gain a permanent " .. tostring(StatUps.NERVEPINCH_SPEED) .. " speed down when that happens #{{ArrowUp}} However, there is a 75% chance to activate your active item for free, even if it's uncharged #One-time use and infinite use actives cannot be used that way")
 	EID:addCollectible(Collectibles.BLOODVESSELS[1], "Taking damage doesn't actually hurt the player, instead filling the blood vessel #This can be repeated 6 times until the vessel if full #Once it's full, using it or taking damage will empty it and deal 3 hearts of damage to the player")
+	EID:addCollectible(Collectibles.SIBLINGRIVALRY, "Orbital that switches between 2 different states every 15 seconds: #Two orbitals that quickly rotate around Isaac #One orbital that rotates slower and closer to Isaac, and periodically shoots teeth in random directions and spawns blood creep underneath it #{{Warning}} All orbitals block enemy shots and do contact damage")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
@@ -3200,8 +3539,9 @@ if EID then
 	EID:addTrinket(Trinkets.CHALKPIECE, "When entering uncleared room, you will leave a trail of powder underneath for 5 seconds #Enemies walking over the powder will be pushed back")
 	EID:addTrinket(Trinkets.ADAMSRIB, "Revives you as Eve when you die")
 	EID:addTrinket(Trinkets.NIGHTSOIL, "75% chance to prevent a curse when entering a new floor")
-	EID:addTrinket(Trinkets.BONEMEAL, "{{ArrowUp}} Increases size and damage for each floor while the trinket is held")
-	EID:addTrinket(Trinkets.TORNPAGE, "Books now have additional effects upon activation")
+	EID:addTrinket(Trinkets.BONEMEAL, "At the beginning of every new floor, grants:#{{ArrowUp}} +10% DMG up #{{ArrowUp}} Player size increase")
+	EID:addTrinket(Trinkets.TORNPAGE, "Books now have different or enhanced effects upon activation #Apart from natural spawns, this trinket has a 33% chance to spawn in libraries")
+	EID:addTrinket(Trinkets.EMPTYPAGE, "Books now  #Apart from natural spawns, this trinket has a 33% chance to spawn in libraries")
 	
 	EID:addCard(PocketItems.SDDSHARD, "Invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "Damages all enemies in a room, turns item pedestals into red locusts and turns pickups into random locusts with a 50% chance")
@@ -3227,6 +3567,8 @@ if EID then
 	EID:addCard(PocketItems.MOMSID , "Charms all enemies in the current room")
 	EID:addCard(PocketItems.FUNERALSERVICES , "Spawns an Old Chest")
 	EID:addCard(PocketItems.ANTIMATERIALCARD , "Can be thrown similarly to Chaos Card #If the card touches an enemy, that enemy is erased for the rest of the run")
+	EID:addCard(PocketItems.FIENDFIRE, "Sacrifice your consumables for mass room destruction #10-50 total: enemies take 15 damage and burn for 4 seconds #51-125 total: the initital damage, the burning damage and burning duration are doubled; destroys obstacles around you #126-150 total: the burning damage and burning duration are quadrupled; produces a Mama Mega explosion")
+	EID:addCard(PocketItems.DEMONFORM, "{{ArrowUp}} Increases your damage by 0.15 for every new uncleared room you enter #The boost disappears when entering a new floor")
 	
 	EID:addPill(Pills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at one red heart other types of hearts are unaffected")
 	EID:addPill(Pills.LAXATIVE, "Makes you shoot out corn tears from behind for 3 seconds")

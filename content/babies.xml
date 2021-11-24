@@ -1,0 +1,20 @@
+<babies root="gfx/Characters/Player2/">
+	<baby id="1001" name="Broken Baby" skin="01_brokenbaby.png" />
+	<baby id="1002" name="Dauntless Baby" skin="02_dauntlessbaby.png" />
+	<baby id="1003" name="Hoarder Baby" skin="03_hoarderbaby.png" />
+	<baby id="1004" name="Deceiver Baby" skin="04_deceiverbaby.png" />
+	<baby id="1005" name="Soiled Baby" skin="05_soiledbaby.png" />
+	<baby id="1006" name="Curdled Baby" skin="06_curdledbaby.png" />
+	<baby id="1007" name="Savage Baby" skin="07_savagebaby.png" />
+	<baby id="1008" name="Benighted Baby" skin="08_benightedbaby.png" />
+	<baby id="1009" name="Enigma Baby" skin="09_enigmababy.png" />
+	<baby id="1010" name="Capricious Baby" skin="10_capriciousbaby.png" />
+	<baby id="1011" name="Baleful Baby" skin="11_balefulbaby.png" />
+	<baby id="1012" name="Harlot Baby" skin="12_harlotbaby.png" />
+	<baby id="1013" name="Miser Baby" skin="13_miserbaby.png" />
+	<baby id="1014" name="Empty Baby" skin="14_emptybaby.png" />
+	<baby id="1015" name="Fettered Baby" skin="15_fetteredbaby.png" />
+	<baby id="1016" name="Zealot Baby" skin="16_zealotbaby.png" />
+	<baby id="1017" name="Deserter Baby" skin="17_deserterbaby.png" />
+	<baby id="1018" name="Edith Baby" skin="18_edithbaby.png" />
+</babies>

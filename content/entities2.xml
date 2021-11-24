@@ -48,6 +48,12 @@
 <entity anm2path="005.403_antimaterialcard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Antimaterial Card" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="170">
 </entity>
 
+<entity anm2path="005.404_slaythespire.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Demon From" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="174">
+</entity>
+
+<entity anm2path="005.404_slaythespire.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Fiend Fire" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="173">
+</entity>
+
 <!-- familiars -->
 
 <entity anm2path="003.210_bagotrash.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Bag O' Trash" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2100">
@@ -69,6 +75,15 @@
     </entity>
 	
 <entity anm2path="003.215_toytank_2.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id = "3" name="Toy Tank 2" numGridCollisionPoints="12" shadowSize="14" stageHP="0" variant="2106">
+    </entity>
+	
+<entity anm2path="003.216_peacefulsibling_1.anm2" baseHP="0" boss="0" champion="0" collisionDamage="3" collisionInterval="2" collisionMass="3" collisionRadius="7" friction="1" id = "3" name="Peaceful Sibling 1" numGridCollisionPoints="12" shadowSize="14" stageHP="0" variant="2107">
+    </entity>
+	
+<entity anm2path="003.216_peacefulsibling_2.anm2" baseHP="0" boss="0" champion="0" collisionDamage="3" collisionInterval="2" collisionMass="3" collisionRadius="7" friction="1" id = "3" name="Peaceful Sibling 2" numGridCollisionPoints="12" shadowSize="14" stageHP="0" variant="2108">
+    </entity>
+	
+<entity anm2path="003.216_fightingsiblings.anm2" baseHP="0" boss="0" champion="0" collisionDamage="6" collisionInterval="2" collisionMass="3" collisionRadius="8" friction="1" id = "3" name="Fighting Siblings" numGridCollisionPoints="12" shadowSize="14" stageHP="0" variant="2109">
     </entity>
 	
 <!-- tears and weapons -->
