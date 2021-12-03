@@ -62,6 +62,7 @@
 	
 	<!-- T. Lilith -->
 	<passive name="Mother's Love" description="Feed them love" gfx="38_motherslove.png" quality="2" cache="damage luck firedelay speed range" />
+	<trinket id="10" name="Baby Shoes" description="So tiny" gfx="t18_babyshoes.png" />
 
 	<!-- T. Keeper -->
 	<trinket name="Greed's Heart" description="Coin up" gfx="t06_greedsheart.png" />

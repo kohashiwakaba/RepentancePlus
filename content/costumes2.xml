@@ -11,5 +11,6 @@
 	<costume id="7" anm2path="costume_009_redbomber.anm2" type="passive" skinColor="5" overwriteColor="true" />
 	<costume id="8" anm2path="costume_001_ordinarylife.anm2" type="passive" />
 	<costume id="9" anm2path="costume_010_ascalpel.anm2" type="passive" />
+	<costume id="10" anm2path="costume_011_babyshoes.anm2" type="trinket" />
 	
 </costumes>

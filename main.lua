@@ -12,8 +12,9 @@
 									---------------------
 
 local game = Game()
-local rplus = RegisterMod("rplus_DB", 1)
-local MOD_VERSION = 1.13
+local rplus = RegisterMod("!rpdevbuild", 1)
+RepentancePlusMod = rplus
+local MOD_VERSION = 1.15
 local sfx = SFXManager()
 local music = MusicManager()
 local CustomData
@@ -45,7 +46,7 @@ DNAPillIcon = Sprite()
 DNAPillIcon:Load("gfx/ui/ui_dnapillhelper.anm2", true)
 
 local BASEMENTKEY_CHANCE = 5			-- chance to replace golden chest with the old chest
-local HEARTKEY_CHANCE = 5				-- chance for enemy to drop Scarlet chest on death
+local HEARTKEY_CHANCE = 5				-- chance for enemy to drop Flesh Chest on death
 local SUPERBERSERKSTATE_CHANCE = 25		-- chance to enter berserk state via Temper Tantrum
 local SUPERBERSERK_DELETE_CHANCE = 10	-- chance to erase enemies while in this state
 local TRASHBAG_BREAK_CHANCE = 1			-- chance of Bag o' Trash breaking
@@ -57,8 +58,9 @@ local ENRAGED_SOUL_COOLDOWN = 420		-- 7 seconds in 60 FPS callback; cooldown for
 local CEREM_DAGGER_LAUNCH_CHANCE = 7 	-- chance to launch a dagger
 local NIGHT_SOIL_CHANCE = 75 			-- chance to negate curse
 local REDBOMBLAUNCHCOOLDOWN = 60 		-- cooldown for launching red bombs (1 second)
-local MAGICPEN_CREEP_COOLDOWN = 240 	-- coldown for magic pen creep
+local MAGICPEN_CREEP_COOLDOWN = 240 	-- coldown for Magic Pen creep
 local NERVEPINCH_USE_CHANCE = 75		-- chance to activate your active item for free via Nerve Pinch
+local FLESHCHEST_REPLACE_CHANCE = 25	-- chance for Flesh Chests to replace chests normally
 
 									-----------------
 									----- ENUMS -----
@@ -148,7 +150,8 @@ Trinkets = {
 	NIGHTSOIL = Isaac.GetTrinketIdByName("Night Soil"),
 	TORNPAGE = Isaac.GetTrinketIdByName("Torn Page"),
 	BONEMEAL = Isaac.GetTrinketIdByName("Bone Meal"),
-	EMPTYPAGE = Isaac.GetTrinketIdByName("Empty Page")
+	EMPTYPAGE = Isaac.GetTrinketIdByName("Empty Page"),
+	BABYSHOES = Isaac.GetTrinketIdByName("Baby Shoes")
 }
 
 PocketItems = {
@@ -182,7 +185,9 @@ PocketItems = {
 }
 
 PickUps = {
-	SCARLETCHEST = Isaac.GetEntityVariantByName("Scarlet Chest")
+	FLESHCHEST = Isaac.GetEntityVariantByName("Flesh Chest"),
+	SCARLETCHEST = Isaac.GetEntityVariantByName("Scarlet Chest"),
+	BLACKCHEST = Isaac.GetEntityVariantByName("Black Chest")
 }
 
 Pills = {
@@ -319,33 +324,50 @@ local Unlocks = {
 --]]
 
 ItemPools = {
-	SCARLETCHEST = { 
+	FLESHCHEST = { 
+		15, -- <3
 		16, -- Raw Liver
+		36, -- Poop
+		45, -- Yum Heart
+		46, -- Lucky Foot
 		73, -- Cube of Meat
+		103, -- Common Cold
 		155, -- The Peeper
 		176, -- Stem Cells
 		214, -- Anemic
 		218, -- Placenta
 		236, -- E. Coli
-		253, -- Magic Scab
+		254, -- Blood Clot
+		273, -- Bob's Brain
+		276, -- Isaac's Heart
+		319, -- Cain's Other Eye
 		440, -- Kidney Stone
 		446, -- Dead Tooth
 		452, -- Varicose Veins
+		453, -- Compound Fracture
+		454, -- Polydactyly
+		458, -- Belly Button
+		467, -- Finger
 		502, -- Large Zit
 		509, -- Bloodshot Eye
+		525, -- Leprosy
 		529, -- Pop!
 		541, -- Marrow
 		542, -- Slipped Rib
 		544, -- Pointy Rib
 		548, -- Jaw Bone
 		549, -- Brittle Bones
+		558, -- Eye Sore
 		611, -- Larynx
 		639, -- Yuck Heart
+		641, -- Akeldama
 		642, -- Magic Skin
 		657, -- Vasculitis
+		658, -- Giant Cell
 		676, -- Empty Heart
 		688, -- Inner Child
-		695  -- Bloody Gust
+		695, -- Bloody Gust
+		731 -- Stye
 	},
 	MOMNDAD = {
 		175, -- Dad's Key
@@ -386,7 +408,7 @@ ItemPools = {
 		77,  -- my little unicorn
 		146, -- prayer card
 		49,  -- shoop
-		171, -- spider button
+		171, -- spider butt
 		38,  -- tammy's head
 		93,  -- gamekid
 		66,  -- hourglass
@@ -522,130 +544,6 @@ KEEPERSPENNY_ITEMPOOLS = {
 	ItemPoolType.POOL_SHOP
 }
 
--- for Mother's Love, familiars will grant stronger or weaker stat boosts, depending on their rarity and effectiveness
--- all familiars unlisted do NOT grant stat boosts (e.g. spiders, flies, dips, familiar spawned from trinkets and Isaac's body parts)
-FAMILIAR_STAT_MUL = {
-	[FamiliarVariant.BROTHER_BOBBY] = 1,
-	[FamiliarVariant.DEMON_BABY] = 1,
-	[FamiliarVariant.LITTLE_CHUBBY] = 1,
-	[FamiliarVariant.LITTLE_GISH] = 1,
-	[FamiliarVariant.LITTLE_STEVEN] = 1,
-	[FamiliarVariant.ROBO_BABY] = 1,
-	[FamiliarVariant.SISTER_MAGGY] = 1,
-	[FamiliarVariant.ABEL] = 1,
-	[FamiliarVariant.GHOST_BABY] = 1,
-	[FamiliarVariant.HARLEQUIN_BABY] = 1,
-	[FamiliarVariant.RAINBOW_BABY] = 1,
-	[FamiliarVariant.DADDY_LONGLEGS] = 1,
-	[FamiliarVariant.PEEPER] = 1,
-	[FamiliarVariant.BOMB_BAG] = 1,
-	[FamiliarVariant.SACK_OF_PENNIES] = 1,
-	[FamiliarVariant.LITTLE_CHAD] = 1,
-	[FamiliarVariant.RELIC] = 1.25,
-	[FamiliarVariant.BUM_FRIEND] = 1,
-	[FamiliarVariant.HOLY_WATER] = 1,
-	[FamiliarVariant.FOREVER_ALONE] = 1,
-	[FamiliarVariant.DISTANT_ADMIRATION] = 1,
-	[FamiliarVariant.GUARDIAN_ANGEL] = 1,
-	[FamiliarVariant.SACRIFICIAL_DAGGER] = 1,
-	[FamiliarVariant.DEAD_CAT] = 1,
-	[FamiliarVariant.ONE_UP] = 1.25,
-	[FamiliarVariant.GUPPYS_HAIRBALL] = 1,
-	[FamiliarVariant.CUBE_OF_MEAT_1] = 1,
-	[FamiliarVariant.CUBE_OF_MEAT_2] = 1.25,
-	[FamiliarVariant.CUBE_OF_MEAT_3] = 1.5,
-	[FamiliarVariant.CUBE_OF_MEAT_4] = 1.75,
-	[FamiliarVariant.SMART_FLY] = 1,
-	[FamiliarVariant.DRY_BABY] = 1.25,
-	[FamiliarVariant.JUICY_SACK] = 1,
-	[FamiliarVariant.ROBO_BABY_2] = 1,
-	[FamiliarVariant.ROTTEN_BABY] = 1,
-	[FamiliarVariant.HEADLESS_BABY] = 1,
-	[FamiliarVariant.LEECH] = 1,
-	[FamiliarVariant.MYSTERY_SACK] = 1,
-	[FamiliarVariant.BBF] = 1,
-	[FamiliarVariant.BOBS_BRAIN] = 1,
-	[FamiliarVariant.BEST_BUD] = 1,
-	[FamiliarVariant.LIL_BRIMSTONE] = 1.25,
-	[FamiliarVariant.ISAACS_HEART] = 2,
-	[FamiliarVariant.LIL_HAUNT] = 1,
-	[FamiliarVariant.DARK_BUM] = 1.25,
-	[FamiliarVariant.BIG_FAN] = 1,
-	[FamiliarVariant.SISSY_LONGLEGS] = 1,
-	[FamiliarVariant.PUNCHING_BAG] = 1,
-	[FamiliarVariant.BALL_OF_BANDAGES_1] = 1,
-	[FamiliarVariant.BALL_OF_BANDAGES_2] = 1.25,
-	[FamiliarVariant.BALL_OF_BANDAGES_3] = 1.5,
-	[FamiliarVariant.BALL_OF_BANDAGES_4] = 1.75,
-	[FamiliarVariant.MONGO_BABY] = 1.25,
-	[FamiliarVariant.SAMSONS_CHAINS] = 1,
-	[FamiliarVariant.CAINS_OTHER_EYE] = 1,
-	[FamiliarVariant.BLUEBABYS_ONLY_FRIEND] = 1,
-	[FamiliarVariant.GEMINI] = 1,
-	[FamiliarVariant.INCUBUS] = 1.25,
-	[FamiliarVariant.FATES_REWARD] = 1,
-	[FamiliarVariant.LIL_CHEST] = 1,
-	[FamiliarVariant.SWORN_PROTECTOR] = 1,
-	[FamiliarVariant.FRIEND_ZONE] = 1,
-	[FamiliarVariant.LOST_FLY] = 1,
-	[FamiliarVariant.CHARGED_BABY] = 1,
-	[FamiliarVariant.LIL_GURDY] = 1,
-	[FamiliarVariant.BUMBO] = 1,
-	[FamiliarVariant.CENSER] = 1,
-	[FamiliarVariant.KEY_BUM] = 1,
-	[FamiliarVariant.RUNE_BAG] = 1,
-	[FamiliarVariant.SERAPHIM] = 1.25,
-	[FamiliarVariant.GB_BUG] = math.random(85, 115) / 100,	-- like, glitch reference, get it guys?..
-	[FamiliarVariant.SPIDER_MOD] = 1,
-	[FamiliarVariant.FARTING_BABY] = 1,
-	[FamiliarVariant.SUCCUBUS] = 1.25,
-	[FamiliarVariant.LIL_LOKI] = 1,
-	[FamiliarVariant.OBSESSED_FAN] = 1,
-	[FamiliarVariant.PAPA_FLY] = 1,
-	[FamiliarVariant.MILK] = 1,
-	[FamiliarVariant.MULTIDIMENSIONAL_BABY] = 1,
-	[FamiliarVariant.SUPER_BUM] = 3,
-	[FamiliarVariant.BIG_CHUBBY] = 1,
-	[FamiliarVariant.DEPRESSION] = 1,
-	[FamiliarVariant.SHADE] = 1,
-	[FamiliarVariant.HUSHY] = 1,
-	[FamiliarVariant.LIL_MONSTRO] = 1,
-	[FamiliarVariant.KING_BABY] = 1,
-	[FamiliarVariant.YO_LISTEN] = 1,
-	[FamiliarVariant.ACID_BABY] = 1,
-	[FamiliarVariant.SPIDER_BABY] = 2,
-	[FamiliarVariant.SACK_OF_SACKS] = 1,
-	[FamiliarVariant.BLOODSHOT_EYE] = 1,
-	[FamiliarVariant.MOMS_RAZOR] = 1,
-	[FamiliarVariant.ANGRY_FLY] = 1,
-	[FamiliarVariant.BUDDY_IN_A_BOX] = 1,
-	[FamiliarVariant.LIL_HARBINGERS] = 1,
-	[FamiliarVariant.ANGELIC_PRISM] = 1,
-	[FamiliarVariant.LIL_SPEWER] = 1,
-	[FamiliarVariant.SLIPPED_RIB] = 1,
-	[FamiliarVariant.POINTY_RIB] = 1,
-	[FamiliarVariant.HALLOWED_GROUND] = 1,
-	[FamiliarVariant.JAW_BONE] = 1,
-	[FamiliarVariant.INTRUDER] = 1,
-	[FamiliarVariant.PSY_FLY] = 1.5,
-	[FamiliarVariant.BOILED_BABY] = 1,
-	[FamiliarVariant.FREEZER_BABY] = 1,
-	[FamiliarVariant.LOST_SOUL] = 1.25,
-	[FamiliarVariant.LIL_DUMPY] = 1,
-	[FamiliarVariant.TINYTOMA] = 1,
-	[FamiliarVariant.BOT_FLY] = 1,
-	[FamiliarVariant.PASCHAL_CANDLE] = 1,
-	[FamiliarVariant.FRUITY_PLUM] = 1,
-	[FamiliarVariant.LIL_ABADDON] = 1,
-	[FamiliarVariant.LIL_PORTAL] = 1,
-	[FamiliarVariant.WORM_FRIEND] = 1,
-	[FamiliarVariant.TWISTED_BABY] = 1,
-	[FamiliarVariant.STAR_OF_BETHLEHEM] = 1,
-	[FamiliarVariant.CUBE_BABY] = 1,
-	[FamiliarVariant.BLOOD_PUPPY] = 1.25,
-	[FamiliarVariant.VANISHING_TWIN] = 1.25,
-}	
-
 						----------------------
 						-- HELPER FUNCTIONS --
 						----------------------
@@ -777,37 +675,28 @@ local function GiveRevivalIVFrames(p)
 	if Sprite:IsPlaying("Hit") then Sprite:Stop() end
 	-- stopping hit sound
 	if sfx:IsPlaying(SoundEffect.SOUND_ISAAC_HURT_GRUNT) then sfx:Stop(SoundEffect.SOUND_ISAAC_HURT_GRUNT) end
-end							
-
-local function isMirrorItemRoom()
-	for _, entity in pairs(Isaac.GetRoomEntities()) do
-		if entity.Type == 5 and entity.SubType == 626 then
-			return true
-		end
-	end	
-	return false
-end								
+end														
 
 -- Helper functions to turn fire delay into equivalent tears up (since via api only fire delay is accessible, not tears)
-function GetTears(fireDelay)
+local function GetTears(fireDelay)
     return 30 / (fireDelay + 1)
 end
 
-function GetFireDelay(tears)
+local function GetFireDelay(tears)
     return math.max(30 / tears - 1, -0.9999)
 end
 
-function isInGhostForm(player)
+local function isInGhostForm(player)
 	return (player:GetPlayerType() == 10 or player:GetPlayerType() == 31 or
 	player:GetPlayerType() == 39 or
 	player:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE))	-- after touching the white fire
 end								
 
-function SilentUseCard(p, card)
+local function SilentUseCard(p, card)
 	p:UseCard(card, UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)
 end
 
-function isPlayerDying(player)
+local function isPlayerDying(player)
 	-- and by 'dying' I (unfortunately) mean 'playing death animation'
 	local sprite = player:GetSprite()
 	
@@ -815,7 +704,7 @@ function isPlayerDying(player)
 	(sprite:IsPlaying("LostDeath") and sprite:GetFrame() > 30)
 end
 
-function isSelfDamage(damageFlags, data)
+local function isSelfDamage(damageFlags, data)
 	-- `damageFlags` (int): damage flags passed from MC_ENTITY_TAKE_DMG callback
 	-- `data` (string): can be used to specify what sources you want to include on checking (to ignore the rest)
 	
@@ -850,6 +739,197 @@ function isSelfDamage(damageFlags, data)
 	return false
 end
 
+function blacklistCollectibles(player, collectible1, collectible2)
+	-- `player` (EntityPlayer): a player
+	-- `collectible1` (int): what collectible should be blacklisted
+	-- `collectible2` (int/table): what collectible(s) should collectible1 be blacklisted from
+	player = player or Isaac.GetPlayer(0)
+	
+	if type(collectible2) == 'number' then
+		if player:HasCollectible(collectible1) then
+			game:GetItemPool():RemoveCollectible(collectible2)
+		end
+		
+		if player:HasCollectible(collectible2) then
+			game:GetItemPool():RemoveCollectible(collectible1)
+		end
+	elseif type(collectible2) == 'table' then
+		for _, COL in pairs(collectible2) do
+			if player:HasCollectible(collectible1) then
+				game:GetItemPool():RemoveCollectible(COL)
+			end
+			
+			if player:HasCollectible(COL) then
+				game:GetItemPool():RemoveCollectible(collectible1)
+			end
+		end
+	end
+end
+
+function getMothersLoveStatBoost(fVariant, insertCustom, boostMul)
+	-- `fVariant` (int): familiar that you want to check (you can also insert info about it if `insertCustom` is true)
+	-- `insertCustom` (boolean): default - false. If true, allows you to add a custom stat boost multiplier for familiar
+	-- `boostMul` (float): if you want to insert a stat boost multiplier for familiar
+	
+	-- for Mother's Love, familiars will grant stronger or weaker stat boosts, depending on their rarity and effectiveness
+	-- all Repentance+ familiars have to be listed here
+	-- all vanilla familiars unlisted do NOT grant stat boosts (e.g. spiders, flies, dips, familiar spawned from trinkets and Isaac's body parts)
+	FAMILIAR_STAT_MUL = {
+		[FamiliarVariant.BROTHER_BOBBY] = 1,
+		[FamiliarVariant.DEMON_BABY] = 1,
+		[FamiliarVariant.LITTLE_CHUBBY] = 1,
+		[FamiliarVariant.LITTLE_GISH] = 1,
+		[FamiliarVariant.LITTLE_STEVEN] = 1,
+		[FamiliarVariant.ROBO_BABY] = 1,
+		[FamiliarVariant.SISTER_MAGGY] = 1,
+		[FamiliarVariant.ABEL] = 1,
+		[FamiliarVariant.GHOST_BABY] = 1,
+		[FamiliarVariant.HARLEQUIN_BABY] = 1,
+		[FamiliarVariant.RAINBOW_BABY] = 1,
+		[FamiliarVariant.DADDY_LONGLEGS] = 1,
+		[FamiliarVariant.PEEPER] = 1,
+		[FamiliarVariant.BOMB_BAG] = 1,
+		[FamiliarVariant.SACK_OF_PENNIES] = 1,
+		[FamiliarVariant.LITTLE_CHAD] = 1,
+		[FamiliarVariant.RELIC] = 1.25,
+		[FamiliarVariant.BUM_FRIEND] = 1,
+		[FamiliarVariant.HOLY_WATER] = 1,
+		[FamiliarVariant.FOREVER_ALONE] = 1,
+		[FamiliarVariant.DISTANT_ADMIRATION] = 1,
+		[FamiliarVariant.GUARDIAN_ANGEL] = 1,
+		[FamiliarVariant.SACRIFICIAL_DAGGER] = 1,
+		[FamiliarVariant.DEAD_CAT] = 1,
+		[FamiliarVariant.ONE_UP] = 1.25,
+		[FamiliarVariant.GUPPYS_HAIRBALL] = 1,
+		[FamiliarVariant.CUBE_OF_MEAT_1] = 1,
+		[FamiliarVariant.CUBE_OF_MEAT_2] = 1.25,
+		[FamiliarVariant.CUBE_OF_MEAT_3] = 1.5,
+		[FamiliarVariant.CUBE_OF_MEAT_4] = 1.75,
+		[FamiliarVariant.SMART_FLY] = 1,
+		[FamiliarVariant.DRY_BABY] = 1.25,
+		[FamiliarVariant.JUICY_SACK] = 1,
+		[FamiliarVariant.ROBO_BABY_2] = 1,
+		[FamiliarVariant.ROTTEN_BABY] = 1,
+		[FamiliarVariant.HEADLESS_BABY] = 1,
+		[FamiliarVariant.LEECH] = 1,
+		[FamiliarVariant.MYSTERY_SACK] = 1,
+		[FamiliarVariant.BBF] = 1,
+		[FamiliarVariant.BOBS_BRAIN] = 1,
+		[FamiliarVariant.BEST_BUD] = 1,
+		[FamiliarVariant.LIL_BRIMSTONE] = 1.25,
+		[FamiliarVariant.ISAACS_HEART] = 2,
+		[FamiliarVariant.LIL_HAUNT] = 1,
+		[FamiliarVariant.DARK_BUM] = 1.25,
+		[FamiliarVariant.BIG_FAN] = 1,
+		[FamiliarVariant.SISSY_LONGLEGS] = 1,
+		[FamiliarVariant.PUNCHING_BAG] = 1,
+		[FamiliarVariant.BALL_OF_BANDAGES_1] = 1,
+		[FamiliarVariant.BALL_OF_BANDAGES_2] = 1.25,
+		[FamiliarVariant.BALL_OF_BANDAGES_3] = 1.5,
+		[FamiliarVariant.BALL_OF_BANDAGES_4] = 1.75,
+		[FamiliarVariant.MONGO_BABY] = 1.25,
+		[FamiliarVariant.SAMSONS_CHAINS] = 1,
+		[FamiliarVariant.CAINS_OTHER_EYE] = 1,
+		[FamiliarVariant.BLUEBABYS_ONLY_FRIEND] = 1,
+		[FamiliarVariant.GEMINI] = 1,
+		[FamiliarVariant.INCUBUS] = 1.25,
+		[FamiliarVariant.FATES_REWARD] = 1,
+		[FamiliarVariant.LIL_CHEST] = 1,
+		[FamiliarVariant.SWORN_PROTECTOR] = 1,
+		[FamiliarVariant.FRIEND_ZONE] = 1,
+		[FamiliarVariant.LOST_FLY] = 1,
+		[FamiliarVariant.CHARGED_BABY] = 1,
+		[FamiliarVariant.LIL_GURDY] = 1,
+		[FamiliarVariant.BUMBO] = 1,
+		[FamiliarVariant.CENSER] = 1,
+		[FamiliarVariant.KEY_BUM] = 1,
+		[FamiliarVariant.RUNE_BAG] = 1,
+		[FamiliarVariant.SERAPHIM] = 1.25,
+		[FamiliarVariant.GB_BUG] = math.random(85, 115) / 100,	-- like, glitch reference, get it guys?..
+		[FamiliarVariant.SPIDER_MOD] = 1,
+		[FamiliarVariant.FARTING_BABY] = 1,
+		[FamiliarVariant.SUCCUBUS] = 1.25,
+		[FamiliarVariant.LIL_LOKI] = 1,
+		[FamiliarVariant.OBSESSED_FAN] = 1,
+		[FamiliarVariant.PAPA_FLY] = 1,
+		[FamiliarVariant.MILK] = 1,
+		[FamiliarVariant.MULTIDIMENSIONAL_BABY] = 1,
+		[FamiliarVariant.SUPER_BUM] = 3,
+		[FamiliarVariant.BIG_CHUBBY] = 1,
+		[FamiliarVariant.DEPRESSION] = 1,
+		[FamiliarVariant.SHADE] = 1,
+		[FamiliarVariant.HUSHY] = 1,
+		[FamiliarVariant.LIL_MONSTRO] = 1,
+		[FamiliarVariant.KING_BABY] = 1,
+		[FamiliarVariant.YO_LISTEN] = 1,
+		[FamiliarVariant.ACID_BABY] = 1,
+		[FamiliarVariant.SPIDER_BABY] = 2,
+		[FamiliarVariant.SACK_OF_SACKS] = 1,
+		[FamiliarVariant.BLOODSHOT_EYE] = 1,
+		[FamiliarVariant.MOMS_RAZOR] = 1,
+		[FamiliarVariant.ANGRY_FLY] = 1,
+		[FamiliarVariant.BUDDY_IN_A_BOX] = 1,
+		[FamiliarVariant.LIL_HARBINGERS] = 1,
+		[FamiliarVariant.ANGELIC_PRISM] = 1,
+		[FamiliarVariant.LIL_SPEWER] = 1,
+		[FamiliarVariant.SLIPPED_RIB] = 1,
+		[FamiliarVariant.POINTY_RIB] = 1,
+		[FamiliarVariant.HALLOWED_GROUND] = 1,
+		[FamiliarVariant.JAW_BONE] = 1,
+		[FamiliarVariant.INTRUDER] = 1,
+		[FamiliarVariant.PSY_FLY] = 1.5,
+		[FamiliarVariant.BOILED_BABY] = 1,
+		[FamiliarVariant.FREEZER_BABY] = 1,
+		[FamiliarVariant.LOST_SOUL] = 1.25,
+		[FamiliarVariant.LIL_DUMPY] = 1,
+		[FamiliarVariant.TINYTOMA] = 1,
+		[FamiliarVariant.BOT_FLY] = 1,
+		[FamiliarVariant.PASCHAL_CANDLE] = 1,
+		[FamiliarVariant.FRUITY_PLUM] = 1,
+		[FamiliarVariant.LIL_ABADDON] = 1,
+		[FamiliarVariant.LIL_PORTAL] = 1,
+		[FamiliarVariant.WORM_FRIEND] = 1,
+		[FamiliarVariant.TWISTED_BABY] = 1,
+		[FamiliarVariant.STAR_OF_BETHLEHEM] = 1,
+		[FamiliarVariant.CUBE_BABY] = 1,
+		[FamiliarVariant.BLOOD_PUPPY] = 1.25,
+		[FamiliarVariant.VANISHING_TWIN] = 1.25,
+		-- Repentance+
+		[Familiars.BAGOTRASH] = 1,
+		[Familiars.CHERUBIM] = 1,
+		[Familiars.CHERRY] = 0,
+		[Familiars.BIRD] = 0,
+		[Familiars.SOUL] = 0,
+		[Familiars.TOYTANK1] = 0.75,
+		[Familiars.TOYTANK2] = 0.75,
+		[Familiars.SIBLING1] = 0.75,
+		[Familiars.SIBLING2] = 0.75,
+		[Familiars.FIGHTINGSIBLINGS] = 1.5,
+	}	
+
+	insertCustom = insertCustom or false
+	boostMul = boostMul or nil
+	if insertCustom == true and type(boostMul) == 'number' then
+		FAMILIAR_STAT_MUL[fVariant] = boostMul
+		return boostMul
+	end
+	
+	if not FAMILIAR_STAT_MUL[fVariant] then
+		if fVariant < 244 or fVariant == 900 then
+			-- vanilla unlisted: 0
+			return 0
+		else
+			-- modded unlisted: 1 (unless overriden by insertCustom)
+			return 1
+		end
+	else
+		return FAMILIAR_STAT_MUL[fVariant]
+	end
+end
+
+function getTrueFamiliarNum(player, collectible)
+	return player:GetCollectibleNum(collectible) + player:GetEffects():GetCollectibleEffectNum(collectible)
+end
 
 						-----------------------------
 						-- CALLBACK TIED FUNCTIONS --
@@ -894,7 +974,7 @@ function rplus:OnGameStart(Continued)
 				MAGICPEN = {CreepSpewCooldown = nil},
 				CATINBOX = {RoomEnterFrame = nil},
 				BOOKOFGENESIS = {Index = 5},
-				MOTHERSLOVE = {NumDamage = 0, NumLuck = 0, NumRange = 0, NumTears = 0, NumSpeed = 0},
+				MOTHERSLOVE = {NumStats = 0, NumFriends = 0},
 				BLOODVESSEL = {DamageFlag = false},
 				NERVEPINCH = {Hold = 300, NumTriggers = 0}
 			},
@@ -906,7 +986,8 @@ function rplus:OnGameStart(Continued)
 			Trinkets = {
 				GREEDSHEART = "CoinHeartEmpty",
 				CHALKPIECE = {RoomEnterFrame = 0},
-				TORNPAGE = {},
+				TORNPAGE = {trinketSeen = false},
+				EMPTYPAGE = {trinketSeen = false},
 				BONEMEAL = {Levels = 0}
 			},
 			Pills = {
@@ -1024,41 +1105,8 @@ function rplus:OnNewRoom()
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
 		
-		-- it turns out that more and more items 
-		-- behave in unintentional ways together, 
-		-- so let's BLACKLIST THEM HERE ---------
-		-----------------------------------------
-		
-		-- there's just no nice synergy yet, it looks wacky
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR) then
-			game:GetItemPool():RemoveCollectible(Collectibles.REDBOMBER)
-		elseif player:HasCollectible(Collectibles.REDBOMBER) then
-			game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)
-		end
-		
-		-- stats are applied every time Lil' Delirium changes forms, and they do not go away, and Lil' Delirium is not a separate familiar variant
-		-- so I can't control him in any way, shape or form
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_LIL_DELIRIUM) 
-		or player:HasCollectible(Collectibles.SIBLINGRIVALRY) then
-			game:GetItemPool():RemoveCollectible(Collectibles.MOTHERSLOVE)
-		elseif player:HasCollectible(Collectibles.MOTHERSLOVE) then
-			game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_LIL_DELIRIUM)
-			game:GetItemPool():RemoveCollectible(Collectibles.SIBLINGRIVALRY)
-		end
-		
-		-- some differently colored pills have same effects with PHD/False PHD, and since the MC_USE_PILL asks for pill effect, there's no way to distinguish
-		-- them and apply the DNA redactor effect correctly
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_PHD) 
-		or player:HasCollectible(CollectibleType.COLLECTIBLE_FALSE_PHD) then
-			game:GetItemPool():RemoveCollectible(Collectibles.DNAREDACTOR)
-		elseif player:HasCollectible(Collectibles.DNAREDACTOR) then
-			game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_PHD)
-			game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_FALSE_PHD)
-		end
-		
-		-----------------------------------------
-		
-		if player:HasCollectible(Collectibles.ORDLIFE) and room:GetType() == RoomType.ROOM_TREASURE and room:IsFirstVisit() and not isMirrorItemRoom() then
+		if player:HasCollectible(Collectibles.ORDLIFE) and room:GetType() == RoomType.ROOM_TREASURE 
+		and room:IsFirstVisit() and not room:IsMirrorWorld() then
 			momNDadItem = Isaac.Spawn(5, 100, ItemPools.MOMNDAD[math.random(#ItemPools.MOMNDAD)], room:FindFreePickupSpawnPosition(Vector(320,280), 1, true, false), Vector.Zero, nil):ToPickup()
 			
 			momNDadItem.OptionsPickupIndex = 3
@@ -1094,11 +1142,11 @@ function rplus:OnNewRoom()
 		end
 		
 		if player:HasTrinket(Trinkets.ANGELSCROWN) and roomtype == RoomType.ROOM_TREASURE 
-		and not isMirrorItemRoom() then
+		and not room:IsMirrorWorld() then
 			if room:IsFirstVisit() then
 				for _, collectible in pairs(Isaac.FindByType(5, 100, -1, false, false)) do
 					collectiblePickup = collectible:ToPickup()
-					collectiblePickup:ToPickup():Morph(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), false, false, false)
+					collectiblePickup:Morph(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), false, false, false)
 					collectiblePickup.Price = 15
 					collectiblePickup.ShopItemId = -777
 				end
@@ -1152,9 +1200,11 @@ function rplus:OnNewRoom()
 			player:EvaluateItems()
 		end
 		
-		player:GetData()['usedLoadedDice'] = false
-		player:AddCacheFlags(CacheFlag.CACHE_LUCK)
-		player:EvaluateItems()
+		if player:GetData()['usedLoadedDice'] then
+			player:GetData()['usedLoadedDice'] = false
+			player:AddCacheFlags(CacheFlag.CACHE_LUCK)
+			player:EvaluateItems()
+		end
 		
 		if player:HasCollectible(Collectibles.TOYTANKS) then
 			tankData[Familiars.TOYTANK1].newRoomCurrHold = game:GetFrameCount()
@@ -1171,38 +1221,24 @@ function rplus:OnNewRoom()
 		end
 		
 		if player:HasCollectible(Collectibles.KEEPERSPENNY) and room:GetType() == RoomType.ROOM_SHOP 
-		and room:IsFirstVisit() then
+		and room:IsFirstVisit() and not room:IsMirrorWorld() and #Isaac.FindByType(EntityType.ENTITY_GREED, -1, -1, false, true) == 0 then
 			numNewItems = math.random(4)
 			
 			if numNewItems == 1 then
-				V = Vector(320, 280)
-				local Item = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(KEEPERSPENNY_ITEMPOOLS[math.random(#KEEPERSPENNY_ITEMPOOLS)], false, Random(), CollectibleType.COLLECTIBLE_NULL), V, Vector.Zero, nil):ToPickup()
-				Item.Price = 15
-				Item.ShopItemId = -10
+				V = {Vector(320, 280)}
 			elseif numNewItems == 2 then
 				V = {Vector(160, 280), Vector(480, 280)}
-				for i = 1, numNewItems do
-					local pool = KEEPERSPENNY_ITEMPOOLS[math.random(#KEEPERSPENNY_ITEMPOOLS)]
-					local Item = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(pool, false, Random(), CollectibleType.COLLECTIBLE_NULL), V[i], Vector.Zero, nil):ToPickup()
-					Item.Price = 15
-					Item.ShopItemId = -11 * i
-				end
 			elseif numNewItems == 3 then
 				V = {Vector(320, 280), Vector(160, 280), Vector(480, 280)}
-				for i = 1, numNewItems do
-					local pool = KEEPERSPENNY_ITEMPOOLS[math.random(#KEEPERSPENNY_ITEMPOOLS)]
-					local Item = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(pool, false, Random(), CollectibleType.COLLECTIBLE_NULL), V[i], Vector.Zero, nil):ToPickup()
-					Item.Price = 15
-					Item.ShopItemId = -12 * i
-				end
 			else
 				V = {Vector(160, 280), Vector(480, 280), Vector(120, 360), Vector(520, 360)}
-				for i = 1, numNewItems do
-					local pool = KEEPERSPENNY_ITEMPOOLS[math.random(#KEEPERSPENNY_ITEMPOOLS)]
-					local Item = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(pool, false, Random(), CollectibleType.COLLECTIBLE_NULL), V[i], Vector.Zero, nil):ToPickup()
-					Item.Price = 15
-					Item.ShopItemId = -13 * i
-				end
+			end
+			
+			for i = 1, numNewItems do
+				local pool = KEEPERSPENNY_ITEMPOOLS[math.random(#KEEPERSPENNY_ITEMPOOLS)]
+				local Item = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(pool, false, Random(), CollectibleType.COLLECTIBLE_NULL), V[i], Vector.Zero, nil):ToPickup()
+				Item.Price = 15
+				Item.ShopItemId = -11 * i
 			end
 		end
 		
@@ -1222,14 +1258,16 @@ function rplus:OnNewRoom()
 		end
 	end
 	
-	if room:GetType() == RoomType.ROOM_LIBRARY and
-	room:IsFirstVisit() then
+	if room:GetType() == RoomType.ROOM_LIBRARY
+	and room:IsFirstVisit() then
 		local pageSpawnRoll = math.random(100)
 		
-		if pageSpawnRoll < 33 then
+		if pageSpawnRoll < 33 and not CustomData.Trinkets.TORNPAGE.trinketSeen then
 			Isaac.Spawn(5, 350, Trinkets.TORNPAGE, Isaac.GetFreeNearPosition(Vector(320, 280), 10), Vector.Zero, nil)
-		elseif pageSpawnRoll < 66 then
+			CustomData.Trinkets.TORNPAGE.trinketSeen = true
+		elseif pageSpawnRoll < 66 and not CustomData.Trinkets.EMPTYPAGE.trinketSeen then
 			Isaac.Spawn(5, 350, Trinkets.EMPTYPAGE, Isaac.GetFreeNearPosition(Vector(320, 280), 10), Vector.Zero, nil)
+			CustomData.Trinkets.EMPTYPAGE.trinketSeen = true
 		end
 	end
 end
@@ -1245,6 +1283,19 @@ function rplus:OnFrame()
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
 		local sprite = player:GetSprite()
+		
+		-- it turns out that more and more items 
+		-- behave in unintentional ways together, 
+		-- so let's BLACKLIST THEM HERE ---------
+		-----------------------------------------
+		
+		-- there's just no nice synergy yet, it looks wacky
+		blacklistCollectibles(player, Collectibles.REDBOMBER, CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)
+		
+		-- some differently colored pills have same effects with PHD/False PHD, and since the MC_USE_PILL asks for pill effect, there's no way to distinguish
+		-- them and apply the DNA redactor effect correctly
+		blacklistCollectibles(player, Collectibles.DNAREDACTOR, {CollectibleType.COLLECTIBLE_PHD, CollectibleType.COLLECTIBLE_FALSE_PHD})
+		-----------------------------------------
 		
 		if player:GetData()['reverseCardRoom'] and player:GetData()['reverseCardRoom'] ~= game:GetLevel():GetCurrentRoomIndex() then
 			player:AnimateCard(PocketItems.REVERSECARD, "Pickup")
@@ -1443,6 +1494,7 @@ function rplus:OnFrame()
 		
 		if CustomData and CustomData.Pills.PHANTOM.UseFrame and (game:GetFrameCount() - CustomData.Pills.PHANTOM.UseFrame) % 600 == 1 then
 			if game:GetFrameCount() <= CustomData.Pills.PHANTOM.UseFrame + 1300 
+			and not isInGhostForm(player)
 			and (player:GetData()['usedPhantom'] or player:GetData()['usedHorsePhantom']) then
 				player:TakeDamage(1, DamageFlag.DAMAGE_FAKE | DamageFlag.DAMAGE_NO_PENALTIES, EntityRef(player), 24)
 				if player:GetData()['usedHorsePhantom'] then
@@ -1467,28 +1519,19 @@ function rplus:OnFrame()
 		end
 		
 		if player:HasCollectible(Collectibles.MOTHERSLOVE) then
-			for _, friend in pairs(Isaac.FindByType(3, -1, -1, false, false)) do
-				if not friend:GetData()['appliedStat'] then
-					-- all modded familiar gives x1 stat up multiplier by default, and vanilla familiars have their own table at the top of the file
-					if friend.Variant > 244 then 
-						if friend.Variant == Familiars.SOUL or friend.Variant == Familiars.CHERRY then
-							LoveStatMulGiven = 0
-						else
-							LoveStatMulGiven = 1
-						end
-					else 
-						LoveStatMulGiven = FAMILIAR_STAT_MUL[friend.Variant] or 0 
+			if CustomData.Items.MOTHERSLOVE.NumFriends ~= #Isaac.FindByType(3, -1, -1, false, false) then
+				CustomData.Items.MOTHERSLOVE.NumStats = 0
+				if #Isaac.FindByType(3, -1, -1, false, false) > 0 then
+					for _, friend in pairs(Isaac.FindByType(3, -1, -1, false, false)) do
+						LoveStatMulGiven = getMothersLoveStatBoost(friend.Variant)
+						
+						CustomData.Items.MOTHERSLOVE.NumStats = CustomData.Items.MOTHERSLOVE.NumStats + LoveStatMulGiven
 					end
-					
-					player:AddCacheFlags(CacheFlag.CACHE_ALL)
-					CustomData.Items.MOTHERSLOVE.NumDamage = CustomData.Items.MOTHERSLOVE.NumDamage + LoveStatMulGiven
-					CustomData.Items.MOTHERSLOVE.NumTears = CustomData.Items.MOTHERSLOVE.NumTears + LoveStatMulGiven
-					CustomData.Items.MOTHERSLOVE.NumLuck = CustomData.Items.MOTHERSLOVE.NumLuck + LoveStatMulGiven
-					CustomData.Items.MOTHERSLOVE.NumSpeed = CustomData.Items.MOTHERSLOVE.NumSpeed + LoveStatMulGiven
-					CustomData.Items.MOTHERSLOVE.NumRange = CustomData.Items.MOTHERSLOVE.NumRange + LoveStatMulGiven
-					
-					friend:GetData()['appliedStat'] = true
 				end
+				player:AddCacheFlags(CacheFlag.CACHE_DAMAGE | CacheFlag.CACHE_FIREDELAY | CacheFlag.CACHE_SPEED | CacheFlag.CACHE_LUCK | CacheFlag.CACHE_RANGE)
+				player:EvaluateItems()
+				
+				CustomData.Items.MOTHERSLOVE.NumFriends = #Isaac.FindByType(3, -1, -1, false, false)
 			end
 		end
 		
@@ -1509,9 +1552,12 @@ function rplus:OnFrame()
 			CustomData.Items.NERVEPINCH.NumTriggers = CustomData.Items.NERVEPINCH.NumTriggers + 1
 			player:AddCacheFlags(CacheFlag.CACHE_SPEED)
 			player:EvaluateItems()
-			if Isaac.GetItemConfig():GetCollectible(player:GetActiveItem(ActiveSlot.SLOT_PRIMARY)).MaxCharges > 0
+			local primaryItem = player:GetActiveItem(ActiveSlot.SLOT_PRIMARY)
+			
+			if Isaac.GetItemConfig():GetCollectible(primaryItem).MaxCharges > 0
+			and not (primaryItem == 490 or primaryItem == 585)
 			and math.random(100) <= NERVEPINCH_USE_CHANCE then
-				player:UseActiveItem(player:GetActiveItem(ActiveSlot.SLOT_PRIMARY), 0, -1)
+				player:UseActiveItem(primaryItem, 0, -1)
 			end
 		end
 		
@@ -1682,7 +1728,7 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, Slot, _)
 			if i == 7 and Player:GetDamageCooldown() <= 0 then
 				CustomData.Items.BLOODVESSEL.DamageFlag = true
 				Player:TakeDamage(6, DamageFlag.DAMAGE_INVINCIBLE | DamageFlag.DAMAGE_NO_PENALTIES | DamageFlag.DAMAGE_RED_HEARTS, EntityRef(Player), 18)
-				Player:RemoveCollectible(Collectibles.BLOODVESSELS[6])
+				Player:RemoveCollectible(Collectibles.BLOODVESSELS[7])
 				Player:AddCollectible(Collectibles.BLOODVESSELS[1])
 				CustomData.Items.BLOODVESSEL.DamageFlag = false
 			else
@@ -1723,7 +1769,8 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, Slot, _)
 		elseif ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS or
 		ItemUsed == CollectibleType.COLLECTIBLE_LEMEGETON or
 		ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES or
-		ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS then
+		ItemUsed == CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS or
+		ItemUsed == CollectibleType.COLLECTIBLE_NECRONOMICON then
 			Player:SetActiveCharge(Player:GetActiveCharge(Slot) + 1, Slot)
 		end
 	end
@@ -2376,7 +2423,7 @@ function rplus:OnGameRender()
 		end
 		
 		if player:HasTrinket(Trinkets.ANGELSCROWN) and room:GetType() == RoomType.ROOM_TREASURE 
-		and not isMirrorItemRoom() then
+		and not room:IsMirrorWorld() then
 			FloorPiece:GetSprite().Scale = Vector(0.25, 0.25)
 			FloorPiece:AddEntityFlags(EntityFlag.FLAG_RENDER_FLOOR)
 			FloorPiece:GetSprite():Load("gfx/backdrop/angel_treasure_room_backdrops.anm2", true)
@@ -2463,37 +2510,6 @@ function rplus:PreUseItem(ItemUsed, RNG, Player, UseFlags, ActiveSlot, CustomVar
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, rplus.PreUseItem)
-
-						-- MC_POST_ENTITY_REMOVE --									
-						---------------------------
-function rplus:OnEntityRemove(Entity)
-	-- helper for Mother's Love
-	for i = 0, game:GetNumPlayers() - 1 do
-		local player = Isaac.GetPlayer(i)
-		
-		if player:HasCollectible(Collectibles.MOTHERSLOVE) then
-			if Entity.Variant > 244 then 
-				if Entity.Variant == Familiars.SOUL or Entity.Variant == Familiars.CHERRY then
-					LoveStatMulRemoved = 0
-				else
-					LoveStatMulRemoved = 1
-				end
-			else 
-				LoveStatMulRemoved = FAMILIAR_STAT_MUL[Entity.Variant] or 0 
-			end
-			
-			if Entity:GetData()['appliedStat'] then
-				player:AddCacheFlags(CacheFlag.CACHE_ALL)
-				CustomData.Items.MOTHERSLOVE.NumDamage = CustomData.Items.MOTHERSLOVE.NumDamage - LoveStatMulRemoved
-				CustomData.Items.MOTHERSLOVE.NumTears = CustomData.Items.MOTHERSLOVE.NumTears - LoveStatMulRemoved
-				CustomData.Items.MOTHERSLOVE.NumLuck = CustomData.Items.MOTHERSLOVE.NumLuck - LoveStatMulRemoved
-				CustomData.Items.MOTHERSLOVE.NumSpeed = CustomData.Items.MOTHERSLOVE.NumSpeed - LoveStatMulRemoved
-				CustomData.Items.MOTHERSLOVE.NumRange = CustomData.Items.MOTHERSLOVE.NumRange - LoveStatMulRemoved
-			end
-		end
-	end
-end
-rplus:AddCallback(ModCallbacks.MC_POST_ENTITY_REMOVE, rplus.OnEntityRemove, EntityType.ENTITY_FAMILIAR)
 
 						-- MC_ENTITY_TAKE_DMG --									
 						------------------------
@@ -2616,7 +2632,7 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 				if Entity:ToPlayer():HasCollectible(Collectibles.BLOODVESSELS[i]) then
 					if i == 7 then
 						CustomData.Items.BLOODVESSEL.DamageFlag = true
-						Entity:TakeDamage(6, DamageFlag.DAMAGE_INVINCIBLE | DamageFlag.DAMAGE_NO_PENALTIES | DamageFlag.DAMAGE_RED_HEARTS, EntityRef(Entity), 18)
+						Entity:TakeDamage(7, DamageFlag.DAMAGE_INVINCIBLE | DamageFlag.DAMAGE_NO_PENALTIES | DamageFlag.DAMAGE_RED_HEARTS, EntityRef(Entity), 18)
 						Entity:ToPlayer():RemoveCollectible(Collectibles.BLOODVESSELS[i])
 						Entity:ToPlayer():AddCollectible(Collectibles.BLOODVESSELS[1])
 						CustomData.Items.BLOODVESSEL.DamageFlag = false
@@ -2633,6 +2649,20 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
 
+						-- MC_POST_NPC_INIT --											
+						-----------------------
+function rplus:OnNPCInit(NPC)
+	for i = 0, game:GetNumPlayers() - 1 do
+		local player = Isaac.GetPlayer(i)
+		
+		if player:HasTrinket(Trinkets.BABYSHOES) then
+			NPC.Size = NPC.Size * 0.8
+			NPC.Scale = NPC.Scale * 0.8
+		end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_POST_NPC_INIT, rplus.OnNPCInit)
+
 						-- MC_POST_NPC_DEATH --											
 						-----------------------
 function rplus:OnNPCDeath(NPC)
@@ -2642,8 +2672,9 @@ function rplus:OnNPCDeath(NPC)
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
 		
-		if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HEARTKEY_CHANCE * player:GetTrinketMultiplier(Trinkets.KEYTOTHEHEART) then
-			Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.SCARLETCHEST, 0, NPC.Position, NPC.Velocity, nil)
+		if player:HasTrinket(Trinkets.KEYTOTHEHEART) and math.random(100) <= HEARTKEY_CHANCE * player:GetTrinketMultiplier(Trinkets.KEYTOTHEHEART) 
+		and NPC.MaxHitPoints >= 10 then
+			Isaac.Spawn(EntityType.ENTITY_PICKUP, PickUps.FLESHCHEST, 0, NPC.Position, NPC.Velocity, nil)
 		end
 		
 		if player:HasCollectible(Collectibles.CHERRYFRIENDS) and math.random(100) <= CHERRY_SPAWN_CHANCE then
@@ -2662,6 +2693,24 @@ function rplus:OnNPCDeath(NPC)
 			player:AddCacheFlags(CacheFlag.CACHE_FIREDELAY)
 			player:AddCacheFlags(CacheFlag.CACHE_SPEED)
 			player:EvaluateItems()
+		end
+		
+		if player:HasCollectible(Collectibles.KEEPERSPENNY) and room:GetType() == RoomType.ROOM_SHOP 
+		and NPC.Type == EntityType.ENTITY_GREED then
+			numNewItems = math.random(3, 4)
+			
+			if numNewItems == 3 then
+				V = {Vector(320, 280), Vector(160, 280), Vector(480, 280)}
+			else
+				V = {Vector(160, 280), Vector(480, 280), Vector(120, 360), Vector(520, 360)}
+			end
+			
+			for i = 1, numNewItems do
+				local pool = KEEPERSPENNY_ITEMPOOLS[math.random(#KEEPERSPENNY_ITEMPOOLS)]
+				local Item = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(pool, false, Random(), CollectibleType.COLLECTIBLE_NULL), V[i], Vector.Zero, nil):ToPickup()
+				Item.Price = 15
+				Item.ShopItemId = -13 * i
+			end
 		end
 	end
 end
@@ -2689,10 +2738,15 @@ function rplus:OnPickupInit(Pickup)
 				end
 				Pickup:Morph(5, 20, CoinSubTypesByVal[CurType + 1], true, true, false)
 			end
+			
+			if math.random(100) <= FLESHCHEST_REPLACE_CHANCE 
+			and (Pickup.Variant == PickupVariant.PICKUP_SPIKEDCHEST or Pickup.Variant == PickupVariant.PICKUP_MIMICCHEST or Pickup.Variant == PickupVariant.PICKUP_REDCHEST) then
+				Pickup:Morph(5, PickUps.FLESHCHEST, 0, true, true, false)
+			end
 		end
 	end
 		
-	if Pickup.Variant == PickUps.SCARLETCHEST and Pickup.SubType == 1 and not Pickup:GetData()["IsInRoom"] then
+	if Pickup.Variant == PickUps.FLESHCHEST and Pickup.SubType == 1 and not Pickup:GetData()["IsInRoom"] then
 		Pickup:Remove()
 	end
 end
@@ -2704,7 +2758,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
 		
-		if Pickup.Variant == PickUps.SCARLETCHEST and Pickup.SubType == 0 
+		if Pickup.Variant == PickUps.FLESHCHEST and Pickup.SubType == 0 
 		and Collider.Type == 1 then
 			-- subtype 1: opened chest (need to remove)
 			Pickup.SubType = 1
@@ -2719,14 +2773,14 @@ function rplus:PickupCollision(Pickup, Collider, _)
 				local freezePreventChecker = 0
 				
 				repeat
-					Item = ItemPools.SCARLETCHEST[math.random(#ItemPools.SCARLETCHEST)]
+					Item = ItemPools.FLESHCHEST[math.random(#ItemPools.FLESHCHEST)]
 					freezePreventChecker = freezePreventChecker + 1
 				until IsCollectibleUnlocked(Item) or freezePreventChecker == 1000
 				
 				if freezePreventChecker < 1000 then
-					local scarletChestPedestal = Isaac.Spawn(5, 100, Item, Pickup.Position, Vector(0, 0), Pickup)
-					scarletChestPedestal:GetSprite():ReplaceSpritesheet(5,"gfx/items/scarletchest_itemaltar.png") 
-					scarletChestPedestal:GetSprite():LoadGraphics()
+					local FLESHCHESTPedestal = Isaac.Spawn(5, 100, Item, Pickup.Position, Vector(0, 0), Pickup)
+					FLESHCHESTPedestal:GetSprite():ReplaceSpritesheet(5,"gfx/items/fleshchest_itemaltar.png") 
+					FLESHCHESTPedestal:GetSprite():LoadGraphics()
 				else 
 					EntityNPC.ThrowSpider(Pickup.Position, Pickup, Pickup.Position + Vector.FromAngle(math.random(360)) * 200, false, 0) 
 				end
@@ -2862,10 +2916,6 @@ function rplus:OnTearUpdate(Tear)
 		
 		SHeart.Rotation = Tear.Velocity:GetAngleDegrees() - 90
 	end
-	
-	if Tear.SpawnerType == 3 and Tear.SpawnerVariant == Familiars.CHERUBIM then
-		Tear.CollisionDamage = 5
-	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_TEAR_UPDATE, rplus.OnTearUpdate)
 
@@ -2949,7 +2999,7 @@ function rplus:UpdateStats(Player, Flag)
 		end
 		
 		if Player:HasCollectible(Collectibles.MOTHERSLOVE) then
-			Player.Damage = Player.Damage + StatUps.MOTHERSLOVE_DMG * CustomData.Items.MOTHERSLOVE.NumDamage
+			Player.Damage = Player.Damage + StatUps.MOTHERSLOVE_DMG * CustomData.Items.MOTHERSLOVE.NumStats
 		end
 		
 		if CustomData and Player:GetData()['usedDemonForm'] then 
@@ -2973,7 +3023,7 @@ function rplus:UpdateStats(Player, Flag)
 		end
 		
 		if Player:HasCollectible(Collectibles.MOTHERSLOVE) then
-			Player.MaxFireDelay = GetFireDelay(GetTears(Player.MaxFireDelay) + StatUps.MOTHERSLOVE_TEARS * CustomData.Items.MOTHERSLOVE.NumTears)
+			Player.MaxFireDelay = GetFireDelay(GetTears(Player.MaxFireDelay) + StatUps.MOTHERSLOVE_TEARS * CustomData.Items.MOTHERSLOVE.NumStats)
 		end
 	end
 	
@@ -3007,17 +3057,17 @@ function rplus:UpdateStats(Player, Flag)
 		end
 		
 		if Player:HasCollectible(Collectibles.MOTHERSLOVE) then
-			Player.TearRange = Player.TearRange + StatUps.MOTHERSLOVE_RANGE * CustomData.Items.MOTHERSLOVE.NumRange * 40
+			Player.TearRange = Player.TearRange + StatUps.MOTHERSLOVE_RANGE * CustomData.Items.MOTHERSLOVE.NumStats * 40
 		end
 	end
 	
 	if Flag == CacheFlag.CACHE_FAMILIARS then
-		Player:CheckFamiliar(Familiars.BAGOTRASH, Player:GetCollectibleNum(Collectibles.BAGOTRASH), Player:GetCollectibleRNG(Collectibles.BAGOTRASH))
-		Player:CheckFamiliar(Familiars.CHERUBIM, Player:GetCollectibleNum(Collectibles.CHERUBIM), Player:GetCollectibleRNG(Collectibles.CHERUBIM))
-		Player:CheckFamiliar(Familiars.TOYTANK1, Player:GetCollectibleNum(Collectibles.TOYTANKS), Player:GetCollectibleRNG(Collectibles.TOYTANKS))
-		Player:CheckFamiliar(Familiars.TOYTANK2, Player:GetCollectibleNum(Collectibles.TOYTANKS), Player:GetCollectibleRNG(Collectibles.TOYTANKS))
-		Player:CheckFamiliar(Familiars.SIBLING1, Player:GetCollectibleNum(Collectibles.SIBLINGRIVALRY), Player:GetCollectibleRNG(Collectibles.SIBLINGRIVALRY))
-		Player:CheckFamiliar(Familiars.SIBLING2, Player:GetCollectibleNum(Collectibles.SIBLINGRIVALRY), Player:GetCollectibleRNG(Collectibles.SIBLINGRIVALRY))
+		Player:CheckFamiliar(Familiars.BAGOTRASH, getTrueFamiliarNum(Player, Collectibles.BAGOTRASH), Player:GetCollectibleRNG(Collectibles.BAGOTRASH))
+		Player:CheckFamiliar(Familiars.CHERUBIM, getTrueFamiliarNum(Player, Collectibles.CHERUBIM), Player:GetCollectibleRNG(Collectibles.CHERUBIM))
+		Player:CheckFamiliar(Familiars.TOYTANK1, getTrueFamiliarNum(Player, Collectibles.TOYTANKS), Player:GetCollectibleRNG(Collectibles.TOYTANKS))
+		Player:CheckFamiliar(Familiars.TOYTANK2, getTrueFamiliarNum(Player, Collectibles.TOYTANKS), Player:GetCollectibleRNG(Collectibles.TOYTANKS))
+		Player:CheckFamiliar(Familiars.SIBLING1, getTrueFamiliarNum(Player, Collectibles.SIBLINGRIVALRY), Player:GetCollectibleRNG(Collectibles.SIBLINGRIVALRY))
+		Player:CheckFamiliar(Familiars.SIBLING2, getTrueFamiliarNum(Player, Collectibles.SIBLINGRIVALRY), Player:GetCollectibleRNG(Collectibles.SIBLINGRIVALRY))
 	end
 	
 	if Flag == CacheFlag.CACHE_LUCK then
@@ -3032,7 +3082,7 @@ function rplus:UpdateStats(Player, Flag)
 		end	
 		
 		if Player:HasCollectible(Collectibles.MOTHERSLOVE) then
-			Player.Luck = Player.Luck + StatUps.MOTHERSLOVE_LUCK * CustomData.Items.MOTHERSLOVE.NumLuck
+			Player.Luck = Player.Luck + StatUps.MOTHERSLOVE_LUCK * CustomData.Items.MOTHERSLOVE.NumStats
 		end
 	end
 	
@@ -3042,7 +3092,7 @@ function rplus:UpdateStats(Player, Flag)
 		end
 		
 		if Player:HasCollectible(Collectibles.MOTHERSLOVE) then
-			Player.MoveSpeed = Player.MoveSpeed + StatUps.MOTHERSLOVE_SPEED * CustomData.Items.MOTHERSLOVE.NumSpeed
+			Player.MoveSpeed = Player.MoveSpeed + StatUps.MOTHERSLOVE_SPEED * CustomData.Items.MOTHERSLOVE.NumStats
 		end
 		
 		if Player:HasCollectible(Collectibles.NERVEPINCH) then
@@ -3060,202 +3110,187 @@ rplus:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, rplus.UpdateStats)
 
 						-- MC_FAMILIAR_INIT --										
 						----------------------
-function rplus:TrashBagInit(Familiar)
-	CustomData.Items.BAGOTRASH.Levels = 1
-	Familiar:AddToFollowers()
-	Familiar.IsFollower = true
-	Familiar:GetSprite():Play("FloatDown")
-end
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.TrashBagInit, Familiars.BAGOTRASH)
-
-function rplus:CherubimInit(Familiar)
-	Familiar:AddToFollowers()
-	Familiar.IsFollower = true
-	Familiar:GetSprite():Play("FloatDown")
-end
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.CherubimInit, Familiars.CHERUBIM)
-
-function rplus:ToyTanksInit(Familiar)
-	tankData = {
-		[Familiars.TOYTANK1] = {lineOfSightDist = 450, lineOfSightAngle = 40, tankVelocityMul = 3.5, 
-								tankAttackBuffer = 8, currBuffer = 0, projectileVelocityMul = 20, newRoomAttackHold = 0,
-								newRoomCurrHold = 0},
-		[Familiars.TOYTANK2] = {lineOfSightDist = 300, lineOfSightAngle = 10, tankVelocityMul = 1.75, 
-								tankAttackBuffer = 90, currBuffer = 0, projectileVelocityMul = 10, newRoomAttackHold = 60,
-								newRoomCurrHold = 0}
-	}
-	Familiar.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND
-	Familiar.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
-end
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.ToyTanksInit, Familiars.TOYTANK1)
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.ToyTanksInit, Familiars.TOYTANK2)
-
-function rplus:SiblingsInit(Familiar)
-	Familiar:AddToOrbit(25)
-	Familiar:GetSprite():Play("Idle")
-end
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.SiblingsInit, Familiars.SIBLING1)
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.SiblingsInit, Familiars.SIBLING2)
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.SiblingsInit, Familiars.FIGHTINGSIBLINGS)
-
-						-- MC_FAMILIAR_UPDATE --	 								
-						------------------------
-function rplus:TrashBagUpdate(Familiar)
-	Familiar:FollowParent()
-	if Familiar:GetSprite():IsFinished("Spawn") then
-		Familiar:GetSprite().PlaybackSpeed = 1.0
+function rplus:FamiliarInit(Familiar)
+	if Familiar.Variant == Familiars.BAGOTRASH then
+		CustomData.Items.BAGOTRASH.Levels = 1
+		Familiar:AddToFollowers()
+		Familiar.IsFollower = true
 		Familiar:GetSprite():Play("FloatDown")
 	end
 	
-	if Familiar.RoomClearCount == 1 then
-		local NumFlies = math.random(CustomData.Items.BAGOTRASH.Levels * 2)
-		if Isaac.GetPlayer(0):HasCollectible(CollectibleType.COLLECTIBLE_BFFS, true) then NumFlies = NumFlies + math.random(2) end
-		
-		Familiar:GetSprite().PlaybackSpeed = 0.5
-		Familiar:GetSprite():Play("Spawn")
-		for _ = 1, NumFlies do Isaac.Spawn(3, FamiliarVariant.BLUE_FLY, 0, Familiar.Position, Vector.Zero, nil) end
-		Familiar.RoomClearCount = 0
+	if Familiar.Variant == Familiars.CHERUBIM then
+	Familiar:AddToFollowers()
+	Familiar.IsFollower = true
+	Familiar:GetSprite():Play("FloatDown")
+	end
+	
+	if Familiar.Variant == Familiars.TOYTANK1 or Familiar.Variant == Familiars.TOYTANK2 then 
+		tankData = {
+			[Familiars.TOYTANK1] = {lineOfSightDist = 450, lineOfSightAngle = 40, tankVelocityMul = 3.5, 
+									tankAttackBuffer = 8, currBuffer = 0, projectileVelocityMul = 20, newRoomAttackHold = 0,
+									newRoomCurrHold = 0},
+			[Familiars.TOYTANK2] = {lineOfSightDist = 300, lineOfSightAngle = 10, tankVelocityMul = 1.75, 
+									tankAttackBuffer = 90, currBuffer = 0, projectileVelocityMul = 10, newRoomAttackHold = 60,
+									newRoomCurrHold = 0}
+		}
+		Familiar.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND
+		Familiar.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
+	end
+	
+	if Familiar.Variant == Familiars.SIBLING1 or Familiar.Variant == Familiars.SIBLING2 or Familiar.Variant == Familiars.FIGHTINGSIBLINGS then
+		Familiar:AddToOrbit(25)
+		Familiar:GetSprite():Play("Idle")
 	end
 end
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.TrashBagUpdate, Familiars.BAGOTRASH)
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, rplus.FamiliarInit)
 
-function rplus:CherubimUpdate(Familiar)
-	Familiar:FollowParent()
-	local Sprite = Familiar:GetSprite()
-	
-	for i = 0, game:GetNumPlayers() - 1 do
-		local player = Isaac.GetPlayer(i)
-		
-		if player:HasCollectible(Collectibles.CHERUBIM) then
-			if player:GetFireDirection() == Direction.NO_DIRECTION then
-				Sprite:Play(DIRECTION_FLOAT_ANIM[player:GetMovementDirection()], false)
-			else
-				local TearVector = DIRECTION_VECTOR[player:GetFireDirection()]
-
-				if Familiar.FireCooldown <= 0 then
-					local Tear = Familiar:FireProjectile(TearVector):ToTear()
-					Tear.TearFlags = TearFlags.TEAR_GLOW | TearFlags.TEAR_HOMING
-					Tear:Update()
-
-					if player:HasTrinket(Isaac.GetTrinketIdByName("Forgotten Lullaby")) then
-						Familiar.FireCooldown = 11
-					else
-						Familiar.FireCooldown = 18
-					end
-				end
-
-				Sprite:Play(DIRECTION_SHOOT_ANIM[player:GetFireDirection()], false)
-			end
-
-			Familiar.FireCooldown = Familiar.FireCooldown - 1
+						-- MC_FAMILIAR_UPDATE --	 								
+						------------------------
+function rplus:FamiliarUpdate(Familiar)
+	if Familiar.Variant == Familiars.BAGOTRASH then 
+		Familiar:FollowParent()
+		if Familiar:GetSprite():IsFinished("Spawn") then
+			Familiar:GetSprite().PlaybackSpeed = 1.0
+			Familiar:GetSprite():Play("FloatDown")
 		end
-	end
-end
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.CherubimUpdate, Familiars.CHERUBIM)
-
-function rplus:SoulUpdate(Familiar)
-	if CustomData.Items.ENRAGEDSOUL.AttachedEnemy then
-		if CustomData.Items.ENRAGEDSOUL.AttachedEnemy:IsActiveEnemy() and AttachFrames >= 0 then
-			Familiar.Position = CustomData.Items.ENRAGEDSOUL.AttachedEnemy.Position
-			AttachFrames = AttachFrames - 1
-		else 	
-			Familiar:Kill()
-			CustomData.Items.ENRAGEDSOUL.AttachedEnemy = nil
-		end
-	end
-end
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.SoulUpdate, Familiars.SOUL)
-
-function rplus:ToyTanksUpdate(Familiar)	
-	-- moving around (BASEMENT DRIFT YOOO)
-	-- change direction naturally; they change direction when colliding with grid automatically
-	if game:GetFrameCount() % 48 == 0 then
-		Familiar.Velocity = DIRECTION_VECTOR_SIMPLIFIED[math.random(#DIRECTION_VECTOR_SIMPLIFIED)] * tankData[Familiar.Variant].tankVelocityMul
-	end
-	-- correct the velocity when colliding with grid so that the tanks don't move diagonally
-	local TX = Familiar.Velocity.X
-	local TY = Familiar.Velocity.Y
-	if TY > 0 and TX <= TY and TX >= -TY then
-		Familiar.Velocity = DIRECTION_VECTOR_SIMPLIFIED[1] * tankData[Familiar.Variant].tankVelocityMul
-	elseif TX > 0 and TY < TX and TY > -TX then
-		Familiar.Velocity = DIRECTION_VECTOR_SIMPLIFIED[4] * tankData[Familiar.Variant].tankVelocityMul
-	elseif TX <= 0 and TY < -TX and TY > TX then
-		Familiar.Velocity = DIRECTION_VECTOR_SIMPLIFIED[2] * tankData[Familiar.Variant].tankVelocityMul
-	else
-		Familiar.Velocity = DIRECTION_VECTOR_SIMPLIFIED[3] * tankData[Familiar.Variant].tankVelocityMul
-	end
-	
-	local tankSprite = Familiar:GetSprite()
-	if Familiar.Velocity.X < -0.1 and math.abs(Familiar.Velocity.Y) < 0.1  then tankSprite:Play("MoveLeft") 
-	elseif Familiar.Velocity.Y < -0.1 and math.abs(Familiar.Velocity.X) < 0.1 then tankSprite:Play("MoveUp") 
-	elseif Familiar.Velocity.X > 0.1 and math.abs(Familiar.Velocity.Y) < 0.1 then tankSprite:Play("MoveRight") 
-	else tankSprite:Play("MoveDown") end
-	
-	-- shooting at enemies
-	for _, enemy in pairs(Isaac.FindInRadius(Familiar.Position, tankData[Familiar.Variant].lineOfSightDist, EntityPartition.ENEMY)) do
-		if enemy.Type ~= EntityType.ENTITY_SHOPKEEPER and enemy.Type ~= EntityType.ENTITY_FIREPLACE 
-		and enemy:IsVulnerableEnemy() and not enemy:HasEntityFlags(EntityFlag.FLAG_CHARM) then
-			local curVel = Familiar.Velocity:Normalized()
-			local posDiff = (enemy.Position - Familiar.Position):Normalized()
+		
+		if Familiar.RoomClearCount == 1 then
+			local NumFlies = math.random(CustomData.Items.BAGOTRASH.Levels * 2)
 			
-			if game:GetRoom():CheckLine(enemy.Position, Familiar.Position, 3, 0, false, false) and 
-			math.abs(curVel:GetAngleDegrees() - posDiff:GetAngleDegrees()) < tankData[Familiar.Variant].lineOfSightAngle then
-				if game:GetFrameCount() > tankData[Familiar.Variant].currBuffer + tankData[Familiar.Variant].tankAttackBuffer 
-				and game:GetFrameCount() > tankData[Familiar.Variant].newRoomCurrHold + tankData[Familiar.Variant].newRoomAttackHold then
-					if Familiar.Variant == Familiars.TOYTANK1 then
-						local tankBullet = Isaac.Spawn(2, TearVariant.METALLIC, 0, Familiar.Position, posDiff * tankData[Familiar.Variant].projectileVelocityMul, nil):ToTear()
-					elseif Familiar.Variant == Familiars.TOYTANK2 then
-						local tankRocket = Isaac.Spawn(4, 19, 0, Familiar.Position, Vector.Zero, nil):ToBomb()
-						tankRocket.SpriteScale = Vector(0.6, 0.6)
-						tankRocket:GetData().forcedRocketTargetVel = curVel * tankData[Familiar.Variant].projectileVelocityMul
-						tankRocket.ExplosionDamage = 35
+			Familiar:GetSprite().PlaybackSpeed = 0.5
+			Familiar:GetSprite():Play("Spawn")
+			for _ = 1, (Familiar.Player:asCollectible(CollectibleType.COLLECTIBLE_BFFS, true) and NumFlies + math.random(2) or NumFlies) do 
+				Isaac.Spawn(3, FamiliarVariant.BLUE_FLY, 0, Familiar.Position, Vector.Zero, nil) 
+			end
+			Familiar.RoomClearCount = 0
+		end
+	end
+	
+	if Familiar.Variant == Familiars.CHERUBIM then
+		Familiar:FollowParent()
+		local Sprite = Familiar:GetSprite()
+		
+		for i = 0, game:GetNumPlayers() - 1 do
+			local player = Isaac.GetPlayer(i)
+			
+			if player:HasCollectible(Collectibles.CHERUBIM) then
+				if player:GetFireDirection() == Direction.NO_DIRECTION then
+					Sprite:Play(DIRECTION_FLOAT_ANIM[player:GetMovementDirection()], false)
+				else
+					local TearVector = DIRECTION_VECTOR[player:GetFireDirection()]
+
+					if Familiar.FireCooldown <= 0 then
+						local Tear = Familiar:FireProjectile(TearVector):ToTear()
+						Tear.CollisionDamage = (Familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 10 or 5)
+						Tear.TearFlags = TearFlags.TEAR_GLOW | TearFlags.TEAR_HOMING
+						Tear:Update()
+
+						if player:HasTrinket(Isaac.GetTrinketIdByName("Forgotten Lullaby")) then
+							Familiar.FireCooldown = 11
+						else
+							Familiar.FireCooldown = 18
+						end
 					end
-					tankData[Familiar.Variant].currBuffer = game:GetFrameCount()
+
+					Sprite:Play(DIRECTION_SHOOT_ANIM[player:GetFireDirection()], false)
+				end
+
+				Familiar.FireCooldown = Familiar.FireCooldown - 1
+			end
+		end
+	end
+	
+	if Familiar.Variant == Familiars.SOUL then
+		if CustomData.Items.ENRAGEDSOUL.AttachedEnemy then
+			if CustomData.Items.ENRAGEDSOUL.AttachedEnemy:IsActiveEnemy() and AttachFrames >= 0 then
+				Familiar.Position = CustomData.Items.ENRAGEDSOUL.AttachedEnemy.Position
+				AttachFrames = AttachFrames - 1
+			else 	
+				Familiar:Kill()
+				CustomData.Items.ENRAGEDSOUL.AttachedEnemy = nil
+			end
+		end
+	end
+	
+	if Familiar.Variant == Familiars.TOYTANK1 or Familiar.Variant == Familiars.TOYTANK2 then 
+		-- moving around (BASEMENT DRIFT YOOO)
+		-- change direction naturally; they change direction when colliding with grid automatically
+		if game:GetFrameCount() % 48 == 0 then
+			Familiar.Velocity = DIRECTION_VECTOR_SIMPLIFIED[math.random(#DIRECTION_VECTOR_SIMPLIFIED)] * tankData[Familiar.Variant].tankVelocityMul
+		end
+		-- correct the velocity when colliding with grid so that the tanks don't move diagonally
+		local TX = Familiar.Velocity.X
+		local TY = Familiar.Velocity.Y
+		if TY > 0 and TX <= TY and TX >= -TY then
+			Familiar.Velocity = DIRECTION_VECTOR_SIMPLIFIED[1] * tankData[Familiar.Variant].tankVelocityMul
+		elseif TX > 0 and TY < TX and TY > -TX then
+			Familiar.Velocity = DIRECTION_VECTOR_SIMPLIFIED[4] * tankData[Familiar.Variant].tankVelocityMul
+		elseif TX <= 0 and TY < -TX and TY > TX then
+			Familiar.Velocity = DIRECTION_VECTOR_SIMPLIFIED[2] * tankData[Familiar.Variant].tankVelocityMul
+		else
+			Familiar.Velocity = DIRECTION_VECTOR_SIMPLIFIED[3] * tankData[Familiar.Variant].tankVelocityMul
+		end
+		
+		local tankSprite = Familiar:GetSprite()
+		if Familiar.Velocity.X < -0.1 and math.abs(Familiar.Velocity.Y) < 0.1  then tankSprite:Play("MoveLeft") 
+		elseif Familiar.Velocity.Y < -0.1 and math.abs(Familiar.Velocity.X) < 0.1 then tankSprite:Play("MoveUp") 
+		elseif Familiar.Velocity.X > 0.1 and math.abs(Familiar.Velocity.Y) < 0.1 then tankSprite:Play("MoveRight") 
+		else tankSprite:Play("MoveDown") end
+		
+		-- shooting at enemies
+		for _, enemy in pairs(Isaac.FindInRadius(Familiar.Position, tankData[Familiar.Variant].lineOfSightDist, EntityPartition.ENEMY)) do
+			if enemy.Type ~= EntityType.ENTITY_SHOPKEEPER and enemy.Type ~= EntityType.ENTITY_FIREPLACE 
+			and enemy:IsVulnerableEnemy() and not enemy:HasEntityFlags(EntityFlag.FLAG_CHARM) then
+				local curVel = Familiar.Velocity:Normalized()
+				local posDiff = (enemy.Position - Familiar.Position):Normalized()
+				
+				if game:GetRoom():CheckLine(enemy.Position, Familiar.Position, 3, 0, false, false) and 
+				math.abs(curVel:GetAngleDegrees() - posDiff:GetAngleDegrees()) < tankData[Familiar.Variant].lineOfSightAngle then
+					if game:GetFrameCount() > tankData[Familiar.Variant].currBuffer + tankData[Familiar.Variant].tankAttackBuffer 
+					and game:GetFrameCount() > tankData[Familiar.Variant].newRoomCurrHold + tankData[Familiar.Variant].newRoomAttackHold then
+						if Familiar.Variant == Familiars.TOYTANK1 then
+							local tankBullet = Isaac.Spawn(2, TearVariant.METALLIC, 0, Familiar.Position, posDiff * tankData[Familiar.Variant].projectileVelocityMul, nil):ToTear()
+							tankBullet.CollisionDamage = (Familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 7 or 3.5)
+						elseif Familiar.Variant == Familiars.TOYTANK2 then
+							local tankRocket = Isaac.Spawn(4, 19, 0, Familiar.Position, Vector.Zero, nil):ToBomb()
+							tankRocket.SpriteScale = Vector(0.6, 0.6)
+							tankRocket:GetData().forcedRocketTargetVel = curVel * tankData[Familiar.Variant].projectileVelocityMul
+							tankRocket.ExplosionDamage = (Familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 70 or 35)
+						end
+						tankData[Familiar.Variant].currBuffer = game:GetFrameCount()
+					end
 				end
 			end
 		end
 	end
-end
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.ToyTanksUpdate, Familiars.TOYTANK1)
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.ToyTanksUpdate, Familiars.TOYTANK2)
-
-function rplus:SiblingsUpdate(Familiar)
-	Familiar.Velocity = Familiar:GetOrbitPosition(Familiar.Player.Position + Familiar.Player.Velocity) - Familiar.Position
 	
-	if Familiar.Variant == Familiars.SIBLING1 or Familiar.Variant == Familiars.SIBLING2 then
-		Familiar.OrbitDistance = Vector(75, 75)
-		Familiar.OrbitSpeed = 0.04
-	else
-		Familiar.OrbitDistance = Vector(60, 60)
-		Familiar.OrbitSpeed = 0.03
-		
-		-- randomly shooting tooth tears and spawning blood creep
-		if game:GetFrameCount() % 12 == 0 then
-			local toothTear = Familiar:FireProjectile(Vector.FromAngle(math.random(360)))
-			toothTear:ChangeVariant(TearVariant.TOOTH)
-			toothTear.Velocity = toothTear.Velocity / 2
-		end
-		
-		if game:GetFrameCount() % 18 == 0 then
-			local creepPuddle = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_RED, 0, Familiar.Position, Vector.Zero, nil):ToEffect()
+	if Familiar.Variant == Familiars.SIBLING1 or Familiar.Variant == Familiars.SIBLING2 or Familiar.Variant == Familiars.FIGHTINGSIBLINGS then
+		Familiar.Velocity = Familiar:GetOrbitPosition(Familiar.Player.Position + Familiar.Player.Velocity) - Familiar.Position
+	
+		if Familiar.Variant == Familiars.SIBLING1 or Familiar.Variant == Familiars.SIBLING2 then
+			Familiar.OrbitDistance = Vector(75, 75)
+			Familiar.OrbitSpeed = 0.04
+		else
+			Familiar.OrbitDistance = Vector(60, 60)
+			Familiar.OrbitSpeed = 0.03
+			
+			-- randomly shooting tooth tears and spawning blood creep
+			if game:GetFrameCount() % 12 == 0 then
+				local toothTear = Familiar:FireProjectile(Vector.FromAngle(math.random(360)))
+				toothTear:ChangeVariant(TearVariant.TOOTH)
+				toothTear.Velocity = toothTear.Velocity / 2
+			end
+			
+			if game:GetFrameCount() % 18 == 0 then
+				local creepPuddle = Isaac.Spawn(1000, EffectVariant.PLAYER_CREEP_RED, 0, Familiar.Position, Vector.Zero, nil):ToEffect()
+			end
 		end
 	end
 end
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.SiblingsUpdate, Familiars.SIBLING1)
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.SiblingsUpdate, Familiars.SIBLING2)
-rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.SiblingsUpdate, Familiars.FIGHTINGSIBLINGS)
+rplus:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, rplus.FamiliarUpdate)
 
 						-- MC_POST_BOMB_UPDATE --									
 						-------------------------
--- helper function for pointing toy tank's rockets in a right direction
-function rplus:TankRocketUpdate(rocket)
-  if rocket:GetData().forcedRocketTargetVel then
-    rocket.Velocity = rocket:GetData().forcedRocketTargetVel
-    rocket.SpriteRotation = rocket:GetData().forcedRocketTargetVel:GetAngleDegrees()
-  end
-end
-rplus:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, rplus.TankRocketUpdate, BombVariant.BOMB_ROCKET)
-
 function rplus:BombUpdate(Bomb)
 	if Bomb.SpawnerEntity and Bomb.SpawnerEntity:ToPlayer() then
 		local player = Bomb.SpawnerEntity:ToPlayer()
@@ -3278,50 +3313,58 @@ function rplus:BombUpdate(Bomb)
 			end		
 		end
 	end
+	
+	-- helper function for pointing toy tank's rockets in a right direction
+	if Bomb.Variant == BombVariant.BOMB_ROCKET then
+		if Bomb:GetData().forcedRocketTargetVel then
+			Bomb.Velocity = Bomb:GetData().forcedRocketTargetVel
+			Bomb.SpriteRotation = Bomb:GetData().forcedRocketTargetVel:GetAngleDegrees()
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, rplus.BombUpdate)
 
 						-- MC_PRE_FAMILIAR_COLLISION --									
 						-------------------------------
-function rplus:CherryCollision(Familiar, Collider, _)
-	if Collider:IsActiveEnemy(true) and not Collider:IsBoss() and game:GetFrameCount() % 10 == 0 then
-		game:CharmFart(Familiar.Position, 10.0, Familiar)
-		sfx:Play(SoundEffect.SOUND_FART, 1, 2, false, 1, 0)
-	end
-end
-rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.CherryCollision, Familiars.CHERRY)
-
-function rplus:BirdCollision(Familiar, Collider, _)
-	if Collider.Type == 1 then
-		for i = 0, game:GetNumPlayers() - 1 do
-			local player = Isaac.GetPlayer(i)
-			
-			if player:GetData()['catchingBird'] then
-				sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
-				Isaac.Spawn(1000, EffectVariant.POOF01, 0, Familiar.Position, Vector.Zero, nil)
-				Familiar:Remove()
-				player.Position = DiePos
-				player:TryRemoveNullCostume(Costumes.BIRDOFHOPE)
-				CustomData.Items.BIRDOFHOPE.BirdCaught = true
-				GiveRevivalIVFrames(player)
-				player:GetData()['catchingBird'] = nil
-				player:AddCacheFlags(CacheFlag.CACHE_FLYING)
-				player:EvaluateItems()
+function rplus:FamiliarCollision(Familiar, Collider, _)
+	if Familiar.Variant == Familiars.CHERRY then
+		if Collider:IsActiveEnemy(true) and not Collider:IsBoss() and game:GetFrameCount() % 10 == 0 then
+			game:CharmFart(Familiar.Position, 10.0, Familiar)
+			sfx:Play(SoundEffect.SOUND_FART, 1, 2, false, 1, 0)
+		end
+	end	
+	
+	if Familiar.Variant == Familiars.BIRD then
+		if Collider.Type == 1 then
+			for i = 0, game:GetNumPlayers() - 1 do
+				local player = Isaac.GetPlayer(i)
+				
+				if player:GetData()['catchingBird'] then
+					sfx:Play(SoundEffect.SOUND_SUPERHOLY, 1, 2, false, 1, 0)
+					Isaac.Spawn(1000, EffectVariant.POOF01, 0, Familiar.Position, Vector.Zero, nil)
+					Familiar:Remove()
+					player.Position = DiePos
+					player:TryRemoveNullCostume(Costumes.BIRDOFHOPE)
+					CustomData.Items.BIRDOFHOPE.BirdCaught = true
+					GiveRevivalIVFrames(player)
+					player:GetData()['catchingBird'] = nil
+					player:AddCacheFlags(CacheFlag.CACHE_FLYING)
+					player:EvaluateItems()
+				end
 			end
+		end
+	end	
+	
+	if Familiar.Variant == Familiars.SOUL then	
+		if Collider:IsActiveEnemy(true) and not Collider:HasEntityFlags(EntityFlag.FLAG_CHARM) and not CustomData.Items.ENRAGEDSOUL.AttachedEnemy then
+			Familiar.Velocity = Vector.Zero
+			CustomData.Items.ENRAGEDSOUL.AttachedEnemy = Collider
+			AttachFrames = ENRAGED_SOUL_COOLDOWN / 2
+			Familiar:GetSprite():Play("Idle", true)
 		end
 	end
 end
-rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.BirdCollision, Familiars.BIRD)
-
-function rplus:SoulCollision(Familiar, Collider, _)
-	if Collider:IsActiveEnemy(true) and not Collider:HasEntityFlags(EntityFlag.FLAG_CHARM) and not CustomData.Items.ENRAGEDSOUL.AttachedEnemy then
-		Familiar.Velocity = Vector.Zero
-		CustomData.Items.ENRAGEDSOUL.AttachedEnemy = Collider
-		AttachFrames = ENRAGED_SOUL_COOLDOWN / 2
-		Familiar:GetSprite():Play("Idle", true)
-	end
-end
-rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.SoulCollision, Familiars.SOUL)
+rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.FamiliarCollision)
 
 						-- MC_PRE_PROJECTILE_COLLISION --									
 						---------------------------------
@@ -3477,6 +3520,28 @@ function rplus:PickupAwardSpawn(_, Pos)
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
 
+						-- MC_GET_PILL_EFFECT --							
+						------------------------
+function rplus:ChangePillEffects(pillEffect, pillColor)
+	for i = 0, game:GetNumPlayers() - 1 do
+		local player = Isaac.GetPlayer(i)
+		
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_PHD) then
+			if pillEffect == Pills.PHANTOM then
+				return game:GetItemPool():GetPillEffect(1, player)
+			end
+		end
+		
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_FALSE_PHD) then
+			if pillEffect == Pills.YUM or pillEffect == Pills.YUCK
+			or pillEffect == Pills.ESTROGEN then
+				return game:GetItemPool():GetPillEffect(1, player)
+			end
+		end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_GET_PILL_EFFECT, rplus.ChangePillEffects)
+
 								----------------------------------
 								--- EXTERNAL ITEM DESCRIPTIONS ---
 								----------------------------------
@@ -3513,9 +3578,9 @@ if EID then
 	EID:addCollectible(Collectibles.CATINBOX, "When entering a room with enemies, their health is halved for the first 3 seconds, and then restored back to full #Doesn't work on bosses or minibosses")
 	EID:addCollectible(Collectibles.BOOKOFGENESIS, "Removes a random item and spawns 3 items of the same quality #Only one item can be taken #Can't remove or spawn quest items")
 	EID:addCollectible(Collectibles.SCALPEL, "Makes you shoot tears in the opposite direction #From the front, you will frequently shoot bloody tears that deal x0.66 of your damage #All other weapon types will still be fired from the front as well")
-	EID:addCollectible(Collectibles.KEEPERSPENNY, "Spawns a golden penny upon entering a new floor #Shops will now sell 1-4 additional items that are drawn from shop, treasure or boss itempools")
+	EID:addCollectible(Collectibles.KEEPERSPENNY, "Spawns a golden penny upon entering a new floor #Shops will now sell 1-4 additional items that are drawn from shop, treasure or boss itempools #If the shop is a Greed fight, it instead spawns 3-4 items when the miniboss dies")
 	EID:addCollectible(Collectibles.NERVEPINCH, "Shooting or moving in one direction for 5 seconds will trigger a nerve pinch #{{ArrowDown}} You take fake damage and gain a permanent " .. tostring(StatUps.NERVEPINCH_SPEED) .. " speed down when that happens #{{ArrowUp}} However, there is a 75% chance to activate your active item for free, even if it's uncharged #One-time use and infinite use actives cannot be used that way")
-	EID:addCollectible(Collectibles.BLOODVESSELS[1], "Taking damage doesn't actually hurt the player, instead filling the blood vessel #This can be repeated 6 times until the vessel if full #Once it's full, using it or taking damage will empty it and deal 3 hearts of damage to the player")
+	EID:addCollectible(Collectibles.BLOODVESSELS[1], "Taking damage doesn't actually hurt the player, instead filling the blood vessel #This can be repeated 6 times until the vessel if full #Once it's full, using it or taking damage will empty it and deal 3 or 3.5 hearts of damage to the player")
 	EID:addCollectible(Collectibles.SIBLINGRIVALRY, "Orbital that switches between 2 different states every 15 seconds: #Two orbitals that quickly rotate around Isaac #One orbital that rotates slower and closer to Isaac, and periodically shoots teeth in random directions and spawns blood creep underneath it #{{Warning}} All orbitals block enemy shots and do contact damage")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
@@ -3531,9 +3596,10 @@ if EID then
 	EID:addTrinket(Trinkets.CHALKPIECE, "When entering uncleared room, you will leave a trail of powder underneath for 5 seconds #Enemies walking over the powder will be pushed back")
 	EID:addTrinket(Trinkets.ADAMSRIB, "Revives you as Eve when you die")
 	EID:addTrinket(Trinkets.NIGHTSOIL, "75% chance to prevent a curse when entering a new floor")
-	EID:addTrinket(Trinkets.BONEMEAL, "At the beginning of every new floor, grants:#{{ArrowUp}} +10% DMG up #{{ArrowUp}} Player size increase")
-	EID:addTrinket(Trinkets.TORNPAGE, "Books now have different or enhanced effects upon activation #Apart from natural spawns, this trinket has a 33% chance to spawn in libraries")
-	EID:addTrinket(Trinkets.EMPTYPAGE, "Books now  #Apart from natural spawns, this trinket has a 33% chance to spawn in libraries")
+	EID:addTrinket(Trinkets.BONEMEAL, "At the beginning of every new floor, grants:#{{ArrowUp}} +10% DMG up #{{ArrowUp}} Size increase #Both damage and size up stay if you drop the trinket")
+	EID:addTrinket(Trinkets.TORNPAGE, "Amplifies or changes book's activation effects, or makes them charge faster #Apart from natural spawns, this trinket has a 33% chance to spawn in libraries")
+	EID:addTrinket(Trinkets.EMPTYPAGE, "Books now activate a random active item on use #Doesn't work on How to Jump and doesn't proc dice and items that hurt or kill you #Apart from natural spawns, this trinket has a 33% chance to spawn in libraries")
+	EID:addTrinket(Trinkets.BABYSHOES, "Reduces the size of all enemies by 20% #This affects both sprite and hitbox #Affects bosses too")
 	
 	EID:addCard(PocketItems.SDDSHARD, "Invokes the effect of Spindown Dice")
 	EID:addCard(PocketItems.REDRUNE, "Damages all enemies in a room, turns item pedestals into red locusts and turns pickups into random locusts with a 50% chance")
@@ -3556,6 +3622,7 @@ if EID then
 	EID:addCard(PocketItems.BUSINESSCARD, "Summons a friendly monster, like ones from Friend Finder")
 	EID:addCard(PocketItems.SACBLOOD, "{{ArrowUp}} Gives +1.25 DMG up that depletes over the span of 20 seconds #Stackable #{{ArrowUp}} Heals you for one red heart if you have Ceremonial Robes #{{Warning}} Damage depletes quicker the more Blood you used subsequently")
 	EID:addCard(PocketItems.LIBRARYCARD, "Activates a random book effect")
+	EID:addCard(PocketItems.FLYPAPER, "Grants 8 fly orbitals, similar to the Swarm item")
 	EID:addCard(PocketItems.MOMSID , "Charms all enemies in the current room")
 	EID:addCard(PocketItems.FUNERALSERVICES , "Spawns an Old Chest")
 	EID:addCard(PocketItems.ANTIMATERIALCARD , "Can be thrown similarly to Chaos Card #If the card touches an enemy, that enemy is erased for the rest of the run")
@@ -3564,7 +3631,7 @@ if EID then
 	
 	EID:addPill(Pills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at one red heart other types of hearts are unaffected")
 	EID:addPill(Pills.LAXATIVE, "Makes you shoot out corn tears from behind for 3 seconds")
-	EID:addPill(Pills.PHANTOM, "Makes Isaac take fake damage on pill use, then 20 and 40 seconds after")
+	EID:addPill(Pills.PHANTOM, "Makes Isaac take fake damage on pill use, then 15 and 30 seconds after")
 	EID:addPill(Pills.YUCK, "Spawns a rotten heart #For 30 seconds, every red heart will spawn blue flies when picked up")
 	EID:addPill(Pills.YUM, "Spawns a red heart #For 30 seconds, every red heart will grant you small permanent stat upgrades when picked up")
 	
@@ -3635,7 +3702,7 @@ if EID then
 	
 	EID:addPill(Pills.ESTROGEN, "Convierte todos tus {{Heart}}corazones en Coágulos#Te deja con al menos un corazón rojo, No afecta Corazones de Alma/Corazones Negros", "Estrógeno", "spa")
 	EID:addPill(Pills.LAXATIVE, "Hace que dispares los maíces de {{Collectible680}}Venganza de Montezuma durante 3 segundos", "Laxante", "spa")
-	EID:addPill(Pills.PHANTOM, "Provoca que Isaac reciba daño falso al usarse, luego a los 20 y 40 segundos de haberla consumido", "Fantasma", "spa")
+	EID:addPill(Pills.PHANTOM, "Provoca que Isaac reciba daño falso al usarse, luego a los 15 y 30 segundos de haberla consumido", "Fantasma", "spa")
 	EID:addPill(Pills.YUCK, "Genera un corazón podrido #Por 30 segundos, cada corazón rojo tomado generará moscas azules", "Puaj", "spa")
 	EID:addPill(Pills.YUM, "Genera un corazón rojo #Por, cada corazón rojo que consigas te dará un pequeño aumento permantente de estadísticas, Igual al efecto de {{Collectible671}} Corazón de Caramelo", "Mmm~", "spa")
 
@@ -3712,7 +3779,7 @@ if EID then
 
 	EID:addPill(Pills.ESTROGEN, "Превращает все ваши {{Heart}} сердца в блебиков #Оставляет вас по крайней мере с одним красным сердцем, не убирает сердца души/черные сердца", "Эстроген", "ru")
 	EID:addPill(Pills.LAXATIVE, "Заставляет вас стрелять кукурузой сзади в течение 3 секунд", "Слабительное", "ru")
-	EID:addPill(Pills.PHANTOM, "Вы получаете фальшивый урон и получаете его снова через 20 и 40 секунд", "Фантомная Боль", "ru")
+	EID:addPill(Pills.PHANTOM, "Вы получаете фальшивый урон и получаете его снова через 15 и 30 секунд", "Фантомная Боль", "ru")
 	EID:addPill(Pills.YUCK, "Создает гнилое сердце #В течение 30 секунд, каждое взятое красное сердце будет создавать синих мух", "Фу!", "ru")
 	EID:addPill(Pills.YUM, "Создает красное сердце #В течение 30 секунд, каждое взятое красное сердце даст вам небольшое постоянное увеличение случайной характеристики, похожий на эффект {{Collectible671}} Карамельного Сердца", "Ням!", "ru")
 end
@@ -3944,6 +4011,7 @@ if Encyclopedia then
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
 				{str = "Spawns a golden penny upon entering a new floor "},
 				{str = "Shops will now sell 1-4 additional items that are drawn from shop, treasure or boss itempools"},
+				{str = "If the shop is a Greed fight, it instead spawns 3-4 items when the miniboss dies"}
 			},
 		},
 		[Collectibles.NERVEPINCH] = {
@@ -3960,7 +4028,16 @@ if Encyclopedia then
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
 				{str = "Taking damage doesn't actually hurt the player, instead filling the blood vessel "},
 				{str = "This can be repeated 6 times until the vessel if full "},
-				{str = "Once it's full, using it or taking damage will empty it and deal 3 hearts of damage to the player"},
+				{str = "Once it's full, using it or taking damage will empty it and deal 3 or 3.5 hearts of damage to the player"},
+			},
+		},
+		[Collectibles.SIBLINGRIVALRY] = {
+			{
+				{str = "Effects", fsize = 2, clr = 3, halign = 0},
+				{str = "Orbital that switches between 2 different states every 15 seconds:"},
+				{str = "Two orbitals that quickly rotate around Isaac"},
+				{str = "One orbital that rotates slower and closer to Isaac, and periodically shoots teeth in random directions and spawns blood creep underneath it"},
+				{str = "All orbitals block enemy shots and do contact damage"},
 			},
 		},
 	}
@@ -4055,6 +4132,49 @@ if Encyclopedia then
 				{str = "75% chance to prevent a curse when entering a new floor"},
 			},
 		},
+		[Trinkets.BONEMEAL] = {
+			{
+				{str = "Effects", fsize = 2, clr = 3, halign = 0},
+				{str = "At the beginning of every new floor, grants:"},
+				{str = "+10% DMG up"},
+				{str = "Size increase "},
+				{str = "Both damage and size up stay if you drop the trinket"},
+			},
+		},
+		[Trinkets.TORNPAGE] = {
+			{
+				{str = "Effects", fsize = 2, clr = 3, halign = 0},
+				{str = "Amplifies or changes book's activation effects, or makes them charge faster"},
+				{str = "Anarchist Cookbook: spawns red bombs instead of troll bombs"},
+				{str = "Bible: removes a broken heart"},
+				{str = "Satanic Bible: prevents a devil deal from replacing a boss item"},
+				{str = "Book of Revelations: prevents Harbingers from replacing floor bosses"},
+				{str = "Book of the Dead: grants you a bone heart"},
+				{str = "Book of Belial: grants Eye of Belial effect"},
+				{str = "Telepathy for Dummies: grants Dunce Cap effect"},
+				{str = "Monster Manual: summons friendly spiders, flies or dips on use"},
+				{str = "Book of Sin: has a 1% chance to spawn an item instead of a pickup"},
+				{str = "Book of Genesis: increases the number of options to 4"},
+				{str = "Other books get +1 charge when used, effectively reducing their chargeup time"},
+				{str = "Apart from natural spawns, this trinket has a 33% chance to spawn in libraries"},
+			},
+		},
+		[Trinkets.EMPTYPAGE] = {
+			{
+				{str = "Effects", fsize = 2, clr = 3, halign = 0},
+				{str = "Books now activate a random active item on use "},
+				{str = "Doesn't work on How to Jump and doesn't proc dice and items that hurt or kill you"},
+				{str = "Apart from natural spawns, this trinket has a 33% chance to spawn in libraries"},
+			},
+		},
+		[Trinkets.BABYSHOES] = {
+			{
+				{str = "Effects", fsize = 2, clr = 3, halign = 0},
+				{str = "Reduces the size of all enemies by 20%"},
+				{str = "This affects both sprite and hitbox"},
+				{str = "Affects bosses too"},
+			},
+		},
 	}
 	
 	local PillsWiki = {
@@ -4074,7 +4194,7 @@ if Encyclopedia then
 		[Pills.PHANTOM] = {
 			{
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
-				{str = "Makes Isaac take fake damage on pill use, then 20 and 40 seconds after"},
+				{str = "Makes Isaac take fake damage on pill use, then 15 and 30 seconds after"},
 			},
 		},
 		[Pills.YUCK] = {
@@ -4133,6 +4253,7 @@ if Encyclopedia then
 		[Collectibles.KEEPERSPENNY] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET},
 		[Collectibles.NERVEPINCH] = {Encyclopedia.ItemPools.POOL_TREASURE},
 		[Collectibles.BLOODVESSELS[1]] = {Encyclopedia.ItemPools.POOL_DEMON_BEGGAR, Encyclopedia.ItemPools.POOL_CURSE},
+		[Collectibles.SIBLINGRIVALRY] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP},
 	}
 
 	local CardsWiki = {
@@ -4294,6 +4415,22 @@ if Encyclopedia then
 				{str = "If the card touches an enemy, that enemy is erased for the rest of the run"},
 			},
 		},
+		[PocketItems.FIENDFIRE] = {
+			{
+				{str = "Effects", fsize = 2, clr = 3, halign = 0},
+				{str = "Sacrifice your consumables for mass room destruction"},
+				{str = "10-50 total: enemies take 15 damage and burn for 4 seconds"},
+				{str = "51-125 total: the initital damage, the burning damage and burning duration are doubled; destroys obstacles around you"},
+				{str = "126-150 total: the burning damage and burning duration are quadrupled; produces a Mama Mega explosion"},
+			},
+		},
+		[PocketItems.DEMONFORM] = {
+			{
+				{str = "Effects", fsize = 2, clr = 3, halign = 0},
+				{str = "Increases your damage by 0.15 for every new uncleared room you enter"},
+				{str = "The boost disappears when entering a new floor"},
+			},
+		},
 	}
 	
 	local spriteToCard = {
@@ -4320,17 +4457,19 @@ if Encyclopedia then
 		[PocketItems.LIBRARYCARD] = "Library Card",
 		[PocketItems.ANTIMATERIALCARD] = "Antimaterial Card",
 		[PocketItems.FUNERALSERVICES] = "Funeral Services",
-		[PocketItems.MOMSID] = "Mom's ID"
+		[PocketItems.MOMSID] = "Mom's ID",
+		[PocketItems.FIENDFIRE] = "Fiend Fire",
+		[PocketItems.DEMONFORM] = "Demon Form"
 	}
 	
 	-- DO NOT touch that! 
 	-- Just fill in the Wiki and itemPools tables with the desired item's entry, and it will show up in the Encyclopedia
-	for i = Collectibles.ORDLIFE, Collectibles.TOYTANKS do
+	for i = Collectibles.ORDLIFE, Collectibles.SIBLINGRIVALRY do
 		Encyclopedia.AddItem({Class = "Repentance Plus", ID = i, WikiDesc = ItemsWiki[i], Pools = itemPools[i]})
 		--Isaac.DebugString('Item ' .. tostring(i) .. 's entry succesfully loaded into the encyclopedia')
 	end
 	
-	for i = Trinkets.BASEMENTKEY, Trinkets.GREEDSHEART do
+	for i = Trinkets.BASEMENTKEY, Trinkets.EMPTYPAGE do
 		Encyclopedia.AddTrinket({Class = "Repentance Plus", ID = i, WikiDesc = TrinketsWiki[i]})
 	end
 	
