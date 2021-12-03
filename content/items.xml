@@ -93,4 +93,5 @@
 	<active name="Cheese Grater" description="A pound of... cheese?" gfx="22_cheesegrater.png" quality="2" maxcharges="0" cache="damage" />
 	<familiar name="Tank Boys" description="You and what army?.." gfx="55_tankboys.png" quality="3" />
 	<familiar name="Sibling Rivalry" description="I can't stand you!" gfx="27_siblingrivalry.png" quality="3" tags="baby" />
+	<passive name="Red King" description="" gfx="51_redking.png" quality="4" /> 
 </items>
