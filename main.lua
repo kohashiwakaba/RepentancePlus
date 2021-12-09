@@ -145,7 +145,8 @@ Collectibles = {
 	},
 	SIBLINGRIVALRY = Isaac.GetItemIdByName("Sibling Rivalry"),
 	REDKING = Isaac.GetItemIdByName("Red King"),
-	STARGAZERSHAT = Isaac.GetItemIdByName("Stargazer's Hat")
+	STARGAZERSHAT = Isaac.GetItemIdByName("Stargazer's Hat"),
+	BOTTOMLESSBAG = Isaac.GetItemIdByName("Bottomless Bag")
 }
 
 Trinkets = {
@@ -1086,7 +1087,8 @@ function rplus:OnGameStart(Continued)
 				MOTHERSLOVE = {NumStats = 0, NumFriends = 0},
 				BLOODVESSEL = {DamageFlag = false},
 				NERVEPINCH = {Hold = 300, NumTriggers = 0},
-				REDKING = {IsInRedKingRoom = false, DescendedRedCrawlspace = false, DefeatedRedKingBoss = false}
+				REDKING = {IsInRedKingRoom = false, DescendedRedCrawlspace = false, DefeatedRedKingBoss = false},
+				BOTTOMLESSBAG = {UseFrame = 0, TearCount = 0, Data = false}
 			},
 			Cards = {
 				JACK = nil,
@@ -1761,6 +1763,53 @@ function rplus:OnFrame()
 			Isaac.ExecuteCommand("goto s.boss." .. tostring(REDKING_BOOSROOM_IDS[math.random(#REDKING_BOOSROOM_IDS)]))
 			CustomData.Items.REDKING.DescendedRedCrawlspace = true
 		end
+		
+		if player:GetData()['BagUsed'] then
+			if game:GetFrameCount() <= CustomData.Items.BOTTOMLESSBAG.UseFrame + 120 then 
+				for _, entity in pairs(Isaac.FindInRadius(player.Position, 1000, EntityPartition.PROJECTILE)) do
+            				if entity.Type == EntityType.ENTITY_PROJECTILE then
+                				entity:AddVelocity((player.Position - entity.Position):Normalized())                    
+           				end
+        			end
+				for _, entity in pairs(Isaac.FindInRadius(player.Position, 35, EntityPartition.PROJECTILE)) do
+					if entity.Type == EntityType.ENTITY_PROJECTILE then
+            					entity:Remove()     
+            					CustomData.Items.BOTTOMLESSBAG.TearCount = CustomData.Items.BOTTOMLESSBAG.TearCount + 1
+            				end
+        			end
+        		elseif game:GetFrameCount() >= CustomData.Items.BOTTOMLESSBAG.UseFrame + 90 and CustomData.Items.BOTTOMLESSBAG.Data then
+    				local idx = player.ControllerIndex
+				local left = Input.GetActionValue(ButtonAction.ACTION_SHOOTLEFT,idx)
+				local right = Input.GetActionValue(ButtonAction.ACTION_SHOOTRIGHT,idx)
+				local up = Input.GetActionValue(ButtonAction.ACTION_SHOOTUP,idx)
+				local down = Input.GetActionValue(ButtonAction.ACTION_SHOOTDOWN,idx)
+				if left > 0 or right > 0 or down > 0 or up > 0 then
+					player:AnimateCollectible(Collectibles.BOTTOMLESSBAG, "HideItem", "PlayerPickup")
+					local angle = Vector(right-left,down-up):Normalized():GetAngleDegrees()
+					local shootVector = Vector.FromAngle(angle)
+    					for i= 1,CustomData.Items.BOTTOMLESSBAG.TearCount do
+						angle = Vector(math.random(-5,5), math.random(-5,5))
+						local tear = player:FireTear(player.Position,shootVector*player.ShotSpeed*math.random(6, 15) + angle + player.Velocity,false,true,false,player)
+						tear.TearFlags = tear.TearFlags | TearFlags.TEAR_HOMING 
+						local color = Color(1, 1, 1, 1, 0, 0, 0)
+          					color:SetColorize(1, 0, 1, 1)
+						tear:SetColor(color, 0, 0, true, false)
+					end
+					CustomData.Items.BOTTOMLESSBAG.Data = false
+				else
+					if player:GetData()['BagHold'] then	
+    						GiveRevivalIVFrames(Isaac.GetPlayer(i))
+						player:AnimateCollectible(Collectibles.BOTTOMLESSBAG, "LiftItem", "PlayerPickup")
+						player:GetData()['BagHold'] = false 
+					end
+				end
+        		else 
+				CustomData.Items.BOTTOMLESSBAG.TearCount = 0
+    				CustomData.Items.BOTTOMLESSBAG.UseFrame = 0
+    				player:GetData()['BagUsed'] = false
+    			end
+		    	
+    		end
 	end
 	
 	for _, bc in pairs(Isaac.FindByType(5, PickUps.BLACKCHEST, 2, false, false)) do
@@ -1875,6 +1924,12 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, Slot, _)
 		end
 
 		return true
+	end
+	if ItemUsed == Collectibles.BOTTOMLESSBAG then 
+		Player:GetData()['BagUsed'] = true
+		Player:GetData()['BagHold'] = true
+		CustomData.Items.BOTTOMLESSBAG.UseFrame = game:GetFrameCount()
+		CustomData.Items.BOTTOMLESSBAG.Data = true
 	end
 	
 	if ItemUsed == Collectibles.TOWEROFBABEL then
