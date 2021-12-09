@@ -84,13 +84,14 @@
 	<passive id="4" name="Ceiling with the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
 	<active id="31" name="Quasar" description="Cosmic wisdom" gfx="33_quasar.png" quality="4" devilprice="2" maxcharges="6" />
 	<active id="32" quality="3" gfx="47_0_bloodvessel.png" description="Delay the inevitable" name="Blood Vessel" maxcharges="0" chargetype="special"/>
-	<active quality="3" gfx="47_1_bloodvessel.png" description="Delay the inevitable" name="Empty Blood Vessel" maxcharges="0" chargetype="special" tags="hidden" />
-	<active quality="3" gfx="47_2_bloodvessel.png" description="Delay the inevitable" name="Stained Blood Vessel" maxcharges="0" chargetype="special" tags="hidden" />
-	<active quality="3" gfx="47_3_bloodvessel.png" description="Delay the inevitable" name="Half Empty Blood Vessel" maxcharges="0" chargetype="special" tags="hidden" />
-	<active quality="3" gfx="47_4_bloodvessel.png" description="Delay the inevitable" name="Brimming Blood Vessel" maxcharges="0" chargetype="special" tags="hidden" />
-	<active quality="3" gfx="47_5_bloodvessel.png" description="Delay the inevitable" name="Full Blood Vessel" maxcharges="0" chargetype="special" tags="hidden" />
-	<active quality="3" gfx="47_6_bloodvessel.png" description="Delay the inevitable" name="Overflowing Blood Vessel" maxcharges="0" chargetype="special" tags="hidden" />
+	<active quality="3" gfx="47_1_bloodvessel.png" description="Delay the inevitable" name="Empty Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
+	<active quality="3" gfx="47_2_bloodvessel.png" description="Delay the inevitable" name="Stained Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
+	<active quality="3" gfx="47_3_bloodvessel.png" description="Delay the inevitable" name="Half Empty Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
+	<active quality="3" gfx="47_4_bloodvessel.png" description="Delay the inevitable" name="Brimming Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
+	<active quality="3" gfx="47_5_bloodvessel.png" description="Delay the inevitable" name="Full Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
+	<active quality="3" gfx="47_6_bloodvessel.png" description="Delay the inevitable" name="Overflowing Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
 	<trinket name="Empty Page" description="Write on it" gfx="t17_emptypage.png" />
+	<active id="37" name="Stargazer's Hat" description="Reusable magic" gfx="34_stargazers_hat.png" quality="3" chargetype="special" maxcharges="4" />
 	
 	<!-- T. Jacob -->
 	<active id="33" name="Cheese Grater" description="A pound of... cheese?" gfx="22_cheesegrater.png" quality="2" maxcharges="0" cache="damage" />

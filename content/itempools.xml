@@ -13,6 +13,7 @@
 		<Item Name="A Cat in the Box" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Nerve Pinch" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Sibling Rivalry" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Stargazer's Hat" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="shop">
 		<Item Name="Ceiling with the Stars" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -46,6 +47,7 @@
 		<Item Name="DNA Redactor" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Bless of the Dead" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Keeper's Penny" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Stargazer's Hat" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="library">
 		<Item Name="Book of Genesis" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
@@ -71,6 +73,7 @@
 		<Item Name="Black Doll" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Blood Vessel" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="A Scalpel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Red Map" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 	</Pool>
 	<Pool Name="keyMaster">
 		

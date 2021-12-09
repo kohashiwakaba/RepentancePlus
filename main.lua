@@ -14,9 +14,10 @@
 local game = Game()
 local rplus = RegisterMod("!rpdevbuild", 1)
 RepentancePlusMod = rplus
-local MOD_VERSION = 1.15
+local MOD_VERSION = 1.16
 local sfx = SFXManager()
 local music = MusicManager()
+local RNGobj = RNG()
 local CustomData
 local json = require("json")
 
@@ -46,7 +47,7 @@ DNAPillIcon = Sprite()
 DNAPillIcon:Load("gfx/ui/ui_dnapillhelper.anm2", true)
 -------------
 -- chances	
-local BASEMENTKEY_CHANCE = 5			-- chance to replace golden chest with the old chest
+local BASEMENTKEY_CHANCE = 5			-- chance to replace golden chest with an old chest
 local HEARTKEY_CHANCE = 5				-- chance for enemy to drop Flesh chest on death
 local SUPERBERSERK_ENTER_CHANCE = 25	-- chance to enter berserk state via Temper Tantrum
 local SUPERBERSERK_DELETE_CHANCE = 10	-- chance to erase enemies while in this state
@@ -57,16 +58,21 @@ local JACK_CHANCE = 60					-- chance for Jack cards to spawn their respective ty
 local TRICKPENNY_CHANCE = 17			-- chance to save your consumable when using it via Trick Penny
 local CEREM_DAGGER_LAUNCH_CHANCE = 7 	-- chance to launch a dagger
 local NIGHT_SOIL_CHANCE = 75 			-- chance to negate curse
-local NERVEPINCH_USE_CHANCE = 75		-- chance to activate your active item for free via Nerve Pinch
+local NERVEPINCH_USE_CHANCE = 80		-- chance to activate your active item for free via Nerve Pinch
 local FLESHCHEST_REPLACE_CHANCE = 20	-- chance for Flesh chests to replace mimic, spiked, red chests normally
 local BLACKCHEST_SPAWN_CHANCE = 20		-- chance for Black chests to spawn when entering a devil room
 local SCARLETCHEST_REPLACE_CHANCE = 20	-- chance for Scarlet chests to replace any chests if any player has Red Key, Cracked Key or Crystal Key
 local STARGAZER_PAYOUT_CHANCE = 15		-- chance for Stargazer beggar to payout with an item
+local STARGAZER_SPAWN_CHANCE = {
+	['Arcade'] = 10,
+	['Planetarium'] = 75
+}
 
 -- cooldowns
 local ENRAGED_SOUL_COOLDOWN = 7 * 60		-- cooldown for Enraged Soul familiar
 local REDBOMBER_LAUNCH_COOLDOWN = 1 * 60 	-- cooldown for launching red bombs
 local MAGICPEN_CREEP_COOLDOWN = 4 * 60 		-- coldown for Magic Pen creep
+local NERVEPINCH_HOLD = 60 * 10				-- cooldown for Nerve Pinch
 
 									-----------------
 									----- ENUMS -----
@@ -138,7 +144,8 @@ Collectibles = {
 		Isaac.GetItemIdByName("Overflowing Blood Vessel") 
 	},
 	SIBLINGRIVALRY = Isaac.GetItemIdByName("Sibling Rivalry"),
-	REDKING = Isaac.GetItemIdByName("Red King")
+	REDKING = Isaac.GetItemIdByName("Red King"),
+	STARGAZERSHAT = Isaac.GetItemIdByName("Stargazer's Hat")
 }
 
 Trinkets = {
@@ -1003,9 +1010,36 @@ end
 
 local function canOpenScarletChests(player)
 	return ((player:GetActiveItem(0) == CollectibleType.COLLECTIBLE_RED_KEY and player:GetActiveCharge(0) >= 4)
-	or player:HasTrinket(TrinketType.TRINKET_CRYSTAL_KEY) or player:GetCard(0) == Card.CARD_CRACKED_KEY)
+	or player:HasTrinket(TrinketType.TRINKET_CRYSTAL_KEY) or player:GetCard(0) == Card.CARD_CRACKED_KEY
+	or player:GetCard(0) == Card.CARD_SOUL_CAIN or player:HasCollectible(CollectibleType.COLLECTIBLE_CRACKED_ORB))
 end
 
+local function openScarletChest(Pickup)
+	-- subtype 1: opened chest (need to remove)
+	Pickup.SubType = 1
+	-- setting some data for pickup, because it is deleted on entering a new room, and the pickup is removed as well
+	Pickup:GetData()["IsInRoom"] = true
+	Pickup:GetSprite():Play("Open")
+	sfx:Play(SoundEffect.SOUND_CHEST_OPEN, 1, 2, false, 1, 0)
+	RNGobj:SetSeed(Random() + 1, 1)
+	local DieRoll = RNGobj:RandomFloat()
+	
+	if DieRoll < 0.75 then
+		local ScarletChestPedestal = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ULTRA_SECRET, false, Random() + 1, CollectibleType.COLLECTIBLE_NULL), Pickup.Position, Vector.Zero, Pickup)
+		ScarletChestPedestal:GetSprite():ReplaceSpritesheet(5,"gfx/items/scarletchest_itemaltar.png") 
+		ScarletChestPedestal:GetSprite():LoadGraphics()
+		
+		Pickup:Remove()
+	else
+		RNGobj:SetSeed(Pickup.DropSeed, 1)
+		local NumOfPickups = RNGobj:RandomInt(10) + 5
+		
+		for i = 1, NumOfPickups do
+			Isaac.Spawn(5, 30, 1, Pickup.Position, Vector.FromAngle(math.random(360)) * 5, Pickup)
+		end
+	end
+end
+						
 						-----------------------------
 						-- CALLBACK TIED FUNCTIONS --
 						-----------------------------
@@ -1043,7 +1077,7 @@ function rplus:OnGameStart(Continued)
 				CEILINGSTARS = {SleptInBed = false},
 				TWOPLUSONE = {ItemsBought_COINS = 0, ItemsBought_HEARTS = 0},
 				CHEESEGRATER = {NumUses = 0},
-				BLESSOTDEAD = 0,
+				BLESSOTDEAD = {NumUses = 0},
 				GUSTYBLOOD = {CurrentTears = 0, CurrentSpeed = 0},
 				REDBOMBER = {BombLaunchCooldown = 0},
 				MAGICPEN = {CreepSpewCooldown = nil},
@@ -1074,7 +1108,7 @@ function rplus:OnGameStart(Continued)
 			}
 		}
 		
-		if CustomData then print("Repentance+ Mod v" .. tostring(MOD_VERSION) .. " Initialized") end
+		if CustomData then print("Repentance Plus mod v" .. tostring(MOD_VERSION) .. " initialized") end
 		
 		--[[ Spawn items/trinkets or turn on debug commands for testing here if necessary
 		! DEBUG: 3 - INFINITE HP, 4 - HIGH DAMAGE, 8 - INFINITE CHARGES, 10 - INSTAKILL ENEMIES !
@@ -1223,7 +1257,7 @@ function rplus:OnNewRoom()
 			if room:IsFirstVisit() then
 				for _, collectible in pairs(Isaac.FindByType(5, 100, -1, false, false)) do
 					collectiblePickup = collectible:ToPickup()
-					collectiblePickup:Morph(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random(), CollectibleType.COLLECTIBLE_NULL), false, false, false)
+					collectiblePickup:Morph(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ANGEL, false, Random() + 1, CollectibleType.COLLECTIBLE_NULL), false, false, false)
 					collectiblePickup.Price = 15
 					collectiblePickup.ShopItemId = -777
 				end
@@ -1299,7 +1333,8 @@ function rplus:OnNewRoom()
 		
 		if player:HasCollectible(Collectibles.KEEPERSPENNY) and room:GetType() == RoomType.ROOM_SHOP 
 		and room:IsFirstVisit() and not room:IsMirrorWorld() and #Isaac.FindByType(EntityType.ENTITY_GREED, -1, -1, false, true) == 0 then
-			numNewItems = math.random(4)
+			RNGobj:SetSeed(Random() + 1, 1)
+			local numNewItems = RNGobj:RandomInt(3) + 1
 			
 			if numNewItems == 1 then
 				V = {Vector(320, 280)}
@@ -1313,7 +1348,7 @@ function rplus:OnNewRoom()
 			
 			for i = 1, numNewItems do
 				local pool = KEEPERSPENNY_ITEMPOOLS[math.random(#KEEPERSPENNY_ITEMPOOLS)]
-				local Item = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(pool, false, Random(), CollectibleType.COLLECTIBLE_NULL), V[i], Vector.Zero, nil):ToPickup()
+				local Item = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(pool, false, Random() + 1, CollectibleType.COLLECTIBLE_NULL), V[i], Vector.Zero, nil):ToPickup()
 				Item.Price = 15
 				Item.ShopItemId = -11 * i
 			end
@@ -1351,7 +1386,8 @@ function rplus:OnNewRoom()
 	
 	if room:GetType() == RoomType.ROOM_LIBRARY
 	and room:IsFirstVisit() then
-		local pageSpawnRoll = math.random(100)
+		RNGobj:SetSeed(Random() + 1, 1)
+		local pageSpawnRoll = math.ceil(RNGobj:RandomFloat() * 100)
 		
 		if pageSpawnRoll < 33 and not CustomData.Trinkets.TORNPAGE.trinketSeen then
 			Isaac.Spawn(5, 350, Trinkets.TORNPAGE, Isaac.GetFreeNearPosition(Vector(320, 280), 10), Vector.Zero, nil)
@@ -1367,6 +1403,21 @@ function rplus:OnNewRoom()
 	and math.random(100) < BLACKCHEST_SPAWN_CHANCE then
 		Isaac.Spawn(5, PickUps.BLACKCHEST, 0, Isaac.GetFreeNearPosition(Vector(440, 240), 10), Vector.Zero, nil)
 		Isaac.Spawn(5, PickUps.BLACKCHEST, 0, Isaac.GetFreeNearPosition(Vector(200, 240), 10), Vector.Zero, nil)
+	end
+	
+	if room:GetType() == RoomType.ROOM_PLANETARIUM
+	and room:IsFirstVisit() and math.random(100) < STARGAZER_SPAWN_CHANCE["Planetarium"] then
+		Isaac.Spawn(6, PickUps.SLOT_STARGAZER, 0, Isaac.GetFreeNearPosition(Vector(200, 240), 10), Vector.Zero, nil)
+	end
+	if room:GetType() == RoomType.ROOM_ARCADE and room:IsFirstVisit() then
+		for _, beggar in pairs(Isaac.FindByType(6, -1, -1, false, false)) do
+			if (beggar.Variant == 9 or beggar.Variant == 7 or beggar.Variant == 4 or beggar.Variant == 5 or beggar.Variant == 13)
+			and math.random(100) < STARGAZER_SPAWN_CHANCE["Arcade"] then
+				beggar:Remove()
+				Isaac.Spawn(6, PickUps.SLOT_STARGAZER, 0, beggar.Position, Vector.Zero, nil)
+				break
+			end
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, rplus.OnNewRoom)
@@ -1395,6 +1446,11 @@ function rplus:OnFrame()
 		blacklistCollectibles(player, Collectibles.DNAREDACTOR, {CollectibleType.COLLECTIBLE_PHD, CollectibleType.COLLECTIBLE_FALSE_PHD})
 		-----------------------------------------
 		
+		-- helper for telling ID of the sound that I want (I'm fucking tired)
+		--for i = 1, 817 do
+		--	if sfx:IsPlaying(i) then print(i) end
+		--end		
+		
 		if player:GetData()['reverseCardRoom'] and player:GetData()['reverseCardRoom'] ~= game:GetLevel():GetCurrentRoomIndex() then
 			player:AnimateCard(PocketItems.REVERSECARD, "Pickup")
 			local secondaryCard = player:GetCard(1)
@@ -1405,23 +1461,21 @@ function rplus:OnFrame()
 		
 		if player:HasCollectible(Collectibles.MAGICPEN) then
 			-- taste the rainbow
-			for _, entity in pairs(Isaac.GetRoomEntities()) do
-				if entity.Type == 1000 and entity.Variant == EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL and entity.SubType == 4 then
-					local Frame = game:GetFrameCount() % 490 + 1
-					
-					if Frame <= 140 then
-						entity:SetColor(Color(1, Frame / 140, 0), 1, 1, false, false)
-					elseif Frame <= 210 then
-						entity:SetColor(Color(1 - (Frame - 140) / 70, 1, 0), 1, 1, false, false)
-					elseif Frame <= 280 then
-						entity:SetColor(Color(0, 1 - (Frame - 210) / 70, (Frame - 210) / 70), 1, 1, false, false)
-					elseif Frame <= 350 then
-						entity:SetColor(Color((Frame - 280) / 70 * 75 / 255, 0, (Frame - 280) / 70 * 130 / 255), 1, 1, false, false)
-					elseif Frame <= 420 then
-						entity:SetColor(Color((75 + (Frame - 350) / 70 * 58) / 255, 0, (130 + (Frame - 350) / 70 * 125) / 255), 1, 1, false, false)
-					else
-						entity:SetColor(Color((143 + (Frame - 420) / 70 * 112) / 255, 0, 1 - (Frame - 420) / 70), 1, 1, false, false)
-					end
+			for _, entity in pairs(Isaac.FindByType(1000, EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL, 4, true, false)) do
+				local Frame = game:GetFrameCount() % 490 + 1
+				
+				if Frame <= 140 then
+					entity:SetColor(Color(1, Frame / 140, 0), 1, 1, false, false)
+				elseif Frame <= 210 then
+					entity:SetColor(Color(1 - (Frame - 140) / 70, 1, 0), 1, 1, false, false)
+				elseif Frame <= 280 then
+					entity:SetColor(Color(0, 1 - (Frame - 210) / 70, (Frame - 210) / 70), 1, 1, false, false)
+				elseif Frame <= 350 then
+					entity:SetColor(Color((Frame - 280) / 70 * 75 / 255, 0, (Frame - 280) / 70 * 130 / 255), 1, 1, false, false)
+				elseif Frame <= 420 then
+					entity:SetColor(Color((75 + (Frame - 350) / 70 * 58) / 255, 0, (130 + (Frame - 350) / 70 * 125) / 255), 1, 1, false, false)
+				else
+					entity:SetColor(Color((143 + (Frame - 420) / 70 * 112) / 255, 0, 1 - (Frame - 420) / 70), 1, 1, false, false)
 				end
 			end
 		end
@@ -1473,13 +1527,11 @@ function rplus:OnFrame()
 		end
 		
 		if player:HasCollectible(Collectibles.CHERRYFRIENDS) and room:IsClear() then
-			for _, entity in pairs(Isaac.GetRoomEntities()) do
-				if entity.Type == 3 and entity.Variant == Familiars.CHERRY then
-					entity:GetSprite():Play("Collect")
-					if entity:GetSprite():IsFinished("Collect") then
-						entity:Remove()
-						Isaac.Spawn(5, PickupVariant.PICKUP_HEART, HeartSubType.HEART_HALF, entity.Position, Vector.Zero, nil)
-					end
+			for _, cherry in pairs(Isaac.FindByType(3, Familiars.CHERRY, -1, true, false)) do
+				cherry:GetSprite():Play("Collect")
+				if cherry:GetSprite():IsFinished("Collect") then
+					cherry:Remove()
+					Isaac.Spawn(5, PickupVariant.PICKUP_HEART, HeartSubType.HEART_HALF, cherry.Position, Vector.Zero, nil)
 				end
 			end
 		end
@@ -1583,10 +1635,8 @@ function rplus:OnFrame()
 		
 		if player:HasCollectible(Collectibles.REDMAP) and not room:IsFirstVisit() 
 		and room:GetType() < 6 and room:GetType() > 3 then
-			for _, entity in pairs(Isaac.FindInRadius(player.Position, 560, EntityPartition.PICKUP)) do
-				if entity.Variant == 350 then
-					entity:ToPickup():Morph(5, 300, Card.CARD_CRACKED_KEY, true, true, true)
-				end
+			for _, trinket in pairs(Isaac.FindByType(5, 350, -1, false, false)) do
+				trinket:ToPickup():Morph(5, 300, Card.CARD_CRACKED_KEY, true, true, true)
 			end
 		end
 		
@@ -1645,7 +1695,7 @@ function rplus:OnFrame()
 		end
 		
 		if player:HasCollectible(Collectibles.NERVEPINCH) and CustomData.Items.NERVEPINCH.Hold <= 0 then
-			CustomData.Items.NERVEPINCH.Hold = 300
+			CustomData.Items.NERVEPINCH.Hold = NERVEPINCH_HOLD
 			player:TakeDamage(1, DamageFlag.DAMAGE_FAKE, EntityRef(player), 30)
 			CustomData.Items.NERVEPINCH.NumTriggers = CustomData.Items.NERVEPINCH.NumTriggers + 1
 			player:AddCacheFlags(CacheFlag.CACHE_SPEED)
@@ -1691,12 +1741,12 @@ function rplus:OnFrame()
 		
 		if player:HasTrinket(Trinkets.TORNPAGE) and player:HasCollectible(CollectibleType.COLLECTIBLE_HOW_TO_JUMP)
 		and sprite:IsPlaying("Jump") and sprite:GetFrame() == 18 then
-			local roll = math.random(10)
-			local Angles
-			if roll <= 5 then
+			RNGobj:SetSeed(Random() + 1, 1)
+			local roll = RNGobj:RandomFloat()
+			local Angles = {45, 135, 225, 315}
+			
+			if roll <= 0.5 then
 				Angles = {0, 90, 180, 270}
-			else
-				Angles = {45, 135, 225, 315}
 			end
 			
 			for _, angle in pairs(Angles) do
@@ -1733,6 +1783,10 @@ function rplus:OnFrame()
 			else
 				SGSprite:Play("Prize")
 			end
+		elseif SGSprite:IsFinished("Teleport") then
+			sg:Remove()
+		elseif SGSprite:IsFinished("Prize") then
+			SGSprite:Play("Idle")
 		end
 		
 		if SGSprite:IsPlaying("Teleport") and SGSprite:IsEventTriggered("Disappear") then
@@ -1741,17 +1795,10 @@ function rplus:OnFrame()
 		end
 		
 		if SGSprite:IsPlaying("Prize") and SGSprite:IsEventTriggered("Prize") then
-			local Rune = math.random(32, 40)
+			RNGobj:SetSeed(Random() + 1, 1)
+			local Rune = RNGobj:RandomInt(9) + 32
 			Isaac.Spawn(5, 300, Rune, sg.Position, Vector.FromAngle(math.random(360)) * 5, nil)
 			sfx:Play(SoundEffect.SOUND_SLOTSPAWN, 1, 2, false, 1, 0)
-		end 
-		
-		if SGSprite:IsFinished("Teleport") then
-			sg:Remove()
-		end
-		
-		if SGSprite:IsFinished("Prize") then
-			SGSprite:Play("Idle")
 		end
 	end
 end
@@ -1787,9 +1834,10 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, Slot, _)
 	end
 	
 	if ItemUsed == Collectibles.RUBIKSCUBE then
-		local SolveChance = math.random(100)
+		RNGobj:SetSeed(Random() + 1, 1)
+		local solveChance = RNGobj:RandomInt(100) + 1
 		
-		if SolveChance <= 5 or CustomData.Items.RUBIKSCUBE.Counter == 20 then
+		if solveChance <= 5 or CustomData.Items.RUBIKSCUBE.Counter == 20 then
 			Player:RemoveCollectible(Collectibles.RUBIKSCUBE, true, ActiveSlot.SLOT_PRIMARY, true)
 			Player:AddCollectible(Collectibles.MAGICCUBE, 4, true, ActiveSlot.SLOT_PRIMARY, 0)
 			Player:AnimateHappy()
@@ -1903,7 +1951,8 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, Slot, _)
 		-- monster manual spawns weaker familiars when used (dips, flies and spiders)
 		elseif ItemUsed == CollectibleType.COLLECTIBLE_MONSTER_MANUAL then
 			for n = 1, 6 do
-				local roll = math.random(100)
+				RNGobj:SetSeed(Random() + 1, 1)
+				local roll = RNGobj:RandomInt(100)
 				
 				if roll <= 33 then
 					Isaac.Spawn(3, FamiliarVariant.BLUE_FLY, 0, Player.Position, Vector.Zero, nil)
@@ -1943,28 +1992,34 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, Slot, _)
 			Player:UseActiveItem(ItemPools.EMPTYPAGEACTIVES[math.random(#ItemPools.EMPTYPAGEACTIVES)], UseFlag.USE_NOANIM, -1)
 		end
 	end
+	
+	if ItemUsed == Collectibles.STARGAZERSHAT then
+		Player:AnimateCollectible(ItemUsed, "Pickup", "PlayerPickupSparkle")
+		sfx:Play(SoundEffect.SOUND_SUMMONSOUND, 1, 2, false, 1, 0)
+		Isaac.Spawn(6, PickUps.SLOT_STARGAZER, 0, Isaac.GetFreeNearPosition(Player.Position, 25), Vector.Zero, nil)
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
 
 						-- MC_USE_CARD -- 										
 						-----------------
-function rplus:CardUsed(Card, Player, _)	
-	if Card == PocketItems.RJOKER then
+function rplus:CardUsed(CardUsed, Player, _)	
+	if CardUsed == PocketItems.RJOKER then
 		game:StartRoomTransition(-6, -1, RoomTransitionAnim.TELEPORT, Player, -1)
 	end
 	
-	if Card == PocketItems.SDDSHARD then
+	if CardUsed == PocketItems.SDDSHARD then
 		Player:UseActiveItem(CollectibleType.COLLECTIBLE_SPINDOWN_DICE, UseFlag.USE_NOANIM, -1)
 	end
 	
-	if Card == PocketItems.BUSINESSCARD then
+	if CardUsed == PocketItems.BUSINESSCARD then
 		Player:UseActiveItem(CollectibleType.COLLECTIBLE_FRIEND_FINDER, UseFlag.USE_NOANIM, -1)
 	end
 	
-	if Card == PocketItems.REDRUNE then
+	if CardUsed == PocketItems.REDRUNE then
 		Player:UseActiveItem(CollectibleType.COLLECTIBLE_ABYSS, false, false, true, false, -1)
 		Player:UseActiveItem(CollectibleType.COLLECTIBLE_NECRONOMICON, false, false, true, false, -1)
-		local locustRNG = RNG()
+		RNGobj:SetSeed(Random() + 1, 1)
 		
 		for _, entity in pairs(Isaac.FindInRadius(Player.Position, 1000, EntityPartition.PICKUP)) do
 			if ((entity.Variant < 100 and entity.Variant > 0) or entity.Variant == 300 or entity.Variant == 350 or entity.Variant == 360) 
@@ -1973,18 +2028,18 @@ function rplus:CardUsed(Card, Player, _)
 				
 				entity:Remove()
 				if math.random(100) <= 50 then
-					Isaac.Spawn(EntityType.ENTITY_FAMILIAR, FamiliarVariant.BLUE_FLY, locustRNG:RandomInt(5) + 1, pos, Vector.Zero, nil)
+					Isaac.Spawn(EntityType.ENTITY_FAMILIAR, FamiliarVariant.BLUE_FLY, RNGobj:RandomInt(5) + 1, pos, Vector.Zero, nil)
 				end
 			end
 		end
 	end
 	
-	if Card == PocketItems.REVERSECARD then
+	if CardUsed == PocketItems.REVERSECARD then
 		Player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false, false, true, false, -1)
 		Player:GetData()["reverseCardRoom"] = game:GetLevel():GetCurrentRoomIndex()
 	end
 	
-	if Card == PocketItems.KINGOFSPADES then
+	if CardUsed == PocketItems.KINGOFSPADES then
 		sfx:Play(SoundEffect.SOUND_GOLDENKEY, 1, 2, false, 1, 0)
 		local NumPickups = math.floor(Player:GetNumKeys() / 4)
 		Player:AddKeys(-Player:GetNumKeys())
@@ -1996,7 +2051,7 @@ function rplus:CardUsed(Card, Player, _)
 		if NumPickups >= 7 then Isaac.Spawn(5, 100, 0, Player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
 	end
 	
-	if Card == PocketItems.KINGOFCLUBS then
+	if CardUsed == PocketItems.KINGOFCLUBS then
 		local NumPickups = math.floor(Player:GetNumBombs() / 4)
 		Player:AddBombs(-Player:GetNumBombs())
 		if Player:HasGoldenBomb() then Player:RemoveGoldenBomb() NumPickups = NumPickups + 2 end
@@ -2007,7 +2062,7 @@ function rplus:CardUsed(Card, Player, _)
 		if NumPickups >= 7 then Isaac.Spawn(5, 100, 0, Player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
 	end
 	
-	if Card == PocketItems.KINGOFDIAMONDS then
+	if CardUsed == PocketItems.KINGOFDIAMONDS then
 		local NumPickups = math.floor(Player:GetNumCoins() / 5)
 		Player:AddCoins(-Player:GetNumCoins())
 		for i = 1, NumPickups do
@@ -2017,7 +2072,7 @@ function rplus:CardUsed(Card, Player, _)
 		if NumPickups >= 7 then Isaac.Spawn(5, 100, 0, Player.Position + Vector.FromAngle(math.random(360)) * 20, Vector.Zero, nil) end
 	end
 	
-	if Card == PocketItems.NEEDLEANDTHREAD then
+	if CardUsed == PocketItems.NEEDLEANDTHREAD then
 		if Player:GetBrokenHearts() > 0 then
 			Player:AddBrokenHearts(-1)
 			Player:AddMaxHearts(2, true)
@@ -2025,14 +2080,15 @@ function rplus:CardUsed(Card, Player, _)
 		end
 	end
 	
-	if Card == PocketItems.QUEENOFDIAMONDS then
+	if CardUsed == PocketItems.QUEENOFDIAMONDS then
 		for i = 1, math.random(12) do
-			local QueenOfDiamondsRandom = math.random(100)
+			RNGobj:SetSeed(Random() + 1, 1)
+			local roll = RNGobj:RandomFloat()
 			local spawnPos = game:GetRoom():FindFreePickupSpawnPosition(Player.Position, 0, true, false)
 			
-			if QueenOfDiamondsRandom <= 92 then
+			if roll < 0.92 then
 				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 1, spawnPos, Vector.Zero, nil)
-			elseif QueenOfDiamondsRandom <= 98 then
+			elseif roll < 0.98 then
 				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 2, spawnPos, Vector.Zero, nil)
 			else
 				Isaac.Spawn(5, PickupVariant.PICKUP_COIN, 3, spawnPos, Vector.Zero, nil)
@@ -2040,12 +2096,13 @@ function rplus:CardUsed(Card, Player, _)
 		end
 	end
 	
-	if Card == PocketItems.QUEENOFCLUBS then
+	if CardUsed == PocketItems.QUEENOFCLUBS then
 		for i = 1, math.random(12) do
-			local QueenOfClubsRandom = math.random(100)
+			RNGobj:SetSeed(Random() + 1, 1)
+			local roll = RNGobj:RandomFloat()
 			local spawnPos = game:GetRoom():FindFreePickupSpawnPosition(Player.Position, 0, true, false)
 			
-			if QueenOfClubsRandom <= 92 then
+			if roll < 0.92 then
 				Isaac.Spawn(5, PickupVariant.PICKUP_BOMB, 1, spawnPos, Vector.Zero, nil)
 			else
 				Isaac.Spawn(5, PickupVariant.PICKUP_BOMB, 2, spawnPos, Vector.Zero, nil)
@@ -2053,7 +2110,7 @@ function rplus:CardUsed(Card, Player, _)
 		end
 	end
 	
-	if Card == PocketItems.BAGTISSUE then
+	if CardUsed == PocketItems.BAGTISSUE then
 		local Weights = {}
 		local SumWeight = 0
 		local EnoughConsumables = true
@@ -2080,7 +2137,9 @@ function rplus:CardUsed(Card, Player, _)
 		table.sort(Weights, function(a,b) return a>b end)
 		for i = 1, 8 do
 			if not Weights[i] then
-				EnoughConsumables = false Player:AnimateSad() break
+				EnoughConsumables = false 
+				Player:AnimateSad() 
+				break
 			end
 			SumWeight = SumWeight + Weights[i]
 		end
@@ -2088,15 +2147,13 @@ function rplus:CardUsed(Card, Player, _)
 
 		if EnoughConsumables then
 			-- defining item quality 
-			DesiredQuality = math.floor(SumWeight / 9)
-			if DesiredQuality > 4 then
-				DesiredQuality = 4
-			end
+			DesiredQuality = math.min(math.floor(SumWeight / 9), 4)
 			
 			-- trying to get random (not story-related!!) item with desired quality
 			repeat
 				ID = GetUnlockedVanillaCollectible(true)
 			until Isaac.GetItemConfig():GetCollectible(ID).Quality == DesiredQuality
+			and Isaac.GetItemConfig():GetCollectible(ID).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST
 			
 			-- spawning the item
 			Player:AnimateHappy()
@@ -2104,7 +2161,7 @@ function rplus:CardUsed(Card, Player, _)
 		end
 	end
 	
-	if Card == PocketItems.LOADEDDICE then
+	if CardUsed == PocketItems.LOADEDDICE then
 		Player:GetData()['usedLoadedDice'] = true
 		
 		Player:AddCacheFlags(CacheFlag.CACHE_LUCK)
@@ -2112,21 +2169,22 @@ function rplus:CardUsed(Card, Player, _)
 	end
 	
 	-- jacks
-	if Card == PocketItems.JACKOFDIAMONDS then
+	if CardUsed == PocketItems.JACKOFDIAMONDS then
 		CustomData.Cards.JACK = "Diamonds"
-	elseif Card == PocketItems.JACKOFCLUBS then
+	elseif CardUsed == PocketItems.JACKOFCLUBS then
 		CustomData.Cards.JACK = "Clubs"
-	elseif Card == PocketItems.JACKOFSPADES then
+	elseif CardUsed == PocketItems.JACKOFSPADES then
 		CustomData.Cards.JACK = "Spades"	
-	elseif Card == PocketItems.JACKOFHEARTS then
+	elseif CardUsed == PocketItems.JACKOFHEARTS then
 		CustomData.Cards.JACK = "Hearts"
 	end
 	
-	if Card == PocketItems.BEDSIDEQUEEN then
-		local numKeys = math.random(12)
-		
-		for i = 1, numKeys do
-			if math.random(100) <= 95 then
+	if CardUsed == PocketItems.BEDSIDEQUEEN then		
+		for i = 1, math.random(12) do
+			RNGobj:SetSeed(Random() + 1, 1)
+			local roll = RNGobj:RandomFloat()
+			
+			if roll < 0.95 then
 				Isaac.Spawn(5, PickupVariant.PICKUP_KEY, 1, game:GetRoom():FindFreePickupSpawnPosition(Player.Position, 0, true, false), Vector.Zero, nil)
 			else
 				Isaac.Spawn(5, PickupVariant.PICKUP_KEY, 4, game:GetRoom():FindFreePickupSpawnPosition(Player.Position, 0, true, false), Vector.Zero, nil)
@@ -2134,7 +2192,7 @@ function rplus:CardUsed(Card, Player, _)
 		end
 	end
 	
-	if Card == PocketItems.QUASARSHARD then
+	if CardUsed == PocketItems.QUASARSHARD then
 		Player:UseActiveItem(CollectibleType.COLLECTIBLE_NECRONOMICON, UseFlag.USE_NOANIM, -1)
 		
 		for _, entity in pairs(Isaac.FindInRadius(Player.Position, 1000, EntityPartition.PICKUP)) do
@@ -2153,7 +2211,7 @@ function rplus:CardUsed(Card, Player, _)
 		end
 	end
 	
-	if Card == PocketItems.SACBLOOD and CustomData then
+	if CardUsed == PocketItems.SACBLOOD and CustomData then
 		CustomData.Cards.SACBLOOD.Data = true
 		CustomData.Cards.SACBLOOD.NumUses = CustomData.Cards.SACBLOOD.NumUses + 1
 		Step = 0
@@ -2163,40 +2221,41 @@ function rplus:CardUsed(Card, Player, _)
 		if Player:HasCollectible(216) then Player:AddHearts(2) end		-- bonus for ceremonial robes ;)
 	end
 	
-	if Card == PocketItems.FLYPAPER then
+	if CardUsed == PocketItems.FLYPAPER then
 		for i = 1, 9 do
 			Player:AddSwarmFlyOrbital(Player.Position)
 		end
 	end
 	
-	if Card == PocketItems.LIBRARYCARD then
-		Player:UseActiveItem(game:GetItemPool():GetCollectible(ItemPoolType.POOL_LIBRARY, false, Random(), 0), true, false, true, true, -1)
+	if CardUsed == PocketItems.LIBRARYCARD then
+		Player:UseActiveItem(game:GetItemPool():GetCollectible(ItemPoolType.POOL_LIBRARY, false, Random() + 1, 0), true, false, true, true, -1)
 	end
 	
-	if Card == PocketItems.FUNERALSERVICES then
+	if CardUsed == PocketItems.FUNERALSERVICES then
 		Isaac.Spawn(5, PickupVariant.PICKUP_OLDCHEST, 0, game:GetRoom():FindFreePickupSpawnPosition(Player.Position, 0, true, false), Vector.Zero, nil)
 	end
 	
-	if Card == PocketItems.MOMSID then
+	if CardUsed == PocketItems.MOMSID then
 		for _, enemy in pairs(Isaac.FindInRadius(Player.Position, 560, EntityPartition.ENEMY)) do
 			if not enemy:IsBoss() then enemy:AddEntityFlags(EntityFlag.FLAG_CHARM) end
 		end
 	end
 	
-	if Card == PocketItems.ANTIMATERIALCARD then
+	if CardUsed == PocketItems.ANTIMATERIALCARD then
 		local antimaterialCardTear = Isaac.Spawn(2, TearVariants.ANTIMATERIALCARD, 0, Player.Position, DIRECTION_VECTOR[Player:GetMovementDirection()]:Resized(10), nil)
 		antimaterialCardTear:GetSprite():Play("Rotate")
 	end
 	
-	if Card == PocketItems.DEMONFORM and CustomData then
+	if CardUsed == PocketItems.DEMONFORM and CustomData then
 		Player:GetData()['usedDemonForm'] = true
 	end
 	
-	if Card == PocketItems.FIENDFIRE then 
+	if CardUsed == PocketItems.FIENDFIRE then 
 		local Counter = 0
 		
-		for i = 1, 300 do 
-			local RandomPickup = math.random(3)
+		for i = 1, 300 do
+			RNGobj:SetSeed(Random() + 1, 1)
+			local RandomPickup = RNGobj:RandomInt(3) + 1
 			
 			if RandomPickup == 1 and Player:GetNumCoins() > 0 then
 				Player:AddCoins(-1)
@@ -2209,12 +2268,12 @@ function rplus:CardUsed(Card, Player, _)
 				Counter = Counter + 1
 			end
 			
-			if Counter == 150 or Player:GetNumKeys() + Player:GetNumBombs() + Player:GetNumCoins() == 0 then 
+			if Counter == 120 or Player:GetNumKeys() + Player:GetNumBombs() + Player:GetNumCoins() == 0 then 
 				break 
 			end 
 		end
 		
-		if Counter >= 10 and Counter <= 50 then 
+		if Counter >= 7 and Counter <= 40 then 
 		-- enemies take damage and are set on fire
 			for _, enemy in pairs(Isaac.GetRoomEntities()) do
 				if enemy:IsVulnerableEnemy() then 
@@ -2222,7 +2281,7 @@ function rplus:CardUsed(Card, Player, _)
 					enemy:AddBurn(EntityRef(Player), 120, Player.Damage)
 				end
 			end
-		elseif Counter >= 51 and Counter <= 125 then 
+		elseif Counter > 40 and Counter <= 80 then 
 		-- more damage, longer burn duration, destroy grid entities around you
 			for _, enemy in pairs(Isaac.GetRoomEntities()) do
 				if enemy:IsVulnerableEnemy() then 
@@ -2236,7 +2295,7 @@ function rplus:CardUsed(Card, Player, _)
 					room:GetGridEntity(g):Destroy() 
 				end
 			end
-		elseif Counter >= 126 and Counter <= 150 then 
+		elseif Counter > 80 and Counter <= 120 then 
 		-- produce mama mega explosion, longer burn duration
 			Isaac.Spawn(1000, 127, 0, Player.Position, Vector.Zero, nil) -- mama mega explosion
 			for _, enemy in pairs(Isaac.GetRoomEntities()) do
@@ -2248,6 +2307,14 @@ function rplus:CardUsed(Card, Player, _)
 		
 		sfx:Play(SoundEffect.SOUND_WAR_HORSE_DEATH, 1, 2, false, 1, 0)
 		Game():ShakeScreen(30)
+	end
+	
+	if CardUsed == Card.CARD_SOUL_CAIN then
+		for _, chest in pairs(Isaac.FindByType(5, PickUps.SCARLETCHEST, -1, false, false)) do
+			if chest.SubType == 0 or chest.SubType == 2 then
+				openScarletChest(chest)
+			end
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
@@ -2458,7 +2525,7 @@ function rplus:PostPlayerUpdate(Player)
 		end
 		
 		if Player:HasCollectible(Collectibles.BLESSOTDEAD) then 
-			CustomData.Items.BLESSOTDEAD = CustomData.Items.BLESSOTDEAD + 0.5
+			CustomData.Items.BLESSOTDEAD.NumUses = CustomData.Items.BLESSOTDEAD.NumUses + 1
 			game:GetHUD():ShowFortuneText("The Dead protect you")
 			level:RemoveCurses(level:GetCurses())
 			Player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
@@ -2534,7 +2601,7 @@ function rplus:PostPlayerUpdate(Player)
 		if nervePinchButton and Input.IsActionPressed(nervePinchButton, Player.ControllerIndex) then
 			CustomData.Items.NERVEPINCH.Hold = CustomData.Items.NERVEPINCH.Hold - 1
 		else
-			CustomData.Items.NERVEPINCH.Hold = 300
+			CustomData.Items.NERVEPINCH.Hold = NERVEPINCH_HOLD
 		end
 	end
 end
@@ -2793,6 +2860,15 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 				end
 			end
 		end
+		
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_CRACKED_ORB) then
+			for _, chest in pairs(Isaac.FindByType(5, PickUps.SCARLETCHEST, -1, false, false)) do
+				if chest.SubType == 0 or chest.SubType == 2 then
+					openScarletChest(chest)
+					break
+				end
+			end
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, rplus.EntityTakeDmg)
@@ -2845,7 +2921,8 @@ function rplus:OnNPCDeath(NPC)
 		
 		if player:HasCollectible(Collectibles.KEEPERSPENNY) and room:GetType() == RoomType.ROOM_SHOP 
 		and NPC.Type == EntityType.ENTITY_GREED then
-			numNewItems = math.random(3, 4)
+			RNGobj:SetSeed(Random() + 1, 1)
+			local numNewItems = RNGobj:RandomInt(2) + 3
 			
 			if numNewItems == 3 then
 				V = {Vector(320, 280), Vector(160, 280), Vector(480, 280)}
@@ -2855,7 +2932,7 @@ function rplus:OnNPCDeath(NPC)
 			
 			for i = 1, numNewItems do
 				local pool = KEEPERSPENNY_ITEMPOOLS[math.random(#KEEPERSPENNY_ITEMPOOLS)]
-				local Item = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(pool, false, Random(), CollectibleType.COLLECTIBLE_NULL), V[i], Vector.Zero, nil):ToPickup()
+				local Item = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(pool, false, Random() + 1, CollectibleType.COLLECTIBLE_NULL), V[i], Vector.Zero, nil):ToPickup()
 				Item.Price = 15
 				Item.ShopItemId = -13 * i
 			end
@@ -2896,16 +2973,10 @@ function rplus:OnPickupInit(Pickup)
 				Pickup:Morph(5, PickUps.FLESHCHEST, 0, true, true, false)
 			end
 			
-			if canOpenScarletChests(player)
-			and math.random(100) <= SCARLETCHEST_REPLACE_CHANCE 
-			and (Pickup.Variant >= 50 and Pickup.Variant <= 60) 
-			and room:GetType() ~= RoomType.ROOM_CHALLENGE then
-				Pickup:Morph(5, PickUps.SCARLETCHEST, 0, true, true, false)
-			end
-			
 			-- TAINTED HEARTS REPLACEMENT --
 			if Pickup.Variant == 10 then
-				local roll = math.random(100)
+				RNGobj:SetSeed(Random() + 1, 1)
+				local roll = RNGobj:RandomInt(100) + 1
 				local st = Pickup.SubType
 				
 				-- 2% capricious heart
@@ -2968,9 +3039,10 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		Pickup:GetSprite():Play("Open")
 		sfx:Play(SoundEffect.SOUND_CHEST_OPEN, 1, 2, false, 1, 0)
 		Collider:TakeDamage(1, DamageFlag.DAMAGE_RED_HEARTS | DamageFlag.DAMAGE_NO_PENALTIES, EntityRef(Pickup), 24)
-		local DieRoll = math.random(100)
+		RNGobj:SetSeed(Random() + 1, 1)
+		local DieRoll = RNGobj:RandomFloat()
 		
-		if DieRoll < 15 then
+		if DieRoll < 0.15 then
 			local freezePreventChecker = 0
 			
 			repeat
@@ -2987,8 +3059,9 @@ function rplus:PickupCollision(Pickup, Collider, _)
 			end
 			
 			Pickup:Remove()
-		elseif DieRoll < 85 then
-			local NumOfPickups = RNG():RandomInt(4) + 1 -- 1 to 4 pickups
+		elseif DieRoll < 0.85 then
+			RNGobj:SetSeed(Pickup.DropSeed, 1)
+			local NumOfPickups = RNGobj:RandomInt(4) + 1 -- 1 to 4 pickups
 			
 			for i = 1, NumOfPickups do
 				local variant = nil
@@ -3146,9 +3219,10 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		Pickup:GetSprite():Play("Open")
 		sfx:Play(SoundEffect.SOUND_CHEST_OPEN, 1, 2, false, 1, 0)
 		player:TakeDamage(1, 0, EntityRef(Pickup), 24)
-		local DieRoll = math.random(100)
+		RNGobj:SetSeed(Random() + 1, 1)
+		local DieRoll = RNGobj:RandomFloat()
 		
-		if DieRoll <= 10 then
+		if DieRoll < 0.1 then
 			local freezePreventChecker = 0
 			
 			repeat
@@ -3163,7 +3237,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 			end
 			
 			Pickup:Remove()
-		elseif DieRoll <= 75 then
+		elseif DieRoll < 0.75 then
 			-- subtype 2: opened chest with consumables (need to close again later)
 			Pickup.SubType = 2
 			Pickup:GetData()['OpenFrame'] = game:GetFrameCount()
@@ -3197,27 +3271,25 @@ function rplus:PickupCollision(Pickup, Collider, _)
 			return false
 		end
 		
-		-- subtype 1: opened chest (need to remove)
-		Pickup.SubType = 1
-		-- setting some data for pickup, because it is deleted on entering a new room, and the pickup is removed as well
-		Pickup:GetData()["IsInRoom"] = true
-		Pickup:GetSprite():Play("Open")
-		sfx:Play(SoundEffect.SOUND_CHEST_OPEN, 1, 2, false, 1, 0)
-		local DieRoll = math.random(100)
+		openScarletChest(Pickup)
+	end
+	
+	if player:HasCollectible(Collectibles.STARGAZERSHAT) 
+	and Pickup.Variant == 10 then
+		local HatSlot = 0
+		local addCharges
+	
+		if Pickup.SubType == HeartSubType.HEART_SOUL then addCharges = 2
+		elseif Pickup.SubType == HeartSubType.HEART_HALF_SOUL then addCharges = 1 end
+		if type(addCharges) == 'nil' then return nil end
 		
-		if DieRoll < 75 then
-			local ScarletChestPedestal = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ULTRA_SECRET, false, Random(), CollectibleType.COLLECTIBLE_NULL), Pickup.Position, Vector(0, 0), Pickup)
-			ScarletChestPedestal:GetSprite():ReplaceSpritesheet(5,"gfx/items/scarletchest_itemaltar.png") 
-			ScarletChestPedestal:GetSprite():LoadGraphics()
-			
-			Pickup:Remove()
-		else
-			local NumOfPickups = RNG():RandomInt(10) + 5
-			
-			for i = 1, NumOfPickups do
-				Isaac.Spawn(5, 30, 1, Pickup.Position, Vector.FromAngle(math.random(360)) * 5, Pickup)
-			end
-		end
+		if player:GetActiveItem(1) == Collectibles.STARGAZERSHAT and player:GetActiveItem(1) ~= Collectibles.STARGAZERSHAT then HatSlot = 1 end
+		if player:GetActiveCharge(HatSlot) >= 4 then return nil end
+		
+		player:SetActiveCharge(player:GetActiveCharge(HatSlot) + addCharges, HatSlot)
+		if player:GetActiveCharge(HatSlot) >= 4 then sfx:Play(SoundEffect.SOUND_BATTERYCHARGE, 1, 2, false, 1, 0) else sfx:Play(SoundEffect.SOUND_BEEP, 1, 2, false, 1, 0) end
+		Pickup:Remove()
+		return false
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, rplus.PickupCollision)
@@ -3323,7 +3395,7 @@ function rplus:UpdateStats(Player, Flag)
 		end
 		
 		if Player:HasCollectible(Collectibles.BLESSOTDEAD) and CustomData then
-			Player.Damage = Player.Damage + CustomData.Items.BLESSOTDEAD * StatUps.BLESS_DMG
+			Player.Damage = Player.Damage + CustomData.Items.BLESSOTDEAD.NumUses * StatUps.BLESS_DMG
 		end
 		
 		if CustomData then
@@ -3493,7 +3565,7 @@ function rplus:FamiliarUpdate(Familiar)
 		end
 		
 		if Familiar.RoomClearCount == 1 then
-			local NumFlies = math.random(CustomData.Items.BAGOTRASH.Levels * 2)
+			local NumFlies = math.random(math.ceil(CustomData.Items.BAGOTRASH.Levels * 1.5))
 			
 			Familiar:GetSprite().PlaybackSpeed = 0.5
 			Familiar:GetSprite():Play("Spawn")
@@ -3809,14 +3881,15 @@ function rplus:PickupAwardSpawn(_, Pos)
 		local Variant = nil
 		local SubType = nil
 		
-		dieroll = math.random(100)
+		RNGobj:SetSeed(Random() + 1, 1)
+		local DieRoll = RNGobj:RandomInt(100) + 1
 		
 		if CustomData.Cards.JACK == "Diamonds" then
 			Variant = 20
 			
-			if dieroll <= 80 then
+			if DieRoll <= 80 then
 				SubType = 1 --penny
-			elseif dieroll <= 95 then
+			elseif DieRoll <= 95 then
 				SubType = 2 --nickel 
 			else
 				SubType = 3 --dime
@@ -3824,7 +3897,7 @@ function rplus:PickupAwardSpawn(_, Pos)
 		elseif CustomData.Cards.JACK == "Clubs" then
 			Variant = 40
 			
-			if dieroll <= 80 then
+			if DieRoll <= 80 then
 				SubType = 1 --bomb
 			else
 				SubType = 2	--double bomb
@@ -3832,9 +3905,9 @@ function rplus:PickupAwardSpawn(_, Pos)
 		elseif CustomData.Cards.JACK == "Spades" then
 			Variant = 30
 			
-			if dieroll <= 80 then
+			if DieRoll <= 80 then
 				SubType = 1 --key
-			elseif dieroll <= 95 then
+			elseif DieRoll <= 95 then
 				SubType = 3	--double key
 			else
 				SubType = 4 --charged key
@@ -3842,17 +3915,17 @@ function rplus:PickupAwardSpawn(_, Pos)
 		elseif CustomData.Cards.JACK == "Hearts" then
 			Variant = 10
 			
-			if dieroll <= 40 then
+			if DieRoll <= 40 then
 				SubType = 1 --Heart
-			elseif dieroll <= 60 then
+			elseif DieRoll <= 60 then
 				SubType = 2 --Half Heart
-			elseif dieroll <= 70 then
+			elseif DieRoll <= 70 then
 				SubType = 5 --Double Heart
-			elseif dieroll <= 85 then
+			elseif DieRoll <= 85 then
 				SubType = 3 --Soul Heart
-			elseif dieroll <= 93 then
+			elseif DieRoll <= 93 then
 				SubType = 10 --Blended Heart
-			elseif dieroll <= 98 then
+			elseif DieRoll <= 98 then
 				SubType = 6  --Black Heart
 			else
 				SubType = 4  --Eternal Heart
@@ -3870,11 +3943,12 @@ function rplus:PickupAwardSpawn(_, Pos)
 			if room:GetType() == RoomType.ROOM_BOSS then
 				if CustomData.Items.REDKING.IsInRedKingRoom then
 					if player:HasCollectible(CollectibleType.COLLECTIBLE_THERES_OPTIONS) then
-						Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ULTRA_SECRET, false, Random(), CollectibleType.COLLECTIBLE_NULL), Vector(360, 360), Vector.Zero, nil):ToPickup().OptionsPickupIndex = 7
-						Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ULTRA_SECRET, false, Random(), CollectibleType.COLLECTIBLE_NULL), Vector(280, 360), Vector.Zero, nil):ToPickup().OptionsPickupIndex = 7
+						Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ULTRA_SECRET, false, Random() + 1, CollectibleType.COLLECTIBLE_NULL), Vector(360, 360), Vector.Zero, nil):ToPickup().OptionsPickupIndex = 7
+						Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ULTRA_SECRET, false, Random() + 1, CollectibleType.COLLECTIBLE_NULL), Vector(280, 360), Vector.Zero, nil):ToPickup().OptionsPickupIndex = 7
 					else
-						Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ULTRA_SECRET, false, Random(), CollectibleType.COLLECTIBLE_NULL), Vector(320, 360), Vector.Zero, nil)
+						Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ULTRA_SECRET, false, Random() + 1, CollectibleType.COLLECTIBLE_NULL), Vector(320, 360), Vector.Zero, nil)
 					end
+					Isaac.Spawn(5, 300, Card.CARD_CRACKED_KEY, Vector(320, 320), Vector.Zero, nil)
 					CustomData.Items.REDKING.DefeatedRedKingBoss = true
 					return true
 				else
@@ -3882,7 +3956,14 @@ function rplus:PickupAwardSpawn(_, Pos)
 					redTrapdoor:GetSprite():Play("OpenAnim")
 				end
 			end
-		end 
+		end
+			
+		if canOpenScarletChests(player)
+		and math.random(100) <= SCARLETCHEST_REPLACE_CHANCE 
+		and room:GetType() ~= RoomType.ROOM_BOSS then
+			Isaac.Spawn(5, PickUps.SCARLETCHEST, 0, game:GetRoom():FindFreePickupSpawnPosition(Pos, 0, true, false), Vector.Zero, nil)
+			return true
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, rplus.PickupAwardSpawn)
@@ -3908,6 +3989,23 @@ function rplus:ChangePillEffects(pillEffect, pillColor)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_GET_PILL_EFFECT, rplus.ChangePillEffects)
+
+						-- MC_POST_EFFECT_INIT --							
+						-------------------------
+function rplus:OnEffectInit(Effect)
+	-- helper for killing stargazer beggars when the explosion is nearby
+	if Effect.Variant == EffectVariant.BOMB_EXPLOSION or Effect.Variant == EffectVariant.MAMA_MEGA_EXPLOSION then
+		for _, slot in pairs(Isaac.FindByType(6, PickUps.SLOT_STARGAZER, -1, false, true)) do
+			if slot.Position:Distance(Effect.Position) <= 100 then
+				slot:Kill()
+				slot:Remove()
+			end
+		end
+	end
+end
+rplus:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, rplus.OnEffectInit)
+
+
 
 								----------------------------------
 								--- EXTERNAL ITEM DESCRIPTIONS ---
@@ -3946,13 +4044,14 @@ if EID then
 	EID:addCollectible(Collectibles.BOOKOFGENESIS, "Removes a random item and spawns 3 items of the same quality #Only one item can be taken #Can't remove or spawn quest items")
 	EID:addCollectible(Collectibles.SCALPEL, "Makes you shoot tears in the opposite direction #From the front, you will frequently shoot bloody tears that deal x0.66 of your damage #All other weapon types will still be fired from the front as well")
 	EID:addCollectible(Collectibles.KEEPERSPENNY, "Spawns a golden penny upon entering a new floor #Shops will now sell 1-4 additional items that are drawn from shop, treasure or boss itempools #If the shop is a Greed fight, it instead spawns 3-4 items when the miniboss dies")
-	EID:addCollectible(Collectibles.NERVEPINCH, "Shooting or moving in one direction for 5 seconds will trigger a nerve pinch #{{ArrowDown}} You take fake damage and gain a permanent " .. tostring(StatUps.NERVEPINCH_SPEED) .. " speed down when that happens #{{ArrowUp}} However, there is a 75% chance to activate your active item for free, even if it's uncharged #One-time use and infinite use actives cannot be used that way")
+	EID:addCollectible(Collectibles.NERVEPINCH, "Shooting or moving for 10 seconds will trigger a nerve pinch #{{ArrowDown}} You take fake damage and gain a permanent " .. tostring(StatUps.NERVEPINCH_SPEED) .. " speed down when that happens #{{ArrowUp}} However, there is a 75% chance to activate your active item for free, even if it's uncharged #One-time use and infinite use actives cannot be used that way")
 	EID:addCollectible(Collectibles.BLOODVESSELS[1], "Taking damage doesn't actually hurt the player, instead filling the blood vessel #This can be repeated 6 times until the vessel if full #Once it's full, using it or taking damage will empty it and deal 3 or 3.5 hearts of damage to the player")
 	EID:addCollectible(Collectibles.SIBLINGRIVALRY, "Orbital that switches between 2 different states every 15 seconds: #Two orbitals that quickly rotate around Isaac #One orbital that rotates slower and closer to Isaac, and periodically shoots teeth in random directions and spawns blood creep underneath it #{{Warning}} All orbitals block enemy shots and do contact damage")
-	EID:addCollectible(Collectibles.REDKING, "After defeating a boss, red crawlspace will appear in a middle of a room #Entering the crawlspace brings you to another bossfight of high difficulty #Victory rewards you a red item (from Ultra secret room pool)")
+	EID:addCollectible(Collectibles.REDKING, "After defeating a boss, red crawlspace will appear in a middle of a room #Entering the crawlspace brings you to another bossfight of high difficulty #Victory rewards you a red item (from Ultra secret room pool) and a Cracked key consumable")
+	EID:addCollectible(Collectibles.STARGAZERSHAT, "Summons the Stargazer beggar #Can only be charged with soul hearts, similar to Alabaster Box #2 soul hearts needed for full charge")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
-	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Scarlet Chest upon death #Scarlet Chests can contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
+	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Flesh Chest upon death #Flesh Chests contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
 	EID:addTrinket(Trinkets.JUDASKISS, "Enemies touching you become targeted by other enemies (effect similar to Rotten Tomato)")
 	EID:addTrinket(Trinkets.TRICKPENNY, "Using coin, bomb or key on slots, beggars or locked chests has a 17% chance to not subtract it from your inventory count")
 	EID:addTrinket(Trinkets.SLEIGHTOFHAND, "Upon spawning, every coin has a 20% chance to be upgraded to a higher value: #penny -> doublepack pennies -> sticky nickel -> nickel -> dime -> lucky penny -> golden penny")
@@ -3994,7 +4093,7 @@ if EID then
 	EID:addCard(PocketItems.MOMSID , "Charms all enemies in the current room")
 	EID:addCard(PocketItems.FUNERALSERVICES , "Spawns an Old Chest")
 	EID:addCard(PocketItems.ANTIMATERIALCARD , "Can be thrown similarly to Chaos Card #If the card touches an enemy, that enemy is erased for the rest of the run")
-	EID:addCard(PocketItems.FIENDFIRE, "Sacrifice your consumables for mass room destruction #10-50 total: enemies take 15 damage and burn for 4 seconds #51-125 total: the initital damage, the burning damage and burning duration are doubled; destroys obstacles around you #126-150 total: the burning damage and burning duration are quadrupled; produces a Mama Mega explosion")
+	EID:addCard(PocketItems.FIENDFIRE, "Sacrifice your consumables for mass room destruction #7-40 total: enemies take 15 damage and burn for 4 seconds #41-80 total: the initital damage, the burning damage and burning duration are doubled; destroys obstacles around you #81+ total: the burning damage and burning duration are quadrupled; produces a Mama Mega explosion")
 	EID:addCard(PocketItems.DEMONFORM, "{{ArrowUp}} Increases your damage by 0.15 for every new uncleared room you enter #The boost disappears when entering a new floor")
 	
 	EID:addPill(Pills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at one red heart other types of hearts are unaffected")
@@ -4385,9 +4484,9 @@ if Encyclopedia then
 		[Collectibles.NERVEPINCH] = {
 			{
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
-				{str = "Shooting or moving in one direction for 5 seconds will trigger a nerve pinch "},
+				{str = "Shooting or moving for 10 seconds will trigger a nerve pinch "},
 				{str = "You take fake damage and gain a permanent " .. tostring(StatUps.NERVEPINCH_SPEED) .. " speed down when that happens "},
-				{str = "However, there is a 75% chance to activate your active item for free, even if it's uncharged "},
+				{str = "However, there is a 80% chance to activate your active item for free, even if it's uncharged "},
 				{str = "One-time use and infinite use actives cannot be used that way"},
 			},
 		},
@@ -4412,9 +4511,17 @@ if Encyclopedia then
 			{
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
 				{str = "After defeating a boss, red crawlspace will appear in a middle of a room"},
-				{str = "Entering the crawlspace brings you to another bossfight of high difficulty. Victory rewards you a red item (from Ultra secret room pool)"},
+				{str = "Entering the crawlspace brings you to another bossfight of high difficulty. Victory rewards you a red item (from Ultra secret room pool) and a Cracked key consumable"},
 				{str = "The crawlspace can be entered only once, but you can enter it whenever you want, not necessarily after defeating the main floor boss"},
 				{str = "Bosses from chapters 2 and onward of the main path can be encountered; also includes a lot of double trouble bossfights"},
+			},
+		},
+		[Collectibles.STARGAZERSHAT] = {
+			{
+				{str = "Effects", fsize = 2, clr = 3, halign = 0},
+				{str = "Summons the Stargazer beggar"},
+				{str = "Can only be charged with soul hearts, similar to Alabaster Box"},
+				{str = "2 soul hearts needed for full charge"},
 			},
 		},
 	}
@@ -4429,9 +4536,9 @@ if Encyclopedia then
 		[Trinkets.KEYTOTHEHEART] = {
 			{
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
-				{str = "While held, every enemy has a chance to drop Scarlet Chest upon death"},
-				{str = "Scarlet Chests hurt the player for half a heart when opened"},
-				{str = "Scarlet Chests can contain 1-4 pills/hearts or a random body-related item"},
+				{str = "While held, every enemy has a chance to drop Flesh Chest upon death"},
+				{str = "Flesh Chests hurt the player for half a heart when opened; this damage prioritizes red hearts"},
+				{str = "Flesh Chests contain 1-4 pills/hearts or a random body-related item"},
 			},
 		},
 		[Trinkets.JUDASKISS] = {
@@ -4616,6 +4723,7 @@ if Encyclopedia then
 		[Collectibles.QUASAR] = {Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ANGEL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
 		[Collectibles.TWOPLUSONE] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET},
 		[Collectibles.REDMAP] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+		[Collectibles.SINNERSHEART] = {Encyclopedia.ItemPools.POOL_DEVIL},
 		[Collectibles.CHEESEGRATER] = {Encyclopedia.ItemPools.POOL_SHOP},
 		[Collectibles.DNAREDACTOR] = {Encyclopedia.ItemPools.POOL_SECRET},
 		[Collectibles.TOWEROFBABEL] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_CRANE_GAME},
@@ -4631,7 +4739,8 @@ if Encyclopedia then
 		[Collectibles.NERVEPINCH] = {Encyclopedia.ItemPools.POOL_TREASURE},
 		[Collectibles.BLOODVESSELS[1]] = {Encyclopedia.ItemPools.POOL_DEMON_BEGGAR, Encyclopedia.ItemPools.POOL_CURSE},
 		[Collectibles.SIBLINGRIVALRY] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP},
-		[Collectibles.REDKING] = {Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET}
+		[Collectibles.REDKING] = {Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+		[Collectibles.STARGAZERSHAT] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_SECRET}
 	}
 
 	local CardsWiki = {
@@ -4774,7 +4883,7 @@ if Encyclopedia then
 				{str = "Activates a random book effect"},
 			},
 		},
-		[PocketItems.MOMSID ] = {
+		[PocketItems.MOMSID] = {
 			{
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
 				{str = "Charms all enemies in the current room"},
@@ -4786,7 +4895,7 @@ if Encyclopedia then
 				{str = "Spawns an Old Chest"},
 			},
 		},
-		[PocketItems.ANTIMATERIALCARD ] = {
+		[PocketItems.ANTIMATERIALCARD] = {
 			{
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
 				{str = "Can be thrown similarly to Chaos Card"},
@@ -4797,9 +4906,9 @@ if Encyclopedia then
 			{
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
 				{str = "Sacrifice your consumables for mass room destruction"},
-				{str = "10-50 total: enemies take 15 damage and burn for 4 seconds"},
-				{str = "51-125 total: the initital damage, the burning damage and burning duration are doubled; destroys obstacles around you"},
-				{str = "126-150 total: the burning damage and burning duration are quadrupled; produces a Mama Mega explosion"},
+				{str = "7-40 total: enemies take 15 damage and burn for 4 seconds"},
+				{str = "41-80 total: the initital damage, the burning damage and burning duration are doubled; destroys obstacles around you"},
+				{str = "80+ total: the burning damage and burning duration are quadrupled; produces a Mama Mega explosion"},
 			},
 		},
 		[PocketItems.DEMONFORM] = {

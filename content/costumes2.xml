@@ -12,5 +12,6 @@
 	<costume id="8" anm2path="costume_001_ordinarylife.anm2" type="passive" />
 	<costume id="9" anm2path="costume_010_ascalpel.anm2" type="passive" />
 	<costume id="10" anm2path="costume_011_babyshoes.anm2" type="trinket" />
+	<costume id="35" anm2path="costume_012_redking.anm2" type="passive" />
 	
 </costumes>
