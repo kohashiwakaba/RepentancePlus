@@ -75,7 +75,7 @@
 	<!-- T. Apollyon -->
 	<passive id="5" blackhearts="4" name="Sinner's Heart" description="Piercing tear + DMG up" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2" />
 	<passive id="29" name="Red Map" description="All secrets are unveiled to you" gfx="18_redmap.png" quality="3" />
-	<active name="Bottomless Bag" description="" gfx="31_bottomlessbag.png" quality="3" chargetype="timed" maxcharges="270" />
+	<active id="38" name="Bottomless Bag" description="Portable vacuum" gfx="31_bottomlessbag.png" quality="3" chargetype="timed" maxcharges="270" />
 	
 	<!-- T. Forgor -->
 	<passive id="30" name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="1" />
@@ -96,7 +96,7 @@
 	
 	<!-- T. Jacob -->
 	<active id="33" name="Cheese Grater" description="A pound of... cheese?" gfx="22_cheesegrater.png" quality="2" maxcharges="0" cache="damage" />
-	<familiar id="34" name="Tank Boys" description="You and what army?.." gfx="55_tankboys.png" quality="3" />
+	<familiar id="34" name="Tank Boys" description="You and what army?.." gfx="55_tankboys.png" quality="2" />
 	<passive id="35" name="Red King" description="BLOOD is my reward" gfx="51_redking.png" quality="4" devilprice="1" /> 
 	<familiar id="36" name="Sibling Rivalry" description="I can't stand you!" gfx="27_siblingrivalry.png" quality="3" tags="baby" />
 </items>

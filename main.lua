@@ -14,7 +14,7 @@
 local game = Game()
 local rplus = RegisterMod("!rpdevbuild", 1)
 RepentancePlusMod = rplus
-local MOD_VERSION = 1.16
+local MOD_VERSION = 1.17
 local sfx = SFXManager()
 local music = MusicManager()
 local RNGobj = RNG()
@@ -67,12 +67,13 @@ local STARGAZER_SPAWN_CHANCE = {
 	['Arcade'] = 10,
 	['Planetarium'] = 75
 }
+local BLOODYROCKS_REPLACE_CHANCE = 30	-- chance for Bloody (Ultra secret, Tainted) rocks to replace spiked rocks
 
 -- cooldowns
 local ENRAGED_SOUL_COOLDOWN = 7 * 60		-- cooldown for Enraged Soul familiar
 local REDBOMBER_LAUNCH_COOLDOWN = 1 * 60 	-- cooldown for launching red bombs
 local MAGICPEN_CREEP_COOLDOWN = 4 * 60 		-- coldown for Magic Pen creep
-local NERVEPINCH_HOLD = 60 * 10				-- cooldown for Nerve Pinch
+local NERVEPINCH_HOLD = 60 * 8				-- cooldown for Nerve Pinch
 
 									-----------------
 									----- ENUMS -----
@@ -1025,7 +1026,7 @@ local function openScarletChest(Pickup)
 	RNGobj:SetSeed(Random() + 1, 1)
 	local DieRoll = RNGobj:RandomFloat()
 	
-	if DieRoll < 0.75 then
+	if DieRoll < 0.7 then
 		local ScarletChestPedestal = Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ULTRA_SECRET, false, Random() + 1, CollectibleType.COLLECTIBLE_NULL), Pickup.Position, Vector.Zero, Pickup)
 		ScarletChestPedestal:GetSprite():ReplaceSpritesheet(5,"gfx/items/scarletchest_itemaltar.png") 
 		ScarletChestPedestal:GetSprite():LoadGraphics()
@@ -1040,7 +1041,62 @@ local function openScarletChest(Pickup)
 		end
 	end
 end
-						
+
+local function replaceBloodyRockSprite(spikedRock, room, level)
+	local stageType = level:GetStageType()
+	local roomType = room:GetType()
+	local stage = level:GetStage()
+	if stage < 10 and stage % 2 == 0 then stage = stage - 1 end		-- no way to account for odd floors other than that, omg
+	local newSpritePath
+	
+	if roomType == RoomType.ROOM_SECRET then
+		newSpritePath = "secretroom"
+	else
+		local stageTypeToFilePath = {
+			[LevelStage.STAGE1_1] = {	-- chapter 1
+				[StageType.STAGETYPE_ORIGINAL] = "basement",
+				[StageType.STAGETYPE_WOTL] = "cellar",
+				[StageType.STAGETYPE_AFTERBIRTH] = "burningbasement",
+				[StageType.STAGETYPE_REPENTANCE] = "downpour",
+				[StageType.STAGETYPE_REPENTANCE_B] = "dross",
+			},
+			[LevelStage.STAGE2_1] = {	-- chapter 2
+				[StageType.STAGETYPE_ORIGINAL] = "caves",
+				[StageType.STAGETYPE_WOTL] = "catacombs",
+				[StageType.STAGETYPE_AFTERBIRTH] = "floodedcaves",
+				[StageType.STAGETYPE_REPENTANCE] = "mines",
+				[StageType.STAGETYPE_REPENTANCE_B] = "ashpit",
+			},
+			[LevelStage.STAGE3_1] = {	-- chapter 3
+				[StageType.STAGETYPE_ORIGINAL] = "depths",
+				[StageType.STAGETYPE_WOTL] = "depths",
+				[StageType.STAGETYPE_AFTERBIRTH] = "depths",
+				[StageType.STAGETYPE_REPENTANCE] = "mausoleum",
+				[StageType.STAGETYPE_REPENTANCE_B] = "gehenna",
+			},
+			[LevelStage.STAGE4_1] = {	-- chapter 4
+				[StageType.STAGETYPE_ORIGINAL] = "womb",
+				[StageType.STAGETYPE_WOTL] = "utero",
+				[StageType.STAGETYPE_AFTERBIRTH] = "scarredwomb",
+				[StageType.STAGETYPE_REPENTANCE] = "corpse"
+			},
+			[LevelStage.STAGE4_3] = "bluewomb",
+			[LevelStage.STAGE5] = {	-- chapter 4
+				[StageType.STAGETYPE_ORIGINAL] = "sheol",
+				[StageType.STAGETYPE_WOTL] = "cathedral"
+			}
+		}
+		
+		if type(stageTypeToFilePath[stage]) == 'string' then newSpritePath = stageTypeToFilePath[stage]
+		else newSpritePath = stageTypeToFilePath[stage][stageType] end
+	end
+	
+	newSpritePath = newSpritePath or "depths"
+	newSpritePath = "gfx/grid/rocks_" .. tostring(newSpritePath) .. "_alt.png"
+	spikedRock:GetSprite():ReplaceSpritesheet(0, newSpritePath)
+	spikedRock:GetSprite():LoadGraphics()
+end
+					
 						-----------------------------
 						-- CALLBACK TIED FUNCTIONS --
 						-----------------------------
@@ -1062,7 +1118,6 @@ function rplus:OnGameStart(Continued)
 	
 	-- deleting Wait, No! from trinket pool
 	game:GetItemPool():RemoveTrinket(Trinkets.WAITNO)
-	game:GetItemPool():RemoveTrinket(Trinkets.TORNPAGE)
 		
 	if not Continued then
 		hideErrorMessage = false
@@ -1405,6 +1460,7 @@ function rplus:OnNewRoom()
 	and math.random(100) < BLACKCHEST_SPAWN_CHANCE then
 		Isaac.Spawn(5, PickUps.BLACKCHEST, 0, Isaac.GetFreeNearPosition(Vector(440, 240), 10), Vector.Zero, nil)
 		Isaac.Spawn(5, PickUps.BLACKCHEST, 0, Isaac.GetFreeNearPosition(Vector(200, 240), 10), Vector.Zero, nil)
+		sfx:Play(SoundEffect.SOUND_CHEST_DROP, 1, 2, false, 1, 0)
 	end
 	
 	if room:GetType() == RoomType.ROOM_PLANETARIUM
@@ -1418,6 +1474,23 @@ function rplus:OnNewRoom()
 				beggar:Remove()
 				Isaac.Spawn(6, PickUps.SLOT_STARGAZER, 0, beggar.Position, Vector.Zero, nil)
 				break
+			end
+		end
+	end
+	
+	-- bloody rocks
+	if level:GetStage() ~= LevelStage.STAGE7 then
+		for ind = 1, room:GetGridSize() do
+			local gridEnt = room:GetGridEntity(ind)
+			
+			if gridEnt and gridEnt:GetType() == GridEntityType.GRID_ROCK_SPIKED then				
+				RNGobj:SetSeed(Random() + 1, 1)
+				local roll = RNGobj:RandomFloat() * 100
+				
+				if (roll < BLOODYROCKS_REPLACE_CHANCE and room:IsFirstVisit() or gridEnt:GetVariant() == 2) then
+					gridEnt:SetVariant(2)
+					replaceBloodyRockSprite(gridEnt, room, level)
+				end
 			end
 		end
 	end
@@ -1756,7 +1829,7 @@ function rplus:OnFrame()
 			end
 		end
 		
-		if player:HasCollectible(Collectibles.REDKING) and room:GetType() == RoomType.ROOM_BOSS
+		if player:HasCollectible(Collectibles.REDKING) and room:GetType() == RoomType.ROOM_BOSS and stage < 9
 		and math.abs(player.Position.X - 320) < 20 and math.abs(player.Position.Y - 280) < 20 
 		and #Isaac.FindByType(6, 334, -1, false, false) > 0 
 		and not CustomData.Items.REDKING.IsInRedKingRoom and not CustomData.Items.REDKING.DefeatedRedKingBoss then
@@ -1765,53 +1838,42 @@ function rplus:OnFrame()
 		end
 		
 		if player:GetData()['BagUsed'] then
-			if game:GetFrameCount() <= CustomData.Items.BOTTOMLESSBAG.UseFrame + 120 then 
-				for _, entity in pairs(Isaac.FindInRadius(player.Position, 1000, EntityPartition.PROJECTILE)) do
-            				if entity.Type == EntityType.ENTITY_PROJECTILE then
-                				entity:AddVelocity((player.Position - entity.Position):Normalized())                    
-           				end
-        			end
-				for _, entity in pairs(Isaac.FindInRadius(player.Position, 35, EntityPartition.PROJECTILE)) do
-					if entity.Type == EntityType.ENTITY_PROJECTILE then
-            					entity:Remove()     
-            					CustomData.Items.BOTTOMLESSBAG.TearCount = CustomData.Items.BOTTOMLESSBAG.TearCount + 1
-            				end
-        			end
-        		elseif game:GetFrameCount() >= CustomData.Items.BOTTOMLESSBAG.UseFrame + 90 and CustomData.Items.BOTTOMLESSBAG.Data then
-    				local idx = player.ControllerIndex
-				local left = Input.GetActionValue(ButtonAction.ACTION_SHOOTLEFT,idx)
-				local right = Input.GetActionValue(ButtonAction.ACTION_SHOOTRIGHT,idx)
-				local up = Input.GetActionValue(ButtonAction.ACTION_SHOOTUP,idx)
-				local down = Input.GetActionValue(ButtonAction.ACTION_SHOOTDOWN,idx)
-				if left > 0 or right > 0 or down > 0 or up > 0 then
-					player:AnimateCollectible(Collectibles.BOTTOMLESSBAG, "HideItem", "PlayerPickup")
-					local angle = Vector(right-left,down-up):Normalized():GetAngleDegrees()
-					local shootVector = Vector.FromAngle(angle)
-    					for i= 1,CustomData.Items.BOTTOMLESSBAG.TearCount do
-						angle = Vector(math.random(-5,5), math.random(-5,5))
-						local tear = player:FireTear(player.Position,shootVector*player.ShotSpeed*math.random(6, 15) + angle + player.Velocity,false,true,false,player)
-						tear.TearFlags = tear.TearFlags | TearFlags.TEAR_HOMING 
-						local color = Color(1, 1, 1, 1, 0, 0, 0)
-          					color:SetColorize(1, 0, 1, 1)
-						tear:SetColor(color, 0, 0, true, false)
-					end
-					CustomData.Items.BOTTOMLESSBAG.Data = false
-				else
-					if player:GetData()['BagHold'] then	
-    						GiveRevivalIVFrames(Isaac.GetPlayer(i))
-						player:AnimateCollectible(Collectibles.BOTTOMLESSBAG, "LiftItem", "PlayerPickup")
-						player:GetData()['BagHold'] = false 
+			if game:GetFrameCount() < CustomData.Items.BOTTOMLESSBAG.UseFrame + 120 then
+				for _, entity in pairs(Isaac.FindInRadius(player.Position, 40, EntityPartition.PROJECTILE)) do
+					if entity:ToProjectile() then
+						entity:Remove()     
+						CustomData.Items.BOTTOMLESSBAG.TearCount = CustomData.Items.BOTTOMLESSBAG.TearCount + 1
 					end
 				end
-        		else 
+				
+				if game:GetFrameCount() < CustomData.Items.BOTTOMLESSBAG.UseFrame + 100 then
+					for _, entity in pairs(Isaac.FindInRadius(player.Position, 300, EntityPartition.PROJECTILE)) do
+						if entity:ToProjectile() then
+							entity:AddVelocity((player.Position - entity.Position):Normalized())   
+						end
+					end
+				elseif game:GetFrameCount() == CustomData.Items.BOTTOMLESSBAG.UseFrame + 100 then
+					player:AnimateCollectible(Collectibles.BOTTOMLESSBAG, "HideItem", "PlayerPickupSparkle")
+					local shootVector = DIRECTION_VECTOR[player:GetFireDirection()]
+					
+					for i = 1, CustomData.Items.BOTTOMLESSBAG.TearCount do
+						extraOffset = Vector(math.random(-5,5), math.random(-5,5))
+						local vacuumTear = player:FireTear(player.Position, shootVector * math.random(6, 15) + extraOffset, false, true, false, player)
+						vacuumTear.TearFlags = vacuumTear.TearFlags | TearFlags.TEAR_HOMING 
+						local color = Color(1, 1, 1, 1, 0, 0, 0)
+						color:SetColorize(1, 0, 1, 1)
+						vacuumTear:SetColor(color, 0, 0, true, false)
+					end
+				end
+			else
 				CustomData.Items.BOTTOMLESSBAG.TearCount = 0
-    				CustomData.Items.BOTTOMLESSBAG.UseFrame = 0
-    				player:GetData()['BagUsed'] = false
-    			end
-		    	
-    		end
+				CustomData.Items.BOTTOMLESSBAG.UseFrame = 0
+				player:GetData()['BagUsed'] = false
+			end
+		end
 	end
 	
+	-- black chests
 	for _, bc in pairs(Isaac.FindByType(5, PickUps.BLACKCHEST, 2, false, false)) do
 		if bc:GetData()['OpenFrame'] and game:GetFrameCount() >= bc:GetData()['OpenFrame'] + 60 then
 			local bcSprite = bc:GetSprite()
@@ -1819,10 +1881,10 @@ function rplus:OnFrame()
 			bcSprite:Play("Close")
 			sfx:Play(SoundEffect.SOUND_CHEST_DROP, 1, 2, false, 1, 0)
 			bc.SubType = 0
-			if bcSprite:IsFinished("Close") then bcSprite:Play("Idle") end
 		end
 	end
 	
+	-- stargazer
 	for _, sg in pairs(Isaac.FindByType(6, PickUps.SLOT_STARGAZER, -1, false, false)) do
 		local SGSprite = sg:GetSprite()
 		
@@ -1848,6 +1910,35 @@ function rplus:OnFrame()
 			local Rune = RNGobj:RandomInt(9) + 32
 			Isaac.Spawn(5, 300, Rune, sg.Position, Vector.FromAngle(math.random(360)) * 5, nil)
 			sfx:Play(SoundEffect.SOUND_SLOTSPAWN, 1, 2, false, 1, 0)
+		end
+	end
+	
+	-- bloody rocks
+	for ind = 1, room:GetGridSize() do
+		local gridEnt = room:GetGridEntity(ind)
+		
+		if gridEnt and gridEnt:GetType() == GridEntityType.GRID_ROCK_SPIKED and gridEnt:GetVariant() == 2
+		and gridEnt.State == 2 and gridEnt.VarData == 0 then
+			RNGobj:SetSeed(Random() + 1, 1)
+			local roll = RNGobj:RandomFloat() * 100
+			
+			if roll < 20 then
+				Isaac.Spawn(5, 300, Card.CARD_CRACKED_KEY, gridEnt.Position, Vector.FromAngle(math.random(360)) * 3, nil)
+				Isaac.Spawn(5, 300, PocketItems.REDRUNE, gridEnt.Position, Vector.FromAngle(math.random(360)) * 3, nil)
+			elseif roll < 45 then
+				Isaac.Spawn(5, 300, PocketItems.REDRUNE, gridEnt.Position, Vector.FromAngle(math.random(360)) * 3, nil)
+				Isaac.Spawn(5, 10, HeartSubType.HEART_FULL, gridEnt.Position, Vector.FromAngle(math.random(360)) * 3, nil)
+			elseif roll < 65 then
+				Isaac.Spawn(5, 10, HeartSubType.HEART_FULL, gridEnt.Position, Vector.FromAngle(math.random(360)) * 3, nil)
+				Isaac.Spawn(5, 10, HeartSubType.HEART_FULL, gridEnt.Position, Vector.FromAngle(math.random(360)) * 3, nil)
+			elseif roll < 70 then
+				Isaac.Spawn(5, PickUps.SCARLETCHEST, 0, gridEnt.Position, Vector.Zero, nil)
+			else
+				Isaac.Spawn(5, 300, Card.CARD_CRACKED_KEY, gridEnt.Position, Vector.FromAngle(math.random(360)) * 3, nil)
+				Isaac.Spawn(5, 10, HeartSubType.HEART_FULL, gridEnt.Position, Vector.FromAngle(math.random(360)) * 3, nil)
+			end
+			
+			gridEnt.VarData = 1
 		end
 	end
 end
@@ -1924,12 +2015,6 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, Slot, _)
 		end
 
 		return true
-	end
-	if ItemUsed == Collectibles.BOTTOMLESSBAG then 
-		Player:GetData()['BagUsed'] = true
-		Player:GetData()['BagHold'] = true
-		CustomData.Items.BOTTOMLESSBAG.UseFrame = game:GetFrameCount()
-		CustomData.Items.BOTTOMLESSBAG.Data = true
 	end
 	
 	if ItemUsed == Collectibles.TOWEROFBABEL then
@@ -2051,7 +2136,14 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, Slot, _)
 	if ItemUsed == Collectibles.STARGAZERSHAT then
 		Player:AnimateCollectible(ItemUsed, "Pickup", "PlayerPickupSparkle")
 		sfx:Play(SoundEffect.SOUND_SUMMONSOUND, 1, 2, false, 1, 0)
-		Isaac.Spawn(6, PickUps.SLOT_STARGAZER, 0, Isaac.GetFreeNearPosition(Player.Position, 25), Vector.Zero, nil)
+		Isaac.Spawn(6, PickUps.SLOT_STARGAZER, 0, Isaac.GetFreeNearPosition(Player.Position, 40), Vector.Zero, nil)
+	end
+	
+	if ItemUsed == Collectibles.BOTTOMLESSBAG then 
+		Player:GetData()['BagUsed'] = true
+		CustomData.Items.BOTTOMLESSBAG.UseFrame = game:GetFrameCount()
+		CustomData.Items.BOTTOMLESSBAG.Data = true
+		Player:AnimateCollectible(Collectibles.BOTTOMLESSBAG, "LiftItem", "PlayerPickupSparkle")
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
@@ -2659,6 +2751,31 @@ function rplus:PostPlayerUpdate(Player)
 			CustomData.Items.NERVEPINCH.Hold = NERVEPINCH_HOLD
 		end
 	end
+	
+	if Player:HasCollectible(Collectibles.BOTTOMLESSBAG) and Player:GetData()['BagUsed'] 
+	and game:GetFrameCount() < CustomData.Items.BOTTOMLESSBAG.UseFrame + 100 then
+		for i = 4, 7 do
+			if Input.IsActionTriggered(i, Player.ControllerIndex) then
+				Player:AnimateCollectible(Collectibles.BOTTOMLESSBAG, "HideItem", "PlayerPickupSparkle")
+				if CustomData.Items.BOTTOMLESSBAG.TearCount > 1 then
+					local shootVector = DIRECTION_VECTOR[Player:GetFireDirection()]
+					
+					for i = 1, CustomData.Items.BOTTOMLESSBAG.TearCount do
+						extraOffset = Vector(math.random(-5,5), math.random(-5,5))
+						local vacuumTear = Player:FireTear(Player.Position, shootVector * math.random(6, 15) + extraOffset, false, true, false, Player)
+						vacuumTear.TearFlags = vacuumTear.TearFlags | TearFlags.TEAR_HOMING 
+						local color = Color(1, 1, 1, 1, 0, 0, 0)
+						color:SetColorize(1, 0, 1, 1)
+						vacuumTear:SetColor(color, 0, 0, true, false)
+					end
+				end
+				
+				CustomData.Items.BOTTOMLESSBAG.TearCount = 0
+				CustomData.Items.BOTTOMLESSBAG.UseFrame = 0
+				Player:GetData()['BagUsed'] = false
+			end
+		end	
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, rplus.PostPlayerUpdate, 0)
 
@@ -2827,12 +2944,12 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, Source, CDFrames)
 		if player:HasCollectible(Collectibles.BLACKDOLL) and ABSepNumber then
 			for i = 1, #EntitiesGroupA do 
 				if Entity:GetData() == EntitiesGroupA[i]:GetData() and EntitiesGroupB[i] and Source.Entity and Source.Entity.Type < 9 then 
-					EntitiesGroupB[i]:TakeDamage(Amount * 0.75, 0, EntityRef(Entity), 0)
+					EntitiesGroupB[i]:TakeDamage(Amount * 0.6, 0, EntityRef(Entity), 0)
 				end 
 			end
 			for i = 1, #EntitiesGroupB do 
 				if Entity:GetData() == EntitiesGroupB[i]:GetData() and EntitiesGroupA[i] and Source.Entity and Source.Entity.Type < 9 then 
-					EntitiesGroupA[i]:TakeDamage(Amount * 0.75, 0, EntityRef(Entity), 0)
+					EntitiesGroupA[i]:TakeDamage(Amount * 0.6, 0, EntityRef(Entity), 0)
 				end 
 			end
 		end
@@ -3000,6 +3117,7 @@ rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
 						-------------------------
 function rplus:OnPickupInit(Pickup)	
 	local room = game:GetRoom()
+	local stage = game:GetLevel():GetStage()
 	
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
@@ -3026,35 +3144,33 @@ function rplus:OnPickupInit(Pickup)
 			and (Pickup.Variant == PickupVariant.PICKUP_SPIKEDCHEST or Pickup.Variant == PickupVariant.PICKUP_MIMICCHEST or Pickup.Variant == PickupVariant.PICKUP_REDCHEST) 
 			and room:GetType() ~= RoomType.ROOM_CHALLENGE then
 				Pickup:Morph(5, PickUps.FLESHCHEST, 0, true, true, false)
+				sfx:Play(SoundEffect.SOUND_CHEST_DROP, 1, 2, false, 1, 0)
 			end
 			
 			-- TAINTED HEARTS REPLACEMENT --
 			if Pickup.Variant == 10 then
 				RNGobj:SetSeed(Random() + 1, 1)
-				local roll = RNGobj:RandomInt(100) + 1
+				local roll = RNGobj:RandomFloat() * 100
 				local st = Pickup.SubType
-				
-				-- 2% capricious heart
-				if roll <= 2 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_CAPRICIOUS, true, true, false) end
 				
 				if st == HeartSubType.HEART_FULL or st == HeartSubType.HEART_HALF then
 					-- 1% broken heart
-					if roll <= 1 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_BROKEN, true, true, false)
+					if roll < 1 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_BROKEN, true, true, false)
 					-- 1% enigma heart
-					elseif roll <= 2 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_ENIGMA, true, true, false) end
+					elseif roll < 2 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_ENIGMA, true, true, false) end
 				elseif st == HeartSubType.HEART_SOUL then
-					-- 20% fettered heart
-					if roll <= 20 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_FETTERED, true, true, false) end
+					-- 15% fettered heart
+					if roll < 15 and stage > 1 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_FETTERED, true, true, false) end
 				elseif st == HeartSubType.HEART_ETERNAL then
 					
 				elseif st == HeartSubType.HEART_DOUBLEPACK then
 					-- 25% hoarded heart
-					if roll <= 25 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_HOARDED, true, true, false) end
+					if roll < 25 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_HOARDED, true, true, false) end
 				elseif st == HeartSubType.HEART_BLACK then
 					-- 30% deserted heart
-					if roll <= 30 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_DESERTED, true, true, false)
+					if roll < 30 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_DESERTED, true, true, false)
 					-- 25% benighted heart
-					elseif roll <= 55 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_BENIGHTED, true, true, false) end
+					elseif roll < 55 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_BENIGHTED, true, true, false) end
 				elseif st == HeartSubType.HEART_GOLDEN then
 					
 				elseif st == HeartSubType.HEART_HALF_SOUL then
@@ -3063,12 +3179,15 @@ function rplus:OnPickupInit(Pickup)
 					
 				elseif st == HeartSubType.HEART_BLENDED then
 					-- 30% deserted heart
-					if roll <= 30 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_DESERTED, true, true, false) end
+					if roll < 30 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_DESERTED, true, true, false) end
 				elseif st == HeartSubType.HEART_BONE then
 				
 				elseif st == HeartSubType.HEART_ROTTEN then
 				
 				end
+				
+				-- 2% capricious heart
+				if roll < 2 then Pickup:Morph(5, 10, PickUps.TaintedHearts.HEART_CAPRICIOUS, true, true, false) end
 			end
 		end
 	end
@@ -3247,14 +3366,16 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		end
 		
 		if Pickup.SubType == PickUps.TaintedHearts.HEART_CAPRICIOUS then
-			for i = 1, 3 do Isaac.ExecuteCommand("spawn 5.10") end
+			for i = 1, 3 do 
+				Isaac.Spawn(5, 10, math.random(12), Pickup.Position, Vector.FromAngle(math.random(360)) * 3, nil)
+			end
 			sfx:Play(SoundEffect.SOUND_EDEN_GLITCH, 1, 2, false, 1, 0)
 		end
 		
 		if Pickup.SubType == PickUps.TaintedHearts.HEART_FETTERED then
-			if player:GetNumKeys() > 0 and player:CanPickSoulHearts() then
+			if (player:GetNumKeys() > 0 or player:HasGoldenKey()) and player:CanPickSoulHearts() then
 				player:AddSoulHearts(3)
-				player:AddKeys(-1)
+				if not player:HasGoldenKey() then player:AddKeys(-1) end
 				sfx:Play(SoundEffect.SOUND_GOLDENKEY, 1, 2, false, 1, 0)
 				sfx:Play(SoundEffect.SOUND_HOLY, 1, 2, false, 1, 0)
 			else return false end
@@ -3312,8 +3433,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 			if player:HasCollectible(CollectibleType.COLLECTIBLE_RED_KEY) and player:GetActiveCharge(0) >= 4 then
 				player:DischargeActiveItem(0)
 			elseif player:GetCard(0) == Card.CARD_CRACKED_KEY then
-				player:SetCard(0, player:GetCard(1))
-				player:SetCard(1, 0)
+				player:SetCard(0, 0)
 			else
 				return false
 			end
@@ -3995,7 +4115,8 @@ function rplus:PickupAwardSpawn(_, Pos)
 		local player = Isaac.GetPlayer(i)
 		
 		if player:HasCollectible(Collectibles.REDKING) then
-			if room:GetType() == RoomType.ROOM_BOSS then
+			if room:GetType() == RoomType.ROOM_BOSS 
+			and level:GetStage() < 9 then
 				if CustomData.Items.REDKING.IsInRedKingRoom then
 					if player:HasCollectible(CollectibleType.COLLECTIBLE_THERES_OPTIONS) then
 						Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ULTRA_SECRET, false, Random() + 1, CollectibleType.COLLECTIBLE_NULL), Vector(360, 360), Vector.Zero, nil):ToPickup().OptionsPickupIndex = 7
@@ -4003,7 +4124,6 @@ function rplus:PickupAwardSpawn(_, Pos)
 					else
 						Isaac.Spawn(5, 100, game:GetItemPool():GetCollectible(ItemPoolType.POOL_ULTRA_SECRET, false, Random() + 1, CollectibleType.COLLECTIBLE_NULL), Vector(320, 360), Vector.Zero, nil)
 					end
-					Isaac.Spawn(5, 300, Card.CARD_CRACKED_KEY, Vector(320, 320), Vector.Zero, nil)
 					CustomData.Items.REDKING.DefeatedRedKingBoss = true
 					return true
 				else
@@ -4017,6 +4137,7 @@ function rplus:PickupAwardSpawn(_, Pos)
 		and math.random(100) <= SCARLETCHEST_REPLACE_CHANCE 
 		and room:GetType() ~= RoomType.ROOM_BOSS then
 			Isaac.Spawn(5, PickUps.SCARLETCHEST, 0, game:GetRoom():FindFreePickupSpawnPosition(Pos, 0, true, false), Vector.Zero, nil)
+			sfx:Play(SoundEffect.SOUND_CHEST_DROP, 1, 2, false, 1, 0)
 			return true
 		end
 	end
@@ -4079,7 +4200,7 @@ if EID then
 	EID:addCollectible(Collectibles.BAGOTRASH, "A familiar that creates blue flies upon clearing a room #Blocks enemy projectiles, and after blocking it has a chance to be destroyed and drop Breakfast or Nightsoil trinket #The more floors it is not destroyed, the more flies it spawns")
 	EID:addCollectible(Collectibles.CHERUBIM, "A familiar that rapidly shoots tears with Godhead aura")
 	EID:addCollectible(Collectibles.CHERRYFRIENDS, "Killing an enemy has a 20% chance to drop cherry familiar on the ground #Those cherries emit a charming fart when an enemy walks over them, and drop half a heart when a room is cleared")
-	EID:addCollectible(Collectibles.BLACKDOLL, "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal 75% of that damage to another enemy in that pair")
+	EID:addCollectible(Collectibles.BLACKDOLL, "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal 60% of that damage to another enemy in that pair")
 	EID:addCollectible(Collectibles.BIRDOFHOPE, "Upon dying you turn into invincible ghost and a bird flies out of room center in a random direction. Catching the bird in 5 seconds will save you and get you back to your death spot, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it harder to catch her")
 	EID:addCollectible(Collectibles.ENRAGEDSOUL, "Double tap shooting button to launch a ghost familiar in the direction you are firing #The ghost will latch onto the first enemy it collides with, dealing damage over time for 7 seconds or until that enemy is killed #The ghost's damage per hit starts at 7 and increases each floor #The ghost can latch onto bosses aswell #{{Warning}} Has a 7 seconds cooldown")
 	EID:addCollectible(Collectibles.CEREMDAGGER, "{{ArrowDown}} Damage x" .. tostring(StatUps.CEREMDAGGER_DMG_MUL) .. "#When shooting, 7% chance to launch a dagger that does no damage, but inflicts bleed on enemies #All enemies that die while bleeding will drop Sacrificial Blood Consumable that gives you temporary DMG up")
@@ -4099,11 +4220,12 @@ if EID then
 	EID:addCollectible(Collectibles.BOOKOFGENESIS, "Removes a random item and spawns 3 items of the same quality #Only one item can be taken #Can't remove or spawn quest items")
 	EID:addCollectible(Collectibles.SCALPEL, "Makes you shoot tears in the opposite direction #From the front, you will frequently shoot bloody tears that deal x0.66 of your damage #All other weapon types will still be fired from the front as well")
 	EID:addCollectible(Collectibles.KEEPERSPENNY, "Spawns a golden penny upon entering a new floor #Shops will now sell 1-4 additional items that are drawn from shop, treasure or boss itempools #If the shop is a Greed fight, it instead spawns 3-4 items when the miniboss dies")
-	EID:addCollectible(Collectibles.NERVEPINCH, "Shooting or moving for 10 seconds will trigger a nerve pinch #{{ArrowDown}} You take fake damage and gain a permanent " .. tostring(StatUps.NERVEPINCH_SPEED) .. " speed down when that happens #{{ArrowUp}} However, there is a 75% chance to activate your active item for free, even if it's uncharged #One-time use and infinite use actives cannot be used that way")
-	EID:addCollectible(Collectibles.BLOODVESSELS[1], "Taking damage doesn't actually hurt the player, instead filling the blood vessel #This can be repeated 6 times until the vessel if full #Once it's full, using it or taking damage will empty it and deal 3 or 3.5 hearts of damage to the player")
+	EID:addCollectible(Collectibles.NERVEPINCH, "Shooting or moving for 8 seconds will trigger a nerve pinch #{{ArrowDown}} You take fake damage and gain a permanent " .. tostring(StatUps.NERVEPINCH_SPEED) .. " speed down when that happens #{{ArrowUp}} However, there is a 75% chance to activate your active item for free, even if it's uncharged #One-time use and infinite use actives cannot be used that way")
+	EID:addCollectible(Collectibles.BLOODVESSELS[1], "Taking damage doesn't actually hurt the player, instead filling the blood vessel #This can be repeated 6 times until the vessel is full #Once it's full, using it or taking damage will empty it and deal 3 and 3.5 hearts of damage to the player, respectively")
 	EID:addCollectible(Collectibles.SIBLINGRIVALRY, "Orbital that switches between 2 different states every 15 seconds: #Two orbitals that quickly rotate around Isaac #One orbital that rotates slower and closer to Isaac, and periodically shoots teeth in random directions and spawns blood creep underneath it #{{Warning}} All orbitals block enemy shots and do contact damage")
-	EID:addCollectible(Collectibles.REDKING, "After defeating a boss, red crawlspace will appear in a middle of a room #Entering the crawlspace brings you to another bossfight of high difficulty #Victory rewards you a red item (from Ultra secret room pool) and a Cracked key consumable")
+	EID:addCollectible(Collectibles.REDKING, "After defeating a boss, red crawlspace will appear in a middle of a room #Entering the crawlspace brings you to another bossfight of high difficulty #Victory rewards you a red item (from Ultra secret room pool)")
 	EID:addCollectible(Collectibles.STARGAZERSHAT, "Summons the Stargazer beggar #Can only be charged with soul hearts, similar to Alabaster Box #2 soul hearts needed for full charge")
+	EID:addCollectible(Collectibles.BOTTOMLESSBAG, "Upon use, holds the bag in the air #For 4 seconds, all nearby projectiles are sucked into the bag #After 4 seconds, all sucked projecties are released as homing tears in your firing direction")
 	
 	EID:addTrinket(Trinkets.BASEMENTKEY, "While held, every Golden Chest has a 5% chance to be replaced with Old Chest")
 	EID:addTrinket(Trinkets.KEYTOTHEHEART, "While held, every enemy has a chance to drop Flesh Chest upon death #Flesh Chests contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
@@ -4395,7 +4517,7 @@ if Encyclopedia then
 		[Collectibles.BLACKDOLL] = {
 			{
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
-				{str = "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal 75% of that damage to another enemy in that pair"},
+				{str = "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal 60% of that damage to another enemy in that pair"},
 			},
 		},
 		[Collectibles.BIRDOFHOPE] = {
@@ -4539,7 +4661,7 @@ if Encyclopedia then
 		[Collectibles.NERVEPINCH] = {
 			{
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
-				{str = "Shooting or moving for 10 seconds will trigger a nerve pinch "},
+				{str = "Shooting or moving for 8 seconds will trigger a nerve pinch "},
 				{str = "You take fake damage and gain a permanent " .. tostring(StatUps.NERVEPINCH_SPEED) .. " speed down when that happens "},
 				{str = "However, there is a 80% chance to activate your active item for free, even if it's uncharged "},
 				{str = "One-time use and infinite use actives cannot be used that way"},
@@ -4549,8 +4671,8 @@ if Encyclopedia then
 			{
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
 				{str = "Taking damage doesn't actually hurt the player, instead filling the blood vessel "},
-				{str = "This can be repeated 6 times until the vessel if full "},
-				{str = "Once it's full, using it or taking damage will empty it and deal 3 or 3.5 hearts of damage to the player"},
+				{str = "This can be repeated 6 times until the vessel is full "},
+				{str = "Once it's full, using it or taking damage will empty it and deal 3 and 3.5 hearts of damage to the player, respectively"},
 			},
 		},
 		[Collectibles.SIBLINGRIVALRY] = {
@@ -4566,7 +4688,7 @@ if Encyclopedia then
 			{
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
 				{str = "After defeating a boss, red crawlspace will appear in a middle of a room"},
-				{str = "Entering the crawlspace brings you to another bossfight of high difficulty. Victory rewards you a red item (from Ultra secret room pool) and a Cracked key consumable"},
+				{str = "Entering the crawlspace brings you to another bossfight of high difficulty. Victory rewards you a red item (from Ultra secret room pool)"},
 				{str = "The crawlspace can be entered only once, but you can enter it whenever you want, not necessarily after defeating the main floor boss"},
 				{str = "Bosses from chapters 2 and onward of the main path can be encountered; also includes a lot of double trouble bossfights"},
 			},
@@ -4577,6 +4699,16 @@ if Encyclopedia then
 				{str = "Summons the Stargazer beggar"},
 				{str = "Can only be charged with soul hearts, similar to Alabaster Box"},
 				{str = "2 soul hearts needed for full charge"},
+			},
+		},
+		[Collectibles.BOTTOMLESSBAG] = {
+			{
+				{str = "Effects", fsize = 2, clr = 3, halign = 0},
+				{str = "Upon use, holds the bag in the air"},
+				{str = "For 4 seconds, all nearby projectiles are sucked into the bag"},
+				{str = "After 4 seconds, all sucked projecties are released as homing tears in your firing direction"},
+				{str = "Tears released by the bag inherit all your tear effects (e.g. they are explosive if you have Ipecac)"},
+				{str = "If the player doesn't hold a shooting button, the reflected tears are shot downwards"},
 			},
 		},
 	}
@@ -5029,25 +5161,17 @@ end
 								--- SEWING MACHINE ---
 								----------------------
 
--- siraxtas actually said that the API for this mod is getting reworked soon-ish,
--- so I won't mess with it for now
---[[
-if sewingMachineMod then
-	sewingMachineMod:makeFamiliarAvailable(Familiars.CHERUBIM, Collectibles.CHERUBIM)
-	sewingMachineMod:AddDescriptionsForFamiliar(Familiars.CHERUBIM, "Increased rate of fire", "Chance to shoot an additional tear from the back")
-	
-	sewingMachineMod:makeFamiliarAvailable(Familiars.BAGOTRASH, Collectibles.BAGOTRASH)
-	sewingMachineMod:AddDescriptionsForFamiliar(Familiars.BAGOTRASH, "Also spawns friendly blue spiders", "Never breaks")
-end
---]]
 
 
--- blacklisting some stuff for Sodom & Gomorrah characters
+								-- blacklisting some stuff ----------
+								-- for Sodom & Gomorrah characters --
+
 if XalumMods and XalumMods.SodomAndGomorrah then
 	XalumMods.SodomAndGomorrah.AddBlacklistedSodomGomorrahItems({
 		Collectibles.CEILINGSTARS,
 		Collectibles.BIRDOFHOPE,
-		Collectibles.MARKCAIN
+		Collectibles.MARKCAIN,
+		Collectibles.STARGAZERSHAT
 	})
 	
 	XalumMods.SodomAndGomorrah.AddBlacklistedSodomGomorrahTrinkets({

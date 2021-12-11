@@ -48,6 +48,7 @@
 		<Item Name="Bless of the Dead" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Keeper's Penny" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Stargazer's Hat" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bottomless Bag" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="library">
 		<Item Name="Book of Genesis" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
