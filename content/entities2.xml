@@ -24,9 +24,15 @@
 <entity anm2path="items/pick ups/001.broken_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Broken Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="84">
     </entity>
 
+<entity anm2path="items/pick ups/002.dauntless_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Dauntless Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="85">
+    </entity>
+
 <entity anm2path="items/pick ups/003.hoarded_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Hoarded Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="86">
     </entity>
 
+<entity anm2path="items/pick ups/005.soiled_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Soiled Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="88">
+    </entity>
+	
 <entity anm2path="items/pick ups/008.benighted_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Benighted Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="91">
     </entity>
 
@@ -39,6 +45,9 @@
 <entity anm2path="items/pick ups/015.fettered_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Fettered Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="98">
     </entity>
 
+<entity anm2path="items/pick ups/016.zealot_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Zealot Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="99">
+    </entity>
+	
 <entity anm2path="items/pick ups/017.deserted_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Deserted Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="100">
     </entity>
 
