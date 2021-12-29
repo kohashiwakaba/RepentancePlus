@@ -4,6 +4,10 @@
 <entity anm2path="gfx/backdrop/blankanim.anm2" id="1000" name="CustomBackDropEntity" variant="69420" collisionRadius="0" numGridCollisionPoints="0">
 </entity>
 
+<!-- effects -->
+<entity anm2path="1000.666_cripple_hands_helper.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Crippling Hands Helper" numGridCollisionPoints="1" shadowSize="0" stageHP="0" variant="666">
+    </entity>
+
 <!-- chests and other pickups -->
 <entity anm2path="005.512_scarletchest.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="6" collisionRadius="12" friction="0.8" id="5" name="Scarlet Chest" numGridCollisionPoints="24" shadowSize="28" stageHP="0" variant="512">
 </entity>
@@ -26,7 +30,7 @@
 
 <entity anm2path="items/pick ups/002.dauntless_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Dauntless Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="85">
     </entity>
-
+	
 <entity anm2path="items/pick ups/003.hoarded_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Hoarded Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="86">
     </entity>
 
@@ -130,10 +134,17 @@
 <entity anm2path="003.216_fightingsiblings.anm2" baseHP="0" boss="0" champion="0" collisionDamage="6" collisionInterval="2" collisionMass="3" collisionRadius="8" friction="1" id = "3" name="Fighting Siblings" numGridCollisionPoints="12" shadowSize="14" stageHP="0" variant="2109">
     </entity>
 	
+<entity anm2path="003.217_rejectionfetus.anm2" baseHP="0" boss="0" champion="0" collisionDamage="2.5" collisionInterval="3" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Rejection Fetus" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2110">
+	</entity>
+	
 <!-- tears and weapons -->
 
 <entity anm2path="002.120_ceremonial_blade_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="8" friction="1" id="2" name="Ceremonial Dagger Tear" numGridCollisionPoints="8" shadowSize="7" stageHP="0" variant="120" />
 
 <entity anm2path="002.123_antimaterial_card_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="10" friction="1" id="2" name="Antimaterial Card Tear" numGridCollisionPoints="8" shadowSize="7" stageHP="0" variant="123" />
+
+<entity anm2path="002.124_rejected_baby_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="12" friction="1" id="2" name="Rejected Baby Tear" numGridCollisionPoints="8" shadowSize="8" stageHP="0" variant="124">
+	<gibs amount="10" blood="2" bone="1" eye="1" gut="3" large="0" />
+	</entity>
 	
 </entities>

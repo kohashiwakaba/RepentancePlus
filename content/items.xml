@@ -26,7 +26,8 @@
 	<!-- T. Judas -->
 	<passive id="3" name="Black Doll" description="Bound by blood" gfx="08_blackdoll.png" quality="2" devilprice="1" />
 	<trinket name="Judas' Kiss" description="One on the cheek" gfx="t05_judaskiss.png" />
-	<passive id="14" name="Ceremonial Blade" description="Just a drop of blood for our Gods" gfx="09_ceremonialblade.png" quality="2" cache="damage" devilprice="1" />
+	<passive id="14" name="Ceremonial Blade" description="Just a drop of blood for our Gods" gfx="09_ceremonialblade.png" quality="2" devilprice="1" />
+	<trinket name="Key Knife" description="Pain is key" gfx="t19_keyknife.png" />
 	
 	<!-- T. ??? -->
 	<familiar id="15" name="Bag-o-Trash" description="Will you take it out already?!" gfx="10_bagotrash.png" quality="2" />
@@ -46,13 +47,14 @@
 	
 	<!-- T. Lazarus -->
 	<passive id="20" name="DNA Redactor" description="It runs in your genes" gfx="20_dnaredactor.png" quality="3" /> 
-	<passive id="21" name="A Cat in the Box" description="(DEAD + ALIVE) / 2" gfx="36_catinabox.png" quality="3" tags="guppy" />
+	<passive id="21" name="A Cat in the Box" description="(DEAD + ALIVE) / 2" gfx="36_catinabox.png" quality="2" />
 	<trinket name="Torn Page" description="There's gold in them books!" gfx="t15_tornpage.png" />
 	<passive id="22" name="Nerve Pinch" description="Ouch!" gfx="26_nervepinch.png" quality="3" />
 	
 	<!-- T. Azazel -->
 	<trinket name="Angel's Crown" description="Patience is a virtue" gfx="t07_angelscrown.png" />
-	<passive id="9" name="A Scalpel" description="Faceless" gfx="26_ascalpel.png" quality="3" />
+	<passive id="9" name="A Scalpel" description="Faceless" gfx="26_ascalpel.png" quality="1" />
+	<passive id="39" name="The Cross of Chaos" description="Crippling fear" gfx="35_thecrossofchaos.png" devilprice="1" quality="3" tags="devil" cache="tearcolor" />
 	
 	<!-- T.Eden -->
 	<passive id="23" name="Magic Pen" description="I want to be an artist" gfx="14_magicpen.png" quality="1" /> 
@@ -62,20 +64,24 @@
 	<!-- T. Lost -->
 	<familiar id="25" name="Cherubim" description="He sees all" gfx="15_zenbaby.png" quality="3" tags="baby angel" />
 	<trinket name="A Piece of Chalk" description="Stay out, unholy!" gfx="t09_pieceofchalk.png" />
+	<active id="42" name="Soul Bond" description="Astral chains" gfx="40_soulbond.png" quality="4" maxcharges="3" />
 	
 	<!-- T. Lilith -->
 	<passive id="26" name="Mother's Love" description="Feed them love" gfx="38_motherslove.png" quality="2" cache="damage luck firedelay speed range" />
-	<trinket id="10" name="Baby Shoes" description="So tiny" gfx="t18_babyshoes.png" />
+	<trinket name="Baby Shoes" description="So tiny" gfx="t18_babyshoes.png" />
+	<active id="41" name="Rejection" description="Sorry, little ones..." gfx="29_rejection.png" quality="3" maxcharges="2" />
+	<familiar name="Rejection (passive)" description="" gfx="29_rejection.png" quality="3" hidden="true" />
 
 	<!-- T. Keeper -->
 	<trinket name="Greed's Heart" description="Coin up" gfx="t06_greedsheart.png" />
 	<passive id="27" name="2+1" description="Limited Offer!!!" gfx="12_2+1.png" quality="3" />
 	<passive id="28" name="Keeper's Penny" description="Shop up" gfx="25_keeperspenny.png" quality="4" />
+	<active id="40" name="Auction Gavel" description="1,2,3,SOLD!" gfx="39_auctiongavel.png" maxcharges="6" quality="3" />
 	
 	<!-- T. Apollyon -->
-	<passive id="5" blackhearts="4" name="Sinner's Heart" description="Piercing tear + DMG up" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range tearcolor" devilprice="2" />
+	<passive id="5" blackhearts="4" name="Sinner's Heart" description="Piercing tear + DMG up" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range" devilprice="2" />
 	<passive id="29" name="Red Map" description="All secrets are unveiled to you" gfx="18_redmap.png" quality="3" />
-	<active id="38" name="Bottomless Bag" description="Portable vacuum" gfx="31_bottomlessbag.png" quality="3" chargetype="timed" maxcharges="270" />
+	<active id="38" name="Bottomless Bag" description="Portable vacuum" gfx="31_bottomlessbag.png" quality="2" chargetype="timed" maxcharges="270" />
 	
 	<!-- T. Forgor -->
 	<passive id="30" name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="1" />
@@ -98,5 +104,5 @@
 	<active id="33" name="Cheese Grater" description="A pound of... cheese?" gfx="22_cheesegrater.png" quality="2" maxcharges="0" cache="damage" />
 	<familiar id="34" name="Tank Boys" description="You and what army?.." gfx="55_tankboys.png" quality="2" />
 	<passive id="35" name="Red King" description="BLOOD is my reward" gfx="51_redking.png" quality="4" devilprice="1" /> 
-	<familiar id="36" name="Sibling Rivalry" description="I can't stand you!" gfx="27_siblingrivalry.png" quality="3" tags="baby" />
+	<familiar id="36" name="Sibling Rivalry" description="I can't stand you!" gfx="27_siblingrivalry.png" quality="3" />
 </items>
