@@ -65,6 +65,7 @@
 	<familiar id="25" name="Cherubim" description="He sees all" gfx="15_zenbaby.png" quality="3" tags="baby angel" />
 	<trinket name="A Piece of Chalk" description="Stay out, unholy!" gfx="t09_pieceofchalk.png" />
 	<active id="42" name="Soul Bond" description="Astral chains" gfx="40_soulbond.png" quality="4" maxcharges="3" />
+	<passive name="Angel's Wings" description="Blasphemy against the holy spirit!" gfx="100_dogma.png" quality="4" cache="tearflag"/> 
 	
 	<!-- T. Lilith -->
 	<passive id="26" name="Mother's Love" description="Feed them love" gfx="38_motherslove.png" quality="2" cache="damage luck firedelay speed range" />
