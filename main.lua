@@ -162,7 +162,8 @@ CustomCollectibles = {
 	REJECTION = Isaac.GetItemIdByName("Rejection"),
 	REJECTION_P = Isaac.GetItemIdByName("Rejection (passive)"),
 	AUCTION_GAVEL = Isaac.GetItemIdByName("Auction Gavel"),
-	SOUL_BOND = Isaac.GetItemIdByName("Soul Bond")
+	SOUL_BOND = Isaac.GetItemIdByName("Soul Bond"),
+	ANGELS_WINGS = Isaac.GetItemIdByName("Angel's Wings")
 }
 
 CustomTrinkets = {
@@ -2017,7 +2018,17 @@ function rplus:PostUpdate()
 				end
 			end
 		end	
-
+		
+		if player:HasCollectible(CustomCollectibles.ANGELS_WINGS) then -- brimstone costume for angel's wings 
+		 	for _, entity in pairs(Isaac.GetRoomEntities()) do
+				if entity.Type == EntityType.ENTITY_LASER and entity.Variant == 1 and entity.Parent.Type == 1 then
+					local laserSprite = entity:GetSprite()
+					laserSprite:ReplaceSpritesheet(0, "gfx/static_laser.png")
+					laserSprite:LoadGraphics()
+				end
+			end
+		end 
+		
 		-- balancing the amount of active (main) and passive (technical) Rejection items
 		if player:GetCollectibleNum(CustomCollectibles.REJECTION) > player:GetCollectibleNum(CustomCollectibles.REJECTION_P) then
 			player:AddCollectible(CustomCollectibles.REJECTION_P)
@@ -3414,6 +3425,11 @@ function rplus:OnNPCDeath(NPC)
 				Item.ShopItemId = -13 * i
 			end
 		end
+		if player:HasCollectible(CustomCollectibles.ANGELS_WINGS) and NPC:HasEntityFlags(EntityFlag.FLAG_SLOW) then
+			local dogmababy = Isaac.Spawn(950, 10, 0, NPC.Position, Vector.Zero, nil) 
+			dogmababy:AddEntityFlags(EntityFlag.FLAG_FRIENDLY)
+			dogmababy:AddEntityFlags(EntityFlag.FLAG_CHARM)
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, rplus.OnNPCDeath)
@@ -3959,12 +3975,18 @@ function rplus:OnTearUpdate(Tear)
 			tearSprite:Play("MoveVert")
 		end
 		
+		if Player:HasCollectible(CustomCollectibles.ANGELS_WINGS) and Tear.Variant ~= CustomTearVariants.CEREMONIAL_BLADE then
+			tearSprite.Scale = Vector(0.66, 0.66)
+			tearSprite:Load("gfx/002.125_static_feather_tear.anm2", true)
+			tearSprite:Play("MoveVert") 
+		end
+		
 		if Tear.Variant == CustomTearVariants.REJECTED_BABY then
 			Tear.CollisionDamage = Player.Damage * 4 * #Player:GetData().FamiliarsInBelly
 		end
 	end
 	
-	if Tear.Variant == CustomTearVariants.CEREMONIAL_BLADE or Player:HasCollectible(CustomCollectibles.SINNERS_HEART) then
+	if Tear.Variant == CustomTearVariants.CEREMONIAL_BLADE or Player:HasCollectible(CustomCollectibles.SINNERS_HEART) or Player:HasCollectible(CustomCollectibles.ANGELS_WINGS) then
 		tearSprite.Rotation = Tear.Velocity:GetAngleDegrees() + 90
 	end
 	
@@ -4090,6 +4112,10 @@ function rplus:UpdateStats(Player, Flag)
 		
 		if Player:HasTrinket(CustomTrinkets.TORN_PAGE) and Player:GetData()['enhancedBoB'] then
 			Player.TearFlags = Player.TearFlags | TearFlags.TEAR_BELIAL | TearFlags.TEAR_PIERCING
+		end
+		
+		if Player:HasCollectible(CustomCollectibles.ANGELS_WINGS) then
+			Player.TearFlags = Player.TearFlags | TearFlags.TEAR_PIERCING | TearFlags.TEAR_SLOW
 		end
 	end
 	
