@@ -4236,6 +4236,16 @@ function rplus:FamiliarUpdate(Familiar)
 			for _ = 1, (Familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS, true) and NumFlies + math.random(2) or NumFlies) do 
 				Isaac.Spawn(3, FamiliarVariant.BLUE_FLY, 0, Familiar.Position, Vector.Zero, nil) 
 			end
+			
+			if Sewn_API then
+				if Sewn_API:GetLevel(Familiar:GetData()) == 2 then
+					local NumSpiders = math.random(math.ceil(CustomData.Items.BAG_O_TRASH.Levels * 1.5))
+					for _ = 1, (Familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS, true) and NumSpiders + math.random(2) or NumSpiders) do 
+						Isaac.Spawn(3, FamiliarVariant.BLUE_SPIDER, 0, Familiar.Position, Vector.Zero, nil) 
+					end
+				end
+			end
+			
 			Familiar.RoomClearCount = 0
 		end
 	end
@@ -4262,6 +4272,19 @@ function rplus:FamiliarUpdate(Familiar)
 			local Tear = Familiar:FireProjectile(TearVector):ToTear()
 			Tear.CollisionDamage = (Familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 10 or 5)
 			Tear.TearFlags = TearFlags.TEAR_GLOW | TearFlags.TEAR_HOMING
+			
+			if Sewn_API then
+				local crownTier = Sewn_API:GetLevel(Familiar:GetData())
+                if crownTier == 1 then
+					Tear.CollisionDamage = Tear.CollisionDamage * 1.3
+					Tear.Scale = Tear.Scale * 1.2
+				end
+				if crownTier == 2 then
+					Tear:ChangeVariant(TearVariant.EYE)
+					Tear.TearFlags = TearFlags.TEAR_GLOW | TearFlags.TEAR_HOMING | TearFlags.TEAR_POP
+				end
+			end
+			
 			Tear:Update()
 
 			if player:HasTrinket(Isaac.GetTrinketIdByName("Forgotten Lullaby")) then
@@ -4330,7 +4353,18 @@ function rplus:FamiliarUpdate(Familiar)
 					and game:GetFrameCount() > Familiar:GetData().Data.newRoomCurrHold + Familiar:GetData().Data.newRoomAttackHold then
 						if Familiar.Variant == CustomFamiliars.TOY_TANK_1 then
 							local tankBullet = Isaac.Spawn(2, TearVariant.METALLIC, 0, Familiar.Position, posDiff * Familiar:GetData().Data.projectileVelocityMul, nil):ToTear()
-							tankBullet.CollisionDamage = (Familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 7 or 3.5)
+							if Sewn_API then
+								if Sewn_API:GetLevel(Familiar:GetData()) >= 1 then
+									tankBullet:AddTearFlags(TearFlags.TEAR_HOMING)
+								end
+								if Sewn_API:GetLevel(Familiar:GetData()) == 2 then
+									for _, familiarInRoom in pairs(Isaac.FindByType(EntityType.ENTITY_FAMILIAR, CustomFamiliars.TOY_TANK_2, -1, false, false)) do
+										local tankLaser = EntityLaser.ShootAngle(2,	familiarInRoom.Position, (enemy.Position - familiarInRoom.Position):Normalized():GetAngleDegrees(), 7, Vector(0,0), familiarInRoom)
+										tankLaser.CollisionDamage = (Familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 7 or 3.5)
+									end
+								end
+							end
+								tankBullet.CollisionDamage = (Familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 7 or 3.5)
 						elseif Familiar.Variant == CustomFamiliars.TOY_TANK_2 then
 							local tankRocket = Isaac.Spawn(4, 19, 0, Familiar.Position, Vector.Zero, nil):ToBomb()
 							tankRocket.SpriteScale = Vector(0.6, 0.6)
@@ -4472,14 +4506,24 @@ rplus:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, rplus.FamiliarCollisio
 function rplus:ProjectileCollision(Projectile, Collider, _)
 	if Collider.Variant == CustomFamiliars.BAG_O_TRASH then
 		Projectile:Remove()
-		
 		if math.random(100) <= TRASHBAG_BREAK_CHANCE then
 			sfx:Play(SoundEffect.SOUND_THUMBS_DOWN, 1, 1, false, 1, 0)
-			Isaac.GetPlayer(0):RemoveCollectible(CustomCollectibles.BAG_O_TRASH)
-			if math.random(100) <= 66 then
-				Isaac.Spawn(5, 100, CollectibleType.COLLECTIBLE_BREAKFAST, Collider.Position, Vector.Zero, nil)
+			if Sewn_API then
+				if Sewn_API:GetLevel(Collider:ToFamiliar():GetData()) < 1 then
+					Isaac.GetPlayer(0):RemoveCollectible(CustomCollectibles.BAG_O_TRASH)
+					if math.random(100) <= 66 then
+						Isaac.Spawn(5, 100, CollectibleType.COLLECTIBLE_BREAKFAST, Collider.Position, Vector.Zero, nil)
+					else
+						Isaac.Spawn(5, 350, CustomTrinkets.NIGHT_SOIL, Collider.Position, Vector.Zero, nil)
+					end
+				end
 			else
-				Isaac.Spawn(5, 350, CustomTrinkets.NIGHT_SOIL, Collider.Position, Vector.Zero, nil)
+				Isaac.GetPlayer(0):RemoveCollectible(CustomCollectibles.BAG_O_TRASH)
+				if math.random(100) <= 66 then
+					Isaac.Spawn(5, 100, CollectibleType.COLLECTIBLE_BREAKFAST, Collider.Position, Vector.Zero, nil)
+				else
+					Isaac.Spawn(5, 350, CustomTrinkets.NIGHT_SOIL, Collider.Position, Vector.Zero, nil)
+				end
 			end
 		end
 	end
@@ -5761,6 +5805,21 @@ end
 								----------------------
 								--- SEWING MACHINE ---
 								----------------------
+
+if Sewn_API then
+	-- Tank Boys
+	Sewn_API:MakeFamiliarAvailable(CustomFamiliars.TOY_TANK_1, CustomCollectibles.TANK_BOYS)
+	Sewn_API:AddFamiliarDescription(CustomFamiliars.TOY_TANK_1, 'The green Tank Boy gains homing ammunition', 'The red Tank Boy gains a laser side-gun')
+	
+	-- Bag-o-Trash
+	Sewn_API:MakeFamiliarAvailable(CustomFamiliars.BAG_O_TRASH, CustomCollectibles.BAG_O_TRASH)
+    --Sewn_API:AddFamiliarDescription(CustomFamiliars.BAG_O_TRASH, 'Bag-o-Trash will no longer have a chance to be destroyed on hit', 'Bag-o-Trash will spawn a blue spider for every blue fly it spawns')
+	
+	-- Cherubim
+    Sewn_API:MakeFamiliarAvailable(CustomFamiliars.CHERUBIM, CustomCollectibles.CHERUBIM)
+    Sewn_API:AddFamiliarDescription(CustomFamiliars.CHERUBIM, 'Cherubim gains increased God Head aura size and tear damage', 'Cherubim gains Pop! tears')
+end
+
 
 								----------------
 								--- MINIMAPI ---
