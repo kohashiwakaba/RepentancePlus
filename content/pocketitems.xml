@@ -36,6 +36,7 @@
 	<!-- non-custom backs -->
 	<card type="suit" name="Joker?" hud="Joker?" mimiccharge="1" description="¿¿¿" pickup="2"/>
 	<card type="special" name="Reverse Card" hud="Reverse Card" mimiccharge="4" description="No, You!" pickup="17" /> 
+	<card type="special" name="Mirrored Landscape" hud="Mirrored Landscape" mimiccharge="12" description="Constant change" pickup="8" />
 	<card type="suit" name="King of Spades" hud="King of Spades" mimiccharge="6" description="Lose everything to get something" pickup="2" />
 	<card type="suit" name="King of Clubs" hud="King of Clubs" mimiccharge="6" description="Lose everything to get something" pickup="2" />
 	<card type="suit" name="King of Diamonds" hud="King of Diamonds" mimiccharge="6" description="Lose everything to get something" pickup="2" />
