@@ -163,7 +163,8 @@ CustomCollectibles = {
 	REJECTION_P = Isaac.GetItemIdByName("Rejection (passive)"),
 	AUCTION_GAVEL = Isaac.GetItemIdByName("Auction Gavel"),
 	SOUL_BOND = Isaac.GetItemIdByName("Soul Bond"),
-	ANGELS_WINGS = Isaac.GetItemIdByName("Angel's Wings")
+	ANGELS_WINGS = Isaac.GetItemIdByName("Angel's Wings"),
+	HAND_ME_DOWNS = Isaac.GetItemIdByName("Hand-Me-Downs")
 }
 
 CustomTrinkets = {
@@ -214,7 +215,8 @@ CustomConsumables = {
 	FUNERAL_SERVICES = Isaac.GetCardIdByName("Funeral Services"),
 	ANTIMATERIAL_CARD = Isaac.GetCardIdByName("Antimaterial Card"),
 	FIEND_FIRE = Isaac.GetCardIdByName("Fiend Fire"),
-	DEMON_FORM = Isaac.GetCardIdByName("Demon Form")
+	DEMON_FORM = Isaac.GetCardIdByName("Demon Form"), 
+	MIRRORED_LANDSCAPE = Isaac.GetCardIdByName("Mirrored Landscape")
 }
 
 CustomPickups = {
@@ -572,7 +574,8 @@ CustomStatups = {
 	MOTHERSLOVE_SPEED = 0.05,
 	MOTHERSLOVE_RANGE = 0.25,
 	NERVEPINCH_SPEED = -0.03,
-	DEMONFORM_DAMAGE = 0.15
+	DEMONFORM_DAMAGE = 0.15,
+	HANDMEDOWNS_SPEED = 0.2
 }
 
 -- used by Bag Tissue
@@ -1313,6 +1316,29 @@ function rplus:OnCommandExecute(command, args)
 end
 rplus:AddCallback(ModCallbacks.MC_EXECUTE_CMD, rplus.OnCommandExecute)
 
+						-- MC_POST_GAME_END --											
+						---------------------
+function rplus:GameEnded(isGameOver)
+	handmedownsstage = 0
+    	for i = 0, game:GetNumPlayers() - 1 do
+		local player = Isaac.GetPlayer(i)
+		local maxid = Isaac.GetItemConfig():GetCollectibles().Size - 1
+		if player:HasCollectible(CustomCollectibles.HAND_ME_DOWNS) then
+			handmedownsstage = game:GetLevel():GetStage()
+			HandMeDownsItems = {} 
+			for i=1, maxid do
+      				if player:HasCollectible(i) and 
+      				Isaac.GetItemConfig():GetCollectible(i).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST and 
+      				i ~= CustomCollectibles.HAND_ME_DOWNS then
+        				table.insert(HandMeDownsItems, i)
+      				end
+    			end
+    		end
+    	end
+end
+rplus:AddCallback(ModCallbacks.MC_POST_GAME_END, rplus.GameEnded)	
+
+
 						-- MC_POST_NEW_LEVEL --										
 						-----------------------
 function rplus:OnNewLevel()
@@ -1377,6 +1403,22 @@ function rplus:OnNewLevel()
 		
 		if player:HasCollectible(CustomCollectibles.KEEPERS_PENNY) then
 			Isaac.Spawn(5, 20, CoinSubType.COIN_GOLDEN, Vector(320, 320), Vector.Zero, nil)
+		end
+		
+		if level:GetStage() == handmedownsstage then 
+			for i = 1, 3 do 
+				if #HandMeDownsItems > 0 then 
+					local spawneditem = HandMeDownsItems[math.random(#HandMeDownsItems)]
+					Isaac.Spawn(5, 100, spawneditem, Vector(408+36*i,100), Vector.Zero, nil):ToPickup()
+					for i, item in ipairs(HandMeDownsItems) do
+   						if spawneditem == item then
+   							table.remove(HandMeDownsItems, i)
+   						end
+					end
+				end
+			end		
+			handmedownsstage = 0
+			HandMeDownsItems = {}	
 		end
 	end
 end
@@ -2383,6 +2425,7 @@ function rplus:OnItemUse(ItemUsed, _, Player, _, Slot, _)
 end
 rplus:AddCallback(ModCallbacks.MC_USE_ITEM, rplus.OnItemUse)
 
+
 						-- MC_USE_CARD -- 										
 						-----------------
 function rplus:CardUsed(CardUsed, Player, _)	
@@ -2710,6 +2753,16 @@ function rplus:CardUsed(CardUsed, Player, _)
 			end
 		end
 	end
+	if CardUsed == CustomConsumables.MIRRORED_LANDSCAPE then
+		local activeitem = player:GetActiveItem(ActiveSlot.SLOT_PRIMARY)
+		local pocketitem = player:GetActiveItem(ActiveSlot.SLOT_POCKET)
+		if pocketitem == 0 then
+            		player:RemoveCollectible(activeitem)
+            		player:SetPocketActiveItem(activeitem, ActiveSlot.SLOT_POCKET, false)
+        	else 
+            		Isaac.Spawn(5, 100, pocketitem, game:GetRoom():FindFreePickupSpawnPosition(Player.Position, 0, true, false), Vector.Zero, nil):ToPickup()
+        	end
+    	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.CardUsed)
 
@@ -4185,6 +4238,9 @@ function rplus:UpdateStats(Player, Flag)
 		if Player:HasCollectible(CustomCollectibles.NERVE_PINCH) then
 			Player.MoveSpeed = Player.MoveSpeed + CustomStatups.NERVEPINCH_SPEED * CustomData.Items.NERVE_PINCH.NumTriggers
 		end
+		if Player:HasCollectible(CustomCollectibles.HAND_ME_DOWNS) then
+			Player.MoveSpeed = Player.MoveSpeed + CustomStatups.HANDMEDOWNS_SPEED
+		end
 	end
 	
 	if Flag == CacheFlag.CACHE_FLYING then
@@ -4832,6 +4888,7 @@ if EID then
 	EID:addCollectible(CustomCollectibles.REJECTION, "On use, consume all your follower familiars and throw them as big piercing poisonous gut ball in your firing direction #Damage formula: your dmg * 4 * number of consumed familiars #Passively grants a familiar that doesn't shoot tears, but deals 2.5 contact damage to enemies")
 	EID:addCollectible(CustomCollectibles.AUCTION_GAVEL, "Spawns an item from the room's pool for sale #Its price will change rougly 5 times a second #The price is random, but generally increases over time until it reaches $99 #If you leave and re-enter the room, the item disappears")
 	EID:addCollectible(CustomCollectibles.SOUL_BOND, "Chain yourself to a random enemy with an astral chain and freeze them #The chain deals contact damage to enemies #Going too far away from chained enemy will break the chain #Chained enemies have a 50% chance to drop half a soul heart when killed")
+	EID:addCollectible(CustomCollectibles.HAND_ME_DOWNS, "{{ArrowUp}} +0.2 Speed up #In your next run in starting room on stage where this run ended spawns 3 items from this run #Can't spawn story items or itself")	
 	
 	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "While held, every Golden Chest has a 12.5% chance to be replaced with Old Chest")
 	EID:addTrinket(CustomTrinkets.KEY_TO_THE_HEART, "While held, every enemy has a chance to drop Flesh Chest upon death #Flesh Chests contain 1-4 {{Heart}} heart/{{Pill}} pills or a random body-related item")
@@ -4879,6 +4936,7 @@ if EID then
 	EID:addCard(CustomConsumables.ANTIMATERIAL_CARD , "Can be thrown similarly to Chaos Card #If the card touches an enemy, that enemy is erased for the rest of the run")
 	EID:addCard(CustomConsumables.FIEND_FIRE, "Sacrifice your consumables for mass room destruction #7-40 total: enemies take 15 damage and burn for 4 seconds #41-80 total: the initital damage, the burning damage and burning duration are doubled; destroys obstacles around you #81+ total: the burning damage and burning duration are quadrupled; produces a Mama Mega explosion")
 	EID:addCard(CustomConsumables.DEMON_FORM, "{{ArrowUp}} Increases your damage by 0.15 for every new uncleared room you enter #The boost disappears when entering a new floor")
+	EID:addCard(CustomConsumables.MIRRORED_LANDSCAPE , "If you don't have a pocket item your active item becomes pocket item #If you already have a pocket item spawns a copy of it")
 	
 	EID:addPill(CustomPills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at one red heart other types of hearts are unaffected")
 	EID:addPill(CustomPills.LAXATIVE, "Makes you shoot out corn tears from behind for 3 seconds")
