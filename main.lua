@@ -1320,21 +1320,22 @@ rplus:AddCallback(ModCallbacks.MC_EXECUTE_CMD, rplus.OnCommandExecute)
 						---------------------
 function rplus:GameEnded(isGameOver)
 	handmedownsstage = 0
-    	for i = 0, game:GetNumPlayers() - 1 do
+    for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
 		local maxid = Isaac.GetItemConfig():GetCollectibles().Size - 1
+		
 		if player:HasCollectible(CustomCollectibles.HAND_ME_DOWNS) then
 			handmedownsstage = game:GetLevel():GetStage()
 			HandMeDownsItems = {} 
 			for i=1, maxid do
-      				if player:HasCollectible(i) and 
-      				Isaac.GetItemConfig():GetCollectible(i).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST and 
-      				i ~= CustomCollectibles.HAND_ME_DOWNS then
-        				table.insert(HandMeDownsItems, i)
-      				end
-    			end
-    		end
-    	end
+				if player:HasCollectible(i) and 
+				Isaac.GetItemConfig():GetCollectible(i).Tags & ItemConfig.TAG_QUEST ~= ItemConfig.TAG_QUEST and 
+				i ~= CustomCollectibles.HAND_ME_DOWNS then
+					table.insert(HandMeDownsItems, i)
+				end
+			end
+		end
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_END, rplus.GameEnded)	
 
