@@ -45,7 +45,10 @@
 
 <entity anm2path="items/pick ups/010.capricious_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Capricious Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="93">
     </entity>
-
+	
+<entity anm2path="items/pick ups/014.empty_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Empty Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="97">
+    </entity>
+	
 <entity anm2path="items/pick ups/015.fettered_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Fettered Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="98">
     </entity>
 
