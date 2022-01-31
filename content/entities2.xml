@@ -1,11 +1,14 @@
 <entities anm2root="gfx/" version="5">
 
-<!-- CUSTOM BACKDROP ENTITY -->
-<entity anm2path="gfx/backdrop/blankanim.anm2" id="1000" name="CustomBackDropEntity" variant="69420" collisionRadius="0" numGridCollisionPoints="0">
+<!-- CUSTOM BACKDROP AND ANIMATED ITEM ENTITY -->
+<entity anm2path="gfx/backdrop/blankanim.anm2" id="1000" name="AnimatedItemDummyEntity" variant="3457435" collisionRadius="0" numGridCollisionPoints="0">
 </entity>
 
 <!-- effects -->
 <entity anm2path="1000.666_cripple_hands_helper.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Crippling Hands Helper" numGridCollisionPoints="1" shadowSize="0" stageHP="0" variant="666">
+    </entity>
+	
+<entity anm2path="1000.764_falling_knife.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Falling Knife Helper" numGridCollisionPoints="1" shadowSize="0" stageHP="0" variant="764">
     </entity>
 
 <!-- chests and other pickups -->
@@ -45,10 +48,10 @@
 
 <entity anm2path="items/pick ups/010.capricious_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Capricious Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="93">
     </entity>
-	
+
 <entity anm2path="items/pick ups/014.empty_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Empty Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="97">
     </entity>
-	
+
 <entity anm2path="items/pick ups/015.fettered_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Fettered Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="98">
     </entity>
 
@@ -105,9 +108,12 @@
 <entity anm2path="005.404_slaythespire.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Fiend Fire" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="173">
 </entity>
 
+<entity anm2path="005.405_valentinescard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Valentine's Card" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="175">
+</entity>
+
 <!-- familiars -->
 
-<entity anm2path="003.210_bagotrash.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Bag O' Trash" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2100">
+<entity anm2path="003.210_bagotrash.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Bag-o-Trash" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2100">
 	</entity>
 
 <entity anm2path="003.211_zenbaby.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Cherubim" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2101">
@@ -140,13 +146,43 @@
 <entity anm2path="003.217_rejectionfetus.anm2" baseHP="0" boss="0" champion="0" collisionDamage="2.5" collisionInterval="3" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Rejection Fetus" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2110">
 	</entity>
 	
+<entity anm2path="003.218_enoch.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Enoch" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2111">
+	</entity>
+	
+<entity anm2path="003.218a_enoch_tainted.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Enoch (tainted)" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2112">
+	</entity>
+	
+<entity anm2path="003.219_spiritual_reserves.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionInterval="2" collisionMass="3" collisionRadius="5" friction="1" id = "3" name="Spiritual Reserves (Sun)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" variant="2113">
+    </entity>
+	
+<entity anm2path="003.219_spiritual_reserves.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionInterval="2" collisionMass="3" collisionRadius="5" friction="1" id = "3" name="Spiritual Reserves (Moon)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" variant="2114">
+    </entity>
+	
+<entity anm2path="003.220_friendlysack.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Friendly Sack" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2115">
+	</entity>
+	
+<entity anm2path="003.221_ultrafleshkid_l1.anm2" baseHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Ultra Flesh Kid (level 1)" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2116">
+	</entity>
+	
+<entity anm2path="003.221_ultrafleshkid_l1.anm2" baseHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Ultra Flesh Kid (level 2)" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2117">
+	</entity>
+	
+<entity anm2path="003.221_ultrafleshkid_l1.anm2" baseHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Ultra Flesh Kid (level 3)" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2118">
+	</entity>
+	
+<entity anm2path="003.221_ultrafleshkid_l1.anm2" baseHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Ultra Flesh Kid (level 4)" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2119">
+	</entity>
+	
+	
 <!-- tears and weapons -->
 
 <entity anm2path="002.120_ceremonial_blade_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="8" friction="1" id="2" name="Ceremonial Dagger Tear" numGridCollisionPoints="8" shadowSize="7" stageHP="0" variant="120" />
 
 <entity anm2path="002.123_antimaterial_card_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="10" friction="1" id="2" name="Antimaterial Card Tear" numGridCollisionPoints="8" shadowSize="7" stageHP="0" variant="123" />
 
-<entity anm2path="002.124_rejected_baby_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="12" friction="1" id="2" name="Rejected Baby Tear" numGridCollisionPoints="8" shadowSize="8" stageHP="0" variant="124">
+<entity anm2path="002.126_valentines_card_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="10" friction="1" id="2" name="Valentine's Card Tear" numGridCollisionPoints="8" shadowSize="7" stageHP="0" variant="126" />
+
+<entity anm2path="002.124_rejected_baby_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="20" friction="1" id="2" name="Rejected Baby Tear" numGridCollisionPoints="8" shadowSize="8" stageHP="0" variant="124">
 	<gibs amount="10" blood="2" bone="1" eye="1" gut="3" large="0" />
 	</entity>
 	

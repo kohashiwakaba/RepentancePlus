@@ -1,0 +1,31 @@
+<data>
+	<!-- Examples from Deliverance and IPECAC mod:
+		<entity BaseHP="1"  Group="Stage" 
+		ID="761" Image="deliverance/761.4000.0 - Munchubus.png" 
+		Kind="Deliverance" Name="Munchubus" Subtype="0" Variant="4000" />
+		
+		<entity Group="(IPECAC) Bosses" ID="5" 
+		Image="IPECAC/Treasure Chest.png" Kind="Pickups" 
+		Name="Treasure Chest" Subtype="0" Variant="1666" />
+	-->
+	
+	<entity Group="Beggars" ID="6" Image="repentanceplus/Stargazer Beggar.png" Kind="Repentance Plus" Name="Stargazer Beggar" Subtype="0" Variant="335" />
+	
+	<entity Group="Chests" ID="5" Image="repentanceplus/Black Chest.png" Kind="Repentance Plus" Name="Black Chest" Subtype="0" Variant="514" />
+	<entity Group="Chests" ID="5" Image="repentanceplus/Flesh Chest.png" Kind="Repentance Plus" Name="Flesh Chest" Subtype="0" Variant="513" />
+	<entity Group="Chests" ID="5" Image="repentanceplus/Scarlet Chest.png" Kind="Repentance Plus" Name="Scarlet Chest" Subtype="0" Variant="512" />
+		
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Broken Heart.png" Kind="Repentance Plus" Name="Broken Heart" Subtype="84" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Hoarded Heart.png" Kind="Repentance Plus" Name="Hoarded Heart" Subtype="86" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Benighted Heart.png" Kind="Repentance Plus" Name="Benighted Heart" Subtype="91" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Enigma Heart.png" Kind="Repentance Plus" Name="Enigma Heart" Subtype="92" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Capricious Heart.png" Kind="Repentance Plus" Name="Capricious Heart" Subtype="93" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Fettered Heart.png" Kind="Repentance Plus" Name="Fettered Heart" Subtype="98" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Deserted Heart.png" Kind="Repentance Plus" Name="Deserted Heart" Subtype="100" Variant="10" />
+	
+	<entity Group="Consumables" ID="5" Image="repentanceplus/Bag Tissue.png" Kind="Repentance Plus" Name="Bag Tissue" Subtype="163" Variant="300" />
+	<entity Group="Consumables" ID="5" Image="repentanceplus/Loaded Dice.png" Kind="Repentance Plus" Name="Loaded Dice" Subtype="164" Variant="300" />
+	<entity Group="Consumables" ID="5" Image="repentanceplus/Quasar Shard.png" Kind="Repentance Plus" Name="Quasar Shard" Subtype="165" Variant="300" />
+	<entity Group="Consumables" ID="5" Image="repentanceplus/Red Rune.png" Kind="Repentance Plus" Name="Red Rune" Subtype="160" Variant="300" />
+	
+</data>

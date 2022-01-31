@@ -2,17 +2,18 @@
 	<Pool Name="treasure">
 		<Item Name="Rubik's Cube" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Magic Pen" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bag o Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Cherry Friends" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Tower of Babel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<item Name="Tank Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Gusty Blood" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Red Bomber" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="A Cat in the Box" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="A Cat in the Box" Weight="0.25" DecreaseBy="0.25" RemoveOn="0.025" />
 		<Item Name="Nerve Pinch" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Sibling Rivalry" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Stargazer's Hat" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Rejection" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Friendly Sack" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="shop">
 		<Item Name="Ceiling with the Stars" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -21,6 +22,7 @@
 		<Item Name="Mother's Love" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Keeper's Penny" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Auction Gavel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Hand-Me-Downs" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="boss">
 		<Item Name="Ordinary Life" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
@@ -41,6 +43,7 @@
 		<Item Name="Quasar" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Book of Genesis" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Soul Bond" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Angel's Wings" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="secret">
 		<Item Name="Temper Tantrum" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -48,12 +51,13 @@
 		<Item Name="Red Map" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="DNA Redactor" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Bless of the Dead" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Keeper's Penny" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Stargazer's Hat" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Keeper's Penny"Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
+		<Item Name="Stargazer's Hat" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Bottomless Bag" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="library">
-		<Item Name="Book of Genesis" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
+		<Item Name="Book of Genesis" Weight="0.25" DecreaseBy="0.25" RemoveOn="0.025" />
+		<Item Name="Book of Leviathan" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="goldenChest">
 		
@@ -62,8 +66,10 @@
 		<Item Name="Black Doll" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="beggar">
-		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bag o Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Mother's Love" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Hand-Me-Downs" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Friendly Sack" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="demonBeggar">
 		<Item Name="Cookie Cutter" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -103,10 +109,11 @@
 		<Item Name="Ordinary Life" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 	</Pool>
 	<Pool Name="babyShop">
-		<Item Name="Cherubim" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
-		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Cherubim" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bag o Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<item Name="Tank Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Sibling Rivalry" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Friendly Sack" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="woodenChest">
 		<Item Name="Auction Gavel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />

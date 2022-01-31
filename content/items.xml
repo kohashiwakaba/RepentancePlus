@@ -9,17 +9,17 @@
 	<!-- T.Isaac -->
 	<passive id="8" name="Ordinary Life" description="Tears up + you feel nostalgic" gfx="01_ordinarylife.png" quality="3" cache="firedelay" />
 	<trinket name="Basement Key" description="Open your memories" gfx="t01_basementkey.png" />
-	<active id="11" name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="03_rubikscube.png" quality="0" maxcharges="2" />
+	<active id="11" name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="03_rubikscube.png" quality="1" maxcharges="2" />
 	<active id="12" name="Magic Cube" description="Did you set the world record?" gfx="04_magiccube.png" quality="4" maxcharges="4" />  
 	<passive id="7" bombs="5" name="Red Bomber" description="Can't hold 'em! +5 bombs" gfx="23_redbomber.png" quality="3" />
 	
 	<!-- T.Maggy -->
 	<active id="13" name="Cookie Cutter" description="Cut your hearts!" gfx="05_cookiecutter.png" quality="1" maxcharges="0"/>
 	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="t02_keytotheheart.png" />
-	<passive id="1" name="Cherry Friends" description=":3" gfx="06_cherryfriends.png" quality="1" />
+	<passive id="1" name="Cherry Friends" description=":3" gfx="06_cherryfriends.png" quality="2" />
 	
 	<!-- T. Cain -->
-	<passive id="2" name="The Mark of Cain" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="2" devilprice="1" cache="damage" tags="devil" />
+	<familiar id="2" name="The Mark of Cain" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="3" devilprice="1" tags="devil" />
 	<trinket name="Sleight of Hand" description="Faster than you'd think!" gfx="t03_sleightofhand.png" />
 	<trinket name="Trick Penny" description="Wealth of risk" gfx="t04_trickpenny.png" />
 
@@ -30,24 +30,26 @@
 	<trinket name="Key Knife" description="Pain is key" gfx="t19_keyknife.png" />
 	
 	<!-- T. ??? -->
-	<familiar id="15" name="Bag-o-Trash" description="Will you take it out already?!" gfx="10_bagotrash.png" quality="2" />
+	<familiar id="15" name="Bag o Trash" description="Will you take it out already?!" gfx="10_bagotrash.png" quality="2" />
 	<trinket name="Night Soil" description="Eww.." gfx="t14_nightsoil.png" />
 	<passive id="16" name="Bless of the Dead" description="What doesn't kill you makes you stronger" gfx="21_blessofthedead.png" quality="3" />
+	<passive id="44" name="Hand-Me-Downs" description="Speed up + share your belongings" gfx="45_handmedowns.png" quality="1" cache="speed" />
 
 	<!-- T. Eve -->
 	<passive id="17" name="A Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="2" cache="flying" />
 	<trinket name="Adam's Rib" description="Children of God" gfx="t13_adamsrib.png" />
-	<active id="18" name="Tower of Babel" description="Divine wraith" gfx="19_towerofbabel.png" quality="2" maxcharges="6" />
+	<active id="18" name="Tower of Babel" description="Divine wraith" gfx="19_towerofbabel.png" quality="1" maxcharges="6" />
+	<familiar id="45" name="Ultra Flesh Kid!" description="We have Super Meat Boy at home" gfx="46_ultrafleshkid.png" quality="3" />
 
 	<!-- T.Samson -->
-	<passive id="19" name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="13_tempertantrum.png" quality="3" /> 
+	<passive id="19" name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="13_tempertantrum.png" quality="2" /> 
 	<trinket name="Magic Sword" description=":-)" gfx="t10_magicsword.png" cache="damage" />
 	<trinket name="Wait, No!" description=":-(" gfx="t11_waitno.png" />
 	<passive id="6" name="Gusty Blood" description="Their blood brings haste" gfx="24_gustyblood.png" quality="3" devilprice="2"/>
 	
 	<!-- T. Lazarus -->
 	<passive id="20" name="DNA Redactor" description="It runs in your genes" gfx="20_dnaredactor.png" quality="3" /> 
-	<passive id="21" name="A Cat in the Box" description="(DEAD + ALIVE) / 2" gfx="36_catinabox.png" quality="2" />
+	<passive id="21" name="A Cat in the Box" description="Dead or alive?" gfx="36_catinabox.png" quality="4" />
 	<trinket name="Torn Page" description="There's gold in them books!" gfx="t15_tornpage.png" />
 	<passive id="22" name="Nerve Pinch" description="Ouch!" gfx="26_nervepinch.png" quality="3" />
 	
@@ -65,33 +67,35 @@
 	<familiar id="25" name="Cherubim" description="He sees all" gfx="15_zenbaby.png" quality="3" tags="baby angel" />
 	<trinket name="A Piece of Chalk" description="Stay out, unholy!" gfx="t09_pieceofchalk.png" />
 	<active id="42" name="Soul Bond" description="Astral chains" gfx="40_soulbond.png" quality="4" maxcharges="3" />
-	<passive name="Angel's Wings" description="Blasphemy against the holy spirit!" gfx="100_dogma.png" quality="4" cache="tearflag"/> 
+	<passive id="43" name="Angel's Wings" description="But if we are living in the light..." gfx="41_angelswings.png" quality="4" cache="tearflag shotspeed" /> 
 	
 	<!-- T. Lilith -->
 	<passive id="26" name="Mother's Love" description="Feed them love" gfx="38_motherslove.png" quality="2" cache="damage luck firedelay speed range" />
 	<trinket name="Baby Shoes" description="So tiny" gfx="t18_babyshoes.png" />
 	<active id="41" name="Rejection" description="Sorry, little ones..." gfx="29_rejection.png" quality="3" maxcharges="2" />
 	<familiar name="Rejection (passive)" description="" gfx="29_rejection.png" quality="3" hidden="true" />
+	<familiar id="46" name="Friendly Sack" description="Gives friends!" gfx="49_friendlysack.png" quality="3" />
 
 	<!-- T. Keeper -->
 	<trinket name="Greed's Heart" description="Coin up" gfx="t06_greedsheart.png" />
 	<passive id="27" name="2+1" description="Limited Offer!!!" gfx="12_2+1.png" quality="3" />
 	<passive id="28" name="Keeper's Penny" description="Shop up" gfx="25_keeperspenny.png" quality="4" />
-	<active id="40" name="Auction Gavel" description="1,2,3,SOLD!" gfx="39_auctiongavel.png" maxcharges="6" quality="3" />
+	<active id="40" name="Auction Gavel" description="1, 2, 3, SOLD!" gfx="39_auctiongavel.png" maxcharges="6" quality="2" />
 	
 	<!-- T. Apollyon -->
-	<passive id="5" blackhearts="4" name="Sinner's Heart" description="Piercing tear + DMG up" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range" devilprice="2" />
+	<passive id="5" blackhearts="4" name="Sinner's Heart" description="Piercing tears + DMG up" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range" devilprice="2" />
 	<passive id="29" name="Red Map" description="All secrets are unveiled to you" gfx="18_redmap.png" quality="3" />
 	<active id="38" name="Bottomless Bag" description="Portable vacuum" gfx="31_bottomlessbag.png" quality="2" chargetype="timed" maxcharges="270" />
-	<passive name="Hand-Me-Downs" description="Speed up + share your belongings" gfx="30_handmedowns.png" quality="3" cache="speed"/>
+	<active id="48" name="Vault of Havoc" description="Portable massacre" gfx="42_vaultofhavoc.png" quality="3" maxcharges="0" />
 	
 	<!-- T. Forgor -->
 	<passive id="30" name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="1" />
 	<trinket name="Bone Meal" description="Your bones grow stronger" gfx="t16_bonemeal.png" />
+	<active id="47" name="Book of Leviathan" description="Grow from the depths" gfx="48_bookofleviathan.png" quality="2" maxcharges="6" tags="book devil" />
 	
 	<!-- T. Bethany -->
 	<passive id="4" name="Ceiling with the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="1" />
-	<active id="31" name="Quasar" description="Cosmic wisdom" gfx="33_quasar.png" quality="4" devilprice="2" maxcharges="6" />
+	<active id="31" name="Quasar" description="Cosmic wisdom" gfx="33_quasar.png" quality="4" devilprice="1" maxcharges="6" />
 	<active id="32" quality="3" gfx="47_0_bloodvessel.png" description="Delay the inevitable" name="Blood Vessel" maxcharges="0" chargetype="special"/>
 	<active quality="3" gfx="47_1_bloodvessel.png" description="Delay the inevitable" name="Empty Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
 	<active quality="3" gfx="47_2_bloodvessel.png" description="Delay the inevitable" name="Stained Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
@@ -103,8 +107,8 @@
 	<active id="37" name="Stargazer's Hat" description="Reusable magic" gfx="34_stargazers_hat.png" quality="3" chargetype="special" maxcharges="4" />
 	
 	<!-- T. Jacob -->
-	<active id="33" name="Cheese Grater" description="A pound of... cheese?" gfx="22_cheesegrater.png" quality="2" maxcharges="0" cache="damage" />
-	<familiar id="34" name="Tank Boys" description="You and what army?.." gfx="55_tankboys.png" quality="2" />
-	<passive id="35" name="Red King" description="BLOOD is my reward" gfx="51_redking.png" quality="4" devilprice="1" /> 
+	<active id="33" name="Cheese Grater" description="A pound of... cheese?" gfx="22_cheesegrater.png" quality="1" maxcharges="0" cache="damage" />
+	<familiar id="34" name="Tank Boys" description="You and what army?.." gfx="44_tankboys.png" quality="3" />
+	<passive id="35" name="Red King" description="BLOOD is my reward" gfx="43_redking.png" quality="4" devilprice="2" /> 
 	<familiar id="36" name="Sibling Rivalry" description="I can't stand you!" gfx="27_siblingrivalry.png" quality="3" />
 </items>

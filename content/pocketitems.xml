@@ -29,14 +29,16 @@
 	<card type="special" name="Library Card" hud="Library Card" mimiccharge="6" description="8-)" pickup="169" />
 	<card type="special" name="Antimaterial Card" hud="Antimaterial Card" mimiccharge="12" description="Erase thy enemy... once" pickup="170" />
 	<card type="special" name="Funeral Service" hud="Funeral Services" mimiccharge="12" description="My time has come..." pickup="171" />
-	<card type="special" name="Mom's ID" hud="Mom's ID" mimiccharge="6" description="..." pickup="172" />
+	<card type="special" name="Mom's ID" hud="Mom's ID" mimiccharge="6" description="Feel her wrath" pickup="172" />
 	<card type="special" name="Fiend Fire" hud="Fiend Fire" mimiccharge="2" description="Feel the heat!" pickup="173" />
 	<card type="special" name="Demon Form" hud="Demon Form" mimiccharge="12" description="Your demons grow stronger" pickup="174" />
+	<card type="special" name="Valentine's Card" hud="Valentine's Card" mimiccharge="6" description="<3" pickup="175" />
 	
 	<!-- non-custom backs -->
+	<card type="special" name="Spiritual Reserves" hud="Spiritual Reserves" mimiccharge="12" description="Awaken your spirits" pickup="8" />
+	<card type="special" name="Mirrored Landscape" hud="Mirrored Landscape" mimiccharge="2" description="Ever changing" pickup="8" />
 	<card type="suit" name="Joker?" hud="Joker?" mimiccharge="1" description="¿¿¿" pickup="2"/>
 	<card type="special" name="Reverse Card" hud="Reverse Card" mimiccharge="4" description="No, You!" pickup="17" /> 
-	<card type="special" name="Mirrored Landscape" hud="Mirrored Landscape" mimiccharge="12" description="Constant change" pickup="8" />
 	<card type="suit" name="King of Spades" hud="King of Spades" mimiccharge="6" description="Lose everything to get something" pickup="2" />
 	<card type="suit" name="King of Clubs" hud="King of Clubs" mimiccharge="6" description="Lose everything to get something" pickup="2" />
 	<card type="suit" name="King of Diamonds" hud="King of Diamonds" mimiccharge="6" description="Lose everything to get something" pickup="2" />
