@@ -80,7 +80,7 @@ local function TornPageCallback(descObj)
 	elseif refID == CustomCollectibles.BOOK_OF_LEVIATHAN then
 		EID:appendToDescription(descObj, "Doesn't require keys to be used")
 	elseif refID == CollectibleType.COLLECTIBLE_LEMEGETON then
-		EID:appendToDescription(descObj, "Can be used at partial charge to gain remaining charges at the cost of player's red health (similarly to how Sharp Plug works)")
+		EID:appendToDescription(descObj, "Can be used at partial charge to gain remaining charges at the cost of player's red health (as if you have {{Collectible205}})")
 	elseif refID == CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS or refID == CollectibleType.COLLECTIBLE_MONSTER_MANUAL then
 		EID:appendToDescription(descObj, "Gains 2 charges back when used")	
 	else
@@ -108,18 +108,18 @@ EID:addDescriptionModifier("Torn Page", TornPageCondition, TornPageCallback)
 --------------------------------------------------------
 local function KeyTrinketsCallback(descObj)
 	EID:appendToDescription(descObj, "#{{Collectible" .. tostring(CustomCollectibles.BOOK_OF_LEVIATHAN) .. "}}: ")
-	local refID = descObj.ObjSubType
+	local refID = descObj.ObjSubType % 32768
 	
 	if refID == TrinketType.TRINKET_STORE_KEY then
 		EID:appendToDescription(descObj, "Crippled enemies can drop random pickup on death")
 	elseif refID == TrinketType.TRINKET_RUSTED_KEY then
 		EID:appendToDescription(descObj, "Applies confusion to crippled enemies")
 	elseif refID == TrinketType.TRINKET_CRYSTAL_KEY then
-		EID:appendToDescription(descObj, "The book opens all red doors in the room on use")
+		EID:appendToDescription(descObj, "Can randomly freeze enemies on death")
 	elseif refID == TrinketType.TRINKET_BLUE_KEY then
 		EID:appendToDescription(descObj, "Crippled enemies can drop half soul heart on death")
 	elseif refID == TrinketType.TRINKET_STRANGE_KEY then
-		EID:appendToDescription(descObj, "Can randomly magnetize enemies on use")
+		EID:appendToDescription(descObj, "Applies random status effect to enemies")
 	elseif refID == TrinketType.TRINKET_GILDED_KEY then
 		EID:appendToDescription(descObj, "Can randomly Midas freeze enemies on use")
 	elseif refID == CustomTrinkets.BASEMENT_KEY then
@@ -134,6 +134,7 @@ local function KeyTrinketsCallback(descObj)
 end
 
 local function isKeyTrinket(t)
+	t = t % 32768	-- golden trinkets
 	return (t == TrinketType.TRINKET_STORE_KEY or t == TrinketType.TRINKET_RUSTED_KEY
 	or t == TrinketType.TRINKET_CRYSTAL_KEY or t == TrinketType.TRINKET_BLUE_KEY 
 	or t == TrinketType.TRINKET_STRANGE_KEY or t == TrinketType.TRINKET_GILDED_KEY 

@@ -161,18 +161,6 @@
 <entity anm2path="003.220_friendlysack.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Friendly Sack" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2115">
 	</entity>
 	
-<entity anm2path="003.221_ultrafleshkid_l1.anm2" baseHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Ultra Flesh Kid (level 1)" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2116">
-	</entity>
-	
-<entity anm2path="003.221_ultrafleshkid_l1.anm2" baseHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Ultra Flesh Kid (level 2)" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2117">
-	</entity>
-	
-<entity anm2path="003.221_ultrafleshkid_l1.anm2" baseHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Ultra Flesh Kid (level 3)" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2118">
-	</entity>
-	
-<entity anm2path="003.221_ultrafleshkid_l1.anm2" baseHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Ultra Flesh Kid (level 4)" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2119">
-	</entity>
-	
 	
 <!-- tears and weapons -->
 
@@ -182,7 +170,7 @@
 
 <entity anm2path="002.126_valentines_card_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="10" friction="1" id="2" name="Valentine's Card Tear" numGridCollisionPoints="8" shadowSize="7" stageHP="0" variant="126" />
 
-<entity anm2path="002.124_rejected_baby_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="20" friction="1" id="2" name="Rejected Baby Tear" numGridCollisionPoints="8" shadowSize="8" stageHP="0" variant="124">
+<entity anm2path="002.124_rejected_baby_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="18" friction="1" id="2" name="Rejected Baby Tear" numGridCollisionPoints="8" shadowSize="8" stageHP="0" variant="124">
 	<gibs amount="10" blood="2" bone="1" eye="1" gut="3" large="0" />
 	</entity>
 	

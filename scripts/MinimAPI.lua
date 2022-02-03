@@ -40,6 +40,9 @@ MinimapAPI:AddPickup("enigmaheart", "enigmaheart", 5, 10, 92, MinimapAPI.PickupN
 MinimapAPI:AddIcon("capriciousheart", Icons, "capriciousheart", 0)
 MinimapAPI:AddPickup("capriciousheart", "capriciousheart", 5, 10, 93, MinimapAPI.PickupNotCollected, "hearts", 10750)
 
+MinimapAPI:AddIcon("emptyheart", Icons, "emptyheart", 0)
+MinimapAPI:AddPickup("emptyheart", "emptyheart", 5, 10, 97, MinimapAPI.PickupNotCollected, "hearts", 10650)
+
 MinimapAPI:AddIcon("fetteredheart", Icons, "fetteredheart", 0)
 MinimapAPI:AddPickup("fetteredheart", "fetteredheart", 5, 10, 98, MinimapAPI.PickupNotCollected, "hearts", 10550)
 

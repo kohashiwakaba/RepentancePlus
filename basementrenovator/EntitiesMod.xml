@@ -20,7 +20,9 @@
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Benighted Heart.png" Kind="Repentance Plus" Name="Benighted Heart" Subtype="91" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Enigma Heart.png" Kind="Repentance Plus" Name="Enigma Heart" Subtype="92" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Capricious Heart.png" Kind="Repentance Plus" Name="Capricious Heart" Subtype="93" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Empty Heart.png" Kind="Repentance Plus" Name="Empty Heart" Subtype="97" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Fettered Heart.png" Kind="Repentance Plus" Name="Fettered Heart" Subtype="98" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Zealot Heart.png" Kind="Repentance Plus" Name="Zealot Heart" Subtype="99" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Deserted Heart.png" Kind="Repentance Plus" Name="Deserted Heart" Subtype="100" Variant="10" />
 	
 	<entity Group="Consumables" ID="5" Image="repentanceplus/Bag Tissue.png" Kind="Repentance Plus" Name="Bag Tissue" Subtype="163" Variant="300" />
