@@ -1238,7 +1238,14 @@ local function HeartRender(player, heartData, heartAnim)
 		local heartSprite = Sprite()
 		heartSprite:Load("gfx/ui/ui_taintedhearts.anm2", true)
 		heartSprite:Play(heartAnim, true)
-		for i = getRightMostHeartForRender(player) + 1 - heartData, getRightMostHeartForRender(player) do
+		if heartAnim == "Zealot" then 
+			heartbegin = getRightMostHeartForRender(player) + 1 - heartData - player:GetGoldenHearts() 
+			heartend = getRightMostHeartForRender(player) - player:GetGoldenHearts() 
+		else 
+			heartbegin = getRightMostHeartForRender(player) + 1 - heartData 
+			heartend = getRightMostHeartForRender(player)
+		end
+		for i = heartbegin, heartend do
 			if (i < 7) then
 				TopVector = Vector((i - 1) * 12 + 48, 12)
 			elseif (i < 13) then
@@ -1448,7 +1455,7 @@ rplus:AddCallback(ModCallbacks.MC_EXECUTE_CMD, rplus.OnCommandExecute)
 						-----------------------
 function rplus:OnNewLevel()
 	local level = game:GetLevel()
-	
+	heartframe = game:GetFrameCount()
 	if GameOverStage and level:GetStage() == GameOverStage then 
 		for _, item in pairs(GameOverItems) do
 			Isaac.Spawn(5, 100, item, game:GetRoom():FindFreePickupSpawnPosition(Vector(300, 200)), Vector.Zero, nil):ToPickup()
@@ -1457,18 +1464,6 @@ function rplus:OnNewLevel()
 		GameOverItems = {}	
 	end
 	
-	if CustomData then
-		for i = 1, CustomData.TaintedHearts.ZEALOT * 2 do
-			repeat 
-				newID = GetUnlockedVanillaCollectible()
-			until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
-			Isaac.GetPlayer(0):AddItemWisp(newID, Isaac.GetPlayer(0).Position, true)
-		end
-		
-		for j = 1, CustomData.TaintedHearts.EMPTY do
-			Isaac.Spawn(3, FamiliarVariant.ABYSS_LOCUST, 0, Isaac.GetPlayer(0).Position, Vector.Zero, nil)	
-		end
-	end
 	
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
@@ -2127,6 +2122,19 @@ function rplus:OnGameUpdate()
 			player:AddCollectible(CustomCollectibles.REJECTION_P)
 		elseif player:GetCollectibleNum(CustomCollectibles.REJECTION) < player:GetCollectibleNum(CustomCollectibles.REJECTION_P) then
 			player:RemoveCollectible(CustomCollectibles.REJECTION_P)
+		end
+		
+		if heartframe+1 == game:GetFrameCount() and CustomData then 
+			for i = 1, CustomData.TaintedHearts.ZEALOT do
+				repeat 
+					newID = GetUnlockedVanillaCollectible()
+				until Isaac.GetItemConfig():GetCollectible(newID).Type % 3 == 1
+				Isaac.GetPlayer(0):AddItemWisp(newID, Isaac.GetPlayer(0).Position, true)
+			end
+			for i = 1, CustomData.TaintedHearts.EMPTY do
+				Isaac.Spawn(3, FamiliarVariant.ABYSS_LOCUST, 0, Isaac.GetPlayer(0).Position, Vector.Zero, nil)	
+			end
+			heartframe = 0
 		end
 	end
 	
@@ -3472,7 +3480,7 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, SourceRef, CooldownFrames)
 		if Flags & DamageFlag.DAMAGE_FAKE ~= DamageFlag.DAMAGE_FAKE 
 		and not isSelfDamage(Flags, "taintedhearts") then
 			if Amount == 2 or Player:GetSoulHearts() % 2 == 1 or (Player:GetSoulHearts() == 0 and Player:GetHearts() % 2 == 1) then
-				if CustomData.TaintedHearts.ZEALOT > 0 then
+				if CustomData.TaintedHearts.ZEALOT and Player:GetGoldenHearts() == 0 then
 					CustomData.TaintedHearts.ZEALOT = CustomData.TaintedHearts.ZEALOT - 1
 				end 
 				if CustomData.TaintedHearts.EMPTY > 0 then
@@ -3738,12 +3746,12 @@ function rplus:OnPickupInit(Pickup)
 					
 					if stage == 1 then
 						-- 2.5% zealot heart
-						if roll < baseChance * 0.2 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_ZEALOT, true, true, false) end
+						if roll < baseChance * 0.2 and game:GetNumPlayers() == 1 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_ZEALOT, true, true, false) end
 					else
 						-- 12.5% fettered heart
 						if roll < baseChance then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_FETTERED, true, true, false)
 						-- 2.5% zealot heart
-						elseif roll < baseChance * 1.2 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_ZEALOT, true, true, false) end
+						elseif roll < baseChance * 1.2 and game:GetNumPlayers() == 1 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_ZEALOT, true, true, false) end
 					end
 				elseif st == HeartSubType.HEART_ETERNAL then
 					
@@ -3782,7 +3790,7 @@ function rplus:OnPickupInit(Pickup)
 					local baseChance = 75
 					
 					-- 7.5% empty heart
-					if roll < baseChance then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_EMPTY, true, true, false) end
+					if roll < baseChance and game:GetNumPlayers() == 1 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_EMPTY, true, true, false) end
 				end
 				
 				-- 0.75% capricious heart
@@ -4092,7 +4100,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		end
 		
 		if Pickup.SubType == CustomPickups.TaintedHearts.HEART_ZEALOT then
-			if getRightMostHeartForRender(player) > CustomData.TaintedHearts.ZEALOT and not isInGhostForm(player) then
+			if getRightMostHeartForRender(player)-player:GetGoldenHearts() > CustomData.TaintedHearts.ZEALOT and not isInGhostForm(player) then
 				CustomData.TaintedHearts.ZEALOT = CustomData.TaintedHearts.ZEALOT + 1
 				sfx:Play(SoundEffect.SOUND_HOLY, 1, 2, false, 1, 0)
 			else return false end
