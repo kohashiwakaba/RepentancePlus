@@ -358,6 +358,23 @@ local ItemsWiki = {
 				{str = "If boss room is a room where Friendly Sack would pay out, it spawns a random charmed monster instead"},
 			},
 	},
+	[CustomCollectibles.MAGIC_MARKER] = {
+        {
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Drops a random tarot card (normal or reversed) when picked up "},
+			{str = "On use, transform held tarot card by adding 1 to its number (or deducing 1 for reversed tarots)"},
+			{str = "Can roll into cards even if they haven't been unlocked yet"},
+        },
+	},
+	[CustomCollectibles.ULTRA_FLESH_KID] = {
+		{
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Familiar that chases enemies and deals contact damage, similar to Leech "},
+			{str = "Has 3 stages, collects red hearts to evolve "},
+			{str = "A total of 15 hearts needs to be collected to evolve"},
+			{str = "Only collects hearts in cleared rooms and cannot fly through obstacles to collect them"},
+		},
+	},
 }
 
 local TrinketsWiki = {
@@ -503,6 +520,13 @@ local TrinketsWiki = {
 			{str = "8% chance to activate Dark Arts effect when taking damage "},
 		},
 	},
+	[CustomTrinkets.SHATTERED_STONE] = {
+		{
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Chance to spawn random locust when picking up bombs, coing or keys"},
+			{str = "Chance increases with pickup's quality"},
+		},
+	},
 }
 
 local PillsWiki = {
@@ -539,7 +563,7 @@ local PillsWiki = {
 	[CustomPills.YUM] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Spawns a red heart "},
+			{str = "Spawns 2-5 half red hearts"},
 			{str = "For 30 seconds, every picked up red heart will grant you small permanent stat upgrades, similar to Candy Heart effect"},
 			{str = "HORSE: lasts for 60 seconds"},
 		},
@@ -598,7 +622,9 @@ local itemPools = {
 	[CustomCollectibles.ANGELS_WINGS] = {Encyclopedia.ItemPools.POOL_ANGEL},
 	[CustomCollectibles.HAND_ME_DOWNS] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_BEGGAR},
 	[CustomCollectibles.BOOK_OF_LEVIATHAN] = {Encyclopedia.ItemPools.POOL_LIBRARY},
-	[CustomCollectibles.FRIENDLY_SACK] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP, Encyclopedia.ItemPools.POOL_BEGGAR}
+	[CustomCollectibles.FRIENDLY_SACK] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP, Encyclopedia.ItemPools.POOL_BEGGAR},
+	[CustomCollectibles.ULTRA_FLESH_KID] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+	[CustomCollectibles.MAGIC_MARKER] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_CRANE_GAME}
 }
 
 local CardsWiki = {
@@ -631,7 +657,7 @@ local CardsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Lose all your keys (but no more than 33) and spawn a number of pickups proportional to the amount of keys lost"},
-			{str = "At least 9 keys is needed for a trinket, and at least 21 for an item "},
+			{str = "Can spawn an item or trinket with a certain chance that grows with the amount of bombs and reaches 100% at 9 or 21 keys, respectively"},
 			{str = "If Isaac has Golden key, it is removed too and significantly increases total value"},
 		},
 	},
@@ -639,7 +665,7 @@ local CardsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Lose all your bombs (but no more than 33) and spawn a number of pickups proportional to the amount of bombs lost"},
-			{str = "At least 9 bombs is needed for a trinket, and at least 21 for an item"},
+			{str = "Can spawn an item or trinket with a certain chance that grows with the amount of bombs and reaches 100% at 9 or 21 bombs, respectively"},
 			{str = "If Isaac has Golden bomb, it is removed too and significantly increases total value"},
 		},
 	},
@@ -647,7 +673,7 @@ local CardsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Lose all your coins (but no more than 66) and spawn a number of pickups proportional to the amount of coins lost"},
-			{str = "At least 24 coins is needed for a trinket, and at least 54 for an item"},
+			{str = "Can spawn an item or trinket with a certain chance that grows with the amount of bombs and reaches 100% at 18 or 42 coins, respectively"},
 		},
 	},
 	[CustomConsumables.BAG_TISSUE] = {
