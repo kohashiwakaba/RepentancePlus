@@ -1,7 +1,6 @@
 # EID to Wiki description
 
-EID = """EID:addCollectible(CustomCollectibles.MAGIC_MARKER, "Drops a random tarot card when picked up #On use, transform held tarot card by adding 1 to its number (or deducing 1 for reversed tarots)")
-	EID:addCollectible(CustomCollectibles.ULTRA_FLESH_KID, "Familiar that chases enemies and deals contact damage, similar to Leech #Has 3 stages, collects red hearts to evolve #A total of 15 hearts needs to be collected to evolve")"""
+EID = """EID:addCollectible(CustomCollectibles.VAULT_OF_HAVOC, "Passively stores killed enemies; can be used as soon as 12 enemies are stored #Upon use, brings you into a special room with 12 most recently killed enemies; clearing the room spawns a reward based on total HP of spawned enemies")"""
 
 for description in EID.split('\n'):
     itemID = description[description.find('(') + 1:description.find(',')]

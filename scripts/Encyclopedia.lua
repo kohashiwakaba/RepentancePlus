@@ -39,7 +39,7 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Double tap shooting button to spew a line of  creep in the direction you're firing "},
-			{str = "Random permanent status effects is applied to enemies walking over that creep "},
+			{str = "Random status effect is applied to enemies walking over that creep "},
 			{str = "Has a 4 seconds cooldown"},
 		},
 	},
@@ -57,7 +57,7 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "25% chance to enter Berserk state when taking damage "},
-			{str = "While in this state, every enemy damaged has a 10% chance to be erased for the rest of the run"},
+			{str = "While in this state, every enemy damaged has a 5% chance to be erased for the rest of the run"},
 		},
 	},
 	[CustomCollectibles.BAG_O_TRASH] = {
@@ -362,17 +362,25 @@ local ItemsWiki = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Drops a random tarot card (normal or reversed) when picked up "},
-			{str = "On use, transform held tarot card by adding 1 to its number (or deducing 1 for reversed tarots)"},
+			{str = "On use, transform held tarot card by increasing the number by 1 (or reducing by 1 for reversed tarots)"},
 			{str = "Can roll into cards even if they haven't been unlocked yet"},
         },
 	},
 	[CustomCollectibles.ULTRA_FLESH_KID] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Familiar that chases enemies and deals contact damage, similar to Leech "},
-			{str = "Has 3 stages, collects red hearts to evolve "},
-			{str = "A total of 15 hearts needs to be collected to evolve"},
-			{str = "Only collects hearts in cleared rooms and cannot fly through obstacles to collect them"},
+			{str = "Familiar that chases enemies and deals contact damage, similar to Leech"},
+			{str = "Has 3 stages, collects red hearts to evolve. A total of 15 hearts needs to be collected to evolve. Only collects hearts in cleared rooms and cannot fly through obstacles to collect them"},
+			{str = "Stage 1: chases enemies, leaving creep"},
+			{str = "Stage 2: contact damage increased, occasionally shoots 8 bloody tears in all directions"},
+			{str = "Stage 3: contact damage increased, after 2 seconds of being in uncleared rooms, pops his head off and lets it bounce across the room"},
+		},
+	},
+	[CustomCollectibles.VAULT_OF_HAVOC] = {
+        {
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Passively stores killed enemies. Can be used as soon as 12 enemies are stored"},
+			{str = "Upon use, brings you into a special room with 12 most recently killed enemies. Clearing the room spawns a reward based on total HP of spawned enemies"},
 		},
 	},
 }
@@ -502,7 +510,7 @@ local TrinketsWiki = {
 	[CustomTrinkets.EMPTY_PAGE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Books now activate another random active item on use. The only exception to this is How to Jump"},
+			{str = "Books now activate another random active item on use"},
 			{str = "Doesn't proc dice (except for D20) and items that hurt or kill you"},
 		},
 	},
@@ -624,7 +632,8 @@ local itemPools = {
 	[CustomCollectibles.BOOK_OF_LEVIATHAN] = {Encyclopedia.ItemPools.POOL_LIBRARY},
 	[CustomCollectibles.FRIENDLY_SACK] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP, Encyclopedia.ItemPools.POOL_BEGGAR},
 	[CustomCollectibles.ULTRA_FLESH_KID] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.MAGIC_MARKER] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_CRANE_GAME}
+	[CustomCollectibles.MAGIC_MARKER] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_CRANE_GAME},
+	[CustomCollectibles.VAULT_OF_HAVOC] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_ULTRA_SECRET, Encyclopedia.ItemPools.POOL_CURSE}
 }
 
 local CardsWiki = {
@@ -657,7 +666,7 @@ local CardsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Lose all your keys (but no more than 33) and spawn a number of pickups proportional to the amount of keys lost"},
-			{str = "Can spawn an item or trinket with a certain chance that grows with the amount of bombs and reaches 100% at 9 or 21 keys, respectively"},
+			{str = "Can spawn an item or trinket with a certain chance that grows with the amount of keys and reaches 100% at 9 or 21 keys, respectively"},
 			{str = "If Isaac has Golden key, it is removed too and significantly increases total value"},
 		},
 	},
@@ -673,7 +682,7 @@ local CardsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Lose all your coins (but no more than 66) and spawn a number of pickups proportional to the amount of coins lost"},
-			{str = "Can spawn an item or trinket with a certain chance that grows with the amount of bombs and reaches 100% at 18 or 42 coins, respectively"},
+			{str = "Can spawn an item or trinket with a certain chance that grows with the amount of coins and reaches 100% at 18 or 42 coins, respectively"},
 		},
 	},
 	[CustomConsumables.BAG_TISSUE] = {

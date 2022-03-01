@@ -15,6 +15,7 @@
 		<Item Name="Rejection" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Friendly Sack" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Ultra Flesh Kid!" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Vault of Havoc" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="shop">
 		<Item Name="Ceiling with the Stars" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -85,6 +86,7 @@
 		<Item Name="Blood Vessel" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="A Scalpel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Red Map" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
+		<Item Name="Vault of Havoc" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 	</Pool>
 	<Pool Name="keyMaster">
 		
@@ -136,6 +138,7 @@
 		<Item Name="Temper Tantrum" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
 		<Item Name="The Cross of Chaos" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
 		<Item Name="Ultra Flesh Kid!" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
+		<Item Name="Vault of Havoc" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	
 	<!-- GREED MODE ITEM POOLS -->
@@ -149,6 +152,7 @@
 		<Item Name="Nerve Pinch" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Sibling Rivalry" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Ultra Flesh Kid!" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Vault of Havoc" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="greedBoss">
 		<Item Name="Ordinary Life" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -167,6 +171,7 @@
 		<Item Name="Ceremonial Blade" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Gusty Blood" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="The Cross of Chaos" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Vault of Havoc" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="greedAngel">
 		<Item Name="Cherubim" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
