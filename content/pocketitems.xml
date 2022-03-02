@@ -33,6 +33,7 @@
 	<card type="special" name="Fiend Fire" hud="Fiend Fire" mimiccharge="2" description="Feel the heat!" pickup="173" />
 	<card type="special" name="Demon Form" hud="Demon Form" mimiccharge="12" description="Your demons grow stronger" pickup="174" />
 	<card type="special" name="Valentine's Card" hud="Valentine's Card" mimiccharge="6" description="<3" pickup="175" />
+	<card type="special" name="Cursed Card" hud="Cursed Card" mimiccharge="6" description="You feel sorrow" pickup="176" />
 	
 	<!-- non-custom backs -->
 	<card type="special" name="Spiritual Reserves" hud="Spiritual Reserves" mimiccharge="12" description="Awaken your spirits" pickup="8" />
