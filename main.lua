@@ -249,7 +249,8 @@ CustomConsumables = {
 	DEMON_FORM = Isaac.GetCardIdByName("Demon Form"),
 	VALENTINES_CARD = Isaac.GetCardIdByName("Valentine's Card"),
 	SPIRITUAL_RESERVES = Isaac.GetCardIdByName("Spiritual Reserves"),
-	MIRRORED_LANDSCAPE = Isaac.GetCardIdByName("Mirrored Landscape")
+	MIRRORED_LANDSCAPE = Isaac.GetCardIdByName("Mirrored Landscape"),
+	CURSED_CARD = Isaac.GetCardIdByName("Cursed Card")
 }
 
 CustomPickups = {
@@ -578,7 +579,8 @@ CustomStatups = {
 		PILL_YUM = 0.05,
 		BONE_MEAL_MUL = 1.1,
 		MOTHERS_LOVE = 0.2,
-		DEMON_FORM = 0.2
+		DEMON_FORM = 0.25,
+		CURSED_CARD = 0.5
 	},
 	Luck = {
 		LOADED_DICE = 10,
@@ -1912,6 +1914,10 @@ function rplus:OnNewRoom()
 			player:AddCacheFlags(CacheFlag.CACHE_FAMILIARS)
 			player:EvaluateItems()
 		end
+		
+		if player:GetData()['usedCursedCard'] then 
+			player:GetData()['usedCursedCard'] = false
+		end
 	end
 	
 	-- returning Ultra Flesh Kid to normal state, just in case
@@ -1940,7 +1946,11 @@ function rplus:OnNewRoom()
 		end
 		
 		-- handle Vault of Havoc rooms
-		if CustomData.Items.VAULT_OF_HAVOC.Data then  
+		if CustomData.Items.VAULT_OF_HAVOC.EnemiesSpawned then 
+			CustomData.Items.VAULT_OF_HAVOC.Data = false 
+			CustomData.Items.VAULT_OF_HAVOC.SumHP = 0
+			CustomData.Items.VAULT_OF_HAVOC.EnemiesSpawned = false 
+		elseif CustomData.Items.VAULT_OF_HAVOC.Data then  
 			-- turning placeholders (black flies) from BR into stored enemies
 			for i, placeholder in pairs(Isaac.FindByType(13, 0, 0, false, false)) do
 				placeholder:Remove()
@@ -1951,13 +1961,8 @@ function rplus:OnNewRoom()
 					CustomData.Items.VAULT_OF_HAVOC.SumHP = CustomData.Items.VAULT_OF_HAVOC.SumHP + enemy.MaxHitPoints
 				end
 			end
-			
 			CustomData.Items.VAULT_OF_HAVOC.EnemiesSpawned = true
 			CustomData.Items.VAULT_OF_HAVOC.EnemyList = {}
-		elseif CustomData.Items.VAULT_OF_HAVOC.EnemiesSpawned then
-			CustomData.Items.VAULT_OF_HAVOC.Data = false 
-			CustomData.Items.VAULT_OF_HAVOC.SumHP = 0
-			CustomData.Items.VAULT_OF_HAVOC.EnemiesSpawned = false 
 		end
 	end
 	
@@ -3198,6 +3203,11 @@ function rplus:OnCardUse(CardUsed, Player, _)
 			Player:SetPocketActiveItem(primaryActive, ActiveSlot.SLOT_POCKET, false)
 		end
 	end
+	
+	if CardUsed == CustomConsumables.CURSED_CARD and CustomData then
+		Player:GetData()['usedCursedCard'] = true
+		sfx:Play(SoundEffect.SOUND_DEATH_CARD, 1, 2, false, 1, 0)
+	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.OnCardUse)
 
@@ -3831,6 +3841,15 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, SourceRef, CooldownFrames)
 					CustomData.TaintedHearts.EMPTY = CustomData.TaintedHearts.EMPTY - 1
 				end
 			end 
+		end
+		
+		if Player:GetData()['usedCursedCard'] == true and Flags & DamageFlag.DAMAGE_FAKE ~= DamageFlag.DAMAGE_FAKE then 
+			Player:AddBrokenHearts(1)
+			Player:TakeDamage(1, DamageFlag.DAMAGE_FAKE, EntityRef(Entity), 24)
+			if Player:GetBrokenHearts() >= 12 then
+				Player:Die()
+			end
+			return false 
 		end
 		
 	-- damage inflicted to enemies
@@ -4764,6 +4783,10 @@ function rplus:OnCacheEvaluate(Player, Flag)
 		
 		if Player:GetData()['NumPickedBenightedHearts'] then
 			Player.Damage = Player.Damage + Player:GetData()['NumPickedBenightedHearts'] * 0.1
+		end
+		
+		if Player:GetData()['usedCursedCard'] then
+			Player.Damage = Player.Damage + Player:GetBrokenHearts() * CustomStatups.Damage.CURSED_CARD
 		end
 	end
 	
