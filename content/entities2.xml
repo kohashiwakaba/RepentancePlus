@@ -118,6 +118,9 @@
 
 <entity anm2path="005.405_valentinescard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Valentine's Card" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="175">
 </entity>
+	
+<entity anm2path="005.406_cursedcard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Cursed Card" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="300" subtype="176">
+</entity>
 
 <!-- FAMILIARS -->
 
