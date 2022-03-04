@@ -282,6 +282,24 @@ if true then
 	EID:assignTransformation("collectible", CustomCollectibles.BOOK_OF_GENESIS, "12")
 	EID:assignTransformation("collectible", CustomCollectibles.CROSS_OF_CHAOS, "9")
 	EID:assignTransformation("collectible", CustomCollectibles.BOOK_OF_LEVIATHAN, "9, 12")
+	
+	EID:addEntity(5, 10, 84, "Broken Heart", "Grants you one full heart container and a broken heart")
+	EID:addEntity(5, 10, 85, "Dauntless Heart", "???")
+	EID:addEntity(5, 10, 86, "Hoarder Heart", "Heals 4 full red hearts")
+	EID:addEntity(5, 10, 87, "Deceiver Heart", "???")
+	EID:addEntity(5, 10, 88, "Soiled Heart", "???")
+	EID:addEntity(5, 10, 89, "Curdled Heart", "Heals you for one full red heart and spawns a Blood Clot on pickup")
+	EID:addEntity(5, 10, 90, "Savage Heart", "Heals you for one full red heart and grants +1.25 damage boost that depletes over the span of 25 seconds")
+	EID:addEntity(5, 10, 91, "Benighted Heart", "Grants a full black heart and a permanent +0.1 DMG Up")
+	EID:addEntity(5, 10, 92, "Enigma Heart", "Grants you one empty heart container")
+	EID:addEntity(5, 10, 93, "Capricious Heart", "Splits into the assortment of 3 random hearts upon pickup")
+	EID:addEntity(5, 10, 94, "Baleful Heart", "???")
+	EID:addEntity(5, 10, 95, "Harlot Heart", "???")
+	EID:addEntity(5, 10, 96, "Miser Heart", "???")
+	EID:addEntity(5, 10, 97, "Empty Heart", "Always occupies your right-most soul/black heart or filled red/bone heart container #Disappears when the heart it's attached to is fully depleted #For every Empty Heart, you get one Abyss {{Collectible706}} locust when entering a new floor")
+	EID:addEntity(5, 10, 98, "Fettered Heart", "Grants 1.5 soul hearts, but requires a key to pick it up")
+	EID:addEntity(5, 10, 99, "Zealot Heart", "Always occupies your right-most soul/black heart or filled red/bone heart container #Disappears when the heart it's attached to is fully depleted #For every Zealot Heart, you get one Lemegeton {{Collectible712}} wisp when entering a new floor")
+	EID:addEntity(5, 10, 100, "Deserter Heart", "Fills up a full Red Heart container, but will act as a Black Heart when no containers are free")
 end
 
 --EID Spanish
@@ -488,6 +506,18 @@ if true then
 	EID:addPill(CustomPills.PHANTOM_PAINS, "Вы получаете фальшивый урон и получаете его снова через 15 и 30 секунд", "Фантомная Боль", "ru")
 	EID:addPill(CustomPills.YUCK, "Создает гнилое сердце #В течение 30 секунд, каждое взятое красное сердце будет создавать синих мух", "Фу!", "ru")
 	EID:addPill(CustomPills.YUM, "Создает красное сердце #В течение 30 секунд, каждое взятое красное сердце даст вам небольшое постоянное увеличение случайной характеристики, похожий на эффект {{Collectible671}} Карамельного Сердца", "Ням!", "ru")
+
+	EID:addEntity(5, 10, 84, "Сломанное Сердце", "Дает полный красный контейнер и сломанное сердце", "ru")
+	EID:addEntity(5, 10, 86, "Сердце Накопителя", "Восстанавливает 4 красных контейнера здоровья", "ru")
+	EID:addEntity(5, 10, 89, "Свернувшееся Сердце", "Восстанавливает один красный контейнер здоровья и призывает блебика", "ru")
+	EID:addEntity(5, 10, 90, "Беспощадное Сердце", "Восстанавливает один красный контейнер и увеличивает урон на +1.25, который истощается в течение 25 секунд", "ru")
+	EID:addEntity(5, 10, 91, "Темное Сердце", "Дает черное сердце и перманентный +0.1 к урону", "ru")
+	EID:addEntity(5, 10, 92, "Загадочное Сердце", "Дает один пустой контейнер здоровья", "ru")
+	EID:addEntity(5, 10, 93, "Капризное Сердце", "Разбивается на 3 случайных сердца при подборе", "ru")
+	EID:addEntity(5, 10, 97, "Пустое Сердце", "Всегда занимает ваш самый правый контейнер с синим/черным сердцем или заполненным красным/костяным сердцем #Исчезает, когда сердце, к которому оно прикреплено, истощается #За каждое пустое сердце, вы получаете одну саранчу Бездны {{Collectible706}} при переходе на новый этаж", "ru")
+	EID:addEntity(5, 10, 98, "Скованное Сердце", "Дает 1.5 сердца души, но требует ключа, чтобы подобрать его", "ru")
+	EID:addEntity(5, 10, 99, "Фанатичное Сердце", "Всегда занимает ваш самый правый контейнер с синим/черным сердцем или заполненным красным/костяным сердцем #Исчезает, когда сердце, к которому оно прикреплено, истощается #За каждое фанатичное сердце, вы получаете один огонек Лемегетона {{Collectible712}} при переходе на новый этаж", "ru")
+	EID:addEntity(5, 10, 100, "Сердце Дезертира", "Восстанавливает один красный контейнер здоровья, но будет действовать как Черное сердце, когда все красные контейнеры здоровья заполнены", "ru")
 end
 
 -- Korean EID
