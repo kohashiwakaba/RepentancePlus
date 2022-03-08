@@ -47,6 +47,7 @@
 		<Item Name="Book of Genesis" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Soul Bond" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Angel's Wings" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Pure Soul" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="secret">
 		<Item Name="Temper Tantrum" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -54,7 +55,7 @@
 		<Item Name="Red Map" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="DNA Redactor" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Bless of the Dead" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Keeper's Penny"Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
+		<Item Name="Keeper's Penny" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Stargazer's Hat" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Bottomless Bag" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
@@ -70,9 +71,7 @@
 	</Pool>
 	<Pool Name="beggar">
 		<Item Name="Bag o Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Mother's Love" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Hand-Me-Downs" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Friendly Sack" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="demonBeggar">
 		<Item Name="Cookie Cutter" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -171,7 +170,6 @@
 		<Item Name="Ceremonial Blade" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Gusty Blood" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="The Cross of Chaos" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Vault of Havoc" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="greedAngel">
 		<Item Name="Cherubim" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
