@@ -1959,8 +1959,8 @@ function rplus:OnNewRoom()
 				[EntityType.ENTITY_PRIDE] = "Pride"
 			}
 			
-			if (room:GetType() == RoomType.ROOM_SUPERSECRET and CustomData.Items.PURE_SOUL.isPortalSuperSecret) 
-			or (room:GetType() == RoomType.ROOM_SECRET and not CustomData.Items.PURE_SOUL.isPortalSuperSecret) then
+			if ((room:GetType() == RoomType.ROOM_SUPERSECRET and CustomData.Items.PURE_SOUL.isPortalSuperSecret) 
+			or (room:GetType() == RoomType.ROOM_SECRET and not CustomData.Items.PURE_SOUL.isPortalSuperSecret)) and game:GetRoom():IsFirstVisit() == true then
 				RNGobj:SetSeed(Random() + 1, 1)
 				local sinType = RNGobj:RandomInt(7) + EntityType.ENTITY_SLOTH
 				local sinVariant = RNGobj:RandomInt(2)
@@ -2491,6 +2491,12 @@ function rplus:OnGameUpdate()
 			for _, ps in pairs(Isaac.FindByType(1000, 777, 0)) do
 				if player.Position:Distance(ps.Position) < 20 then
 					Isaac.Spawn(player:GetData().PureSoulSin[1], player:GetData().PureSoulSin[2], 0, Vector(320, 280), Vector.Zero, nil)
+					for i = 0, 8 do
+						local door = game:GetRoom():GetDoor(i)
+						if door then 
+							door:Bar()
+						end
+					end
 					ps:Remove()
 				end
 			end
@@ -3365,9 +3371,11 @@ function rplus:OnCardUse(CardUsed, Player, _)
 		Player:AddCacheFlags(CacheFlag.CACHE_FIREDELAY)
 		Player:EvaluateItems()
 		local hearts = Player:GetMaxHearts()
-		Player:AddMaxHearts(-hearts)
-		Player:AddBoneHearts(hearts / 2)
-		Player:AddRottenHearts(hearts)
+		if Player:GetPlayerType() ~= PlayerType.PLAYER_KEEPER_B and Player:GetPlayerType() ~= PlayerType.PLAYER_KEEPER then
+			Player:AddMaxHearts(-hearts)
+			Player:AddBoneHearts(hearts / 2)
+			Player:AddRottenHearts(hearts)
+		end
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_CARD, rplus.OnCardUse)
@@ -4008,7 +4016,7 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, SourceRef, CooldownFrames)
 			return false
 		end
 		
-		if Player:GetData()['prideStatBoosts'] then
+		if Player:GetData()['prideStatBoosts'] and isSelfDamage(Flags, '') == false then
 			Player:GetData()['prideStatBoosts'] = false
 			Player:AddCacheFlags(CacheFlag.CACHE_DAMAGE | CacheFlag.CACHE_FIREDELAY | CacheFlag.CACHE_SPEED | CacheFlag.CACHE_LUCK | CacheFlag.CACHE_RANGE)
 			Player:EvaluateItems()
@@ -6448,37 +6456,3 @@ if XalumMods and XalumMods.SodomAndGomorrah then
 		CustomTrinkets.ADAMS_RIB
 	})
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
