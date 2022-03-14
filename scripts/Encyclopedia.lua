@@ -211,14 +211,14 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Makes you shoot tears in the opposite direction "},
-			{str = "From the front, you will frequently shoot bloody tears that deal x0.66 of your damage "},
+			{str = "From the front, you will frequently shoot bloody tears that deal 75% of your damage "},
 			{str = "All other weapon types will still be fired from the front as well"},
 		},
 	},
 	[CustomCollectibles.KEEPERS_PENNY] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Spawns a golden penny upon entering a new floor "},
+			{str = "Spawns a golden penny upon entering a new floor"},
 			{str = "Shops will now sell 1-4 additional items that are drawn from shop, treasure or boss itempools"},
 			{str = "If the shop is a Greed fight, it instead spawns 3-4 items when the miniboss dies"}
 		},
@@ -382,6 +382,33 @@ local ItemsWiki = {
 			{str = "Passively stores killed enemies. Can be used as soon as 12 enemies are stored"},
 			{str = "Upon use, brings you into a special room with 12 most recently killed enemies. Clearing the room spawns a reward based on total HP of spawned enemies"},
 		},
+	},
+	[CustomCollectibles.PURE_SOUL] = {
+        {
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "All sin minibosses have a 100% chance to drop their respective Sin's Jewel"},
+			{str = "A ghost can spawn in either Secret or Super Secret room that will disappear and spawn a random sin miniboss when approached"},
+			{str = "This familiar will also spawn in the doorway leading to a miniboss room, alarming you of what miniboss is inside"},
+			{str = "Sin's Jewels are a special set of consumables that drop when defeating a miniboss, each sin miniboss has a 7.5% default chance to drop its respective Jewel (15% for Super version)"}
+        },
+	},
+	[CustomCollectibles.HANDICAPPED_PLACARD] = {
+        {
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Places a handicapped placard on the ground"},
+			{str = "Every enemy inside the placard's area of effect is weakened (The Strength? card effect) and spawns bone spurs on death"},
+			{str = "The area becomes bigger the more damage you take in a room"},
+			{str = "Works on bosses and minibosses too"}
+        },
+	},
+	[CustomCollectibles.BOOK_OF_JUDGES] = {
+        {
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Passively spawns targets on the floor when entering a new room with monsters"},
+			{str = "Every 3 seconds, beams of light will strike at the targets' positions "},
+			{str = "Beams hurt enemies and inflict burn on them, but they deal full heart of damage to you as well"},
+			{str = "Using the book cancels the summoning of beams for the current room"},
+        },
 	},
 }
 
@@ -633,7 +660,10 @@ local itemPools = {
 	[CustomCollectibles.FRIENDLY_SACK] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP, Encyclopedia.ItemPools.POOL_BEGGAR},
 	[CustomCollectibles.ULTRA_FLESH_KID] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
 	[CustomCollectibles.MAGIC_MARKER] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_CRANE_GAME},
-	[CustomCollectibles.VAULT_OF_HAVOC] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_ULTRA_SECRET, Encyclopedia.ItemPools.POOL_CURSE}
+	[CustomCollectibles.VAULT_OF_HAVOC] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_ULTRA_SECRET, Encyclopedia.ItemPools.POOL_CURSE},
+	[CustomCollectibles.PURE_SOUL] = {Encyclopedia.ItemPools.POOL_ANGEL},
+	[CustomCollectibles.HANDICAPPED_PLACARD] = {Encyclopedia.ItemPools.POOL_SHOP},
+	[CustomCollectibles.BOOK_OF_JUDGES] = {Encyclopedia.ItemPools.POOL_LIBRARY, Encyclopedia.ItemPools.POOL_ANGEL}
 }
 
 local CardsWiki = {
@@ -834,6 +864,66 @@ local CardsWiki = {
 			{str = "Does nothing if you don't have active items"},
 		},
 	},
+	[CustomConsumables.CURSED_CARD] = {
+		{
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "For the current room, every hit you would take is negated "},
+			{str = "Instead, it gives you a broken heart and a permanent tears boost"},
+		},
+	},
+	[CustomConsumables.CROWN_OF_GREED] = {
+        {
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Spawns 1-2 golden pennies and grants -1 luck for each penny spawned"},
+			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
+        },
+	},
+	[CustomConsumables.FLOWER_OF_LUST] = {
+		{
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Allows you to restart the room and grants a better room reward for clearing it"},
+			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
+		},
+	},
+	[CustomConsumables.ACID_OF_SLOTH] = {
+		{
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Slows down all enemies by 50% and makes them leave poisonous creep behind"},
+			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
+		},
+	},
+	[CustomConsumables.VOID_OF_GLUTTONY] = {
+		{
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Consumes all enemies in a room"},
+			{str = "Depending on their total health, either grants you a heart containter or makes you spit them back as a Cyst enemy"},
+			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
+		},
+	},
+	[CustomConsumables.APPLE_OF_PRIDE] = {
+		{
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Grants you a massive boost to all stats until you get hit"},
+			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
+		},
+	},
+	[CustomConsumables.CANINE_OF_WRATH] = {
+		{
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Every enemy in a room explodes, taking 15 damage "},
+			{str = "The explosion can hurt you too "},
+			{str = "Every enemy that dies from the explosion will give you a temporary damage boost"},
+			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
+		},
+	},
+	[CustomConsumables.MASK_OF_ENVY] = {
+		{
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Tears up"},
+			{str = "Turns all your heart containers into bone hearts filled with rotten heart and moves them to after soul hearts"},                
+			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
+		},
+	},
 }
 
 local spriteToCard = {
@@ -865,7 +955,15 @@ local spriteToCard = {
 	[CustomConsumables.DEMON_FORM] = "Demon Form",
 	[CustomConsumables.VALENTINES_CARD] = "Valentine's Card",
 	[CustomConsumables.SPIRITUAL_RESERVES] = "Spectral Reserves",
-	[CustomConsumables.MIRRORED_LANDSCAPE] = "Mirrored Landscape"
+	[CustomConsumables.MIRRORED_LANDSCAPE] = "Mirrored Landscape",
+	[CustomConsumables.CURSED_CARD] = "Cursed Card",
+	[CustomConsumables.CROWN_OF_GREED ] = "Crown of Greed",
+	[CustomConsumables.FLOWER_OF_LUST] = "Flower of Lust",
+	[CustomConsumables.ACID_OF_SLOTH] = "Acid of Sloth",
+	[CustomConsumables.VOID_OF_GLUTTONY] = "Void of Gluttony",
+	[CustomConsumables.APPLE_OF_PRIDE] = "Apple of Pride",
+	[CustomConsumables.CANINE_OF_WRATH] = "Canine of Wrath",
+	[CustomConsumables.MASK_OF_ENVY] = "Mask of Envy"
 }
 
 -- DO NOT touch that! 

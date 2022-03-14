@@ -2,7 +2,7 @@
 
 <!-- EFFECTS -->
 <entity anm2path="gfx/backdrop/blankanim.anm2" id="1000" name="AnimatedItemDummyEntity" variant="3457435" collisionRadius="0" numGridCollisionPoints="0">
-</entity>
+	</entity>
 
 <entity anm2path="1000.666_cripple_hands_helper.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Crippling Hands Helper" numGridCollisionPoints="1" shadowSize="0" stageHP="0" variant="666">
     </entity>
@@ -11,6 +11,9 @@
     </entity>
 	
 <entity anm2path="1000.777_pure_soul.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Pure Soul" numGridCollisionPoints="1" shadowSize="0" stageHP="0" variant="777">
+    </entity>
+	
+<entity anm2path="1000.767_placard_effect_border.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Handicapped Placard Effect Border" numGridCollisionPoints="1" shadowSize="0" stageHP="0" variant="767">
     </entity>
 
 <!-- PICKUPS -->
@@ -207,6 +210,9 @@
 	</entity>
 	
 <entity anm2path="003.221_ultrafleshkid_l3_head.anm2" baseHP="0" boss="0" champion="0" collisionDamage="2.6" collisionInterval="3" collisionMass="3" collisionRadius="15" friction="1" id="3" name="Ultra Flesh Kid lvl 3 (head)" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2119">
+	</entity>
+	
+<entity anm2path="003.222_placard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Handicapped Placard" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="2120" >
 	</entity>
 	
 <!-- TEAR VARIANTS -->

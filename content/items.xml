@@ -44,10 +44,10 @@
 	<familiar id="45" name="Ultra Flesh Kid!" description="We have Super Meat Boy at home" gfx="46_ultrafleshkid.png" quality="3" tags="offensive nokeeper" />
 
 	<!-- T.Samson -->
-	<passive id="19" name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGETOUTOF" gfx="13_tempertantrum.png" quality="3" tags="summonable nolostbr" /> 
+	<passive id="19" name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGET" gfx="13_tempertantrum.png" quality="3" tags="summonable nolostbr" /> 
 	<trinket name="Magic Sword" description=":-)" gfx="t10_magicsword.png" cache="damage" />
 	<passive id="6" name="Gusty Blood" description="Their blood brings haste" gfx="24_gustyblood.png" quality="3" devilprice="2" tags="offensive" />
-	<active id="51" name="Book of Judges" description="..." gfx="52_bookofjudges.png" quality="2" maxcharges="4" tags="" />
+	<active id="51" name="Book of Judges" description="Divine judgement" gfx="52_bookofjudges.png" quality="2" maxcharges="4" tags="offensive book" />
 	
 	<!-- T. Lazarus -->
 	<passive id="20" name="DNA Redactor" description="It runs in your genes" gfx="20_dnaredactor.png" quality="3" tags="offensive summonable" /> 
@@ -95,7 +95,7 @@
 	<passive id="30" name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="1" tags="offensive" />
 	<trinket name="Bone Meal" description="Your bones grow stronger" gfx="t16_bonemeal.png" />
 	<passive id="50" name="Pure Soul" description="Confess thy sins" gfx="28_puresouls.png" quality="3" tags="offensive" />
-	<active id="52" name="Handicapped Placard" description="My blue badge" gfx="51_handicappedplacard.png" maxcharges="3" quality="2" tags="offensive" />
+	<active id="52" name="Handicapped Placard" description="My blue badge" gfx="51_handicappedplacard.png" maxcharges="4" quality="2" tags="nolostbr" />
 
 	<!-- T. Bethany -->
 	<passive id="4" name="Ceiling with the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="2" tags="offensive" />
@@ -115,7 +115,7 @@
 	<active quality="3" gfx="47_3_bloodvessel.png" description="Delay the inevitable" name="Half Empty Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
 	<active quality="3" gfx="47_4_bloodvessel.png" description="Delay the inevitable" name="Brimming Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
 	<active quality="3" gfx="47_5_bloodvessel.png" description="Delay the inevitable" name="Full Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
-	<active quality="3" gfx="47_6_bloodvessel.png" description="Delay the inevitable" name="Overflowing Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
+	<active id="53" quality="3" gfx="47_6_bloodvessel.png" description="Delay the inevitable" name="Overflowing Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
 	<familiar name="Rejection (passive)" description="" gfx="29_rejection.png" quality="3" hidden="true" />
 	<trinket name="Wait, No!" description=":-(" gfx="t11_waitno.png" />
 </items>
