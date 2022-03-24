@@ -348,10 +348,10 @@ if true then
 	EID:addPill(CustomPills.YUM, "Spawns 2-5 half red hearts #For 30 seconds, every red heart will grant you small permanent stat upgrades when picked up")
 
 	EID:addEntity(5, 10, 84, "Broken Heart", "Grants you one full heart container and a broken heart")
-	EID:addEntity(5, 10, 85, "Dauntless Heart", "???")
+	EID:addEntity(5, 10, 85, "Dauntless Heart", "If your rightmost heart has only one half, killing enemies has a chance to spawn half of that heart")
 	EID:addEntity(5, 10, 86, "Hoarder Heart", "Heals 4 full red hearts")
 	EID:addEntity(5, 10, 87, "Deceiver Heart", "???")
-	EID:addEntity(5, 10, 88, "Soiled Heart", "???")
+	EID:addEntity(5, 10, 88, "Soiled Heart", "Has a chance to spawn 1-2 friendly dips upon clearing a room")
 	EID:addEntity(5, 10, 89, "Curdled Heart", "Heals you for one full red heart and spawns a Blood Clot on pickup")
 	EID:addEntity(5, 10, 90, "Savage Heart", "Heals you for one full red heart and grants +1.25 damage boost that depletes over the span of 25 seconds")
 	EID:addEntity(5, 10, 91, "Benighted Heart", "Grants a full black heart and a permanent +0.1 DMG Up")
