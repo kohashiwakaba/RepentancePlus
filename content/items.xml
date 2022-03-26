@@ -8,14 +8,14 @@
 	
 	<!-- T.Isaac -->
 	<passive id="8" name="Ordinary Life" description="Tears up + you feel nostalgic" gfx="01_ordinarylife.png" quality="3" cache="firedelay" tags="offensive summonable" />
-	<trinket name="Basement Key" description="Open your memories" gfx="t01_basementkey.png" />
+	<trinket name="Basement Key" description="Open your memories" gfx="t01_basementkey.png" tags="nogreed" />
 	<active id="12" name="Magic Cube" description="Did you set the world record?" gfx="04_magiccube.png" quality="4" maxcharges="4" />  
 	<active id="11" name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="03_rubikscube.png" quality="1" maxcharges="2" tags="offensive" />
 	<passive id="7" bombs="5" name="Red Bomber" description="Can't hold 'em! +5 bombs" gfx="23_redbomber.png" quality="3" tags="offensive summonable" />
 	
 	<!-- T.Maggy -->
 	<active id="13" name="Cookie Cutter" description="Cut your hearts!" gfx="05_cookiecutter.png" quality="1" maxcharges="0" tags="nokeeper nolostbr"/>
-	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="t02_keytotheheart.png" />
+	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="t02_keytotheheart.png" tags="nogreed" />
 	<passive id="1" name="Cherry Friends" description=":3" gfx="06_cherryfriends.png" quality="2" tags="nolostbr summonable" />
 	<active id="32" quality="3" gfx="47_0_bloodvessel.png" description="Delay the inevitable" name="Blood Vessel" maxcharges="0" chargetype="special" tags="nolostbr nokeeper" />
 	
@@ -59,7 +59,7 @@
 	<trinket name="Angel's Crown" description="Patience is a virtue" gfx="t07_angelscrown.png" />
 	<passive id="9" name="A Scalpel" description="Faceless" gfx="26_ascalpel.png" quality="1" tags="offensive" />
 	<passive id="39" name="The Cross of Chaos" description="Crippling fear" gfx="35_thecrossofchaos.png" devilprice="1" quality="3" tags="devil offensive" cache="tearcolor" />
-	<active id="47" name="Book of Leviathan" description="Grow from the depths" gfx="48_bookofleviathan.png" quality="1" maxcharges="6" tags="book devil offensive" />
+	<active id="47" name="Book of Leviathan" description="Grow from the depths" gfx="48_bookofleviathan.png" quality="2" maxcharges="4" tags="book devil offensive" />
 	
 	<!-- T.Eden -->
 	<passive id="23" name="Magic Pen" description="I want to be an artist" gfx="14_magicpen.png" quality="1" tags="offensive" /> 
@@ -69,7 +69,7 @@
 	
 	<!-- T. Lost -->
 	<familiar id="25" name="Cherubim" description="He sees all" gfx="15_zenbaby.png" quality="3" tags="baby angel monstermanual offensive summonable" />
-	<trinket name="A Piece of Chalk" description="Stay out, unholy!" gfx="t09_pieceofchalk.png" />
+	<trinket name="A Piece of Chalk" description="Stay out, unholy!" gfx="t09_pieceofchalk.png" tags="nogreed" />
 	<active id="42" name="Soul Bond" description="Astral chains" gfx="40_soulbond.png" quality="3" maxcharges="3" tags="offensive" />
 	<passive id="43" name="Angel's Wings" description="But if we are living in the light..." gfx="41_angelswings.png" quality="4" cache="tearflag shotspeed" tags="offensive" /> 
 	
@@ -87,7 +87,7 @@
 	
 	<!-- T. Apollyon -->
 	<passive id="5" blackhearts="4" name="Sinner's Heart" description="Piercing tears + DMG up" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range" devilprice="2" tags="offensive" />
-	<active id="38" name="Bottomless Bag" description="Portable vacuum" gfx="31_bottomlessbag.png" quality="1" chargetype="timed" maxcharges="270" tags="offensive" />
+	<active id="38" name="Bottomless Bag" description="Portable vacuum" gfx="31_bottomlessbag.png" quality="2" chargetype="timed" maxcharges="270" tags="offensive" />
 	<active id="48" name="Vault of Havoc" description="Portable massacre" gfx="42_vaultofhavoc.png" quality="3" maxcharges="6" initcharge="0" tags="offensive" />
 	<trinket name="Shattered Stone" description="Shard of calamity" gfx="t20_shatteredstone.png" />
 	

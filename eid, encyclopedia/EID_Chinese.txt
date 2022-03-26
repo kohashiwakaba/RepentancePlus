@@ -1,4 +1,35 @@
-	
+	TornPageDesc["zh_cn"] = {
+		[-1] = "<其他Mod的书，无效果>", --Modded books
+		[CustomCollectibles.BOOK_OF_GENESIS] = "使用时获得4个选择而不是3个",
+		[CustomCollectibles.BOOK_OF_LEVIATHAN] = "不需要钥匙也可以使用",
+		[CollectibleType.COLLECTIBLE_NECRONOMICON] = "使用时产生三只死亡蝗虫",
+		[CollectibleType.COLLECTIBLE_BIBLE] = "移除一颗碎心",
+		[CollectibleType.COLLECTIBLE_BOOK_OF_REVELATIONS] = "天启四骑士不会在boss房生成",
+		[CollectibleType.COLLECTIBLE_BOOK_OF_BELIAL] = "同时获得彼列之眼的效果",
+		[CollectibleType.COLLECTIBLE_BOOK_OF_SIN] = "有3%的几率生成一个底座道具、普通箱子或者金箱子",
+		[CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS] = "护盾持续时间更久",
+		[CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD] = "使用时获得一个骨心",
+		[CollectibleType.COLLECTIBLE_HOW_TO_JUMP] = "落地时，以X或者+的形式发射眼泪",
+		[CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES] = "被动道具火的生命值提高1.5倍",
+		[CollectibleType.COLLECTIBLE_SATANIC_BIBLE] = "本层使用并击败boss后，有两个恶魔房道具可以选择",
+		[CollectibleType.COLLECTIBLE_TELEPATHY_BOOK] = "使用时获得滑稽帽(你是巫师吗)效果",
+		[CollectibleType.COLLECTIBLE_ANARCHIST_COOKBOOK] = "改为生成金色即爆炸弹",
+		[CollectibleType.COLLECTIBLE_LEMEGETON] = "可以在拥有部分充能的情况下以红心为代价进行充能并使用",
+		[CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS] = "使用后立即获得2充能",
+		[CollectibleType.COLLECTIBLE_MONSTER_MANUAL] = "使用后立即获得2充能",
+	}
+	KeyTrinketsDesc["zh_cn"] = {
+		[CustomTrinkets.BASEMENT_KEY] = "瘫痪的敌人死后生成骨刺",
+		[CustomTrinkets.KEY_TO_THE_HEART] = "瘫痪的敌人死后掉落半颗红心",
+		[CustomTrinkets.KEY_KNIFE] = "对瘫痪的敌人施加流血效果",
+		[TrinketType.TRINKET_STORE_KEY] = "瘫痪的敌人死后掉落随机掉落物",
+		[TrinketType.TRINKET_RUSTED_KEY] = "对瘫痪的敌人施加混乱效果",
+		[TrinketType.TRINKET_CRYSTAL_KEY] = "瘫痪的敌人死亡时概率被冰冻",
+		[TrinketType.TRINKET_BLUE_KEY] = "瘫痪的敌人死后掉落半颗魂心",
+		[TrinketType.TRINKET_STRANGE_KEY] = "对敌人施加随机状态效果",
+		[TrinketType.TRINKET_GILDED_KEY] = "使用时随机石化敌人",
+	}
+
 	-- Chinese EID
 	EID:addCollectible(CustomCollectibles.ORDINARY_LIFE,"{{ArrowUp}} 射速上升 #在宝箱房额外生成一个与妈妈/爸爸相关的道具,只能拿走其中一个","平凡生活","zh_cn")
 	EID:addCollectible(CustomCollectibles.COOKIE_CUTTER,"使用后，获得一个 {{Heart}} 心之容器和一个碎心 #{{Warning}} 碎心达到12个时角色死亡","曲奇刀","zh_cn")
@@ -107,7 +138,7 @@
 	EID:addCard(CustomConsumables.FLOWER_OF_LUST, "使用后可以重新清理房间获得更好的奖励", "欲望之花", "zh_cn")
 	EID:addCard(CustomConsumables.ACID_OF_SLOTH, "使用后，当前房间所有敌人减速50%，同时敌人身后会留下有毒痕迹", "懒惰之酸", "zh_cn")
 	EID:addCard(CustomConsumables.VOID_OF_GLUTTONY, "摧毁房间所有敌人 #取决于所有敌人的总生命值，给予你一个心之容器或者你将敌人吐回去", "暴食之虚", "zh_cn")
-	EID:addCard(CustomConsumables.APPLE_OF_PRIDE, "在你受到伤害后获得大量属性提升", "傲慢之果", "zh_cn")
+	EID:addCard(CustomConsumables.APPLE_OF_PRIDE, "获得大量属性提升 #受到伤害后效果消失", "傲慢之果", "zh_cn")
 	EID:addCard(CustomConsumables.CANINE_OF_WRATH, "房间里每个敌人都会爆炸，造成15点伤害 #{{Warning}}你会受到敌人爆炸伤害 #每个死于爆炸的敌人都会给予你短暂的伤害提升", "愤怒之犬", "zh_cn")
 	EID:addCard(CustomConsumables.MASK_OF_ENVY, "{{ArrowUp}}射速上升 #将所有心之容器转化为充满腐心的骨心，并移动到魂心之后", "嫉妒面具", "zh_cn")
 
@@ -116,4 +147,21 @@
 	EID:addPill(CustomPills.PHANTOM_PAINS,"使用后造成一次假受伤 #每过15-30秒就会再受到一次假伤害", "幻痛", "zh_cn")
 	EID:addPill(CustomPills.YUCK,"生成一个红心 #30秒内每捡起一颗红心都会给予永久属性上升", "呸", "zh_cn")
 	EID:addPill(CustomPills.YUM,"生成一个腐心 #30秒内每捡起一颗红心都会产生蓝苍蝇", "好吃", "zh_cn")
-	
+
+	EID:addEntity(5, 10, 84, "神伤者的心", "给予你一个心之容器和一个碎心", "zh_cn")
+	EID:addEntity(5, 10, 85, "无畏者之心", "???", "zh_cn")
+	EID:addEntity(5, 10, 86, "囤积者之心", "恢复4颗红心", "zh_cn")
+	EID:addEntity(5, 10, 87, "背叛者之心", "???", "zh_cn")
+	EID:addEntity(5, 10, 88, "污秽者之心", "???", "zh_cn")
+	EID:addEntity(5, 10, 89, "血凝者之心", "恢复一颗红心并在拾取后生成一个血凝块", "zh_cn")
+	EID:addEntity(5, 10, 90, "残暴者之心", "恢复一颗红心并增加1.25伤害，持续25秒", "zh_cn")
+	EID:addEntity(5, 10, 91, "堕落者之心", "获得一颗黑心并永久提升0.1伤害", "zh_cn")
+	EID:addEntity(5, 10, 92, "迷离者之心", "给予你一个空的心之容器", "zh_cn")
+	EID:addEntity(5, 10, 93, "无常者之心", "拾取时随机分成三颗心", "zh_cn")
+	EID:addEntity(5, 10, 94, "受难者之心", "???", "zh_cn")
+	EID:addEntity(5, 10, 95, "浪荡者之心", "???", "zh_cn")
+	EID:addEntity(5, 10, 96, "吝财者之心", "???", "zh_cn")
+	EID:addEntity(5, 10, 97, "空虚者之心", "进入新楼层时获得一只深渊{{Collectibles 706}}产生的蝗虫", "zh_cn")
+	EID:addEntity(5, 10, 98, "受缚者之心", "给予你1.5颗魂心，但是需要一把钥匙才能拾取它", "zh_cn")
+	EID:addEntity(5, 10, 99, "狂信者之心", "进入新楼层时获得一个{{Collectible712}}被动道具火焰跟班", "zh_cn")
+	EID:addEntity(5, 10, 100, "流亡者之心", "作为混合心的黑心版本", "zh_cn")

@@ -22,8 +22,8 @@
 
 	
 	<!-- Locusts -->
-	<locust id="1" color="red" tearFlags="13" procChance="0.3" damageMultiplier="0.5" count="2" /> <!--Cherry Friends-->
-	<locust id="2" speed="0.5" color="tan" damageMultiplier="2" gfx="minisaac.png" backGfx="glow.png" backColor="red" /> <!--The Mark of Cain-->
+	<locust id="1" color="red" tearFlags2="13" procChance="0.3" damageMultiplier="0.5" count="2" /> <!--Cherry Friends-->
+	<locust id="2" speed="0.5" damageMultiplier="2" gfx="null.png" backGfx="minisaac.png" backColor="tan" /> <!--The Mark of Cain-->
 	<locust id="3" speed="1.5" color="black" damageMultiplier="0.6" count="2" /> <!--Black Doll-->
 	<locust id="4" speed="1" color="yellow" tearFlags="2" damageMultiplier="0.5" count="3" backGfx="glow.png" backColor="purple" /> <!--Ceiling with the Stars-->
 	<locust id="5" speed="0.6" color="pink" damageMultiplier="2.3" gfx="heart.png" backGfx="flame.png" backColor="pink" /> <!--Sinner's Heart-->
@@ -31,38 +31,47 @@
 	<locust id="7" speed="1.3" tearFlags="12" gfx="bomb.png" backGfx="glow.png" backColor="red" /> <!--Red Bomber-->
 	<locust id="8" speed="1" collisionInterval="6" color="tan" /> <!--Ordinary Life-->
 	<locust id="9" speed="1.2" color="gray" backGfx="dripping.png" backColor="red" /> <!--A Scalpel-->
-	<locust id="11" gfx="rainbow.png" /> <!--Rubik's Cube-->
+	<locust id="11" color="green" backGfx="rainbowglow.png" /> <!--Rubik's Cube-->
 	<locust id="12" speed="0.3" collisionInterval="4" tearFlags="2 3 4 5 12 13 14 20 22 34 39 43 55 65 66 67" color="darkpurple" backGfx="rainbowglow.png" /> <!--Magic Cube-->
-	<locust id="13" gfx="heart.png" backGfx="dripping.png" backColor="red" count="2" /> <!--Cookie Cutter-->
+	<locust id="13" gfx="heart.png" color="gray" backGfx="dripping.png" backColor="red" count="2" /> <!--Cookie Cutter-->
 	<locust id="14" damageMultiplier="1.5" scale="0.25" gfx="damocles.png" backGfx="dripping.png" backColor="red" /> <!--Ceremonial Blade-->
 	<locust id="15" damageMultiplier="0.4" color="blue" count="6" /> <!--Bag o Trash-->
 	<locust id="16" speed="0.3" tearFlags="34" color="brown" backGfx="glow.png" backColor="black" /> <!--Bless of the Dead-->
 	<locust id="17" speed="1.5" tearFlags="2" color="cyan" gfx="angelic.png" backGfx="glow.png" /> <!--A Bird of Hope-->
 	<locust id="18" damageMultiplier="1.5" tearFlags="14" gfx="rainbow.png" /> <!--Tower of Babel-->
-	<locust id="19" tearflags="56" procChange="0.1" color="maroon" backGfx="dripping.png" backColor="red" /> <!--Temper Tantrum-->
+	<locust id="19" tearFlags2="56" procChange="0.1" color="maroon" backGfx="dripping.png" backColor="red" /> <!--Temper Tantrum-->
 	<locust id="20" damageMultiplier="1.25" color="maroon" gfx="pill.png" /> <!--DNA Redactor-->
 	<locust id="21" speed="0.5" damageMultiplier="2" collisionInterval="4" color="brown" /> <!--Cat in a Box-->
-	<locust id="22" tearflags="55" procChange="0.5" color="lightblue" backGfx="spark.png" backColor="pink" /> <!--Nerve Pinch-->
-	<locust id="23" tearflags="3 4 5 13 14 20 22" procChange="0.5" gfx="rainbow.png" backGfx="dripping.png" backColor="blue" /> <!--Magic Pen-->
-	<locust id="24" damageMultiplier="2" tearflags="2" color="brown" backGfx="glow.png" backColor="yellow" /> <!--Book of Genesis-->
-	<locust id="25" tearflags="2" color="white" gfx="minisaac.png" backGfx="glow.png" backColor="yellow" /> <!--Cherubim-->
-	<locust id="26" scale="1.5" speed="0.75" damageMultiplier="2.5" tearflags="13" procChange="0.3" gfx="heart.png" /> <!--Mother's Love-->
+	<locust id="22" tearFlags2="55" procChange="0.5" color="lightblue" backGfx="spark.png" backColor="pink" /> <!--Nerve Pinch-->
+	<locust id="23" tearFlags2="3 4 5 13 14 20 22 66 67" procChange="0.5" gfx="null.png" overlayGfx="rainbow.png" backGfx="dripping.png" backColor="blue" /> <!--Magic Pen-->
+	<locust id="24" damageMultiplier="2" tearFlags="2" color="brown" backGfx="glow.png" backColor="yellow" /> <!--Book of Genesis-->
+	<locust id="25" tearFlags="2" gfx="null.png" overlayGfx="minisaac.png" overlayColor="white" backGfx="glow.png" backColor="yellow" /> <!--Cherubim-->
+	<locust id="26" scale="1.5" speed="0.75" damageMultiplier="2.5" tearFlags2="13" procChange="0.3" gfx="heart.png" /> <!--Mother's Love-->
 	<locust id="27" damageMultiplier="0.33" color="brown" backGfx="dripping.png" backColor="red" gfx="card.png" count="3" /> <!--2+1-->
-	<locust id="28" tearflags="40" gfx="coin.png" /> <!--Keeper's Penny-->
+	<locust id="28" tearFlags="40" gfx="coin.png" /> <!--Keeper's Penny-->
 	<locust id="29" damageMultiplier="2" color="red" gfx="qmark.png" /> <!--Red Map-->
-	<locust id="30" speed="1.5" collisionInterval="7" color="black" gfx="minisaac.png" /> <!--Enraged Soul-->
-	<locust id="31" damageMultiplier="2" color="maroon" gfx="void.png" /> <!--Quasar-->
+	<locust id="30" speed="1.5" collisionInterval="7" gfx="null.png" backGfx="minisaac.png" backColor="black" /> <!--Enraged Soul-->
+	<locust id="31" tearFlags="2" damageMultiplier="2" gfx="null.png" overlayGfx="void.png" overlayColor="maroon" /> <!--Quasar-->
 	<locust id="32" speed="0.5" damageMultiplier="3" color="gray" gfx="big.png" backGfx="dripping.png" backColor="red" /> <!--Blood Vessel-->
-	<locust id="33" gfx="minisaac.png" count="4" /> <!--Cheese Grater-->
-	<locust id="34" damageMultiplier="0.75" tearflags="12" color="green" count="2" /> <!--Tank Boys-->
+	<locust id="33" gfx="null.png" overlayGfx="minisaac.png" overlayColor="tan" count="4" /> <!--Cheese Grater-->
+	<locust id="34" damageMultiplier="0.75" tearFlags="12" color="green" count="2" /> <!--Tank Boys-->
 	<locust id="35" damageMultiplier="4" color="red" gfx="big.png" backGfx="dripping.png" backColor="red" /> <!--Red King-->
-	<locust id="36" gfx="minisaac.png" backGfx="dripping.png" backColor="red" count="2" /> <!--Sibling Rivalry-->
-	<locust id="37" speed="0.5" damageMultiplier="2" tearflags="2" color="purple" backGfx="glow.png" backColor="yellow" /> <!--Stargazer's Hat-->
-	<locust id="38" speed="0.3" damageMultiplier="2" tearflags="34" color="darkpurple" gfx="big.png" /> <!--Bottomless Bag-->
-	<locust id="39" tearflags="3" color="black" backGfx="glow.png" backColor="red" /> <!--Cross of Chaos-->
-	<locust id="40" damageMultiplier="1.75" tearflags="44" color="brown" /> <!--Auction Gavel-->
-	<locust id="41" speed="0.5" damageMultiplier="2" scale="1.5" tearflags="4" procChange="0.5" color="tan" gfx="minisaac.png" backGfx="dripping.png" backColor="red" /> <!--Rejection-->
-	<locust id="42" tearflags="5 65" color="lightblue" gfx="minisaac.png" backGfx="glow.png" backColor="white" /> <!--Soul Bond-->
-	<locust id="43" damageMultiplier="2.5" tearflags="2" gfx="static.png" count="2" /> <!--Angel's Wings-->
+	<locust id="36" gfx="null.png" overlayGfx="minisaac.png" overlayColor="tan" backGfx="dripping.png" backColor="red" count="2" /> <!--Sibling Rivalry-->
+	<locust id="37" tearFlags="2" speed="0.5" damageMultiplier="2" color="purple" backGfx="glow.png" backColor="yellow" /> <!--Stargazer's Hat-->
+	<locust id="38" tearFlags="34" speed="0.3" damageMultiplier="2" color="darkpurple" gfx="big.png" /> <!--Bottomless Bag-->
+	<locust id="39" tearFlags="3" color="black" backGfx="glow.png" backColor="red" /> <!--Cross of Chaos-->
+	<locust id="40" damageMultiplier="1.75" tearFlags="44" color="brown" /> <!--Auction Gavel-->
+	<locust id="41" tearFlags2="4" procChange="0.5" speed="0.5" damageMultiplier="2" scale="1.5" gfx="null.png" overlayGfx="minisaac.png" overlayColor="tan" backGfx="dripping.png" backColor="red" /> <!--Rejection-->
+	<locust id="42" tearFlags="2 5 65" gfx="null.png" overlayGfx="minisaac.png" overlayColor="lightblue" backGfx="glow.png" backColor="white" /> <!--Soul Bond-->
+	<locust id="43" damageMultiplier="2.5" tearFlags="2" gfx="null.png" overlayGfx="static.png" count="2" /> <!--Angel's Wings-->
+	<locust id="44" speed="1.2" damageMultimplier="0.8" color="tan" /> <!--Hand-me-Downs-->
+	<locust id="45" speed="1.2" damageMultimplier="1.2" gfx="minisaac.png" color="red" backGfx="dripping.png" backColor="red" /> <!--Ultra Flesh Kid!-->
+	<locust id="46" damageMultimplier="1.4" count="3" gfx="spider.png" color="tan" /> <!--Friendly Sack-->
+	<locust id="47" speed="1.2" damageMultimplier="1.5" gfx="key.png" color="black" backGfx="glow.png" backColor="red" /> <!--Book of Leviathan-->
+	<locust id="48" damageMultimplier="1.8" gfx="null.png" overlayGfx="void.png" overlayColor="red" backGfx="dripping.png" backColor="red" /> <!--Vault of Havoc-->
+	<locust id="49" tearFlags="2" gfx="card.png" color="black" /> <!--Magic Marker-->
+	<locust id="50" damageMultiplier="1.5" tearFlags="2" gfx="null.png" overlayGfx="minisaac.png" overlayColor="lightblue" backGfx="glow.png" backColor="white" /> <!--Pure Soul-->
+	<locust id="51" damageMultiplier="1.2" tearFlags="39" color="lightgreen" /> <!--Book of Judges-->
+	<locust id="52" tearFlags="3" color="blue" count="2" /> <!--Handicapped Placard-->
 </locusts>
 	

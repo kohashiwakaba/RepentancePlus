@@ -18,6 +18,9 @@ MinimapAPI:AddPickup("fleshchest", "fleshchest", 5, 513, -1, MinimapAPI.PickupNo
 MinimapAPI:AddIcon("blackchest", Icons, "blackchest", 0)
 MinimapAPI:AddPickup("blackchest", "blackchest", 5, 514, -1, MinimapAPI.PickupNotCollected, "chests", 7450)
 
+MinimapAPI:AddIcon("coffin", Icons, "coffin", 0)
+MinimapAPI:AddPickup("coffin", "coffin", 5, 515, -1, MinimapAPI.PickupNotCollected, "chests", 7650)
+
 -- tainted hearts
 MinimapAPI:AddIcon("brokenheart", Icons, "brokenheart", 0)
 MinimapAPI:AddPickup("brokenheart", "brokenheart", 5, 10, 84, MinimapAPI.PickupNotCollected, "hearts", 10750)
@@ -30,6 +33,12 @@ MinimapAPI:AddPickup("hoardedheart", "hoardedheart", 5, 10, 86, MinimapAPI.Picku
 
 MinimapAPI:AddIcon("soiledheart", Icons, "soiledheart", 0)
 MinimapAPI:AddPickup("soiledheart", "soiledheart", 5, 10, 88, MinimapAPI.PickupNotCollected, "hearts", 10350)
+
+MinimapAPI:AddIcon("curdledheart", Icons, "curdledheart", 0)
+MinimapAPI:AddPickup("curdledheart", "curdledheart", 5, 10, 89, MinimapAPI.PickupNotCollected, "hearts", 10450)
+
+MinimapAPI:AddIcon("savageheart", Icons, "savageheart", 0)
+MinimapAPI:AddPickup("savageheart", "savageheart", 5, 10, 90, MinimapAPI.PickupNotCollected, "hearts", 10450)
 
 MinimapAPI:AddIcon("benightedheart", Icons, "benightedheart", 0)
 MinimapAPI:AddPickup("benightedheart", "benightedheart", 5, 10, 91, MinimapAPI.PickupNotCollected, "hearts", 10650)

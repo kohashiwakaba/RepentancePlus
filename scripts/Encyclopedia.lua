@@ -140,7 +140,7 @@ local ItemsWiki = {
 	[CustomCollectibles.CHEESE_GRATER] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Removes one red heart container and gives you  +".. tostring(CustomStatups.Damage.CHEESE_GRATER) .. " Damage up and 3 Minisaacs"},
+			{str = "Removes one red heart container and gives you  x" .. tostring(CustomStatups.Damage.CHEESE_GRATER_MUL) .. " damage increase and 3 Minisaacs"},
 		},
 	},
 	[CustomCollectibles.DNA_REDACTOR] = {
@@ -160,7 +160,7 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Prevents curses from appearing for the rest of the run "},
-			{str = "Preventing a curse grants you  +".. tostring(CustomStatups.Damage.BLESS_OF_THE_DEAD) .. " Damage up"},
+			{str = "Preventing a curse grants you  x" .. tostring(CustomStatups.Damage.BLESS_OF_THE_DEAD_MUL) .. " damage increase"},
 		},
 	},
 	[CustomCollectibles.TANK_BOYS] = {
@@ -493,8 +493,8 @@ local TrinketsWiki = {
 	[CustomTrinkets.ADAMS_RIB] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Revives you as Eve when you die"},
-			{str = "The Eve character receives 3 soul hearts and a Whore of Babylon item"}
+			{str = "22% chance to revive you as Eve when you die"},
+			{str = "The Eve character retains all standard stats, health, and passive items"}
 		},
 	},
 	[CustomTrinkets.NIGHT_SOIL] = {
@@ -888,15 +888,16 @@ local CardsWiki = {
 	[CustomConsumables.ACID_OF_SLOTH] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Slows down all enemies by 50% and makes them leave poisonous creep behind"},
+			{str = "Slows down all enemies by 50% and makes them leave poisonous gas clouds behind"},
 			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
 		},
 	},
 	[CustomConsumables.VOID_OF_GLUTTONY] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Consumes all enemies in a room"},
-			{str = "Depending on their total health, either grants you a heart containter or makes you spit them back as a Cyst enemy"},
+			{str = "For 7 seconds, if you lack red health, you will regenerate it at the rate of 1 half a red heart per second, while also gaining -0.01 speed"},
+			{str = "The duration of this effect is extended by 2 seconds each time you kill an enemy. There is no limit to how many times it can be extended"},
+			{str = "Your speed stat goes back to normal after the effect ends"},
 			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
 		},
 	},
@@ -919,8 +920,7 @@ local CardsWiki = {
 	[CustomConsumables.MASK_OF_ENVY] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Tears up"},
-			{str = "Turns all your heart containers into bone hearts filled with rotten heart and moves them to after soul hearts"},                
+			{str = "Turns all your heart containers into bone hearts filled with rotten hearts"},                
 			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
 		},
 	},

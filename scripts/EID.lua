@@ -5,6 +5,7 @@ TornPageDesc["en_us"] = {
 	[-1] = "<Modded book, no effect>", --Modded books
 	[CustomCollectibles.BOOK_OF_GENESIS] = "Gives you 4 options to choose from instead of 3",
 	[CustomCollectibles.BOOK_OF_LEVIATHAN] = "Doesn't require keys to be used",
+	[CustomCollectibles.BOOK_OF_JUDGES] = "Doubles burning damage and duration",
 	[CollectibleType.COLLECTIBLE_NECRONOMICON] = "Spawns 3 locusts of death on use",
 	[CollectibleType.COLLECTIBLE_BIBLE] = "Removes a broken heart",
 	[CollectibleType.COLLECTIBLE_BOOK_OF_REVELATIONS] = "Prevents Harbingers from spawning in boss rooms",
@@ -25,6 +26,7 @@ TornPageDesc["ko_kr"] = {
 	[-1] = "<추가 효과 없음>", --Modded books
 	[CustomCollectibles.BOOK_OF_GENESIS] = "3개가 아닌 4개의 선택지가 주어집니다.",
 	[CustomCollectibles.BOOK_OF_LEVIATHAN] = "열쇠 없이 사용할 수 있습니다.",
+	[CustomCollectibles.BOOK_OF_JUDGES] = "화염 피해 및 지속 시간 2배.",
 	[CollectibleType.COLLECTIBLE_NECRONOMICON] = "죽음의 메뚜기 파리 3마리를 소환합니다.",
 	[CollectibleType.COLLECTIBLE_BIBLE] = "소지 불가능 하트 하나를 제거합니다.",
 	[CollectibleType.COLLECTIBLE_BOOK_OF_REVELATIONS] = "보스가 4기사로 교체되지 않습니다.",
@@ -40,6 +42,27 @@ TornPageDesc["ko_kr"] = {
 	[CollectibleType.COLLECTIBLE_LEMEGETON] = "{{Collectible205}}충전량이 부족한 경우 빨간하트를 소모하여 재충전할 수 있습니다.",
 	[CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS] = "사용시 2칸의 충전량을 보존합니다.",
 	[CollectibleType.COLLECTIBLE_MONSTER_MANUAL] = "사용시 2칸의 충전량을 보존합니다.",
+}
+TornPageDesc["zh_cn"] = {
+	[-1] = "<其他Mod的书，无效果>", --Modded books
+	[CustomCollectibles.BOOK_OF_GENESIS] = "使用时获得4个选择而不是3个",
+	[CustomCollectibles.BOOK_OF_LEVIATHAN] = "不需要钥匙也可以使用",
+	[CustomCollectibles.BOOK_OF_JUDGES] = "双倍燃烧伤害和持续时间",
+	[CollectibleType.COLLECTIBLE_NECRONOMICON] = "使用时产生三只死亡蝗虫",
+	[CollectibleType.COLLECTIBLE_BIBLE] = "移除一颗碎心",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_REVELATIONS] = "天启四骑士不会在boss房生成",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_BELIAL] = "同时获得彼列之眼的效果",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_SIN] = "有3%的几率生成一个底座道具、普通箱子或者金箱子",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS] = "护盾持续时间更久",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD] = "使用时获得一个骨心",
+	[CollectibleType.COLLECTIBLE_HOW_TO_JUMP] = "落地时，以X或者+的形式发射眼泪",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES] = "被动道具火的生命值提高1.5倍",
+	[CollectibleType.COLLECTIBLE_SATANIC_BIBLE] = "本层使用并击败boss后，有两个恶魔房道具可以选择",
+	[CollectibleType.COLLECTIBLE_TELEPATHY_BOOK] = "使用时获得滑稽帽(你是巫师吗)效果",
+	[CollectibleType.COLLECTIBLE_ANARCHIST_COOKBOOK] = "改为生成金色即爆炸弹",
+	[CollectibleType.COLLECTIBLE_LEMEGETON] = "可以在拥有部分充能的情况下以红心为代价进行充能并使用",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS] = "使用后立即获得2充能",
+	[CollectibleType.COLLECTIBLE_MONSTER_MANUAL] = "使用后立即获得2充能",
 }
 
 KeyTrinketsDesc = {}
@@ -65,7 +88,17 @@ KeyTrinketsDesc["ko_kr"] = {
 	[TrinketType.TRINKET_STRANGE_KEY] = "방 안의 적에게 랜덤 상태이상 효과를 추가로 적용합니다.",
 	[TrinketType.TRINKET_GILDED_KEY] = "방 안의 적에게 추가로 일정 확률로 석화시킵니다.",
 }
-
+KeyTrinketsDesc["zh_cn"] = {
+	[CustomTrinkets.BASEMENT_KEY] = "瘫痪的敌人死后生成骨刺",
+	[CustomTrinkets.KEY_TO_THE_HEART] = "瘫痪的敌人死后掉落半颗红心",
+	[CustomTrinkets.KEY_KNIFE] = "对瘫痪的敌人施加流血效果",
+	[TrinketType.TRINKET_STORE_KEY] = "瘫痪的敌人死后掉落随机掉落物",
+	[TrinketType.TRINKET_RUSTED_KEY] = "对瘫痪的敌人施加混乱效果",
+	[TrinketType.TRINKET_CRYSTAL_KEY] = "瘫痪的敌人死亡时概率被冰冻",
+	[TrinketType.TRINKET_BLUE_KEY] = "瘫痪的敌人死后掉落半颗魂心",
+	[TrinketType.TRINKET_STRANGE_KEY] = "对敌人施加随机状态效果",
+	[TrinketType.TRINKET_GILDED_KEY] = "使用时随机石化敌人",
+}
 
 -- making a Spindown Dice Shard roll helper --
 ----------------------------------------------
@@ -221,13 +254,14 @@ if true then
 	EID:addPillMetadata(CustomPills.YUCK, 6, "2+")
 end
 
+--[[
+		----------------------------------
+		THE ACTUAL DESCRIPTIONS START HERE
+		----------------------------------
+-- huge shoutout to contributors once again!
+--]]
 
-		----------------------------------------
-		-- THE ACTUAL DESCRIPTIONS START HERE --
-		----------------------------------------
-
-
--- Enlish EID (by me)
+-- Enlish EID (by Mr. SeemsGood)
 if true then
 	EID:addCollectible(CustomCollectibles.ORDINARY_LIFE, "{{ArrowUp}}Tears up #Spawns an additional Mom and Dad related item in Treasure rooms alongside the presented items; only one item can be taken")	
 	EID:addCollectible(CustomCollectibles.COOKIE_CUTTER, "Gives you one {{Heart}}heart container and one broken heart #{{Warning}}Having 12 broken hearts kills you!")
@@ -248,10 +282,10 @@ if true then
 	EID:addCollectible(CustomCollectibles.QUASAR, "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed")
 	EID:addCollectible(CustomCollectibles.TWO_PLUS_ONE, "Every third shop item on the current floor will cost 1 {{Coin}}penny #Buying two items with hearts in one room makes all other items free")
 	EID:addCollectible(CustomCollectibles.RED_MAP, "Reveals location of Ultra Secret Room #Any trinket left in a boss or treasure room will turn into Cracked Key, unless this is your first visit in such room")
-	EID:addCollectible(CustomCollectibles.CHEESE_GRATER, "Removes one red heart container and gives you {{ArrowUp}}+" .. tostring(CustomStatups.Damage.CHEESE_GRATER) .. " Damage up and 3 Minisaacs")
+	EID:addCollectible(CustomCollectibles.CHEESE_GRATER, "Removes one red heart container and gives you {{ArrowUp}}x" .. tostring(CustomStatups.Damage.CHEESE_GRATER_MUL) .. " damage increase and 3 Minisaacs")
 	EID:addCollectible(CustomCollectibles.DNA_REDACTOR, "Pills now have additional effects based on their color")
 	EID:addCollectible(CustomCollectibles.TOWER_OF_BABEL, "Destroys all obstacles in the current room and applies confusion to enemies in small radius around you #Also blows the doors open and opens secret room entrances")
-	EID:addCollectible(CustomCollectibles.BLESS_OF_THE_DEAD, "Prevents curses from appearing for the rest of the run #Preventing a curse grants you {{ArrowUp}}+" .. tostring(CustomStatups.Damage.BLESS_OF_THE_DEAD) .. " damage up")
+	EID:addCollectible(CustomCollectibles.BLESS_OF_THE_DEAD, "Prevents curses from appearing for the rest of the run #Preventing a curse grants you {{ArrowUp}}x" .. tostring(CustomStatups.Damage.BLESS_OF_THE_DEAD_MUL) .. " damage increase")
 	EID:addCollectible(CustomCollectibles.TANK_BOYS, "Spawns 2 Toy Tanks that roam around the room and attack enemies that are in their line of sight #Green tank: rapidly shoots bullets at enemies from a further distance and moves more quickly #Red tank: shoots rockets at enemies at a close range, moves slower")
 	EID:addCollectible(CustomCollectibles.GUSTY_BLOOD, "Killing enemies grants you {{ArrowUp}}tears and speed up #The bonus is reset when entering a new room")
 	EID:addCollectible(CustomCollectibles.RED_BOMBER, "+5 bombs #Grants explosion immunity #Allows you to throw your bombs instead of placing them on the ground")
@@ -292,7 +326,7 @@ if true then
 	EID:addTrinket(CustomTrinkets.WAIT_NO, "Does nothing, it's broken")
 	EID:addTrinket(CustomTrinkets.EDENS_LOCK, "Upon taking damage, one of your items rerolls into another random item #Doesn't take away nor give you story items")
 	EID:addTrinket(CustomTrinkets.PIECE_OF_CHALK, "When entering uncleared room, you will leave a trail of powder #Enemies walking on the powder will be significantly slowed down #The powder lasts for 10 seconds")
-	EID:addTrinket(CustomTrinkets.ADAMS_RIB, "Revives you as Eve when you die")
+	EID:addTrinket(CustomTrinkets.ADAMS_RIB, "22% chance to revive you as Eve when you die")
 	EID:addTrinket(CustomTrinkets.NIGHT_SOIL, "75% chance to prevent a curse when entering a new floor")
 	EID:addTrinket(CustomTrinkets.BONE_MEAL, "At the beginning of every new floor, grants:#{{ArrowUp}}+10% DMG up #{{ArrowUp}}Size increase #Both damage and size up stay if you drop the trinket")
 	EID:addTrinket(CustomTrinkets.TORN_PAGE, "Amplifies or changes book's activation effects")
@@ -335,11 +369,11 @@ if true then
 	--
 	EID:addCard(CustomConsumables.CROWN_OF_GREED , "Spawns 1-2 golden pennies and grants {{ArrowDown}}-1 luck for each penny spawned")
 	EID:addCard(CustomConsumables.FLOWER_OF_LUST, "Allows you to restart the room and grants a better room reward for clearing it")
-	EID:addCard(CustomConsumables.ACID_OF_SLOTH, "Slows down all enemies by 50% and makes them leave poisonous creep behind")
-	EID:addCard(CustomConsumables.VOID_OF_GLUTTONY, "Consumes all enemies in a room #Depending on their total health, either grants you a heart containter or makes you spit them back as a Cyst enemy")
+	EID:addCard(CustomConsumables.ACID_OF_SLOTH, "Slows down all enemies by 50% and makes them leave poisonous gas clouds behind")
+	EID:addCard(CustomConsumables.VOID_OF_GLUTTONY, "For 7 seconds, if you lack red health, you will regenerate it at the rate of 1{{HalfHeart}} per second, while also gaining {{ArrowDown}}-0.01 speed #The duration is extended by 2 seconds each time you kill an enemy")
 	EID:addCard(CustomConsumables.APPLE_OF_PRIDE, "Grants you a massive boost to all stats until you get hit")
 	EID:addCard(CustomConsumables.CANINE_OF_WRATH, "Every enemy in a room explodes, taking 15 damage #{{Warning}}The explosion can hurt you too #Every enemy that dies from the explosion will give you a temporary damage boost")
-	EID:addCard(CustomConsumables.MASK_OF_ENVY, "#{{ArrowUp}}Tears up #Turns all your heart containers into bone hearts filled with rotten heart and moves them to after soul hearts")
+	EID:addCard(CustomConsumables.MASK_OF_ENVY, "Turns all your heart containers into bone hearts filled with rotten hearts")
 
 	EID:addPill(CustomPills.ESTROGEN, "Turns all your red health into blood clots #Leaves you at one red heart other types of hearts are unaffected")
 	EID:addPill(CustomPills.LAXATIVE, "Makes you shoot out corn tears from behind for 3 seconds")
@@ -751,10 +785,10 @@ if true then
 	EID:addCollectible(CustomCollectibles.QUASAR,"使用后，摧毁所有底座道具 #每摧毁一个底座道具生成三个被动道具火焰跟班","类星体","zh_cn")
 	EID:addCollectible(CustomCollectibles.TWO_PLUS_ONE,"当前楼层每购买两个商品，第三个商品将只需要1块钱 #在同一个房间进行两次心交易，会使得其他道具免费","2+1","zh_cn")
 	EID:addCollectible(CustomCollectibles.RED_MAP,"在所有后续楼层显示红隐藏的位置 #将饰品留在宝箱房或Boss房进出房间后饰品会转化为红钥匙碎片","红地图","zh_cn")
-	EID:addCollectible(CustomCollectibles.CHEESE_GRATER,"使用后，移除一个心之容器，{{ArrowUp}}+" .. tostring(CustomStatups.Damage.CHEESE_GRATER) .. "攻击力并获得3个小以撒 #允许你移除所有心之容器并且没有其他心，但是离开房间后角色会死亡","奶酪刨丝器","zh_cn")
+	EID:addCollectible(CustomCollectibles.CHEESE_GRATER,"使用后，移除一个心之容器，{{ArrowUp}}x" .. tostring(CustomStatups.Damage.CHEESE_GRATER) .. "攻击力并获得3个小以撒 #允许你移除所有心之容器并且没有其他心，但是离开房间后角色会死亡","奶酪刨丝器","zh_cn")
 	EID:addCollectible(CustomCollectibles.DNA_REDACTOR,"药丸基于不同的颜色具有额外效果","DNA编辑器","zh_cn")
 	EID:addCollectible(CustomCollectibles.TOWER_OF_BABEL,"使用后摧毁当前房间内的所有障碍物并对你周围小范围内的敌人施加混乱效果 #同时摧毁普通房间门并打开隐藏房入口","通天塔","zh_cn")
-	EID:addCollectible(CustomCollectibles.BLESS_OF_THE_DEAD,"防止接下来的楼层遇到诅咒 #每避免一次诅咒，{{ArrowUp}} +" .. tostring(CustomStatups.Damage.BLESS_OF_THE_DEAD) .. "攻击力","死者的祝福","zh_cn")
+	EID:addCollectible(CustomCollectibles.BLESS_OF_THE_DEAD,"防止接下来的楼层遇到诅咒 #每避免一次诅咒，{{ArrowUp}} x" .. tostring(CustomStatups.Damage.BLESS_OF_THE_DEAD) .. "攻击力","死者的祝福","zh_cn")
 	EID:addCollectible(CustomCollectibles.TANK_BOYS,"生成两个坦克跟班,它们会在房间内漫游并攻击视线内的敌人 #绿坦克：远距离向敌人快速射击，移速较快 #红坦克:近距离向敌人发射火箭，移速较慢","坦克男孩","zh_cn")
 	EID:addCollectible(CustomCollectibles.GUSTY_BLOOD,"杀死敌人在当前房间获得{{ArrowUp}}泪速和移速加成","血雨腥风","zh_cn")
 	EID:addCollectible(CustomCollectibles.RED_BOMBER,"+5炸弹 #免疫爆炸 #允许你投掷炸弹而不是直接在地板上放置炸弹","红色炸弹","zh_cn")
@@ -797,7 +831,7 @@ if true then
 	EID:addTrinket(CustomTrinkets.PIECE_OF_CHALK,"进入未清理房间时，会在下方留下5秒的粉末痕迹 #痕迹会将敌人隔绝","一块粉笔","zh_cn")
 	EID:addTrinket(CustomTrinkets.ADAMS_RIB,"死亡后，复活成为夏娃","亚当的肋骨","zh_cn")
 	EID:addTrinket(CustomTrinkets.NIGHT_SOIL,"进入新的一层有75%的概率免疫诅咒","粪便","zh_cn")
-	EID:addTrinket(CustomTrinkets.BONE_MEAL,"在每个新楼层开始时,给予: #{{ArrowUp}} +10% 伤害 #{{ArrowUp}} 眼泪尺寸增加 #如果你掉落饰品，伤害和眼泪尺寸都会保持不变", "骨粉","zh_cn")
+	EID:addTrinket(CustomTrinkets.BONE_MEAL,"在每个新楼层开始时,给予: #{{ArrowUp}} +10% 伤害 #{{ArrowUp}} 眼泪尺寸增加 #如果你掉落饰品，伤害和眼泪尺寸都会保持不变", "","zh_cn")
 	EID:addTrinket(CustomTrinkets.TORN_PAGE,"加强或改变书的主动效果,或者使书的充能更快 #除了正常生成外，该饰品有33%概率在书房生成","撕裂的书页","zh_cn")
 	EID:addTrinket(CustomTrinkets.EMPTY_PAGE,"在使用书时额外激活一个随机主动道具 #跳书不会触发并且不会触发骰子以及会伤害或杀死角色的主动道具 #除了正常生成外，该饰品有33%概率在书房生成","空白的书页","zh_cn")
 	EID:addTrinket(CustomTrinkets.BABY_SHOES,"将所有敌人的尺寸缩小10% #这会影响动画和碰撞体积 #对boss也有效","婴儿鞋","zh_cn")
@@ -839,7 +873,7 @@ if true then
 	EID:addCard(CustomConsumables.FLOWER_OF_LUST, "使用后可以重新清理房间获得更好的奖励", "欲望之花", "zh_cn")
 	EID:addCard(CustomConsumables.ACID_OF_SLOTH, "使用后，当前房间所有敌人减速50%，同时敌人身后会留下有毒痕迹", "懒惰之酸", "zh_cn")
 	EID:addCard(CustomConsumables.VOID_OF_GLUTTONY, "摧毁房间所有敌人 #取决于所有敌人的总生命值，给予你一个心之容器或者你将敌人吐回去", "暴食之虚", "zh_cn")
-	EID:addCard(CustomConsumables.APPLE_OF_PRIDE, "在你受到伤害后获得大量属性提升", "傲慢之果", "zh_cn")
+	EID:addCard(CustomConsumables.APPLE_OF_PRIDE, "获得大量属性提升 #受到伤害后效果消失", "傲慢之果", "zh_cn")
 	EID:addCard(CustomConsumables.CANINE_OF_WRATH, "房间里每个敌人都会爆炸，造成15点伤害 #{{Warning}}你会受到敌人爆炸伤害 #每个死于爆炸的敌人都会给予你短暂的伤害提升", "愤怒之犬", "zh_cn")
 	EID:addCard(CustomConsumables.MASK_OF_ENVY, "{{ArrowUp}}射速上升 #将所有心之容器转化为充满腐心的骨心，并移动到魂心之后", "嫉妒面具", "zh_cn")
 
@@ -848,7 +882,24 @@ if true then
 	EID:addPill(CustomPills.PHANTOM_PAINS,"使用后造成一次假受伤 #每过15-30秒就会再受到一次假伤害", "幻痛", "zh_cn")
 	EID:addPill(CustomPills.YUCK,"生成一个红心 #30秒内每捡起一颗红心都会给予永久属性上升", "呸", "zh_cn")
 	EID:addPill(CustomPills.YUM,"生成一个腐心 #30秒内每捡起一颗红心都会产生蓝苍蝇", "好吃", "zh_cn")
-	
+
+	EID:addEntity(5, 10, 84, "神伤者的心", "给予你一个心之容器和一个碎心", "zh_cn")
+	EID:addEntity(5, 10, 85, "无畏者之心", "???", "zh_cn")
+	EID:addEntity(5, 10, 86, "囤积者之心", "恢复4颗红心", "zh_cn")
+	EID:addEntity(5, 10, 87, "背叛者之心", "???", "zh_cn")
+	EID:addEntity(5, 10, 88, "污秽者之心", "???", "zh_cn")
+	EID:addEntity(5, 10, 89, "血凝者之心", "恢复一颗红心并在拾取后生成一个血凝块", "zh_cn")
+	EID:addEntity(5, 10, 90, "残暴者之心", "恢复一颗红心并增加1.25伤害，持续25秒", "zh_cn")
+	EID:addEntity(5, 10, 91, "堕落者之心", "获得一颗黑心并永久提升0.1伤害", "zh_cn")
+	EID:addEntity(5, 10, 92, "迷离者之心", "给予你一个空的心之容器", "zh_cn")
+	EID:addEntity(5, 10, 93, "无常者之心", "拾取时随机分成三颗心", "zh_cn")
+	EID:addEntity(5, 10, 94, "受难者之心", "???", "zh_cn")
+	EID:addEntity(5, 10, 95, "浪荡者之心", "???", "zh_cn")
+	EID:addEntity(5, 10, 96, "吝财者之心", "???", "zh_cn")
+	EID:addEntity(5, 10, 97, "空虚者之心", "进入新楼层时获得一只深渊{{Collectibles 706}}产生的蝗虫", "zh_cn")
+	EID:addEntity(5, 10, 98, "受缚者之心", "给予你1.5颗魂心，但是需要一把钥匙才能拾取它", "zh_cn")
+	EID:addEntity(5, 10, 99, "狂信者之心", "进入新楼层时获得一个{{Collectible712}}被动道具火焰跟班", "zh_cn")
+	EID:addEntity(5, 10, 100, "流亡者之心", "作为混合心的黑心版本", "zh_cn")
 end
 
 
