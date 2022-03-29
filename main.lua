@@ -1494,7 +1494,7 @@ local function HeartRender(player, heartData, heartAnim)
 		`heartAnim` (string): animation that refers to a certain Tainted heart
 	]]
 	
-	if not CustomData or heartData == 0 then return end
+	if not CustomData or heartData == 0 or not Game():GetHUD():IsVisible() then return end
 	if game:GetLevel():GetCurses() & LevelCurse.CURSE_OF_THE_UNKNOWN == LevelCurse.CURSE_OF_THE_UNKNOWN then return end
 	local TopVector
 	local HeartRenderOffset = Options.HUDOffset * Vector(20, 12)
