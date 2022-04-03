@@ -1491,11 +1491,11 @@ local function HeartRender(player, heartData, heartAnim)
 			heartbegin = getRightMostHeartForRender(player) + 1 - heartData - player:GetGoldenHearts() 
 			heartend = getRightMostHeartForRender(player) - player:GetGoldenHearts()
 		elseif heartAnim == "Soiled" then 
-			heartbegin = getRightMostHeartForRender(player) + 1 - heartData - player:GetGoldenHearts() - CustomData.TaintedHearts.DAUNTLESS.Num 
-			heartend = getRightMostHeartForRender(player) - player:GetGoldenHearts() - CustomData.TaintedHearts.DAUNTLESS.Num 
+			heartbegin =   math.floor(player:GetHearts()/2 + 0.5 - player:GetBoneHearts() - player:GetRottenHearts())+ 1 - heartData 
+			heartend =  math.floor(player:GetHearts()/2 + 0.5 - player:GetBoneHearts()-player:GetRottenHearts()) 
 		elseif heartAnim == "Zealot" then 
-			heartbegin = getRightMostHeartForRender(player) + 1 - heartData - player:GetGoldenHearts() - CustomData.TaintedHearts.DAUNTLESS.Num - CustomData.TaintedHearts.SOILED
-			heartend = getRightMostHeartForRender(player) - player:GetGoldenHearts() - CustomData.TaintedHearts.DAUNTLESS.Num - CustomData.TaintedHearts.SOILED
+			heartbegin = getRightMostHeartForRender(player) + 1 - heartData - player:GetGoldenHearts() - CustomData.TaintedHearts.DAUNTLESS.Num
+			heartend = getRightMostHeartForRender(player) - player:GetGoldenHearts() - CustomData.TaintedHearts.DAUNTLESS.Num
 		else
 			heartbegin = getRightMostHeartForRender(player) + 1 - heartData 
 			heartend = getRightMostHeartForRender(player)
@@ -4115,13 +4115,23 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, SourceRef, CooldownFrames)
 				if Player:GetGoldenHearts() == 0 then 
 					if CustomData.TaintedHearts.DAUNTLESS.Num > 0  then
 						CustomData.TaintedHearts.DAUNTLESS.Num = CustomData.TaintedHearts.DAUNTLESS.Num - 1
-					elseif CustomData.TaintedHearts.SOILED > 0 then
-						CustomData.TaintedHearts.SOILED = CustomData.TaintedHearts.SOILED - 1
 					elseif CustomData.TaintedHearts.ZEALOT > 0 then
 						CustomData.TaintedHearts.ZEALOT = CustomData.TaintedHearts.ZEALOT - 1
 					end
 				end
 			end 
+			if CustomData.TaintedHearts.SOILED > 0 and Player:GetSoulHearts() == 0 and Player:GetBoneHearts() == 0 then
+				if Amount == 2 and Player:GetRottenHearts() == 1 then 
+					CustomData.TaintedHearts.SOILED = CustomData.TaintedHearts.SOILED - 1
+					Player:AddHearts(-1)
+				elseif Amount == 2 and CustomData.TaintedHearts.SOILED >= 2 then 
+					CustomData.TaintedHearts.SOILED = CustomData.TaintedHearts.SOILED - 2
+					Player:AddHearts(-2)
+				elseif Player:GetRottenHearts() == 0 then
+					CustomData.TaintedHearts.SOILED = CustomData.TaintedHearts.SOILED - 1
+					Player:AddHearts(-1)
+				end
+			end
 		end
 		
 	-- damage inflicted to enemies
@@ -4747,7 +4757,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		end
 		
 		if Pickup.SubType == CustomPickups.TaintedHearts.HEART_DAUNTLESS then
-			if getRightMostHeartForRender(player) - player:GetGoldenHearts() - CustomData.TaintedHearts.ZEALOT - CustomData.TaintedHearts.SOILED > CustomData.TaintedHearts.DAUNTLESS.Num and not isInGhostForm(player) then
+			if getRightMostHeartForRender(player) - player:GetGoldenHearts() - CustomData.TaintedHearts.ZEALOT > CustomData.TaintedHearts.DAUNTLESS.Num and not isInGhostForm(player) then
 				CustomData.TaintedHearts.DAUNTLESS.Num = CustomData.TaintedHearts.DAUNTLESS.Num + 1
 				sfx:Play(SoundEffect.SOUND_DIVINE_INTERVENTION, 1, 2, false, 1, 0)
 				sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES, 1, 2, false, 1, 0)
@@ -4768,8 +4778,13 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		end
 		
 		if Pickup.SubType == CustomPickups.TaintedHearts.HEART_SOILED then
-			if getRightMostHeartForRender(player) - player:GetGoldenHearts()  - CustomData.TaintedHearts.DAUNTLESS.Num - CustomData.TaintedHearts.ZEALOT > CustomData.TaintedHearts.SOILED and not isInGhostForm(player) then
+			if player:GetMaxHearts()/2 - player:GetBoneHearts() - CustomData.TaintedHearts.SOILED > 0 and not isInGhostForm(player) then
 				CustomData.TaintedHearts.SOILED = CustomData.TaintedHearts.SOILED + 1
+				if player:GetHearts()%2 == 1 then 
+					player:AddHearts(3)
+				else 
+					player:AddHearts(2)
+				end
 				sfx:Play(SoundEffect.SOUND_POOPITEM_STORE, 1, 2, false, 1, 0)
 				sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES, 1, 2, false, 1, 0)
 			else return false end
@@ -4837,7 +4852,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		end
 		
 		if Pickup.SubType == CustomPickups.TaintedHearts.HEART_ZEALOT then
-			if getRightMostHeartForRender(player) - player:GetGoldenHearts()  - CustomData.TaintedHearts.DAUNTLESS.Num -CustomData.TaintedHearts.SOILED > CustomData.TaintedHearts.ZEALOT and not isInGhostForm(player) then
+			if getRightMostHeartForRender(player) - player:GetGoldenHearts()  - CustomData.TaintedHearts.DAUNTLESS.Num > CustomData.TaintedHearts.ZEALOT and not isInGhostForm(player) then
 				CustomData.TaintedHearts.ZEALOT = CustomData.TaintedHearts.ZEALOT + 1
 				sfx:Play(SoundEffect.SOUND_HOLY, 1, 2, false, 1, 0)
 			else return false end
@@ -6474,8 +6489,8 @@ function rplus:GetShaderParams(shaderName)
 	if not CustomData then return end
 	-- only used for rendering Tainted hearts, and ONLY FOR THE MAIN PLAYER !!!
 	if shaderName == 'Hearts' then
-		HeartRender(Isaac.GetPlayer(0), CustomData.TaintedHearts.DAUNTLESS.Num, "Dauntless")
 		HeartRender(Isaac.GetPlayer(0), CustomData.TaintedHearts.SOILED, "Soiled")
+		HeartRender(Isaac.GetPlayer(0), CustomData.TaintedHearts.DAUNTLESS.Num, "Dauntless")
 		HeartRender(Isaac.GetPlayer(0), CustomData.TaintedHearts.ZEALOT, "Zealot")
 		HeartRender(Isaac.GetPlayer(0), CustomData.TaintedHearts.EMPTY, "Empty")
 		return nil
