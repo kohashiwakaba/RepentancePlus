@@ -285,6 +285,7 @@ CustomPickups = {
 		HEART_BENIGHTED  = 91,
 		HEART_ENIGMA  = 92,
 		HEART_CAPRICIOUS  = 93,
+		HEART_BALEFUL = 94,
 		HEART_MISER = 96,
 		HEART_EMPTY = 97,
 		HEART_FETTERED  = 98,
@@ -305,159 +306,124 @@ CustomPills = {
 --[[
 local Unlocks = { 
 	["21"] = { --T.Isaac
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_BROKEN},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.BASEMENT_KEY},
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.UNO_REVERSE_CARD}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.ORDINARY_LIFE}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.RUBIKS_CUBE}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.RED_BOMBER}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = CustomCollectibles.RUBIKS_CUBE}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = CustomTrinkets.BASEMENT_KEY}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.SPINDOWN_DICE_SHARD}
 	},
 	["22"] = { --T.Maggy
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_DAUNTLESS},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.KEY_TO_THE_HEART},
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.QUEEN_OF_DIAMONDS}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.CHERRY_FRIENDS}, 
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.COOKIE_CUTTER}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomTrinkets.BLOOD_VESSELS[1]}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.KEY_TO_THE_HEART}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.NEEDLE_AND_THREAD}
 	},
 	["23"] = { --T.Cain
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_HOARDED},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomTrinkets.RED_MAP},
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomCollectibles.JACK_OF_DIAMONDS}, 
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.MARK_OF_CAIN}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.TRICK_PENNY}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.SLEIGHT_OF_HAND}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.SLEIGHT_OF_HAND}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.TRICK_PENNY}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.BAG_TISSUE}
 	},
 	["24"] = { --T.Judas
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_DECEIVER},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.KEY_KNIFE},
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.JACK_OF_HEARTS}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.CEREMONIAL_BLADE}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.BLACK_DOLL}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomCollectibles.BLACK_DOLL}, 
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.JUDAS_KISS}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.SACRIFICIAL_BLOOD}
 	},
 	["25"] = {	--T.???
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_SOILED},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.NIGHT_SOIL},
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.FLY_PAPER}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.BLESS_OF_THE_DEAD}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.BAG_O_TRASH}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.HAND_ME_DOWNS}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = "pill_laxative"}
+		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.BAG_O_TRASH}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
 	["26"] = {	--T.Eve
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_CURDLED},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.ADAMS_RIB},
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.BEDSIDE_QUEEN}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.BIRD_OF_HOPE}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.TOWER_OF_BABEL}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.ULTRA_FLESH_KID}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = "pill_estrogen_up"}
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
 	["27"] = {	--T.Samson
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_SAVAGE},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.MAGIC_SWORD},
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.JACK_OF_CLUBS}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.TEMPER_TANTRUM}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.GUSTY_BLOOD}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.BOOK_OF_JUDGES}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = "pill_phantom_pains"}
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
 	["28"] = {	--T.Azazel
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_BENIGHTED},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.ANGELS_CROWN},
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.JOKER_Q}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant =  100, SubType = CustomCollectibles.CROSS_OF_CHAOS}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.SCALPEL}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.BOOK_OF_LEVIATHAN}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.FIEND_FIRE},
-		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.DEMON_FORM}
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
 	["29"] = {	--T.Lazarus
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_ENIGMA},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.TORN_PAGE},
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.JACK_OF_SPADES}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = DNA_REDACTOR}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CAT_IN_A_BOX}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = NERVE_PINCH}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = "pill_yum"},
-		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = "pill_yuck"}
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
 	["30"] = {	--T.Eden
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_CAPRICIOUS},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.EDENS_LOCK},
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.VALENTINES_CARD}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.BOOK_OF_GENESIS}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.MAGIC_PEN}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.MAGIC_MARKER}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.MIRRORED_LANDSCAPE}
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
 	["31"] = {	--T.Lost
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_BALEFUL},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.PIECE_OF_CHALK},
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.CURSED_CARD}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.CHERUBIM}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.SOUL_BOND}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.ANGELS_WINGS}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.SPIRITUAL_RESERVES}
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
 	["32"] = {	--T.Lilith
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_HARLOT},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.BABY_SHOES},
 		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.QUEEN_OF_CLUBS}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.REJECTION}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.MOTHERS_LOVE}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.FRIENDLY_SACK}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.MOMS_ID}
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
 	["33"] = {	--T.Keeper
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_MISER},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.GREEDS_HEART},
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.KING_OF_DIAMONDS}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.TWO_PLUS_ONE}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.AUCTION_GAVEL}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.KEEPERS_PENNY}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.LOADED_DICE}
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
 	["34"] = {	--T.Appolyon
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_EMPTY},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.SHATTERED_STONE},
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.KING_OF_SPADES}, 
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.SINNERS_HEART}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.BOTTOMLESS_BAG}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.VAULT_OF_HAVOC}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.RED_RUNE}
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
 	["35"] = {	--T.Forgor
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_FETTERED},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.BONE_MEAL},
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.KING_OF_CLUBS}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.ENRAGED_SOUL}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.PURE_SOUL}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.HANDICAPPED_PLACARD}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.FUNERAL_SERVICES}
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
 	["36"] = {	--T.Bethany
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_ZEALOT},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 350, SubType = CustomTrinkets.EMPTY_PAGE},
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.LIBRARY_CARD}, 
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
 		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.CEILING_WITH_THE_STARS}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.QUASAR}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.STARGAZERS_HAT}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.QUASAR_SHARD}
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
 	},
 	["37"] = {	--T.Jacob
-		["Character Unlock"] = {Unlocked = false, Type = 5, Variant = 10, SubType = CustomPickups.TaintedHearts.HEART_DESERTED},
-		["Mom's Heart"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomTrinkets.SIBLING_RIVALRY},
-		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.BUSINESS_CARD}, 
-		["Satan"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.CHEESE_GRATER}, 
-		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.RED_KING}, 
-		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.TANK_BOYS}, 
-		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.ANTIMATERIAL_CARD}
+		["Boss Rush"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Satan"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Isaac"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}, 
+		["Greed"] = {Unlocked = false, Type = 5, Variant = nil, SubType = nil}
+	}
 
 }
 --]]
@@ -687,6 +653,8 @@ PickupWeights = {
 		[CustomPickups.TaintedHearts.HEART_HOARDED] = 4,
 		[CustomPickups.TaintedHearts.HEART_BENIGHTED] = 6,
 		[CustomPickups.TaintedHearts.HEART_CAPRICIOUS] = 6,
+		[CustomPickups.TaintedHearts.HEART_BALEFUL] = 7,
+		[CustomPickups.TaintedHearts.HEART_MISER] = 6,
 		[CustomPickups.TaintedHearts.HEART_ENIGMA] = 6,
 		[CustomPickups.TaintedHearts.HEART_EMPTY] = 7,
 		[CustomPickups.TaintedHearts.HEART_FETTERED] = 5,
@@ -1639,7 +1607,7 @@ function rplus:OnGameStart(Continued)
 				GREEDS_HEART = "CoinHeartEmpty",
 				BONE_MEAL = {Levels = 0},
 				ANGELS_CROWN = {treasureRoomsData = {{index = -1, needToConvert = false},
-												    {index = -1, needToConvert = false}}}
+													{index = -1, needToConvert = false}}}
 			},
 			Pills = {
 				LAXATIVE = {UseFrame = nil},
@@ -1659,7 +1627,11 @@ function rplus:OnGameStart(Continued)
 					Num = 0,
 					Data = true
 				},
-				MISER = 0
+				MISER = 0,
+				BALEFUL = {
+					Num = 0,
+					Data = true
+				}
 			}
 		}
 		
@@ -1726,6 +1698,7 @@ function rplus:GameEnded(isGameOver)
 	CustomData.TaintedHearts.EMPTY = 0
 	CustomData.TaintedHearts.ZEALOT = 0
 	CustomData.TaintedHearts.MISER = 0
+	CustomData.TaintedHearts.BALEFUL = 0
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_END, rplus.GameEnded)	
 
@@ -1793,7 +1766,7 @@ function rplus:OnNewLevel()
 			CustomData.Items.CEILING_WITH_THE_STARS.SleptInBed = false
 			CustomData.Items.RED_KING.redCrawlspacesData = {}
 			CustomData.Trinkets.ANGELS_CROWN.treasureRoomsData = {{index = -1, needToConvert = false},
-																  {index = -1, needToConvert = false}}
+																{index = -1, needToConvert = false}}
 			
 			if player:GetData()['usedDemonForm'] then
 				CustomData.Cards.DEMON_FORM.NumUses = 0
@@ -2071,6 +2044,7 @@ function rplus:OnNewRoom()
 				until #CustomData.Items.BOOK_OF_JUDGES.BeamTargets == roll
 			end
 		end
+		CustomData.TaintedHearts.BALEFUL.Data = true
 	end
 	
 	if CustomData then
@@ -2616,6 +2590,13 @@ function rplus:OnGameUpdate()
 			end
 			
 			heartframe = 0
+		end
+
+		--Baleful Heart main effect
+		if #Isaac.FindInRadius(player.Position, (CustomData.TaintedHearts.BALEFUL.Num * 35) + 25, EntityPartition.ENEMY) >= 1 and CustomData.TaintedHearts.BALEFUL.Num > 0 and CustomData.TaintedHearts.BALEFUL.Data == true then 
+			local ghost = Isaac.Spawn(1000, 189, 1, player.Position, Vector(0, 0), nil)
+			ghost.CollisionDamage = CustomData.TaintedHearts.BALEFUL.Num * (player.Damage / 1.35)
+			CustomData.TaintedHearts.BALEFUL.Data = false
 		end
 	end
 	
@@ -4149,6 +4130,14 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, SourceRef, CooldownFrames)
 			if Amount == 2 or Player:GetSoulHearts() % 2 == 1 or (Player:GetSoulHearts() == 0 and Player:GetHearts() % 2 == 1) then
 				if CustomData.TaintedHearts.EMPTY > 0 then
 					CustomData.TaintedHearts.EMPTY = CustomData.TaintedHearts.EMPTY - 1
+				elseif CustomData.TaintedHearts.MISER > 0 then
+					CustomData.TaintedHearts.MISER = CustomData.TaintedHearts.MISER - 1
+					for i = 1, 5 do
+						Player:UseActiveItem(CollectibleType.COLLECTIBLE_KEEPERS_BOX)
+					end
+					Player:UseActiveItem(CollectibleType.COLLECTIBLE_D6)
+				elseif CustomData.TaintedHearts.BALEFUL.Num > 0 then
+					CustomData.TaintedHearts.BALEFUL.Num = CustomData.TaintedHearts.BALEFUL.Num - 1
 				end
 				if Player:GetGoldenHearts() == 0 then 
 					if CustomData.TaintedHearts.DAUNTLESS.Num > 0  then
@@ -4157,17 +4146,11 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, SourceRef, CooldownFrames)
 						CustomData.TaintedHearts.SOILED = CustomData.TaintedHearts.SOILED - 1
 					elseif CustomData.TaintedHearts.ZEALOT > 0 then
 						CustomData.TaintedHearts.ZEALOT = CustomData.TaintedHearts.ZEALOT - 1
-					elseif CustomData.TaintedHearts.MISER > 0 then
-						CustomData.TaintedHearts.MISER = CustomData.TaintedHearts.MISER - 1
-						for i = 1, 5 do
-							Player:UseActiveItem(CollectibleType.COLLECTIBLE_KEEPERS_BOX)
-						end
-						Player:UseActiveItem(CollectibleType.COLLECTIBLE_D6)
 					end
 				end
 			end 
 		end
-		
+	
 	-- damage inflicted to enemies
 	elseif Entity:IsVulnerableEnemy() then
 		if Source and Source.Type == 1000 and Source.Variant == EffectVariant.PLAYER_CREEP_HOLYWATER_TRAIL and Source.SubType == 4 then
@@ -4502,7 +4485,9 @@ function rplus:OnPickupInit(Pickup)
 						elseif roll < baseChance * 1.2 and game:GetNumPlayers() == 1 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_ZEALOT, true, true, false) end
 					end
 				elseif st == HeartSubType.HEART_ETERNAL then
-					
+					local baseChance = 500
+					--50% baleful heart
+					if roll < baseChance then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_BALEFUL, true, true, false) end
 				elseif st == HeartSubType.HEART_DOUBLEPACK then
 					local baseChance = 250
 					if player:HasCollectible(CollectibleType.COLLECTIBLE_HUMBLEING_BUNDLE) then
@@ -4793,7 +4778,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		end
 		
 		if Pickup.SubType == CustomPickups.TaintedHearts.HEART_DAUNTLESS then
-			if getRightMostHeartForRender(player) - - CustomData.TaintedHearts.MISER - player:GetGoldenHearts() - CustomData.TaintedHearts.ZEALOT - CustomData.TaintedHearts.SOILED > CustomData.TaintedHearts.DAUNTLESS.Num and not isInGhostForm(player) then
+			if getRightMostHeartForRender(player) - CustomData.TaintedHearts.MISER - player:GetGoldenHearts() - CustomData.TaintedHearts.ZEALOT - CustomData.TaintedHearts.SOILED > CustomData.TaintedHearts.DAUNTLESS.Num and not isInGhostForm(player) then
 				CustomData.TaintedHearts.DAUNTLESS.Num = CustomData.TaintedHearts.DAUNTLESS.Num + 1
 				sfx:Play(SoundEffect.SOUND_DIVINE_INTERVENTION, 1, 2, false, 1, 0)
 				sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES, 1, 2, false, 1, 0)
@@ -4866,11 +4851,20 @@ function rplus:PickupCollision(Pickup, Collider, _)
 			sfx:Play(SoundEffect.SOUND_EDEN_GLITCH, 1, 2, false, 1, 0)
 		end
 
+		if Pickup.SubType == CustomPickups.TaintedHearts.HEART_BALEFUL then
+			if getRightMostHeartForRender(player) > CustomData.TaintedHearts.BALEFUL.Num and not isInGhostForm(player) then
+				CustomData.TaintedHearts.BALEFUL.Num = CustomData.TaintedHearts.BALEFUL.Num + 1
+				sfx:Play(SoundEffect.SOUND_BEAST_GHOST_RISE, 1.2, 35, false, 0.666, 0)
+				sfx:Play(SoundEffect.SOUND_DIVINE_INTERVENTION, 0.8, 2, false, 0.5, 0)
+			else return false end
+		end
+
 		if Pickup.SubType == CustomPickups.TaintedHearts.HEART_MISER then
 			if player:CanPickSoulHearts() and not isInGhostForm(player) then
 				player:AddSoulHearts(2)
 				CustomData.TaintedHearts.MISER = CustomData.TaintedHearts.MISER + 1
 				sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES, 1, 2, false, 1, 0)
+				sfx:Play(SoundEffect.SOUND_NICKELPICKUP, 1, 2, false, 0.333, 0)
 			else return false end
 		end
 
@@ -6528,7 +6522,8 @@ function rplus:GetShaderParams(shaderName)
 	if not CustomData then return end
 	-- only used for rendering Tainted hearts, and ONLY FOR THE MAIN PLAYER !!!
 	if shaderName == 'Hearts' then
-		HeartRender(Isaac.GetPlayer(0), CustomData.TaintedHearts.MISER, "Miser") -- Keep this in first spot!
+		HeartRender(Isaac.GetPlayer(0), CustomData.TaintedHearts.MISER, "Miser") --Keep this order!
+		HeartRender(Isaac.GetPlayer(0), CustomData.TaintedHearts.BALEFUL.Num, "Baleful")
 		HeartRender(Isaac.GetPlayer(0), CustomData.TaintedHearts.DAUNTLESS.Num, "Dauntless")
 		HeartRender(Isaac.GetPlayer(0), CustomData.TaintedHearts.SOILED, "Soiled")
 		HeartRender(Isaac.GetPlayer(0), CustomData.TaintedHearts.ZEALOT, "Zealot")
