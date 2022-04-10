@@ -471,10 +471,7 @@ local Unlocks = {
 		["Isaac"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.RED_KING}, 
 		["Blue Baby"] = {Unlocked = false, Type = 5, Variant = 100, SubType = CustomCollectibles.TANK_BOYS}, 
 		["Greed"] = {Unlocked = false, Type = 5, Variant = 300, SubType = CustomConsumables.ANTIMATERIAL_CARD}
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 }
 --]]
 
@@ -1812,7 +1809,7 @@ function rplus:GameEnded(isGameOver)
 	CustomData.TaintedHearts.DAUNTLESS = 0
 	CustomData.TaintedHearts.ENIGMA = 0
 	CustomData.TaintedHearts.MISER = 0
-	CustomData.TaintedHearts.BALEFUL.Num = 0
+	CustomData.TaintedHearts.BALEFUL = 0
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_END, rplus.GameEnded)	
 
