@@ -17,10 +17,18 @@
 	<entity Group="Chests" ID="5" Image="repentanceplus/Coffin.png" Kind="Repentance Plus" Name="Coffin" Subtype="0" Variant="515" />
 	
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Broken Heart.png" Kind="Repentance Plus" Name="Broken Heart" Subtype="84" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Dauntless Heart.png" Kind="Repentance Plus" Name="Dauntless Heart" Subtype="85" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Hoarded Heart.png" Kind="Repentance Plus" Name="Hoarded Heart" Subtype="86" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Deceiver Heart.png" Kind="Repentance Plus" Name="Deceiver Heart" Subtype="87" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Soiled Heart.png" Kind="Repentance Plus" Name="Soiled Heart" Subtype="88" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Curdled Heart.png" Kind="Repentance Plus" Name="Curdled Heart" Subtype="89" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Savage Heart.png" Kind="Repentance Plus" Name="Savage Heart" Subtype="90" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Benighted Heart.png" Kind="Repentance Plus" Name="Benighted Heart" Subtype="91" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Enigma Heart.png" Kind="Repentance Plus" Name="Enigma Heart" Subtype="92" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Capricious Heart.png" Kind="Repentance Plus" Name="Capricious Heart" Subtype="93" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Baleful Heart.png" Kind="Repentance Plus" Name="Baleful Heart" Subtype="94" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Harlot Heart.png" Kind="Repentance Plus" Name="Harlot Heart" Subtype="95" Variant="10" />
+	<entity Group="Hearts" ID="5" Image="repentanceplus/Miser Heart.png" Kind="Repentance Plus" Name="Miser Heart" Subtype="96" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Empty Heart.png" Kind="Repentance Plus" Name="Empty Heart" Subtype="97" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Fettered Heart.png" Kind="Repentance Plus" Name="Fettered Heart" Subtype="98" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Zealot Heart.png" Kind="Repentance Plus" Name="Zealot Heart" Subtype="99" Variant="10" />

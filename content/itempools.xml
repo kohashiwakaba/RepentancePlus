@@ -16,6 +16,7 @@
 		<Item Name="Friendly Sack" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Ultra Flesh Kid!" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Vault of Havoc" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bottomless Bag" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="shop">
 		<Item Name="Ceiling with the Stars" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -23,13 +24,15 @@
 		<Item Name="Cheese Grater" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Mother's Love" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Keeper's Penny" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
-		<Item Name="Auction Gavel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Auction Gavel" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Hand-Me-Downs" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Magic Marker" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Stargazer's Hat" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Handicapped Placard" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Birth Certificate" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 	</Pool>
 	<Pool Name="boss">
-		<Item Name="Ordinary Life" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
+		
 	</Pool>
 	<Pool Name="devil">
 		<Item Name="Sinner's Heart" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
@@ -53,13 +56,13 @@
 	</Pool>
 	<Pool Name="secret">
 		<Item Name="Temper Tantrum" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="2+1" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Red Map" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="DNA Redactor" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Bless of the Dead" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Keeper's Penny" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
-		<Item Name="Stargazer's Hat" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
+		<Item Name="Keeper's Penny" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Bottomless Bag" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Birth Certificate" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Ordinary Life" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="library">
 		<Item Name="Book of Genesis" Weight="0.25" DecreaseBy="0.25" RemoveOn="0.025" />
@@ -79,7 +82,6 @@
 	<Pool Name="demonBeggar">
 		<Item Name="Cookie Cutter" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="A Scalpel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Blood Vessel" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 	</Pool>
 	<Pool Name="curse">
 		<Item Name="Cookie Cutter" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -163,9 +165,9 @@
 		<Item Name="Rubik's Cube" Weight="1" DecreaseBy="0.5" RemoveOn="0.1" />
 		<Item Name="Mother's Love" Weight="1" DecreaseBy="0.5" RemoveOn="0.1" />
 		<Item Name="Auction Gavel" Weight="1" DecreaseBy="0.5" RemoveOn="0.1" />
-		<Item Name="2+1" Weight="1" DecreaseBy="0.5" RemoveOn="0.1" />
+		<Item Name="2+1" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.1" />
 		<Item Name="Magic Marker" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Handicapped Placard" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Handicapped Placard" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="greedDevil">
 		<Item Name="Sinner's Heart" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />

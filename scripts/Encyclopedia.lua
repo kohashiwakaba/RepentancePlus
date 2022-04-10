@@ -9,7 +9,7 @@ local ItemsWiki = {
 	[CustomCollectibles.COOKIE_CUTTER] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Gives you one heart container and one broken heart "},
+			{str = "Gives you one heart container and one broken heart. Heals you for 2 full red hearts"},
 			{str = "Having 12 broken hearts kills you!"},
 		},
 	},
@@ -64,27 +64,27 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "A familiar that creates blue flies upon clearing a room "},
-			{str = "Blocks enemy projectiles, and after blocking it has a chance to be destroyed and drop Breakfast or Nightsoil trinket "},
+			{str = "Blocks enemy projectiles, and after blocking it has a chance to be destroyed and drop Breakfast or Nightsoil trinket"},
 			{str = "The more floors it is not destroyed, the more flies it spawns"},
 		},
 	},
 	[CustomCollectibles.CHERUBIM] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "A familiar that rapidly shoots tears with Godhead aura"},
+			{str = "A familiar that shoots tears with Godhead aura that deal 5 damage"},
 		},
 	},
 	[CustomCollectibles.CHERRY_FRIENDS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Killing an enemy has a 20% chance to drop cherry familiar on the ground "},
+			{str = "Killing an enemy has a 20% chance to drop cherry familiar on the ground"},
 			{str = "Those cherries emit a charming fart when an enemy walks over them, and drop half a heart when a room is cleared"},
 		},
 	},
 	[CustomCollectibles.BLACK_DOLL] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Upon entering a new room, all enemies will be split in pairs. Dealing damage to one enemy in each pair will deal 60% of that damage to another enemy in that pair"},
+			{str = "Upon entering a new room, all enemies will be grouped into pairs randomly. Dealing damage to an enemy will deal 60% of that damage to another enemy in the pair"},
 		},
 	},
 	[CustomCollectibles.BIRD_OF_HOPE] = {
@@ -126,8 +126,7 @@ local ItemsWiki = {
 	[CustomCollectibles.TWO_PLUS_ONE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Every third shop item on the current floor will cost 1  penny "},
-			{str = "Buying two items with hearts in one room makes all other items free"},
+			{str = "Every third shop item on the current floor will cost 1 penny"},
 		},
 	},
 	[CustomCollectibles.RED_MAP] = {
@@ -174,7 +173,7 @@ local ItemsWiki = {
 	[CustomCollectibles.GUSTY_BLOOD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Killing enemies grants you  tears and speed up "},
+			{str = "Killing enemies grants you  tears and speed up"},
 			{str = "The bonus is reset when entering a new room"},
 		},
 	},
@@ -203,16 +202,16 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Removes a random item and spawns 3 items of the same quality "},
-			{str = "Only one item can be taken "},
+			{str = "Only one item can be taken"},
 			{str = "Can't remove or spawn quest items"},
 		},
 	},
 	[CustomCollectibles.SCALPEL] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Makes you shoot tears in the opposite direction "},
-			{str = "From the front, you will frequently shoot bloody tears that deal 75% of your damage "},
-			{str = "All other weapon types will still be fired from the front as well"},
+			{str = "Consumes a heart container. If you have no containers, consumes a soul heart"},
+			{str = "Permanently makes Isaac fire tears in one more random direction, similarly to Eye Sore"},
+			{str = "These tears deal 75% of your damage and retain all your tear modifiers"},
 		},
 	},
 	[CustomCollectibles.KEEPERS_PENNY] = {
@@ -226,9 +225,8 @@ local ItemsWiki = {
 	[CustomCollectibles.NERVE_PINCH] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Shooting or moving for 8 seconds will trigger a nerve pinch "},
-			{str = "You take fake damage and gain a permanent " .. tostring(CustomStatups.Speed.NERVE_PINCH) .. " speed down when that happens "},
-			{str = "However, there is an 80% chance to activate your active item for free, even if it's uncharged "},
+			{str = "Shooting or moving for 8 seconds will trigger a nerve pinch. You take fake damage and gain a permanent " .. tostring(CustomStatups.Speed.NERVE_PINCH) .. " speed down when that happens"},
+			{str = "However, there is an 80% chance to activate your active item for free, even if it's uncharged"},
 			{str = "One-time use and infinite use actives cannot be used that way"},
 		},
 	},
@@ -244,8 +242,8 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Grants an orbital that switches between 2 different states every 15 seconds:"},
-			{str = "Two orbitals that quickly rotate around Isaac"},
-			{str = "One orbital that rotates slower and closer to Isaac, and periodically shoots teeth in random directions and spawns blood creep underneath it"},
+			{str = "- Two orbitals that quickly rotate around Isaac"},
+			{str = "- One orbital that rotates slower and closer to Isaac, and periodically shoots teeth in random directions and spawns blood creep underneath it"},
 			{str = "All orbitals block enemy shots and do contact damage"},
 		},
 	},
@@ -255,15 +253,14 @@ local ItemsWiki = {
 			{str = "After defeating a boss, red crawlspace will appear in a middle of a room"},
 			{str = "Entering the crawlspace brings you to another bossfight of high difficulty. Victory rewards you two items from Ultra secret room pool to choose from"},
 			{str = "The crawlspace can be entered only once, but you can enter it whenever you want, not necessarily after defeating the main floor boss"},
-			{str = "Bosses from chapters 2 and onward of the main path can be encountered. Also includes a lot of double trouble bossfights"},
 		},
 	},
 	[CustomCollectibles.STARGAZERS_HAT] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Summons the Stargazer beggar"},
-			{str = "Can only be charged with soul hearts, similar to Alabaster Box"},
-			{str = "2 soul hearts needed for full charge"},
+			{str = "Can only be charged with soul hearts, similarly to Alabaster Box. 1 soul heart needed for full charge"},
+			{str = "Can only be used once per floor"},
 		},
 	},
 	[CustomCollectibles.BOTTOMLESS_BAG] = {
@@ -301,14 +298,14 @@ local ItemsWiki = {
 			{str = "Its price will change rougly 5 times a second"},
 			{str = "The price is random, but generally increases over time until it reaches $99"},
 			{str = "If you leave and re-enter the room, the item disappears"},
-			{str = "Having Steam Sale makes the prices start at only 5 cents and halves the price increase rate"}
+			{str = "Having Steam Sale makes the prices start at only 11 cents and slows down the price increase"}
 		},
 	},
 	[CustomCollectibles.SOUL_BOND] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Chain yourself to a random enemy in a close radius with an astral chain and freeze them "},
-			{str = "The chain deals heavy contact damage to enemies "},
+			{str = "The chain deals heavy contact damage to enemies"},
 			{str = "Going too far away from chained enemy will break the chain "},
 			{str = "Chained enemies have a 33% chance to drop a soul heart when killed"},
 			{str = "Can chain bosses too. Chain-down lasts for 5 seconds"},
@@ -336,9 +333,9 @@ local ItemsWiki = {
 	[CustomCollectibles.BOOK_OF_LEVIATHAN] = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "Requires a key to 'unlock' and use it, does nothing if used without keys. Grants 2 keys on pickup"},
 			{str = "Upon use, cripples all enemies in the room"},
 			{str = "Crippled enemies lose their speed overtime, and die afer 12 seconds of losing it "},
-			{str = "Requires a key to 'unlock' and use it, does nothing if used without keys "},
 			{str = "Has special synergies with key-related trinkets:"},
 			{str = "- Store Key: Crippled enemies have a 75% chance to drop random pickup on death"},
 			{str = "- Rusted Key: Applies confusion to crippled enemies"},
@@ -380,7 +377,10 @@ local ItemsWiki = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Passively stores killed enemies. Can be used as soon as 12 enemies are stored"},
-			{str = "Upon use, brings you into a special room with 12 most recently killed enemies. Clearing the room spawns a reward based on total HP of spawned enemies"},
+			{str = "Upon use, brings you into a special room with 12 most recently killed enemies. Clearing the room spawns a reward based on total HP of spawned enemies:"},
+			{str = "- Low: soul, red and golden heart"},
+			{str = "- Medium: brown chest, golden chest and a trinket"},
+			{str = "- High: a random collectible item"},
 		},
 	},
 	[CustomCollectibles.PURE_SOUL] = {
@@ -410,6 +410,16 @@ local ItemsWiki = {
 			{str = "Using the book cancels the summoning of beams for the current room"},
         },
 	},
+	[CustomCollectibles.BIRTH_CERTIFICATE] = {
+        {
+			{str = "Effects", fsize = 2, clr = 3, halign = 0},
+			{str = "ONE-TIME USE ITEM"},
+			{str = "Consumes all your currently held trinkets and teleports you to a room containing 188 trinkets, as well as some other pickups"},
+			{str = "Only one trinket can be chosen, and after choosing it, you will be teleported back to the starting room of the current floor"},
+			{str = "If the total trinket pool is more than 230, there will be a secondary room adjusted to the main one which contains 52 more trinkets"},
+			{str = "You will not be able to return to the main room once you enter the secondary room, so choose carefully!"}
+        },
+	},
 }
 
 local TrinketsWiki = {
@@ -430,7 +440,8 @@ local TrinketsWiki = {
 	[CustomTrinkets.JUDAS_KISS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Enemies touching you become feared and targeted by other enemies (effect of Rotten Tomato item)"},
+			{str = "Enemies touching you become feared and targeted by other enemies (bait effect of Rotten Tomato item)"},
+			{str = "Fear effect lasts for 1.5 seconds, bait effect is permanent"},
 		},
 	},
 	[CustomTrinkets.TRICK_PENNY] = {
@@ -458,15 +469,13 @@ local TrinketsWiki = {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "All new treasure rooms will have an angel item for sale instead of a normal item"},
 			{str = "Angels spawned from statues will not drop Key Pieces!"},
-			{str = "Angel items reroll into items from a treasure room pool"}
 		},
 	},
 	[CustomTrinkets.MAGIC_SWORD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "x2 DMG up while held "},
-			{str = "Breaks when you take damage"},
-			{str = "Having Duct Tape prevents it from breaking"},
+			{str = "Breaks when you take damage. Having Duct Tape prevents it from breaking"},
 		},
 	},
 	[CustomTrinkets.WAIT_NO] = {
@@ -577,14 +586,14 @@ local PillsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Makes you shoot out corn tears from behind for 3 seconds"},
-			{str = "HORSE: lasts for 12 seconds"},
+			{str = "HORSE: the effect lasts for 12 seconds"},
 		},
 	},
 	[CustomPills.PHANTOM_PAINS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Makes Isaac take fake damage on pill use, then 15 and 30 seconds after"},
-			{str = "HORSE: when fake damage ticks, 8 bone tears are shot in X and + pattern around Isaac"},
+			{str = "HORSE: when fake damage ticks, 8 bone tears are shot in a star pattern around Isaac"},
 		},
 	},
 	[CustomPills.YUCK] = {
@@ -614,7 +623,7 @@ local PillsColors = {
 }
 
 local itemPools = {
-	[CustomCollectibles.ORDINARY_LIFE] = {Encyclopedia.ItemPools.POOL_BOSS},
+	[CustomCollectibles.ORDINARY_LIFE] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_OLD_CHEST},
 	[CustomCollectibles.COOKIE_CUTTER] = {Encyclopedia.ItemPools.POOL_DEMON_BEGGAR, Encyclopedia.ItemPools.POOL_CURSE},
 	[CustomCollectibles.RUBIKS_CUBE] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_CRANE_GAME},
 	[CustomCollectibles.MAGIC_PEN] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_CRANE_GAME},
@@ -629,7 +638,7 @@ local itemPools = {
 	[CustomCollectibles.CEREMONIAL_BLADE] = {Encyclopedia.ItemPools.POOL_DEVIL},
 	[CustomCollectibles.CEILING_WITH_THE_STARS] = {Encyclopedia.ItemPools.POOL_SHOP},
 	[CustomCollectibles.QUASAR] = {Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ANGEL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.TWO_PLUS_ONE] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET},
+	[CustomCollectibles.TWO_PLUS_ONE] = {Encyclopedia.ItemPools.POOL_SHOP},
 	[CustomCollectibles.RED_MAP] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
 	[CustomCollectibles.SINNERS_HEART] = {Encyclopedia.ItemPools.POOL_DEVIL},
 	[CustomCollectibles.CHEESE_GRATER] = {Encyclopedia.ItemPools.POOL_SHOP},
@@ -645,11 +654,11 @@ local itemPools = {
 	[CustomCollectibles.SCALPEL] = {Encyclopedia.ItemPools.POOL_DEMON_BEGGAR, Encyclopedia.ItemPools.POOL_RED_CHEST},
 	[CustomCollectibles.KEEPERS_PENNY] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET},
 	[CustomCollectibles.NERVE_PINCH] = {Encyclopedia.ItemPools.POOL_TREASURE},
-	[CustomCollectibles.BLOOD_VESSELS[1]] = {Encyclopedia.ItemPools.POOL_DEMON_BEGGAR, Encyclopedia.ItemPools.POOL_CURSE},
+	[CustomCollectibles.BLOOD_VESSELS[1]] = {Encyclopedia.ItemPools.POOL_CURSE},
 	[CustomCollectibles.SIBLING_RIVALRY] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP},
 	[CustomCollectibles.RED_KING] = {Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.STARGAZERS_HAT] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_SECRET},
-	[CustomCollectibles.BOTTOMLESS_BAG] = {Encyclopedia.ItemPools.POOL_SECRET},
+	[CustomCollectibles.STARGAZERS_HAT] = {Encyclopedia.ItemPools.POOL_TREASURE},
+	[CustomCollectibles.BOTTOMLESS_BAG] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_TREASURE},
 	[CustomCollectibles.CROSS_OF_CHAOS] = {Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
 	[CustomCollectibles.REJECTION] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_ROTTEN_BEGGAR},
 	[CustomCollectibles.AUCTION_GAVEL] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_CRANE_GAME, Encyclopedia.ItemPools.POOL_WOODEN_CHEST},
@@ -663,7 +672,8 @@ local itemPools = {
 	[CustomCollectibles.VAULT_OF_HAVOC] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_ULTRA_SECRET, Encyclopedia.ItemPools.POOL_CURSE},
 	[CustomCollectibles.PURE_SOUL] = {Encyclopedia.ItemPools.POOL_ANGEL},
 	[CustomCollectibles.HANDICAPPED_PLACARD] = {Encyclopedia.ItemPools.POOL_SHOP},
-	[CustomCollectibles.BOOK_OF_JUDGES] = {Encyclopedia.ItemPools.POOL_LIBRARY, Encyclopedia.ItemPools.POOL_ANGEL}
+	[CustomCollectibles.BOOK_OF_JUDGES] = {Encyclopedia.ItemPools.POOL_LIBRARY, Encyclopedia.ItemPools.POOL_ANGEL},
+	[CustomCollectibles.BIRTH_CERTIFICATE] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET}
 }
 
 local CardsWiki = {
@@ -795,15 +805,14 @@ local CardsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Gives +1.25 DMG up that depletes over the span of 20 seconds"},
-			{str = "Stackable"},
 			{str = "Heals you for one red heart if you have Ceremonial Robes "},
-			{str = "Damage depletes quicker the more Blood you used subsequently"},
+			{str = "Stackable. Damage depletes quicker the more Blood you used subsequently"},
 		},
 	},
 	[CustomConsumables.LIBRARY_CARD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Activates a random book effect"},
+			{str = "Activates a random book"},
 		},
 	},
 	[CustomConsumables.MOMS_ID] = {
@@ -852,7 +861,7 @@ local CardsWiki = {
 	[CustomConsumables.SPIRITUAL_RESERVES] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Spawns two ghostly orbital familiars that block enemy shots and shoot spectral tears that deal 2.25 damage each"},
+			{str = "Spawns two ghostly orbital familiars that block enemy shots and shoot spectral tears that deal 2 damage each"},
 			{str = "After blocking 3 shots, each ghost dies and drops half a soul heart"},
 		},
 	},
@@ -861,13 +870,13 @@ local CardsWiki = {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Your active item moves to the pocket slot"},
 			{str = "If you've already had pocket active, it drops on a pedestal"},
-			{str = "Does nothing if you don't have active items"},
+			{str = "Does nothing if you don't have active items. Doesn't work with certain active items that don't function correctly in pocket slot"},
 		},
 	},
 	[CustomConsumables.CURSED_CARD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "For the current room, every hit you would take is negated "},
+			{str = "For the current room, every hit of damage you would take is negated "},
 			{str = "Instead, it gives you a broken heart and a permanent tears boost"},
 		},
 	},

@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="trtv" CreatedOn="22.01.2022 21:20:53" Version="33" Fps="30"/>
+	<Info CreatedBy="trtv" CreatedOn="30.03.2022 17:53:43" Version="34" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="familiar\10_spiritual_reserves.png" Id="0"/>
