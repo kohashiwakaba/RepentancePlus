@@ -1,5 +1,5 @@
 # Repentance Plus mod
-This is the Github repository of the Repentance Plus mod for The Binding of Isaac: Rebirth game. The latest version is 1.25b.
+This is the Github repository of the Repentance Plus mod for The Binding of Isaac: Rebirth game. The latest version is 1.27.
 
 It doesn't get updated as often as the mod does, but it's better than nothing :)
 
