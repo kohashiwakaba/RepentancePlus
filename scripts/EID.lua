@@ -85,6 +85,27 @@ TornPageDesc["ru"] = {
 	[CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS] = "+2 заряда после использования",
 	[CollectibleType.COLLECTIBLE_MONSTER_MANUAL] = "+2 заряда после использования",
 }
+TornPageDesc["spa"] = {
+	[-1] = "<Libro de mod, no tiene efecto>", --Modded books
+	[CustomCollectibles.BOOK_OF_GENESIS] = "Te da a elegir 4 opciones en vez de 3",
+	[CustomCollectibles.BOOK_OF_LEVIATHAN] = "No necesitas llaves para usarlo",
+	[CustomCollectibles.BOOK_OF_JUDGES] = "Duplica el daño de fuego y la duración",
+	[CollectibleType.COLLECTIBLE_NECRONOMICON] = "Genera 3 langostaas de Muerte",
+	[CollectibleType.COLLECTIBLE_BIBLE] = "{{BrokenHeart}} Remueve un corazón roto al usarlo",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_REVELATIONS] = "Evita que los jinetes aparezcan en la sala del jefe",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_BELIAL] = "Otorga el efecto del Ojo de Belial durante la sala",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_SIN] = "3% de posibilidad de generar un pedestal de item, un cofre regular o un cofre dorado",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS] = "Duración del escudo extendida",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD] = "{{EmptyBoneHeart}} Otorga un corazón de hueso al usarlo",
+	[CollectibleType.COLLECTIBLE_HOW_TO_JUMP] = "Al aterrizar, dispararás lágrimas en un patrón 'x' o '+'",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES] = "Las flamas tienen 1.5 veces más HP",
+	[CollectibleType.COLLECTIBLE_SATANIC_BIBLE] = "Otorga 2 opciones de trato con el Diablo al vencer a un jefe",
+	[CollectibleType.COLLECTIBLE_TELEPATHY_BOOK] = "Grants the Wiz (Dunce Cap) effect on use",
+	[CollectibleType.COLLECTIBLE_ANARCHIST_COOKBOOK] = "Generará una bomba troll dorada",
+	[CollectibleType.COLLECTIBLE_LEMEGETON] = "Puede usarse sin cargar por completo, recargándose a cambio de dañar al jugador",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS] = "Recibe 2 cargas tras usarlo",
+	[CollectibleType.COLLECTIBLE_MONSTER_MANUAL] = "Recibe 2 cargas tras usarlo"
+}
 
 KeyTrinketsDesc = {}
 KeyTrinketsDesc["en_us"] = {
@@ -130,6 +151,17 @@ KeyTrinketsDesc["ru"] = {
 	[TrinketType.TRINKET_BLUE_KEY] = "Ослабленные враги призывают полвину сердца души при смерти",
 	[TrinketType.TRINKET_STRANGE_KEY] = "Накладывает случайные эффекта на врагов",
 	[TrinketType.TRINKET_GILDED_KEY] = "Может превратить врагов в золотые статуи при использовании",
+}
+KeyTrinketsDesc["spa"] = {
+	[CustomTrinkets.BASEMENT_KEY] = "Los enemigos lisiados podrán generar orbitales de hueso al morir",
+	[CustomTrinkets.KEY_TO_THE_HEART] = "Los enemigos lisiados podrán generar medios corazones rojos de hueso al morir",
+	[CustomTrinkets.KEY_KNIFE] = "{{BleedingOut}} Aplica sangrado a los enemigos lisiados",
+	[TrinketType.TRINKET_STORE_KEY] = "Los enemigos lisiados pueden soltar un recolectable al morir",
+	[TrinketType.TRINKET_RUSTED_KEY] = "{{Confusion}} Aplica confusión a los enemigos lisiados",
+	[TrinketType.TRINKET_CRYSTAL_KEY] = "{{Freezing}} Los enemigos se congelan al morir",
+	[TrinketType.TRINKET_BLUE_KEY] = "Los enemigos lisiados pueden soltar medio corazón de alma al morir",
+	[TrinketType.TRINKET_STRANGE_KEY] = "Aplica un efecto de estado aleatorio a los enemigos",
+	[TrinketType.TRINKET_GILDED_KEY] = "Puede aplicar el efecto del Toque de Midas a los enemigos"
 }
 
 -- making a Spindown Dice Shard roll helper --
@@ -240,6 +272,159 @@ EID:addIcon("RPlus Icon", "Icon", 0, 8, 8, 6, 6, iconSprite)
 EID:setModIndicatorIcon("RPlus Icon")
 
 
+-- adding icons for cards/runes --
+----------------------------------
+if true then
+	local SPINDOWN_DICE_SHARD_CARDFRONT = Sprite()
+	SPINDOWN_DICE_SHARD_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.SPINDOWN_DICE_SHARD, "Spindown Dice Shard", 0, 9, 9, 0.5, 1.5, SPINDOWN_DICE_SHARD_CARDFRONT)
+
+	local RED_RUNE_CARDFRONT = Sprite()
+	RED_RUNE_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.RED_RUNE, "Red Rune", 0, 9, 9, 0.5, 1.5, RED_RUNE_CARDFRONT)
+
+	local NEEDLE_AND_THREAD_CARDFRONT = Sprite()
+	NEEDLE_AND_THREAD_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.NEEDLE_AND_THREAD, "Needle and Thread", 0, 9, 9, 0.5, 1.5, NEEDLE_AND_THREAD_CARDFRONT)
+
+	local QUEEN_OF_DIAMONDS_CARDFRONT = Sprite()
+	QUEEN_OF_DIAMONDS_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.QUEEN_OF_DIAMONDS, "Queen of Diamonds", 0, 9, 9, 0.5, 1.5, QUEEN_OF_DIAMONDS_CARDFRONT)
+
+	local KING_OF_SPADES_CARDFRONT = Sprite()
+	KING_OF_SPADES_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.KING_OF_SPADES, "King of Spades", 0, 9, 9, 0.5, 1.5, KING_OF_SPADES_CARDFRONT)
+
+	local KING_OF_CLUBS_CARDFRONT = Sprite()
+	KING_OF_CLUBS_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.KING_OF_CLUBS, "King of Clubs", 0, 9, 9, 0.5, 1.5, KING_OF_CLUBS_CARDFRONT)
+
+	local KING_OF_DIAMONDS_CARDFRONT = Sprite()
+	KING_OF_DIAMONDS_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.KING_OF_DIAMONDS, "King of Diamonds", 0, 9, 9, 0.5, 1.5, KING_OF_DIAMONDS_CARDFRONT)
+
+	local BAG_TISSUE_CARDFRONT = Sprite()
+	BAG_TISSUE_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.BAG_TISSUE, "Bag Tissue", 0, 9, 9, 0.5, 1.5, BAG_TISSUE_CARDFRONT)
+
+	local JOKER_Q_CARDFRONT = Sprite()
+	JOKER_Q_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.JOKER_Q, "Joker?", 0, 9, 9, 0.5, 1.5, JOKER_Q_CARDFRONT)
+
+	local UNO_REVERSE_CARD_CARDFRONT = Sprite()
+	UNO_REVERSE_CARD_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.UNO_REVERSE_CARD, "Reverse Card", 0, 9, 9, 0.5, 1.5, UNO_REVERSE_CARD_CARDFRONT)
+
+	local LOADED_DICE_CARDFRONT = Sprite()
+	LOADED_DICE_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.LOADED_DICE, "Loaded Dice", 0, 9, 9, 0.5, 1.5, LOADED_DICE_CARDFRONT)
+
+	local BEDSIDE_QUEEN_CARDFRONT = Sprite()
+	BEDSIDE_QUEEN_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.BEDSIDE_QUEEN, "Bedside Queen", 0, 9, 9, 0.5, 1.5, BEDSIDE_QUEEN_CARDFRONT)
+
+	local QUEEN_OF_CLUBS_CARDFRONT = Sprite()
+	QUEEN_OF_CLUBS_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.QUEEN_OF_CLUBS, "Queen of Clubs", 0, 9, 9, 0.5, 1.5, QUEEN_OF_CLUBS_CARDFRONT)
+
+	local JACK_OF_CLUBS_CARDFRONT = Sprite()
+	JACK_OF_CLUBS_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.JACK_OF_CLUBS, "Jack of Clubs", 0, 9, 9, 0.5, 1.5, JACK_OF_CLUBS_CARDFRONT)
+
+	local JACK_OF_DIAMONDS_CARDFRONT = Sprite()
+	JACK_OF_DIAMONDS_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.JACK_OF_DIAMONDS, "Jack of Diamonds", 0, 9, 9, 0.5, 1.5, JACK_OF_DIAMONDS_CARDFRONT)
+
+	local JACK_OF_SPADES_CARDFRONT = Sprite()
+	JACK_OF_SPADES_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.JACK_OF_SPADES, "Jack of Spades", 0, 9, 9, 0.5, 1.5, JACK_OF_SPADES_CARDFRONT)
+
+	local JACK_OF_HEARTS_CARDFRONT = Sprite()
+	JACK_OF_HEARTS_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.JACK_OF_HEARTS, "Jack of Hearts", 0, 9, 9, 0.5, 1.5, JACK_OF_HEARTS_CARDFRONT)
+
+	local QUASAR_SHARD_CARDFRONT = Sprite()
+	QUASAR_SHARD_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.QUASAR_SHARD, "Quasar Shard", 0, 9, 9, 0.5, 1.5, QUASAR_SHARD_CARDFRONT)
+
+	local BUSINESS_CARD_CARDFRONT = Sprite()
+	BUSINESS_CARD_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.BUSINESS_CARD, "Business Card", 0, 9, 9, 0.5, 1.5, BUSINESS_CARD_CARDFRONT)
+
+	local SACRIFICIAL_BLOOD_CARDFRONT = Sprite()
+	SACRIFICIAL_BLOOD_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.SACRIFICIAL_BLOOD, "Sacrificial Blood", 0, 9, 9, 0.5, 1.5, SACRIFICIAL_BLOOD_CARDFRONT)
+
+	local LIBRARY_CARD_CARDFRONT = Sprite()
+	LIBRARY_CARD_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.LIBRARY_CARD, "Library Card", 0, 9, 9, 0.5, 1.5, LIBRARY_CARD_CARDFRONT)
+
+	local ANTIMATERIAL_CARD_CARDFRONT = Sprite()
+	ANTIMATERIAL_CARD_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.ANTIMATERIAL_CARD, "Antimaterial Card", 0, 9, 9, 0.5, 1.5, ANTIMATERIAL_CARD_CARDFRONT)
+
+	local FUNERAL_SERVICES_CARDFRONT = Sprite()
+	FUNERAL_SERVICES_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.FUNERAL_SERVICES, "Funeral Services", 0, 9, 9, 0.5, 1.5, FUNERAL_SERVICES_CARDFRONT)
+
+	local MOMS_ID_CARDFRONT = Sprite()
+	MOMS_ID_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.MOMS_ID, "Mom's ID", 0, 9, 9, 0.5, 1.5, MOMS_ID_CARDFRONT)
+
+	local FIEND_FIRE_CARDFRONT = Sprite()
+	FIEND_FIRE_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.FIEND_FIRE, "Fiend Fire", 0, 9, 9, 0.5, 1.5, FIEND_FIRE_CARDFRONT)
+
+	local DEMON_FORM_CARDFRONT = Sprite()
+	DEMON_FORM_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.DEMON_FORM, "Demon Form", 0, 9, 9, 0.5, 1.5, DEMON_FORM_CARDFRONT)
+
+	local VALENTINES_CARD_CARDFRONT = Sprite()
+	VALENTINES_CARD_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.VALENTINES_CARD, "Valentine's Card", 0, 9, 9, 0.5, 1.5, VALENTINES_CARD_CARDFRONT)
+
+	local SPIRITUAL_RESERVES_CARDFRONT = Sprite()
+	SPIRITUAL_RESERVES_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.SPIRITUAL_RESERVES, "Spectral Reserves", 0, 9, 9, 0.5, 1.5, SPIRITUAL_RESERVES_CARDFRONT)
+
+	local MIRRORED_LANDSCAPE_CARDFRONT = Sprite()
+	MIRRORED_LANDSCAPE_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.MIRRORED_LANDSCAPE, "Mirrored Landscape", 0, 9, 9, 0.5, 1.5, MIRRORED_LANDSCAPE_CARDFRONT)
+
+	local CURSED_CARD_CARDFRONT = Sprite()
+	CURSED_CARD_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.CURSED_CARD, "Cursed Card", 0, 9, 9, 0.5, 1.5, CURSED_CARD_CARDFRONT)
+
+	local CROWN_OF_GREED_CARDFRONT = Sprite()
+	CROWN_OF_GREED_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.CROWN_OF_GREED , "Crown of Greed", 0, 9, 9, 0.5, 1.5, CROWN_OF_GREED_CARDFRONT)
+
+	local FLOWER_OF_LUST_CARDFRONT = Sprite()
+	FLOWER_OF_LUST_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.FLOWER_OF_LUST, "Flower of Lust", 0, 9, 9, 0.5, 1.5, FLOWER_OF_LUST_CARDFRONT)
+
+	local ACID_OF_SLOTH_CARDFRONT = Sprite()
+	ACID_OF_SLOTH_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.ACID_OF_SLOTH, "Acid of Sloth", 0, 9, 9, 0.5, 1.5, ACID_OF_SLOTH_CARDFRONT)
+
+	local VOID_OF_GLUTTONY_CARDFRONT = Sprite()
+	VOID_OF_GLUTTONY_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.VOID_OF_GLUTTONY, "Void of Gluttony", 0, 9, 9, 0.5, 1.5, VOID_OF_GLUTTONY_CARDFRONT)
+
+	local APPLE_OF_PRIDE_CARDFRONT = Sprite()
+	APPLE_OF_PRIDE_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.APPLE_OF_PRIDE, "Apple of Pride", 0, 9, 9, 0.5, 1.5, APPLE_OF_PRIDE_CARDFRONT)
+
+	local CANINE_OF_WRATH_CARDFRONT = Sprite()
+	CANINE_OF_WRATH_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.CANINE_OF_WRATH, "Canine of Wrath", 0, 9, 9, 0.5, 1.5, CANINE_OF_WRATH_CARDFRONT)
+
+	local MASK_OF_ENVY_CARDFRONT = Sprite()
+	MASK_OF_ENVY_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
+	EID:addIcon("Card"..CustomConsumables.MASK_OF_ENVY, "Mask of Envy", 0, 9, 9, 0.5, 1.5, MASK_OF_ENVY_CARDFRONT)
+end
+
+
 -- adding metadata for Placebo, Blank Card and Clear Rune mimicking --
 ----------------------------------------------------------------------
 if true then
@@ -286,12 +471,11 @@ if true then
 	EID:addPillMetadata(CustomPills.YUCK, 6, "2+")
 end
 
---[[
-		----------------------------------
-		THE ACTUAL DESCRIPTIONS START HERE
-		----------------------------------
--- huge shoutout to contributors once again!
---]]
+
+	----------------------------------------
+	-- THE ACTUAL DESCRIPTIONS START HERE --
+	----------------------------------------
+ -- big shoutout to contributors once again! --
 
 -- Enlish EID (by Mr. SeemsGood)
 if true then
@@ -426,7 +610,7 @@ if true then
 	EID:addEntity(5, 10, 93, "Capricious Heart", "Splits into 1-3 random hearts upon pickup")
 	EID:addEntity(5, 10, 94, "Baleful Heart", "While held, will summon ghosts to attack enemies that get close to you #Each heart increases their damage and allows them to attack from further away")
 	EID:addEntity(5, 10, 95, "Harlot Heart", "Heals full red heart and spawns a Leprosy orbital on pickup")
-	EID:addEntity(5, 10, 96, "Miser Heart", "When depleted, spawns a random amount of shop goodies and rerolls all items/pickups in the room")
+	EID:addEntity(5, 10, 96, "Miser Heart", "When depleted, rerolls all items/pickups in the room #Passively grants discounts in shops while held")
 	EID:addEntity(5, 10, 97, "Empty Heart", "{{Collectible706}}Grants you one Abyss locust when entering a new floor")
 	EID:addEntity(5, 10, 98, "Fettered Heart", "Requires a key to pick up #Grants a soul heart and a special ghost familiar")
 	EID:addEntity(5, 10, 99, "Zealot Heart", "{{Collectible712}}Grants you one Lemegeton wisp when entering a new floor")
@@ -488,6 +672,11 @@ if true then
 	EID:addCollectible(CustomCollectibles.FRIENDLY_SACK, "Después de cada 3 habitaciones completadas, se generará un familiar debil (como un Dip, Blood clot, moscas, etc.)#Si esl efecto del Saco amistoso se activa en una {{BossRoom}}sala del jefe, aparecerá un monstruo encantado en su lugar", "Saco amistoso", "spa")
 	EID:addCollectible(CustomCollectibles.MAGIC_MARKER, "{{Card}}Se genera una carta del tarot#Tras usarlo, cambiará tu carta sumándole un 1 a su número (Restará 1 para las cartas reversas)", "Plumón Mágico", "spa")
     EID:addCollectible(CustomCollectibles.ULTRA_FLESH_KID, "Familiar que persigue y ataca a los enemigos#Posee 3 fases, conseguir {{Heart}}corazones rojos hará que evolucione#{{Heart}}Se necesitan 15 corazones en total para hacerlo evolucionar", "Chico Ultra-carnoso", "spa")
+	EID:addCollectible(CustomCollectibles.VAULT_OF_HAVOC, "Almacenará de forma pasiva a los enemigos asesinados; se podrá usar cuando guardes hasta 12#Al usarlo, te llevará a una habitación especial con esos 12 enemigos; limpiar la sala generará una recompensa basada en el HP de los enemigos", "Bóveda de Havoc", "spa")
+	EID:addCollectible(CustomCollectibles.PURE_SOUL, "Todos los jefes de pecado tienen un 100% de posibilidad de soltar su respectiva {{ColorRed}}Gema del pecado{{CR}} #Un fantasma podrá aparecer en la {{SecretRoom}} Sala secreta o la {{SuperSecretRoom}} sala súper secreta, el cual generará un minijefe del pecado si lo alcanzas #{{MiniBoss}} Este familiar se posicionará en las entradas de las salas de minijefe", "Alma Pura", "spa")
+	EID:addCollectible(CustomCollectibles.HANDICAPPED_PLACARD, "Coloca una placa de discapacitados en el suelo#Cada enemigo dentro del área de la placa será debilitado y generarán Espuelas de huesos al morir#El área se volverá más grande al recibir daño", "Placa de discapacitados", "spa")
+	EID:addCollectible(CustomCollectibles.BOOK_OF_JUDGES, "Se generarán punteros al entrar a una sala con enemigos#Cada 3 segundos, caerán rayos de luz sobre estos punteros#{{Burning}} Los rayos dañan y queman a los enemigos, pero también te pueden dañar, but they hurt you too#Usar el libro anulará el efecto durante la sala", "Book of Judges", "spa")
+	EID:addCollectible(CustomCollectibles.BIRTH_CERTIFICATE, "{{Warning}} DE UN SOLO USO#Consumirá todos los trinkets que poseas#Te teletransportarás a una sala especial con demasiados trinkets, junto a otros recolectables#Sólo podrás tomar unp; después de esto, serás transportado a la sala donde estabas antes", "Birth Certificate", "spa")
 
 	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "{{ChestRoom}}Al tenerlo, cada Cofre Dorado tiene un 15% de probabilidad de convertirse en un Cofre Viejo", "Llave del Sótano", "spa")
 	EID:addTrinket(CustomTrinkets.KEY_TO_THE_HEART, "Al tenerlo, cada enemigo tiene una posibilidad de soltar un Cofre Escarlata al morir#Los Cofres Escarlata contienen: 1-4 {{Heart}}corazones/{{Pill}}píldoras O un objeto aleatorio relativo al cuerpo", "Llave al Corazón", "spa")
@@ -539,6 +728,16 @@ if true then
 	EID:addCard(CustomConsumables.VALENTINES_CARD , "Se lanza de forma parecida a una Carta del Cáos#Si la carta golpea a un enemigo, este se volverá amigable y se generará un corazón rojo en el piso", "Carta de San Valentín", "spa")
 	EID:addCard(CustomConsumables.SPIRITUAL_RESERVES, "Genera 2 familiares orbitales fantasma que bloquean disparos enemigos y disparan lágrimas espectrales#{{HalfSoulHeart}}Tras bloquear 3 disparos, los fantasmas soltarán medio corazón de alma", "Reserva Espiritual", "spa")
 	EID:addCard(CustomConsumables.MIRRORED_LANDSCAPE, "Tu objeto activo será movido hacia los activos de bolsillo#En caso de que ya tengas un activo de bolsillo, lo soltarás en un pedestal", "Paisaje Reflejado", "spa")
+	EID:addCard(CustomConsumables.CURSED_CARD, "Durante la sala, todo daño recibido será negado#A cambio, recibes: #{{BrokenHeart}} Un corazón roto#{{ArrowUp}} {{Tears}} Un aumento de lágrimas permanente", "Carta Maldita", "spa")
+
+	-- Gemas del pecado
+	EID:addCard(CustomConsumables.CROWN_OF_GREED , "{{Penny}} Genera 1-2 monedas doradas#{{ArrowDown}} {{Luck}} Suerte -1 por cada moneda generada", "Corona de la Codicia", "spa")
+	EID:addCard(CustomConsumables.FLOWER_OF_LUST, "Te permite resetear la sala, asegurando recibir una recompensa mejor", "Flor de la Lujuria", "spa")
+	EID:addCard(CustomConsumables.ACID_OF_SLOTH, "{{Slow}} Ralentiza a los enemigos reduciendo a su velocidad a la mitad#{{Poison}} Dejarán gas venenoso detrás suyo", "Ácido de la pereza", "spa")
+	EID:addCard(CustomConsumables.VOID_OF_GLUTTONY, "{{HalfHeart}} Durante 7 segundos, Si no tienes salud roja, la recuperarás#{{ArrowDown}} {{Speed}} Perderás -0.01 de velovidad #Su duración se extiende 2 segundos al matar a un enemigo", "Vacío de la Gula", "spa")
+	EID:addCard(CustomConsumables.APPLE_OF_PRIDE, "{{ArrowUp}} Recibes un aumento de stats moderado hasta recibir daño", "Manzana del Orgullo", "spa")
+	EID:addCard(CustomConsumables.CANINE_OF_WRATH, "Every enemy in a room explodes, taking 15 damage #{{Warning}}The explosion can hurt you too #Every enemy that dies from the explosion will give you a temporary damage boost", "Colmillo de la Ira", "spa")
+	EID:addCard(CustomConsumables.MASK_OF_ENVY, "{{RottenBoneHeart}} Convierte todos tus contenedores de corazón en corazones de hueso rellenos con corazones podridos", "Máscara de la Envídia", "spa")
 
 	EID:addPill(CustomPills.ESTROGEN, "Convierte todos tus {{Heart}}corazones en Coágulos#Te deja con al menos un corazón rojo, No afecta Corazones de Alma/Corazones Negros", "Estrógeno", "spa")
 	EID:addPill(CustomPills.LAXATIVE, "Hace que dispares los maíces de {{Collectible680}}Venganza de Montezuma durante 3 segundos", "Laxante", "spa")
@@ -547,26 +746,26 @@ if true then
 	EID:addPill(CustomPills.YUM, "Genera un corazón rojo #Por, cada corazón rojo que consigas te dará un pequeño aumento permantente de estadísticas, Igual al efecto de {{Collectible671}}Corazón de Caramelo", "Mmm~", "spa")
 end
 
--- EID Russian (by Laraz)
+-- EID Russian (by Laraz and Mr. SeemsGood)
 if true then
 	EID:addCollectible(CustomCollectibles.ORDINARY_LIFE, "{{ArrowUp}}Повышает скорострельность #Создает дополнительный предмет, связанный с матерью/отцом, в сокровищницах; можно взять только один предмет", "Обычная Жизнь", "ru")	
 	EID:addCollectible(CustomCollectibles.COOKIE_CUTTER, "При использовании дает один {{Heart}}контейнер сердца и одно сломанное сердце #{{Warning}}При 12 сломанных сердец вы умрете!", "Формочка для Печенья", "ru")
 	EID:addCollectible(CustomCollectibles.SINNERS_HEART, "+2 черных сердца #{{ArrowUp}}Дает +2 к урону и умножает на 1.5 #{{ArrowUp}}Дает +2 к дальности и -0.2 к скорости слезы #Дает спектральные и пронзающие слезы", "Сердце Грешника", "ru")
-	EID:addCollectible(CustomCollectibles.RUBIKS_CUBE, "После каждого использования, имеет 5%(100% на 20-ом использовании) шанс стать 'собранным', забирает у игрока этот предмет и заменяет его Магическим Кубом", "Кубик Рубика", "ru")
+	EID:addCollectible(CustomCollectibles.RUBIKS_CUBE, "После каждого использования, имеет 5%(100% на 20-ом использовании) шанс собраться, забирает у игрока этот предмет и заменяет его Магическим Кубом", "Кубик Рубика", "ru")
 	EID:addCollectible(CustomCollectibles.MAGIC_CUBE, "{{DiceRoom}}Меняет предметы в комнате #Замененные предметы могут быть из любого пула предметов", "Магический Куб", "ru")
 	EID:addCollectible(CustomCollectibles.MAGIC_PEN, "При двойном нажатие кнопки стрельбы создает на полу полосу {{ColorRainbow}}радужной{{CR}}лужи в направлении стрельбы #Лужа накладывает случайные статусные эффекты врагам при соприкосновении#{{Warning}}Имеет 4 секунды перезарядки", "Магическая Ручка", "ru")
 	EID:addCollectible(CustomCollectibles.MARK_OF_CAIN, "Дарует вам спутника Еноха #Когда вы умираете, если у вас есть какие-либо спутники, кроме Еноха, воскрешает вас и уничтожает их вместо этого; Енох становится сильнее; дает вам кадры неуязвимости и сохраняет все ваши красные контейнеры #{{Warning}}Работает только один раз", "Метка Каина", "ru")
-	EID:addCollectible(CustomCollectibles.TEMPER_TANTRUM, "При получении урона, есть 25% шанс войти в режим Берсерка #В этом состоянии, любой пораженный враг имеет 10% шанс стать стертым до конца забега", "Приступ Ярости", "ru")
+	EID:addCollectible(CustomCollectibles.TEMPER_TANTRUM, "При получении урона, есть 25% шанс войти в режим Берсерка #В этом состоянии, любой пораженный враг имеет 5% шанс стать стертым до конца забега", "Приступ Ярости", "ru")
 	EID:addCollectible(CustomCollectibles.BAG_O_TRASH, "Спутник призывающий мух при зачистке комнат #Блокирует вражеские выстрелы, при блокировании имеет небольшой шанс быть уничтоженным и создать предмет Завтрак или брелок Ночное Золото #Чем больше этажей этот спутник выживает, тем больше мух он призывает", "Мешок для Мусора", "ru")
-	EID:addCollectible(CustomCollectibles.CHERUBIM, "Спутник, быстро стреляющий слезами с аурой {{Collectible331}}Головы Бога", "Херувим", "ru")
-	EID:addCollectible(CustomCollectibles.CHERRY_FRIENDS, "При убийстве врага есть 20% шанс призвать на его месте спутника вишенку #Вишенки испускают очаровывающий пук при соприкосновении с врагами, и создает половинку красного сердца после зачистки комнаты", "Вишенки", "ru")
-	EID:addCollectible(CustomCollectibles.BLACK_DOLL, "При посещении комнаты, все враги будут разделены на пары. Нанося урон врагу, также наносит половину урона другому врагу в этой паре", "Черная Кукла", "ru")
+	EID:addCollectible(CustomCollectibles.CHERUBIM, "Спутник, стреляющий слезами с аурой {{Collectible331}}Головы Бога", "Херувим", "ru")
+	EID:addCollectible(CustomCollectibles.CHERRY_FRIENDS, "При убийстве врага есть 20% шанс призвать на его месте спутника вишенку #Вишенки испускают очаровывающий пук при соприкосновении с врагами, и создает половинку красного сердца после зачистки комнаты", "Друзья вишенки", "ru")
+	EID:addCollectible(CustomCollectibles.BLACK_DOLL, "При посещении комнаты, все враги будут разделены на пары. Нанося урон врагу, также наносит 60% урона другому врагу в этой паре", "Черная Кукла", "ru")
 	EID:addCollectible(CustomCollectibles.BIRD_OF_HOPE, "При смерти персонаж превращается в неуязвимого призрака, и птица вылетает из центра комнаты в случайном направление. При поимке птицы вы воскрешаетесь и возвращаетесь на место своей смерти, если вы не успеваете поймать птицу вы умираете. Ужасной смертью #{{Warning}}За каждую вашу смерть, птица становится быстрее, затрудняя ее поймать", "Птичка Надежды", "ru")
 	EID:addCollectible(CustomCollectibles.ENRAGED_SOUL, "При двойном нажатии кнопки стрельбы запускает призрака в направление стрельбы #Призрак прилипнет ко врагу нанося урон на протяжении 7 секунд или до тех пор пока этот враг умрет#Призрак наносит 7 урона и повышается каждый этаж #Также Призрак может прилипать к боссам #{{Warning}}Призрак имеет 7 секунд перезарядки", "Разъяренная Душа", "ru")
-	EID:addCollectible(CustomCollectibles.CEREMONIAL_BLADE, "При стрельбе есть 7%  шанс запустить кинжал, который не наносит урона, но накладывает кровотечение на врагов #Враги которые умерли пока кровоточили оставят за собой Жертвенную Кровь, которая дает временную прибавку к урону", "Церемониальный Кинжал", "ru")
+	EID:addCollectible(CustomCollectibles.CEREMONIAL_BLADE, "При стрельбе есть 7% шанс запустить кинжал, который не наносит урона, но накладывает кровотечение на врагов #Враги которые умерли пока кровоточили оставят за собой Жертвенную Кровь, которая дает временную прибавку к урону", "Церемониальный Кинжал", "ru")
 	EID:addCollectible(CustomCollectibles.CEILING_WITH_THE_STARS, "Дает 2 огонька {{Collectible712}}Лемегетона в начале каждого этажа и когда вы спите в кровати ", "Потолок со Звездами", "ru")
 	EID:addCollectible(CustomCollectibles.QUASAR, "Поглощает все предметы на пьедесталах в комнате и дает 3 огонька {{Collectible712}}Лемегетона за каждый поглощенный предмет", "Квазар", "ru")
-	EID:addCollectible(CustomCollectibles.TWO_PLUS_ONE, "Каждый третий купленный предмет будет стоить 1 {{Coin}}пенни #Покупка двух предметов сердцами сделает все остальные предметы бесплатными", "2+1", "ru")
+	EID:addCollectible(CustomCollectibles.TWO_PLUS_ONE, "Каждый третий купленный предмет будет стоить 1 {{Coin}}монету", "2+1", "ru")
 	EID:addCollectible(CustomCollectibles.RED_MAP, "Показывает местоположение Ультра Секретной Комнаты на последующих этажах #Любой брелок оставленный в комнате босса или сокровищнице превратиться в Треснутый Ключ", "Красная Карта", "ru")
 	EID:addCollectible(CustomCollectibles.CHEESE_GRATER, "Забирает один контейнер сердца и дает {{ArrowUp}}+0.5 к урону и создает 3 мини Айзека", "Терка для Сыра", "ru")
 	EID:addCollectible(CustomCollectibles.DNA_REDACTOR, "Пилюли дают дополнительный эффект в зависимости от их цвета", "Редактор ДНК", "ru")
@@ -574,31 +773,32 @@ if true then
 	EID:addCollectible(CustomCollectibles.BLESS_OF_THE_DEAD, "Предотвращает проклятья до конца забега #Предотвращение проклятья дает вам {{ArrowUp}}*" .. tostring(CustomStatups.Damage.BLESS_OF_THE_DEAD_MUL) .. " множитель к урону", "Благословение Мертвых", "ru")
 	EID:addCollectible(CustomCollectibles.TANK_BOYS, "Призывает двух спутников Танкистов, которые катаются по комнате и атакуют врагов находящиеся в их поле зрения #Зеленый танк: быстро стреляет по врагам на далекой дистанции и двигается быстро #Красный танк: стреляет ракетами по врагам на маленькой дистанции и двигается медленно", "Танкисты", "ru")
 	EID:addCollectible(CustomCollectibles.GUSTY_BLOOD, "Убийство врагов дает {{ArrowUp}}повышение к скорострельности и к скорости #Бонус пропадает при выходе из комнаты", "Бурная Кровь", "ru")
-	EID:addCollectible(CustomCollectibles.RED_BOMBER, "+5 бомб #Дает иммунитет к взрывам #Позволяет вам бросать бомбы", "Красный Бомбардировщик", "ru")
+	EID:addCollectible(CustomCollectibles.RED_BOMBER, "+5 бомб #Дает иммунитет к взрывам #Позволяет вам бросать бомбы, а не оставлять их на земле", "Красный Подрывник", "ru")
 	EID:addCollectible(CustomCollectibles.MOTHERS_LOVE, "Дает повышение к случайной характеристике за каждого спутника", "Мамина Любовь", "ru")
 	EID:addCollectible(CustomCollectibles.BOOK_OF_GENESIS, "Удаляет ваш случайный предмет и создает три предмета того же качества #Только один предмет можно взять", "Книга Бытия", "ru")
-	EID:addCollectible(CustomCollectibles.SCALPEL, "Вы будете стрелять слезами в противоположном направлении #Спереди вы быстро будете стрелять кровавыми слезами, которые наносят х0,66 вашего урона #Все остальные типы оружия также будут выпущены спереди", "Скальпель", "ru")
+	EID:addCollectible(CustomCollectibles.SCALPEL, "Убавляет одно красное сердце, или синее сердце, если красных нет #Игрок будет стрелять кровавыми слезами ещё в одном случайном направлении #Эти слёзы наносят 75% вашего урона", "Скальпель", "ru")
 	EID:addCollectible(CustomCollectibles.KEEPERS_PENNY, "Создает золотую монетку при переходе на новый этаж #Магазины теперь будут продавать 1-4 дополнительных предмета, взятых из пула магазина, сокровищницы или комнаты босса #Если в магазине будет битва с Алчностью, создает 3-4 предмета, когда мини-босс умирает", "Монетка Хранителя", "ru")
-	EID:addCollectible(CustomCollectibles.NERVE_PINCH, "При стрельбе или ходьбе в течение 8 секунд  #{{ArrowDown}}Вы получаете фальшивый урон и " .. tostring(CustomStatups.Speed.NERVE_PINCH) .. " к скорости #{{ArrowUp}}C 75% шансом активирует ваш активный предмет, даже если он не заряжен", "Защемление Нерва", "ru")
+	EID:addCollectible(CustomCollectibles.NERVE_PINCH, "При стрельбе или ходьбе в течение 8 секунд  #{{ArrowDown}}Вы получаете фальшивый урон и " .. tostring(CustomStatups.Speed.NERVE_PINCH) .. " к скорости #{{ArrowUp}}C 80% шансом активирует ваш активный предмет, даже если он не заряжен", "Защемление Нерва", "ru")
 	EID:addCollectible(CustomCollectibles.BLOOD_VESSELS[1], "Получение урона не причиняет вреда игроку, вместо этого заполняет сосуд #Это можно повторить 6 раз, пока сосуд не заполнится #Как только он заполнится, его использование или получение урона опустошит его и нанесет игроку 3 и 3,5 сердца урона соответственно.", "Кровавый Сосуд", "ru")
 	EID:addCollectible(CustomCollectibles.SIBLING_RIVALRY, "Орбитал который переключается между двумя состояниями: #Два орбитала которые кружатся около игрока #Орбитал который кружится медленее, и случайно стреляет зубами в случайных направлениях и создает кровавые лужи под ними #{{Warning}}Все орбиталы блокируют снаряды и наносят контактный урон", "Соперничество", "ru")
-	EID:addCollectible(CustomCollectibles.RED_KING, "После победы над боссом в середине комнаты появится красный люк #Люк приведет вас к другому бою с боссом высокой сложности #Победа вознаграждает вас красным предметом", "Красный Король", "ru")
-	EID:addCollectible(CustomCollectibles.STARGAZERS_HAT, "Создает попрошайку Астронома #Предмет заряжается только синими сердцами #2 сердца нужна для полного заряда", "Шапка Астронома", "ru")
-	EID:addCollectible(CustomCollectibles.BOTTOMLESS_BAG, "В течение 4 секунд все ближащие снаряды всасываются в мешок #Удерживайте кнопку стрельбы, чтобы выпустить все всосанные снаряды в соответствующем направлении #Снаряды становятся самонаводящимися", "Бездонный Мешок", "ru")
+	EID:addCollectible(CustomCollectibles.RED_KING, "После победы над боссом в середине комнаты появится красный люк #Люк приведет вас к другому бою с боссом высокой сложности #Победа вознаграждает вас двумя красными предметами на выбор", "Красный Король", "ru")
+	EID:addCollectible(CustomCollectibles.STARGAZERS_HAT, "Создает попрошайку Астронома #Предмет заряжается только синими сердцами #1 сердце для полного заряда", "Шапка Астронома", "ru")
+	EID:addCollectible(CustomCollectibles.BOTTOMLESS_BAG, "В течение 4 секунд все ближайшие снаряды всасываются в мешок #Удерживайте кнопку стрельбы, чтобы выпустить все всосанные снаряды в соответствующем направлении #Снаряды становятся самонаводящимися", "Бездонный Мешок", "ru")
 	EID:addCollectible(CustomCollectibles.CROSS_OF_CHAOS, "Враги, которые приближаются к вам, становятся ослабленными; ваши слезы также могут ослабить их #Ослабленные враги теряют свою скорость со временем и умирают через 16 секунд после ее потери #Когда ослабленные враги умирают, они выпускают фонтан замедляющихся черных слез", "Крест Хаоса", "ru")
 	EID:addCollectible(CustomCollectibles.REJECTION, "При использовании уничтожает всех спутников на одну комнату и бросает их в виде большого пронзающего ядовитого шара в направлении вашей стрельбы #Формула урона: ваш урон * 4 *количество спутников #Пассивно дает фамильяра, который не стреляет слезами, но наносит 2,5 контактного урона врагам.", "Отторжение", "ru")
-	EID:addCollectible(CustomCollectibles.AUCTION_GAVEL, "Создает предмет из пула комнаты который можно купить # Его цена будет меняться случайно 5 раз в секунду #Цена меняется случайно, но в целом увеличивается, пока не достигнет 99 монет #Если вы выйдете из комнаты, предмет исчезнет", "Молоток для Аукциона", "ru")
-	EID:addCollectible(CustomCollectibles.SOUL_BOND, "Приковывайте себя к случайному врагу астральной цепью и замораживайте их # Цепь наносит сильный контактный урон врагам # Если вы отойдете слишком далеко от прикованного врага, цепь разорвется #Прикованные враги имеют 33% шанс уронить синие сердце при смерти", "Связь Душ", "ru")
-	EID:addCollectible(CustomCollectibles.ANGELS_WINGS, "{{ArrowUp}}+0,3 к скорости выстрела  #Ваши слезы заменяются пронзающими перьями, которые наносят больше урона, чем больше они пролетают # Двойное нажатие на кнопку выстрела, чтобы использовать одну из атак Догмы #Имеет 6 секунд перезарядки", "Ангельские Крылья", "ru")
+	EID:addCollectible(CustomCollectibles.AUCTION_GAVEL, "Создает предмет из пула комнаты который можно купить #Его цена будет меняться случайно 5 раз в секунду #Цена меняется случайно, но в целом увеличивается, пока не достигнет 99 монет #Если вы выйдете из комнаты, предмет исчезнет", "Молоток для Аукциона", "ru")
+	EID:addCollectible(CustomCollectibles.SOUL_BOND, "Приковывайте себя к случайному врагу астральной цепью и замораживайте их # Цепь наносит сильный контактный урон врагам # Если вы отойдете слишком далеко от прикованного врага, цепь разорвется #Прикованные враги имеют 33% шанс уронить синее сердце при смерти", "Связь Душ", "ru")
+	EID:addCollectible(CustomCollectibles.ANGELS_WINGS, "{{ArrowUp}}+0,3 к скорости выстрела  #Ваши слезы заменяются пронзающими перьями, которые наносят больше урона, чем больше они пролетают #Двойное нажатие на кнопку выстрела, чтобы использовать одну из атак Догмы #Имеет 6 секунд перезарядки", "Ангельские Крылья", "ru")
 	EID:addCollectible(CustomCollectibles.HAND_ME_DOWNS, "{{ArrowUp}}+0.2 к скорости #После того, как ваш забег закончится, 3 случайных предмета из вашего инвентаря появятся на этаже, где он закончился. Их можно собрать на следующем забеге, добравшись до того же этажа", "Подержанные Вещи", "ru")
-	EID:addCollectible(CustomCollectibles.BOOK_OF_LEVIATHAN, "При использовании ослабляет всех врагов в комнате #Ослабленные враги теряют свою скорость со временем и умирают через 12 секунд после ее потери #Нужен ключ для использования", "Книга Левиафана", "ru")
-	EID:addCollectible(CustomCollectibles.FRIENDLY_SACK, "После каждой 3-й пройденной комнаты появляется случайный слабый спутник (дип, блебик, синии мухи и т.д.). #Если комната босса - это комната, где выплачивается Дружеский мешок, вместо этого появляется случайный зачарованный монстр", "Мешок с Друзьями", "ru")	
+	EID:addCollectible(CustomCollectibles.BOOK_OF_LEVIATHAN, "+2 ключа #При использовании ослабляет всех врагов в комнате #Ослабленные враги теряют свою скорость со временем и умирают через 12 секунд после ее потери #Нужен ключ для использования", "Книга Левиафана", "ru")
+	EID:addCollectible(CustomCollectibles.FRIENDLY_SACK, "После каждой 3-й пройденной комнаты появляется случайный слабый спутник (дип, блебик, синии мухи и т.д.). #Если комната босса - это комната, где Дружеский мешок спавнит спутника, вместо этого появляется случайный зачарованный монстр", "Мешок с Друзьями", "ru")	
 	EID:addCollectible(CustomCollectibles.MAGIC_MARKER, "Создает случайную карту таро #При использовании, превращает вашу карту, увеличивая ее номер на 1(или уменьшая на 1 для перевернутых карт)", "Магический Маркер", "ru")
-	EID:addCollectible(CustomCollectibles.ULTRA_FLESH_KID, "Спутник который гонится за врагами и наносит им контактный урон #Имеет три стадии, собирает красные сердца чтобы улучшаться #Нужно 15 красных сердеу для улучшения", "Ультра Телесный Ребенок", "ru")
+	EID:addCollectible(CustomCollectibles.ULTRA_FLESH_KID, "Спутник который гонится за врагами и наносит им контактный урон #Имеет три стадии, собирает красные сердца чтобы улучшаться #Нужно 15 красных сердец для улучшения", "Ультра Телесный Ребенок", "ru")
 	EID:addCollectible(CustomCollectibles.VAULT_OF_HAVOC, "Пассивно хранит убитых врагов; Можно использовать только если сохранено 12 врагов #При использовании, отправляет вас в специальную комнату с сохраненными врагами; При зачистке комнаты, вы получаете награду основанную на общем количестве HP врагов", "Хранилище Хаоса", "ru")
-	EID:addCollectible(CustomCollectibles.PURE_SOUL, "Все грехи оставляют соответствующий {{ColorRed}}Драгоценный Камень Греха{{CR}} после смерти #Призрак может появится в {{SecretRoom}}Секретных или {{SuperSecretRoom}}Супер Секретных комнатах который исчезнет и призовет случайный Грех при приблежении #Этот призрак также может появиться возле двери, ведущей в комнату с Грехом, показывая, какой Грех там находится", "Чистая Душа", "ru")
+	EID:addCollectible(CustomCollectibles.PURE_SOUL, "Все грехи оставляют соответствующий {{ColorRed}}Драгоценный Камень Греха{{CR}} после смерти #Призрак может появится в {{SecretRoom}}Секретных или {{SuperSecretRoom}}Супер Секретных комнатах который исчезнет и призовет случайный Грех при приближении #Этот призрак также может появиться возле двери, ведущей в комнату с Грехом, показывая, какой Грех там находится", "Чистая Душа", "ru")
 	EID:addCollectible(CustomCollectibles.HANDICAPPED_PLACARD, "Помещает Плакат для Инвалидов на землю #Враги в зоне действия плаката ослабляется и порождает кости при смерти #Площадь становится больше, чем больше урона вы получаете в комнате", "Плакат для Инвалидов", "ru")
-	EID:addCollectible(CustomCollectibles.BOOK_OF_JUDGES, "Пассивно создает мишени на полу при входе в новую комнату #Каждые 3 секунды лучи света будут поражать мишени #Лучи наносят урон врагам и накладывает горение, но {{Warning}} они также наносят урон игроку #Использование книги отменяет вызов лучей для текущей комнаты", "Книга Судей", "ru")
+	EID:addCollectible(CustomCollectibles.BOOK_OF_JUDGES, "Пассивно создает мишени на полу при входе в новую комнату #Каждые 3 секунды лучи света будут поражать мишени #Лучи наносят урон врагам и накладывает горение, но {{Warning}}они также наносят урон игроку #Использование книги отменяет вызов лучей для текущей комнаты", "Книга Судей", "ru")
+	EID:addCollectible(CustomCollectibles.BIRTH_CERTIFICATE, "{{Warning}} Одноразовый! #При использовании, поглощает все удерживаемые брелки и телепортирует вас в комнату, в которой находится 188 брелоков, и несколько других расходников #Только один брелок может быть взять; вскоре после этого, вас телепортирует обратно в стартовую комнату текущего этажа", "Сертификат о рождении", "ru")
 	
 	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "{{ChestRoom}}Золотые Сундуки имеют 12.5% шанс стать Старым Сундуком", "Ключ от Подвала", "ru")
 	EID:addTrinket(CustomTrinkets.KEY_TO_THE_HEART, "У каждого врага есть шанс создать Кожанный Сундук после смерти #Кожанные Сундуки могут содержать 1-4 {{Heart}}сердца/{{Pill}}таблетки или случайный предмет, связанный с телом", "Ключ к Сердцу", "ru")
@@ -657,7 +857,7 @@ if true then
 	EID:addCard(CustomConsumables.ACID_OF_SLOTH, "Замедляет всех врагов на 50% и заставляет их оставлять после себя облака ядовитого газа", "Кислота Лени", "ru")
 	EID:addCard(CustomConsumables.VOID_OF_GLUTTONY, "На 7 секунд, если у вас не хватает красных сердец, восстанавливает 1{{HalfHeart}} в секунду, также получая {{ArrowDown}}-0.01 к скорости #Длительность эффекта увеличивается на 2 секунды после убийства врага", "Пустота Чревоугодия", "ru")
 	EID:addCard(CustomConsumables.APPLE_OF_PRIDE, "Дает большую прибавку ко всем статам пока вы не получите урон", "Яблоко Гордыни", "ru")
-	EID:addCard(CustomConsumables.CANINE_OF_WRATH, "Все враги в комнате взрывается нанося 15 урона #{{Warning}}Взрывы наносят урон игроку #Если враг умирает от взрыва вы получаете временную прибавку к урону", "Клык Гнева", "")
+	EID:addCard(CustomConsumables.CANINE_OF_WRATH, "Все враги в комнате взрывается нанося 15 урона #{{Warning}}Взрывы наносят урон игроку #Если враг умирает от взрыва вы получаете временную прибавку к урону", "Клык Гнева", "ru")
 	EID:addCard(CustomConsumables.MASK_OF_ENVY, "Превращает все ваши контейнеры сердца в костянные сердца наполненные гнилыми сердцами", "Маска Зависти", "ru")
 	
 	EID:addPill(CustomPills.ESTROGEN, "Превращает все ваши {{Heart}}сердца в блебиков #Оставляет вас по крайней мере с одним красным сердцем, не убирает сердца души/черные сердца", "Эстроген", "ru")
@@ -667,18 +867,18 @@ if true then
 	EID:addPill(CustomPills.YUM, "Создает красное сердце #В течение 30 секунд, каждое взятое красное сердце даст вам небольшое постоянное увеличение случайной характеристики, похожий на эффект {{Collectible671}}Карамельного Сердца", "Ням!", "ru")
 
 	EID:addEntity(5, 10, 84, "Сломанное Сердце", "Дает полный красный контейнер и сломанное сердце", "ru")
-	EID:addEntity(5, 10, 85, "Бесстрашное Сердце", "Если ваше общее количество красных и синих сердец нечетное, у врагов есть шанс призвать половину красного или синего сердца при смерти #Выпавшие сердца быстро исчезают")
+	EID:addEntity(5, 10, 85, "Бесстрашное Сердце", "Если ваше общее количество красных и синих сердец нечетное, у врагов есть шанс призвать половину красного или синего сердца при смерти #Выпавшие сердца быстро исчезают", "ru")
 	EID:addEntity(5, 10, 86, "Сердце Накопителя", "Восстанавливает 4 красных контейнера здоровья", "ru")
-	EID:addEntity(5, 10, 87, "Сердце Обманщика", "Разделяется на половину красного сердца и случайный расходник")
-	EID:addEntity(5, 10, 88, "Грязное Сердце", "Призывает 0-2 дипов после зачистки комнаты")
+	EID:addEntity(5, 10, 87, "Сердце Обманщика", "Разделяется на половину красного сердца и случайный расходник", "ru")
+	EID:addEntity(5, 10, 88, "Грязное Сердце", "Призывает 0-2 дипов после зачистки комнаты", "ru")
 	EID:addEntity(5, 10, 89, "Свернувшееся Сердце", "Восстанавливает один красный контейнер здоровья и призывает блебика", "ru")
 	EID:addEntity(5, 10, 90, "Беспощадное Сердце", "Восстанавливает один красный контейнер и увеличивает урон на +1.25, который истощается в течение 25 секунд", "ru")
 	EID:addEntity(5, 10, 91, "Темное Сердце", "Дает черное сердце и перманентный +0.1 к урону", "ru")
 	EID:addEntity(5, 10, 92, "Загадочное Сердце", "Игрок может воскреснуть после смерти, если у него есть хотя бы одно Загадочное Сердце #Любое сердце будет восстанавливать 2 красных сердца после воскрешения", "ru")
 	EID:addEntity(5, 10, 93, "Капризное Сердце", "Разбивается на 1-3 случайных сердца при подборе", "ru")
-	EID:addEntity(5, 10, 94, "Зловещее Сердце", "Призывает атакующих призраков, если вы стоите близко к врагам")
+	EID:addEntity(5, 10, 94, "Зловещее Сердце", "Призывает атакующих призраков, если вы стоите близко к врагам", "ru")
 	EID:addEntity(5, 10, 95, "Сердце Блудницы", "Восстанавливает один красный контейнер здоровья и призывает орбиталь {{Collectible525}}Проказы", "ru")
-	EID:addEntity(5, 10, 96, "Сердце Торговца", "При потери этого сердца призывает 1-2 товара на продажу и меняет все предметы и расходники в комнате", "ru")
+	EID:addEntity(5, 10, 96, "Сердце Торговца", "При потери этого сердца меняет все предметы и расходники в комнате #Пассивно даёт скидки в магазине", "ru")
 	EID:addEntity(5, 10, 97, "Пустое Сердце", "За каждое пустое сердце, вы получаете одну саранчу Бездны {{Collectible706}}при переходе на новый этаж", "ru")
 	EID:addEntity(5, 10, 98, "Скованное Сердце", "Требует ключа, чтобы подобрать #Дает сердце души и призывает призрачного орбитального спутника", "ru")
 	EID:addEntity(5, 10, 99, "Фанатичное Сердце", "За каждое фанатичное сердце, вы получаете один огонек Лемегетона {{Collectible712}}при переходе на новый этаж", "ru")
@@ -738,7 +938,7 @@ if true then
 	EID:addCollectible(CustomCollectibles.PURE_SOUL, "7대죄악 미니보스 처치 시 100%의 확률로 각 죄에 대응되는 {{ColorRed}}죄악의 보석{{CR}}을 드랍합니다. #{{SecretRoom}}{{SuperSecretRoom}}비밀방/일급비밀방 진입 시 일정 확률로 유령이 나타나며 유령에 접촉 시 미니보스를 소환합니다.#미니보스방의 문 입구에 유령이 나타나 어느 미니보스가 나올 것인지 알려줍니다.", "순결한 영혼", "ko_kr")
 	EID:addCollectible(CustomCollectibles.HANDICAPPED_PLACARD, "사용 시 캐릭터의 위치에 플래카드를 설치합니다.#{{Weakness}} 플래카드의 범위 안에 있는 적들을 약화시키며 처치 시 뼛조각을 생성합니다. #피격 시 플래카드의 범위가 커집니다.#!!! 적이 없는 방에서 사용 불가", "장애인 플래카드", "ko_kr")
 	EID:addCollectible(CustomCollectibles.BOOK_OF_JUDGES, "소지 시, 적이 있는 방에서 파란 타겟 여러개가 생성됩니다.#3초마다 빛줄기가 떨어지며 빛줄기는 캐릭터에게 피해를, 적에게 화상 피해를 줍니다.#사용 시 현재 방에서 빛줄기가 떨어지지 않습니다.", "심판의 책", "ko_kr")
-	EID:addCollectible(CustomCollectibles.BIRTH_CERTIFICATE, "!!! 일회용 #사용 시 현재 들고 있는 장신구를 흡수하고 아이작의 모든 장신구가 있는 방으로 이동합니다.#장신구 한개 획득 시 원래 있던 장소로 돌아갑니다.")
+	EID:addCollectible(CustomCollectibles.BIRTH_CERTIFICATE, "!!! 일회용 #사용 시 현재 들고 있는 장신구를 흡수하고 아이작의 모든 장신구가 있는 방으로 이동합니다.#장신구 한개 획득 시 원래 있던 장소로 돌아갑니다.", "출생 증명서", "ko_kr")
 
 	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "{{DirtyChest}} 황금상자를 15%의 확률로 낡은 상자로 대체합니다.", "지하실 열쇠", "ko_kr")
 	EID:addTrinket(CustomTrinkets.KEY_TO_THE_HEART, "적 처치 시 5%의 확률로 생체상자를 드랍합니다.#생체상자에서는 하트류 픽업, 알약이나 몸체 관련 아이템 및 장신구를 드랍합니다.", "심장열쇠", "ko_kr")
@@ -825,7 +1025,7 @@ if true then
 	EID:addEntity(5, 10, 100, "방랑자 하트", "습득 시 빨간하트를, 빨간하트를 주울 수 없으면 블랙하트를 획득합니다.", "ko_kr")
 end
 
--- Chinese EID (by Relu\)
+-- Chinese EID (by ReLU\)
 if true then
 	EID:addCollectible(CustomCollectibles.ORDINARY_LIFE,"{{ArrowUp}} 射速上升 #在宝箱房额外生成一个与妈妈/爸爸相关的道具,只能拿走其中一个","平凡生活","zh_cn")
 	EID:addCollectible(CustomCollectibles.COOKIE_CUTTER,"使用后，获得一个 {{Heart}} 心之容器和一个碎心 #{{Warning}} 碎心达到12个时角色死亡","曲奇刀","zh_cn")

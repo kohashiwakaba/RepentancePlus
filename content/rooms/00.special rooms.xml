@@ -1074,7 +1074,7 @@
 		<door exists="True" x="6" y="7"/>
 		<door exists="True" x="13" y="3"/>
 		<spawn x="0" y="0">
-			<entity type="5" variant="90" subtype="2" weight="1.0"/>
+			<entity type="5" variant="90" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="1" y="0">
 			<entity type="1002" variant="0" subtype="0" weight="1.0"/>
@@ -1143,7 +1143,7 @@
 			<entity type="1002" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="12" y="6">
-			<entity type="5" variant="90" subtype="2" weight="1.0"/>
+			<entity type="5" variant="90" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
 	<room variant="7844" name="Library6" type="12" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="2.0">
@@ -3983,8 +3983,14 @@
 		<spawn x="12" y="1">
 			<entity type="5" variant="10" subtype="87" weight="1.0"/>
 		</spawn>
+		<spawn x="4" y="2">
+			<entity type="17" variant="2" subtype="0" weight="1.0"/>
+		</spawn>
 		<spawn x="6" y="2">
 			<entity type="5" variant="10" subtype="93" weight="1.0"/>
+		</spawn>
+		<spawn x="8" y="2">
+			<entity type="17" variant="2" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="3" y="3">
 			<entity type="5" variant="10" subtype="95" weight="1.0"/>
@@ -4020,7 +4026,7 @@
 			<entity type="5" variant="10" subtype="90" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="19242" name="Error1" type="3" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="19242" name="Error1" type="3" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -4070,7 +4076,10 @@
 		<spawn x="3" y="3">
 			<entity type="5" variant="10" subtype="93" weight="1.0"/>
 		</spawn>
-		<spawn x="6" y="3">
+		<spawn x="5" y="3">
+			<entity type="5" variant="10" subtype="93" weight="1.0"/>
+		</spawn>
+		<spawn x="7" y="3">
 			<entity type="5" variant="10" subtype="93" weight="1.0"/>
 		</spawn>
 		<spawn x="9" y="3">
@@ -4110,7 +4119,7 @@
 			<entity type="5" variant="10" subtype="91" weight="1.0"/>
 		</spawn>
 		<spawn x="10" y="2">
-			<entity type="5" variant="10" subtype="98" weight="1.0"/>
+			<entity type="5" variant="10" subtype="94" weight="1.0"/>
 		</spawn>
 		<spawn x="6" y="3">
 			<entity type="5" variant="100" subtype="0" weight="1.0"/>
@@ -4134,7 +4143,7 @@
 			<entity type="5" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="3" y="2">
-			<entity type="5" variant="0" subtype="0" weight="1.0"/>
+			<entity type="5" variant="10" subtype="4" weight="1.0"/>
 		</spawn>
 		<spawn x="4" y="2">
 			<entity type="5" variant="0" subtype="0" weight="1.0"/>
@@ -4143,7 +4152,7 @@
 			<entity type="5" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="9" y="2">
-			<entity type="5" variant="0" subtype="0" weight="1.0"/>
+			<entity type="5" variant="10" subtype="4" weight="1.0"/>
 		</spawn>
 		<spawn x="10" y="2">
 			<entity type="5" variant="0" subtype="0" weight="1.0"/>
@@ -4266,7 +4275,7 @@
 			<entity type="85" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="19242" name="Curse4" type="10" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="19242" name="Curse4" type="10" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -4369,7 +4378,7 @@
 			<entity type="5" variant="69" subtype="2" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="70" name="Devil1" type="14" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="70" name="Devil1" type="14" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -4393,7 +4402,7 @@
 			<entity type="5" variant="514" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="71" name="Devil2" type="14" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="71" name="Devil2" type="14" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -4420,7 +4429,7 @@
 			<entity type="5" variant="10" subtype="6" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="72" name="Devil3" type="14" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="72" name="Devil3" type="14" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -4465,7 +4474,7 @@
 			<entity type="5" variant="150" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="73" name="Devil3_oneitem" type="14" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="73" name="Devil3_oneitem" type="14" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -5280,19 +5289,22 @@
 			<entity type="5" variant="20" subtype="1" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="4381" name="Supersecret7" type="8" subtype="15" shape="1" width="13" height="7" difficulty="1" weight="0.5">
+	<room variant="4381" name="Supersecret7" type="8" subtype="33" shape="1" width="13" height="7" difficulty="1" weight="0.5">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
 		<door exists="True" x="13" y="3"/>
+		<spawn x="6" y="2">
+			<entity type="832" variant="1" subtype="0" weight="1.0"/>
+		</spawn>
 		<spawn x="4" y="3">
-			<entity type="33" variant="2" subtype="0" weight="1.0"/>
+			<entity type="33" variant="3" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="6" y="3">
 			<entity type="5" variant="10" subtype="99" weight="1.0"/>
 		</spawn>
 		<spawn x="8" y="3">
-			<entity type="33" variant="2" subtype="0" weight="1.0"/>
+			<entity type="33" variant="3" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
 	<room variant="4382" name="Supersecret8_left" type="8" subtype="31" shape="1" width="13" height="7" difficulty="1" weight="0.25">
@@ -5385,7 +5397,7 @@
 			<entity type="33" variant="2" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="4384" name="Supersecret9" type="8" subtype="60" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="4384" name="Supersecret9" type="8" subtype="60" shape="1" width="13" height="7" difficulty="1" weight="0.5">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -5541,7 +5553,7 @@
 			<entity type="1495" variant="0" subtype="1" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="4387" name="Supersecret12" type="8" subtype="15" shape="1" width="13" height="7" difficulty="1" weight="0.25">
+	<room variant="4387" name="Supersecret12" type="8" subtype="15" shape="1" width="13" height="7" difficulty="1" weight="0.75">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -5690,61 +5702,6 @@
 		</spawn>
 		<spawn x="6" y="3">
 			<entity type="5" variant="10" subtype="93" weight="1.0"/>
-		</spawn>
-		<spawn x="0" y="6">
-			<entity type="1000" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="12" y="6">
-			<entity type="1000" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-	</room>
-	<room variant="2931" name="Secret2_1" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
-		<door exists="True" x="-1" y="3"/>
-		<door exists="True" x="6" y="-1"/>
-		<door exists="True" x="6" y="7"/>
-		<door exists="True" x="13" y="3"/>
-		<spawn x="0" y="0">
-			<entity type="1000" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="1" y="0">
-			<entity type="1000" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="2" y="0">
-			<entity type="1000" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="10" y="0">
-			<entity type="1000" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="11" y="0">
-			<entity type="1000" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="12" y="0">
-			<entity type="1000" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="0" y="1">
-			<entity type="1000" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="1" y="1">
-			<entity type="1000" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="4" y="1">
-			<entity type="33" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="6" y="1">
-			<entity type="17" variant="3" subtype="0" weight="1.0"/>
-			<entity type="17" variant="4" subtype="0" weight="1.0"/>
-			<entity type="17" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="8" y="1">
-			<entity type="33" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="11" y="1">
-			<entity type="1000" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="12" y="1">
-			<entity type="1000" variant="0" subtype="0" weight="1.0"/>
-		</spawn>
-		<spawn x="6" y="3">
 			<entity type="5" variant="10" subtype="84" weight="1.0"/>
 			<entity type="5" variant="10" subtype="92" weight="1.0"/>
 		</spawn>
@@ -5823,7 +5780,7 @@
 			<entity type="5" variant="10" subtype="98" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="2933" name="Secret4_coffins" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
+	<room variant="2933" name="Secret4_coffins" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -6394,7 +6351,7 @@
 			<entity type="1002" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="2392" name="Arcade4" type="9" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="2392" name="Arcade4" type="9" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -6423,7 +6380,7 @@
 			<entity type="33" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="2393" name="Arcade5" type="9" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="2393" name="Arcade5" type="9" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -6465,7 +6422,7 @@
 			<entity type="1500" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="2394" name="Arcade6" type="9" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="2394" name="Arcade6" type="9" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -6509,7 +6466,7 @@
 			<entity type="1002" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="2395" name="Arcade7" type="9" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="2395" name="Arcade7" type="9" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -6528,7 +6485,7 @@
 			<entity type="33" variant="2" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="2396" name="Arcade8" type="9" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="2396" name="Arcade8" type="9" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -6689,7 +6646,7 @@
 			<entity type="3000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="78" name="Angel1" type="15" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.75">
+	<room variant="78" name="Angel1" type="15" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -6713,7 +6670,7 @@
 			<entity type="5" variant="10" subtype="98" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="79" name="Angel2" type="15" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.75">
+	<room variant="79" name="Angel2" type="15" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -6737,7 +6694,31 @@
 			<entity type="5" variant="10" subtype="99" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="80" name="Angel3" type="15" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="1.0">
+	<room variant="80" name="Angel3" type="15" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
+		<door exists="True" x="-1" y="3"/>
+		<door exists="True" x="6" y="-1"/>
+		<door exists="True" x="6" y="7"/>
+		<door exists="True" x="13" y="3"/>
+		<spawn x="4" y="2">
+			<entity type="33" variant="2" subtype="0" weight="1.0"/>
+		</spawn>
+		<spawn x="6" y="2">
+			<entity type="5001" variant="0" subtype="0" weight="1.0"/>
+		</spawn>
+		<spawn x="8" y="2">
+			<entity type="33" variant="2" subtype="0" weight="1.0"/>
+		</spawn>
+		<spawn x="4" y="4">
+			<entity type="5" variant="10" subtype="94" weight="1.0"/>
+		</spawn>
+		<spawn x="6" y="4">
+			<entity type="5" variant="100" subtype="0" weight="1.0"/>
+		</spawn>
+		<spawn x="8" y="4">
+			<entity type="5" variant="10" subtype="94" weight="1.0"/>
+		</spawn>
+	</room>
+	<room variant="81" name="Angel4" type="15" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -6757,17 +6738,17 @@
 		<spawn x="10" y="2">
 			<entity type="33" variant="2" subtype="0" weight="1.0"/>
 		</spawn>
-		<spawn x="3" y="4">
+		<spawn x="3" y="3">
 			<entity type="5" variant="10" subtype="98" weight="1.0"/>
 		</spawn>
-		<spawn x="5" y="4">
-			<entity type="5" variant="10" subtype="4" weight="1.0"/>
+		<spawn x="5" y="3">
+			<entity type="5" variant="10" subtype="85" weight="1.0"/>
 		</spawn>
-		<spawn x="7" y="4">
+		<spawn x="7" y="3">
 			<entity type="5" variant="10" subtype="99" weight="1.0"/>
 		</spawn>
-		<spawn x="9" y="4">
-			<entity type="5" variant="10" subtype="3" weight="1.0"/>
+		<spawn x="9" y="3">
+			<entity type="5" variant="10" subtype="94" weight="1.0"/>
 		</spawn>
 	</room>
 	<room variant="55001" name="Vault of Havoc 1" type="5" subtype="0" shape="6" width="26" height="7" difficulty="15" weight="0.0">

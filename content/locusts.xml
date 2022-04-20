@@ -73,5 +73,7 @@
 	<locust id="50" damageMultiplier="1.5" tearFlags="2" gfx="null.png" overlayGfx="minisaac.png" overlayColor="lightblue" backGfx="glow.png" backColor="white" /> <!--Pure Soul-->
 	<locust id="51" damageMultiplier="1.2" tearFlags="39" color="lightgreen" /> <!--Book of Judges-->
 	<locust id="52" tearFlags="3" color="blue" count="2" /> <!--Handicapped Placard-->
+	<locust id="53" speed="0.5" damageMultiplier="3" color="red" gfx="big.png" backGfx="dripping.png" backColor="red" /> <!--Overflowing Blood Vessel-->
+	<locust id="54" damageMultiplier="2.30" color="yellow" gfx="big.png" backGfx="glow.png" backColor="white" /> <!--Birth Certificate-->
 </locusts>
 	

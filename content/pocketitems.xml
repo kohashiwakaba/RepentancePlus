@@ -22,11 +22,11 @@
 	<card type="object" name="Needle and Thread" hud="Needle and Thread" mimiccharge="6" description="To cure my broken heart" pickup="162" />
 	<card type="object" name="Bag Tissue" hud="Bag Tissue" mimiccharge="4" description="Craft a piece of your destiny" pickup="163" />
 	<card type="object" name="Loaded Dice" hud="Loaded Dice" mimiccharge="6" description="Luck is on your side" pickup="164" />
-	<card type="rune" name="Quasar Shard" hud="Quasar Shard" mimiccharge="6" description="Shards of knoweldge" pickup="165" />
+	<rune type="rune" name="Quasar Shard" hud="Quasar Shard" mimiccharge="6" description="Shard of knowledge" pickup="165" />
 	<card type="special" name="Business Card" hud="Business Card" mimiccharge="4" description="Reusable partnership" pickup="166" />
 	<card type="object" name="Sacrificial Blood" hud="Sacrificial Blood" mimiccharge="3" description="Feed on their pain" pickup="167" />
 	<card type="special" name="Flypaper" hud="Flypaper" mimiccharge="12" description="Sticky!" pickup="168" />
-	<card type="special" name="Library Card" hud="Library Card" mimiccharge="6" description="8-)" pickup="169" />
+	<card type="special" name="Library Card" hud="Library Card" mimiccharge="6" description="8)" pickup="169" />
 	<card type="special" name="Antimaterial Card" hud="Antimaterial Card" mimiccharge="12" description="Erase thy enemy... once" pickup="170" />
 	<card type="special" name="Funeral Service" hud="Funeral Services" mimiccharge="12" description="My time has come..." pickup="171" />
 	<card type="special" name="Mom's ID" hud="Mom's ID" mimiccharge="6" description="Feel her wrath" pickup="172" />
@@ -36,13 +36,13 @@
 	<card type="special" name="Cursed Card" hud="Cursed Card" mimiccharge="2" description="Grief and sorrow" pickup="183" />
 	
 	<!-- Sin's Jewels -->
-	<card type="rune" pickup="176" hud="Canine of Wrath" description="Subconscious anger" name="Canine of Wrath" mimiccharge="6" />
-    <card type="rune" pickup="177" hud="Mask of Envy" description="Defiled from the inside" name="Mask of Envy" mimiccharge="4" />
-    <card type="rune" pickup="178" hud="Crown of Greed" description="Want, want and want" name="Crown of Greed" mimiccharge="3" />
-    <card type="rune" pickup="179" hud="Void of Gluttony" description="Devour all" name="Void of Glutonny" mimiccharge="12" />
-    <card type="rune" pickup="180" hud="Apple of Pride" description="Succumb to being the Almighty" name="Apple of Pride" mimiccharge="3" />
-    <card type="rune" pickup="181" hud="Flower of Lust" description="Do anything for more" name="Flower of Lust" mimiccharge="6" />
-    <card type="rune" pickup="182" hud="Acid of Sloth" description="Embrace laziness" name="Acid of Sloth" mimiccharge="3" />
+	<rune type="rune" pickup="176" hud="Canine of Wrath" description="Subconscious anger" name="Canine of Wrath" mimiccharge="6" />
+    <rune type="rune" pickup="177" hud="Mask of Envy" description="Defiled from the inside" name="Mask of Envy" mimiccharge="4" />
+    <rune type="rune" pickup="178" hud="Crown of Greed" description="Want, want, want" name="Crown of Greed" mimiccharge="3" />
+    <rune type="rune" pickup="179" hud="Void of Gluttony" description="Devour all" name="Void of Glutonny" mimiccharge="12" />
+    <rune type="rune" pickup="180" hud="Apple of Pride" description="Succumb to being the Almighty" name="Apple of Pride" mimiccharge="3" />
+    <rune type="rune" pickup="181" hud="Flower of Lust" description="Do anything for more" name="Flower of Lust" mimiccharge="6" />
+    <rune type="rune" pickup="182" hud="Acid of Sloth" description="Embrace laziness" name="Acid of Sloth" mimiccharge="3" />
 	
 	<!-- non-custom backs -->
 	<card type="special" name="Spiritual Reserves" hud="Spiritual Reserves" mimiccharge="12" description="Awaken your spirits" pickup="8" />
@@ -61,10 +61,10 @@
 	<card type="suit" name="Jack of Hearts" hud="Jack of Hearts" mimiccharge="2" description="Increase your Health" pickup="2" />
 	
 	<!-- pill effects -->
-	<pilleffect name="Estrogen Up" mimiccharge="4" class="2" />
-	<pilleffect name="Laxative" mimiccharge="2" class="1+" />
-	<pilleffect name="Phantom Pains" mimiccharge="4" class="2" />
-	<pilleffect name="Yum!" mimiccharge="12" class="3+" />
-	<pilleffect name="Yuck!" mimiccharge="6" class="2+" />
+	<pilleffect name="Estrogen Up" mimiccharge="4" class="2+" />
+	<pilleffect name="Laxative" mimiccharge="2" class="0" />
+	<pilleffect name="Phantom Pains" mimiccharge="4" class="1+" />
+	<pilleffect name="Yum!" mimiccharge="12" class="1+" />
+	<pilleffect name="Yuck!" mimiccharge="6" class="1+" />
 	
 </pocketitems>

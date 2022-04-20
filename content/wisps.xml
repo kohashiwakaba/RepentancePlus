@@ -204,51 +204,53 @@
 	<!-- Cookie Cutter -->
 	<wisp id="13" hp="6" damage="1" flameColor="flame_red" coreColor="core_red" coreGfx="heart.png" canShoot="false" />
 	
-	<!-- Overflowing Blood Vessel -->
-	<wisp id="53" hp="1" damage="1" flameColor="flame_red" coreColor="core_red" coreGfx="meat.png" count="7" canShoot="false" />
-	
 	<!-- Tower of Babel -->
 	<wisp id="18" hp="4" damage="2" shotSpeed="1.2" fireDelay="36" tearFlags2="47 50" procChance="0.075" flameColor="flame_green" coreColor="core_green" tearColor="tear_green" tearColor2="tear_green" coreGfx="question.png" />
-	
-	<!-- Book of Judges -->
-	<wisp id="51" hp="3" damage="2" fireDelay="30" flameColor="flame_green" coreColor="core_brown" tearColor="tear_green" />
-	
-	<!-- Book of Leviathan -->
-	<wisp id="47" hp="4" damage="3" shotSpeed="1.1" fireDelay="30" tearFlags2="20" procChance="0.075" flameColor="flame_black" coreColor="core_black" tearColor="tear_black" tearColor2="tear_black" coreGfx="skull.png" />
 	
 	<!-- Book of Genesis -->
 	<wisp id="24" hp="4" damage="1" fireDelay="30" tearFlags="1" flameColor="flame_gold" coreColor="core_gold" tearColor="tear_gold" coreGfx="question.png" count="3" />
 	
-	<!-- Magic Marker -->
-	<wisp id="49" hp="3" damage="2" fireDelay="30" tearFlags="3" flameColor="flame_grey" coreColor="core_grey" tearColor="tear_grey" coreGfx="card.png" />
-	
-	<!-- Soul Bond -->
-	<wisp id="42" hp="4" damage="3.5" fireDelay="36" tearFlags2="5" procChance="0.1" flameColor="flame_bright_blue" coreColor="core_blue" tearColor="tear_bright_blue" tearColor2="tear_bright_blue" coreGfx="cross.png" />
-	
-	<!-- Rejection -->
-	<wisp id="41" hp="4" damage="3" shotSpeed="1.1" fireDelay="42" tearFlags2="4" procChance="0.075" flameColor="flame_brown" coreColor="core_brown" tearColor="tear_brown" tearColor2="tear_green" coreGfx="yuck.png" />
-	
-	<!-- Auction Gavel -->
-	<wisp id="40" hp="4" damage="3" fireDelay="42" tearFlags2="53" procChance="0.05" flameColor="flame_gold" coreColor="core_brown" tearColor="tear_brown" tearColor2="tear_gold" coreGfx="coin.png" />
-	
-	<!-- Bottomless Bag -->
-	<wisp id="38" hp="1" damage="1" shotSpeed="1.2" fireDelay="30" tearFlags="23" flameColor="flame_purple" coreColor="core_purple" tearColor="tear_grey" />
-	
-	<!-- Vault of Havoc -->
-	<wisp id="48" hp="6" damage="3" fireDelay="36" flameColor="flame_red" coreColor="core_dark_red" tearColor="tear_dark_red" />
-	
-	<!-- Handicapped Placard -->
-	<wisp id="52" hp="3" damage="2.5" fireDelay="30" tearFlags="51" flameColor="flame_blue" coreColor="core_blue" tearColor="tear_white" tearVariant="29" />
-	
 	<!-- Quasar -->
 	<wisp id="31" hp="4" damage="3.5" fireDelay="36" tearFlags2="39" procChance="0.05" flameColor="flame_dark_red" coreColor="core_dark_red" tearColor="tear_red" tearColor2="tear_red" />
-	
-	<!-- Stargazer's Hat -->
-	<wisp id="37" hp="6" damage="3.5" fireDelay="30" flameColor="flame_bright_blue" coreColor="core_bright_blue" tearColor="tear_blue" coreGfx="orb.png" />
 	
 	<!-- Cheese Grater -->
 	<wisp id="33" hp="6" damage="1.5" flameColor="flame_beige" coreColor="core_beige" coreGfx="minisaac.png" count="2" canShoot="false" />
 	
+	<!-- Stargazer's Hat -->
+	<wisp id="37" hp="6" damage="3.5" fireDelay="30" flameColor="flame_bright_blue" coreColor="core_bright_blue" tearColor="tear_blue" coreGfx="orb.png" />
+	
+	<!-- Bottomless Bag -->
+	<wisp id="38" hp="1" damage="1" shotSpeed="1.2" fireDelay="30" tearFlags="23" flameColor="flame_purple" coreColor="core_purple" tearColor="tear_grey" />
+	
+	<!-- Auction Gavel -->
+	<wisp id="40" hp="4" damage="3" fireDelay="42" tearFlags2="53" procChance="0.05" flameColor="flame_gold" coreColor="core_brown" tearColor="tear_brown" tearColor2="tear_gold" coreGfx="coin.png" />
+	
+	<!-- Rejection -->
+	<wisp id="41" hp="4" damage="3" shotSpeed="1.1" fireDelay="42" tearFlags2="4" procChance="0.075" flameColor="flame_brown" coreColor="core_brown" tearColor="tear_brown" tearColor2="tear_green" coreGfx="yuck.png" />
+	
+	<!-- Soul Bond -->
+	<wisp id="42" hp="4" damage="3.5" fireDelay="36" tearFlags2="5" procChance="0.1" flameColor="flame_bright_blue" coreColor="core_blue" tearColor="tear_bright_blue" tearColor2="tear_bright_blue" coreGfx="cross.png" />
+	
+	<!-- Book of Leviathan -->
+	<wisp id="47" hp="4" damage="3" shotSpeed="1.1" fireDelay="30" tearFlags2="20" procChance="0.075" flameColor="flame_black" coreColor="core_black" tearColor="tear_black" tearColor2="tear_black" coreGfx="skull.png" />
+	
+	<!-- Vault of Havoc -->
+	<wisp id="48" hp="6" damage="3" fireDelay="36" flameColor="flame_red" coreColor="core_dark_red" tearColor="tear_dark_red" />
+	
+	<!-- Magic Marker -->
+	<wisp id="49" hp="3" damage="2" fireDelay="30" tearFlags="3" flameColor="flame_grey" coreColor="core_grey" tearColor="tear_grey" coreGfx="card.png" />
+	
+	<!-- Book of Judges -->
+	<wisp id="51" hp="3" damage="2" fireDelay="30" flameColor="flame_green" coreColor="core_brown" tearColor="tear_green" />
+	
+	<!-- Handicapped Placard -->
+	<wisp id="52" hp="3" damage="2.5" fireDelay="30" tearFlags="51" flameColor="flame_blue" coreColor="core_blue" tearColor="tear_white" tearVariant="29" />
+	
+	<!-- Overflowing Blood Vessel -->
+	<wisp id="53" hp="1" damage="1" flameColor="flame_red" coreColor="core_red" coreGfx="meat.png" count="7" canShoot="false" />
+	
+	<!-- Birth Certificate -->
+	<wisp id="54" hp="12" damage="3.5" fireDelay="30" flameColor="flame_beige" coreColor="core_brown" tearColor="tear_red" />
 </wisps>
 
 
