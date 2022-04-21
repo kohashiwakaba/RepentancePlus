@@ -890,8 +890,20 @@ local function getFinalBossMark(room, level, stage)
 	return nil
 end
 
-local function getBSideObtained()
-	-- ???
+local function getCharBSide(chr)
+	if chr > 20 then return -1 end
+	
+	if chr == 12 then	-- Judas
+		return 24
+	elseif chr >= 13 and chr <= 16 then		-- Lilith to Forgotten
+		return chr + 19
+	elseif chr == 11 or chr == 17 or chr == 18 then		-- Lazarus, Soul and Bethany
+		return chr + 18
+	elseif chr == 19 or chr == 20 then	-- J&E
+		return 37
+	end
+	
+	return chr + 21
 end
 
 --
@@ -918,6 +930,11 @@ function unlockMark(playerType, mark)
 		if playerType == 38 then playerType = 29 end	-- T. Lazarus Dead
 		if playerType == 39 then playerType = 37 end	-- T. Jacob Ghost
 		if playerType == 40 then playerType = 35 end	-- T. Soul
+		if mark == "Character Unlock" then
+			-- match normal character with their B-side
+			playerType = getCharBSide(playerType)
+		end
+		
 		playerType = tostring(playerType)
 		if type(mark) ~= "string" then print("[ERR] Invalid argument: `mark` to unlockMark (string expected, " .. type(mark) .. " provided)") return end
 		if not CustomData.Unlocks[playerType] then print("[ERR] Invalid argument: `playerType` to unlockMark (player type doesn't exist)") return end
@@ -949,6 +966,14 @@ local function unlockSpecials()
 	end
 end
 
+local function unlockHearts()
+	for p = 0, 19 do
+		if p ~= 11 and p ~= 12 and p ~= 17 then
+			unlockMark(p, "Character Unlock")
+		end
+	end
+end
+
 local function unlockAll()
 	for p = 21, 37 do
 		for _, m in pairs(marks) do
@@ -957,6 +982,7 @@ local function unlockAll()
 	end
 	
 	unlockSpecials()
+	unlockHearts()
 	unlockMark("Special", "Birth Certificate")
 end
 
@@ -1014,13 +1040,35 @@ local function GetScreenCenterPosition()
 	return Isaac.WorldToRenderPosition(pos, false)
 end
 
+local function SilentUseCard(p, card)
+	p:UseCard(card, UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOHUD)
+end
+
 local function playAchievementPaper(playerType, mark)
 	if playerType == 38 then playerType = 29 end	-- T. Lazarus Dead
 	if playerType == 39 then playerType = 37 end	-- T. Jacob Ghost
 	if playerType == 40 then playerType = 35 end	-- T. Soul
+	if mark == "Character Unlock" then
+		-- match normal character with their B-side
+		playerType = getCharBSide(playerType)
+	end
+	
+	playerType = tostring(playerType)
 	if not CustomData.Unlocks[playerType] or not CustomData.Unlocks[playerType][mark] or not CustomData.Unlocks[playerType][mark].Unlocked 
 	or not CustomData.Unlocks[playerType][mark].paper then return end
 	
+	fakeBerkanoCall = true
+	SilentUseCard(Isaac.GetPlayer(0), Card.RUNE_BERKANO)
+	for _, bluefly in pairs(Isaac.FindByType(3, FamiliarVariant.BLUE_FLY, -1)) do
+		if bluefly:Exists() and bluefly.FrameCount <= 0 then
+			bluefly:Remove()
+		end
+	end
+	for _, bluespider in pairs(Isaac.FindByType(3, FamiliarVariant.BLUE_SPIDER, -1)) do
+		if bluespider:Exists() and bluespider.FrameCount <= 0 then
+			bluespider:Remove()
+		end
+	end
 	FLAG_RENDER_PAPER = true
 	achievementPaper:ReplaceSpritesheet(3, "gfx/ui/achievement/" .. CustomData.Unlocks[playerType][mark].paper .. ".png")
 	achievementPaper:LoadGraphics()
@@ -1029,7 +1077,7 @@ end
 local function isPickupUnlocked(pickupVar, pickupSubType)
 	if pickupVar == 300 or pickupVar == 100 or pickupVar == 10 or pickupVar == 350 then	-- cards, trinkets, hearts or collectible items
 		for p = 21, 37 do
-			for _, m in pairs({"Boss Rush", "Mom's Heart", "Blue Baby", "Satan", "Isaac", "Greed", "Character Unlock"}) do
+			for _, m in pairs(marks) do
 				if CustomData.Unlocks[tostring(p)][m].Variant == pickupVar and CustomData.Unlocks[tostring(p)][m].SubType == pickupSubType
 				and isMarkUnlocked(p, m) then
 					return true
@@ -1042,6 +1090,12 @@ local function isPickupUnlocked(pickupVar, pickupSubType)
 	end
 	
 	return (pickupVar == 100 and pickupSubType == CustomCollectibles.BIRTH_CERTIFICATE and isMarkUnlocked("Special", "Birth Certificate")) or false
+end
+
+local function morphToTaintedIfUnlocked(heartPickup, taintedType)
+	if isPickupUnlocked(10, taintedType) then
+		heartPickup:Morph(5, 10, taintedType, true, true, true)
+	end
 end
 
 local function isPillEffectUnlocked(effect)
@@ -1199,10 +1253,6 @@ local function isInGhostForm(player, ignoreVisibleHealth)
 		player:GetPlayerType() == 39 or	player:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE)
 	end
 end				
-
-local function SilentUseCard(p, card)
-	p:UseCard(card, UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOHUD)
-end
 
 local function isPlayerDying(player)
 	-- and by 'dying' I (unfortunately) mean 'playing death animation'
@@ -1956,11 +2006,6 @@ function rplus:OnGameStart(Continued)
 		Isaac.Spawn(5, 100, CustomCollectibles.TestCollectible, Isaac.GetFreeNearPosition(Vector(320,280), 10.0), Vector.Zero, nil)
 		Isaac.ExecuteCommand("debug 0")
 		--]]
-<<<<<<< Updated upstream
-	else
-		local customDataLoaded = Isaac.LoadModData(rplus)
-		CustomData = json.decode(customDataLoaded)
-=======
 		
 		--[[ Process custom challenges --]]
 		local p = Isaac.GetPlayer(0)
@@ -1982,7 +2027,6 @@ function rplus:OnGameStart(Continued)
 	if checkAllMarks(false, false) and not isMarkUnlocked("Special", "Birth Certificate") then
 		unlockMark("Special", "Birth Certificate")
 		playAchievementPaper("Special", "Birth Certificate")
->>>>>>> Stashed changes
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, rplus.OnGameStart)
@@ -2065,6 +2109,8 @@ function rplus:OnCommandExecute(command, args)
 		unlockSpecials()
 	elseif command == "rplus_checkmarks" then
 		checkAllMarks(true, true)
+	elseif command == "rplus_unlockhearts" then
+		unlockHearts()
 	end
 	
 	if command == "rplus_help" then
@@ -2074,6 +2120,7 @@ function rplus:OnCommandExecute(command, args)
 		print("rplus_version: gets version of currently running mod")
 		print("rplus_unlockall: unlocks ALL marks")
 		print("rplus_unlockspecials: unlocks SPECIAL marks (not tied to characters)")
+		print("rplus_unlockhearts: unlocks all Tainted hearts")
 		print("rplus_checkmarks: lists which marks haven't been unlocked yet")
 	end
 	
@@ -2166,45 +2213,47 @@ function rplus:OnNewRoom()
 	local room = game:GetRoom()
 	local roomtype = room:GetType()
 
-	-- unlocks for entering certain room types
-	if roomtype == RoomType.ROOM_SECRET and not isMarkUnlocked("Special", "Coffin") then
-		CustomData.Unlocks["Special"]["Coffin"].num = CustomData.Unlocks["Special"]["Coffin"].num + 1
-		if CustomData.Unlocks["Special"]["Coffin"].num == CustomData.Unlocks["Special"]["Coffin"].requiredNum then
-			unlockMark("Special", "Coffin")
-			playAchievementPaper("Special", "Coffin")
-		end
-	elseif roomtype == RoomType.ROOM_PLANETARIUM and not isMarkUnlocked("Special", "Stargazer") then
-		CustomData.Unlocks["Special"]["Stargazer"].num = CustomData.Unlocks["Special"]["Stargazer"].num + 1
-		if CustomData.Unlocks["Special"]["Stargazer"].num == CustomData.Unlocks["Special"]["Stargazer"].requiredNum then
-			unlockMark("Special", "Stargazer")
-			playAchievementPaper("Special", "Stargazer")
-		end
-	elseif roomtype == RoomType.ROOM_ULTRASECRET and not isMarkUnlocked("Special", "Scarlet Chest") then
-		CustomData.Unlocks["Special"]["Scarlet Chest"].num = CustomData.Unlocks["Special"]["Scarlet Chest"].num + 1
-		if CustomData.Unlocks["Special"]["Scarlet Chest"].num == CustomData.Unlocks["Special"]["Scarlet Chest"].requiredNum then
-			unlockMark("Special", "Scarlet Chest")
-			playAchievementPaper("Special", "Scarlet Chest")
-		end
-	elseif roomtype == RoomType.ROOM_DEVIL and not isMarkUnlocked("Special", "Black Chest") then
-		CustomData.Unlocks["Special"]["Black Chest"].num = CustomData.Unlocks["Special"]["Black Chest"].num + 1
-		if CustomData.Unlocks["Special"]["Black Chest"].num == CustomData.Unlocks["Special"]["Black Chest"].requiredNum then
-			unlockMark("Special", "Black Chest")
-			playAchievementPaper("Special", "Black Chest")
-		end
-	elseif roomtype == RoomType.ROOM_CURSE and not isMarkUnlocked("Special", "Flesh Chest") then
-		CustomData.Unlocks["Special"]["Flesh Chest"].num = CustomData.Unlocks["Special"]["Flesh Chest"].num + 1
-		if CustomData.Unlocks["Special"]["Flesh Chest"].num == CustomData.Unlocks["Special"]["Flesh Chest"].requiredNum then
-			unlockMark("Special", "Flesh Chest")
-			playAchievementPaper("Special", "Flesh Chest")
-		end
-	elseif roomtype == RoomType.ROOM_SUPERSECRET and not isMarkUnlocked("Special", "Tainted Rocks") then
-		CustomData.Unlocks["Special"]["Tainted Rocks"].num = CustomData.Unlocks["Special"]["Tainted Rocks"].num + 1
-		if CustomData.Unlocks["Special"]["Tainted Rocks"].num == CustomData.Unlocks["Special"]["Tainted Rocks"].requiredNum then
-			unlockMark("Special", "Tainted Rocks")
-			playAchievementPaper("Special", "Tainted Rocks")
+-- unlocks for entering certain room types
+	if room:IsFirstVisit() then
+		if roomtype == RoomType.ROOM_SECRET and not isMarkUnlocked("Special", "Coffin") then
+			CustomData.Unlocks["Special"]["Coffin"].num = CustomData.Unlocks["Special"]["Coffin"].num + 1
+			if CustomData.Unlocks["Special"]["Coffin"].num == CustomData.Unlocks["Special"]["Coffin"].requiredNum then
+				unlockMark("Special", "Coffin")
+				playAchievementPaper("Special", "Coffin")
+			end
+		elseif roomtype == RoomType.ROOM_PLANETARIUM and not isMarkUnlocked("Special", "Stargazer") then
+			CustomData.Unlocks["Special"]["Stargazer"].num = CustomData.Unlocks["Special"]["Stargazer"].num + 1
+			if CustomData.Unlocks["Special"]["Stargazer"].num == CustomData.Unlocks["Special"]["Stargazer"].requiredNum then
+				unlockMark("Special", "Stargazer")
+				playAchievementPaper("Special", "Stargazer")
+			end
+		elseif roomtype == RoomType.ROOM_ULTRASECRET and not isMarkUnlocked("Special", "Scarlet Chest") then
+			CustomData.Unlocks["Special"]["Scarlet Chest"].num = CustomData.Unlocks["Special"]["Scarlet Chest"].num + 1
+			if CustomData.Unlocks["Special"]["Scarlet Chest"].num == CustomData.Unlocks["Special"]["Scarlet Chest"].requiredNum then
+				unlockMark("Special", "Scarlet Chest")
+				playAchievementPaper("Special", "Scarlet Chest")
+			end
+		elseif roomtype == RoomType.ROOM_DEVIL and not isMarkUnlocked("Special", "Black Chest") then
+			CustomData.Unlocks["Special"]["Black Chest"].num = CustomData.Unlocks["Special"]["Black Chest"].num + 1
+			if CustomData.Unlocks["Special"]["Black Chest"].num == CustomData.Unlocks["Special"]["Black Chest"].requiredNum then
+				unlockMark("Special", "Black Chest")
+				playAchievementPaper("Special", "Black Chest")
+			end
+		elseif roomtype == RoomType.ROOM_CURSE and not isMarkUnlocked("Special", "Flesh Chest") then
+			CustomData.Unlocks["Special"]["Flesh Chest"].num = CustomData.Unlocks["Special"]["Flesh Chest"].num + 1
+			if CustomData.Unlocks["Special"]["Flesh Chest"].num == CustomData.Unlocks["Special"]["Flesh Chest"].requiredNum then
+				unlockMark("Special", "Flesh Chest")
+				playAchievementPaper("Special", "Flesh Chest")
+			end
+		elseif roomtype == RoomType.ROOM_SUPERSECRET and not isMarkUnlocked("Special", "Tainted Rocks") then
+			CustomData.Unlocks["Special"]["Tainted Rocks"].num = CustomData.Unlocks["Special"]["Tainted Rocks"].num + 1
+			if CustomData.Unlocks["Special"]["Tainted Rocks"].num == CustomData.Unlocks["Special"]["Tainted Rocks"].requiredNum then
+				unlockMark("Special", "Tainted Rocks")
+				playAchievementPaper("Special", "Tainted Rocks")
+			end
 		end
 	end
-	--]]
+--
 	
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
@@ -3041,16 +3090,6 @@ function rplus:OnGameUpdate()
 			end
 			
 			-- Baleful Heart main effect
-<<<<<<< Updated upstream
-			if CustomData.TaintedHearts.BALEFUL > 0 
-			and #Isaac.FindInRadius(player.Position, (CustomData.TaintedHearts.BALEFUL + 1) * 50, EntityPartition.ENEMY) > 0 then
-				if not player:GetData().ghostSpawnCountdown or player:GetData().ghostSpawnCountdown <= 0 then
-					local ghost = Isaac.Spawn(1000, 189, 1, player.Position, Vector.Zero, player)
-					ghost.CollisionDamage = CustomData.TaintedHearts.BALEFUL * (player.Damage / 1.35)
-					player:GetData().ghostSpawnCountdown = 75
-				else
-					player:GetData().ghostSpawnCountdown = player:GetData().ghostSpawnCountdown - 1
-=======
 			if CustomData.Data.TaintedHearts.BALEFUL > 0 then
 				for _, enemy in pairs(Isaac.FindInRadius(player.Position, (CustomData.Data.TaintedHearts.BALEFUL + 1) * 50, EntityPartition.ENEMY)) do
 					if enemy:IsVulnerableEnemy() and enemy:IsActiveEnemy(false) 
@@ -3061,7 +3100,6 @@ function rplus:OnGameUpdate()
 					elseif player:GetData().ghostSpawnCountdown then
 						player:GetData().ghostSpawnCountdown = player:GetData().ghostSpawnCountdown - 1
 					end
->>>>>>> Stashed changes
 				end
 			end
 		end
@@ -4174,8 +4212,12 @@ function rplus:PostPlayerUpdate(Player)
 	
 -- replacing locked items in player's inventory
 	for item = CustomCollectibles.ORDINARY_LIFE, CustomCollectibles.SIBLING_RIVALRY do
-		if Player:HasCollectible(item, true) and not isChallengeCoreItem(item) then
-			Player:AddCollectible(GetUnlockedVanillaCollectible(true, Isaac.GetItemConfig():GetCollectible(item).Type == ItemType.ITEM_ACTIVE), 0, true, ActiveSlot.SLOT_PRIMARY, 0)
+		if Player:HasCollectible(item, true) and not isChallengeCoreItem(item) 
+		and not isPickupUnlocked(100, item) then
+			local item = GetUnlockedVanillaCollectible(true, Isaac.GetItemConfig():GetCollectible(item).Type == ItemType.ITEM_ACTIVE)
+			Player:AddCollectible(item, 0, true, ActiveSlot.SLOT_PRIMARY, 0)
+			print("Inventory item -> " .. item)
+			
 			Player:RemoveCollectible(item, false, ActiveSlot.SLOT_PRIMARY, true)
 		end
 	end
@@ -4494,6 +4536,7 @@ function rplus:OnGameRender()
 			end
 			if achievementPaper:IsEventTriggered("SetFlag") then
 				FLAG_RENDER_PAPER = false
+				fakeBerkanoCall = false
 			end
 		end
 		
@@ -4971,8 +5014,9 @@ function rplus:OnNPCDeath(NPC)
 			end 
 		end
 		
-		if player:HasCollectible(CustomCollectibles.CEREMONIAL_BLADE) and not NPC:IsBoss() and NPC:HasEntityFlags(EntityFlag.FLAG_BLEED_OUT) then
-			Isaac.Spawn(5, 300, CustomConsumables.SACRIFICIAL_BLOOD, NPC.Position, Vector.Zero, nil)
+		if player:HasCollectible(CustomCollectibles.CEREMONIAL_BLADE) and not NPC:IsBoss() and NPC:HasEntityFlags(EntityFlag.FLAG_BLEED_OUT) 
+		and isPickupUnlocked(300, CustomConsumables.SACRIFICIAL_BLOOD) then
+			Isaac.Spawn(5, 300, CustomConsumables.SACRIFICIAL_BLOOD, NPC.Position, Vector.Zero, player)
 			break
 		end
 		
@@ -5002,6 +5046,13 @@ function rplus:OnPickupInit(Pickup)
 	local level = game:GetLevel()
 	local stage = level:GetStage()
 	
+-- CHALLENGE
+	if Pickup.Variant == 100 and Isaac.GetChallenge() == CustomChallenges.THE_COMMANDER
+	and Isaac.GetItemConfig():GetCollectible(Pickup.SubType).Tags & ItemConfig.TAG_QUEST == 0 then
+		Pickup:Morph(5, 100, CustomCollectibles.TANK_BOYS, true, true, true)
+	end
+-- CHALLENGE END
+	
 	-- morph modded content if it hasn't been unlocked yet
 		-- CHESTS
 		if Pickup.Variant == CustomPickups.BLACK_CHEST and not isMarkUnlocked("Special", "Black Chest") then
@@ -5018,7 +5069,9 @@ function rplus:OnPickupInit(Pickup)
 		if Pickup.Variant == 100 and Pickup.SubType >= CustomCollectibles.ORDINARY_LIFE and Pickup.SubType <= CustomCollectibles.SIBLING_RIVALRY
 		and not isPickupUnlocked(100, Pickup.SubType) and not isChallengeCoreItem(Pickup.SubType) then
 			local id = GetUnlockedVanillaCollectible(false, true)
-			Pickup:Morph(5, 100, id, true, true, true)
+			print("Item -> " .. id)
+			
+			Pickup:Morph(5, 100, id, true, true, false)
 		end
 		
 		-- CARDS & RUNES
@@ -5027,6 +5080,7 @@ function rplus:OnPickupInit(Pickup)
 		and not isPickupUnlocked(300, Pickup.SubType) then
 			local isRune = Pickup.SubType == CustomConsumables.RED_RUNE or Pickup.SubType == CustomConsumables.QUASAR_SHARD
 			local card = game:GetItemPool():GetCard(Pickup.DropSeed, not isRune, isRune, isRune)
+			print("Card/Rune -> " .. card)
 			
 			Pickup:Morph(5, 300, card, true, true, true)
 		end
@@ -5034,18 +5088,32 @@ function rplus:OnPickupInit(Pickup)
 		-- JEWELS
 		if Pickup.Variant == 300 and Pickup.SubType >= CustomConsumables.CANINE_OF_WRATH and Pickup.SubType <= CustomConsumables.ACID_OF_SLOTH
 		and not isMarkUnlocked(35, "Isaac") then	-- is Pure Soul unlocked?
-			local card = game:GetItemPool():GetCard(Pickup.DropSeed, false, true, true)
+			local rune = game:GetItemPool():GetCard(Pickup.DropSeed, false, true, true)
+			print("Jewel -> " .. rune)
 			
-			Pickup:Morph(5, 300, card, true, true, true)
+			Pickup:Morph(5, 300, rune, true, true, true)
+		end
+		
+		-- HEARTS
+		if Pickup.Variant == 10 and Pickup.SubType >= CustomPickups.TaintedHearts.HEART_BROKEN and Pickup.SubType <= CustomPickups.TaintedHearts.HEART_DESERTED
+		and not isPickupUnlocked(10, Pickup.SubType) then
+			if Pickup.SubType == 98 or Pickup.SubType == 99 then
+				Pickup:Morph(5, 10, HeartSubType.HEART_SOUL, true, true, false)
+			elseif Pickup.SubType == 85 or Pickup.SubType == 92 or Pickup.SubType == 94 then
+				Pickup:Morph(5, 10, HeartSubType.HEART_ETERNAL, true, true, false)
+			elseif Pickup.SubType == 86 then
+				Pickup:Morph(5, 10, HeartSubType.HEART_DOUBLEPACK, true, true, false)
+			elseif Pickup.SubType == 91 or Pickup.SubType == 100 then
+				Pickup:Morph(5, 10, HeartSubType.HEART_BLACK, true, true, false)
+			elseif Pickup.SubType == 96 then
+				Pickup:Morph(5, 10, HeartSubType.HEART_GOLDEN, true, true, false)
+			elseif Pickup.SubType == 97 or Pickup.SubType == 88 then
+				Pickup:Morph(5, 10, HeartSubType.HEART_ROTTEN, true, true, false)
+			else
+				Pickup:Morph(5, 10, HeartSubType.HEART_FULL, true, true, false)
+			end
 		end
 	--
-	
-	-- CHALLENGE
-	if Pickup.Variant == 100 and Isaac.GetChallenge() == CustomChallenges.THE_COMMANDER
-	and Isaac.GetItemConfig():GetCollectible(Pickup.SubType).Tags & ItemConfig.TAG_QUEST == 0 then
-		Pickup:Morph(5, 100, CustomCollectibles.TANK_BOYS, true, true, true)
-	end
-	-- CHALLENGE END
 	
 	-- morph Joker? on final floors
 	if Pickup.Variant == 300 and Pickup.SubType == CustomConsumables.JOKER_Q
@@ -5576,6 +5644,122 @@ function rplus:PostPickupUpdate(Pickup)
 	local sp = Pickup:GetSprite()
 	local stage = game:GetLevel():GetStage()
 	
+-- TAINTED HEARTS REPLACEMENT --
+	for i = 0, game:GetNumPlayers() - 1 do
+		local player = Isaac.GetPlayer(i)
+		
+		if Pickup.Variant == 10 and not noCustomHearts and room:GetType() ~= RoomType.ROOM_BOSS and Pickup.Price == 0 
+		and CustomData.Data.TaintedHearts.HEART_NO_MORPH_FRAME == 0 
+		and (Pickup:GetSprite():IsPlaying("Appear") or Pickup:GetSprite():IsPlaying("AppearFast")) and Pickup:GetSprite():GetFrame() == 1 then
+			RNGobj:SetSeed(Random() + 1, 1)
+			local roll = RNGobj:RandomFloat() * 1000
+			local capriciousRoll = RNGobj:RandomFloat() * 1000
+			local st = Pickup.SubType
+			
+			if st == HeartSubType.HEART_FULL then
+				local baseChance = 7.5
+				if player:HasCollectible(CollectibleType.COLLECTIBLE_OLD_BANDAGE) or
+				player:HasCollectible(CollectibleType.COLLECTIBLE_SHARD_OF_GLASS) then
+					baseChance = 3.75
+				end
+			
+				-- 0.75% broken heart
+				if roll < baseChance then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_BROKEN)
+				-- 1.125% curdled heart
+				elseif roll < baseChance * 2.5 then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_CURDLED)
+				-- 1.125% savage heart
+				elseif roll < baseChance * 4 then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_SAVAGE)
+				-- 0.75% harlot heart
+				elseif roll < baseChance * 5 then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_HARLOT)
+				-- 0.75% deceiver heart
+				elseif roll < baseChance * 6 then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_DECEIVER)
+				-- 0.75% enigma heart
+				elseif roll < baseChance * 7 and game:GetNumPlayers() == 1 then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_ENIGMA) end
+			elseif st == HeartSubType.HEART_SOUL then
+				local baseChance = 50
+				if player:HasCollectible(CollectibleType.COLLECTIBLE_RELIC) or
+				player:HasCollectible(CollectibleType.COLLECTIBLE_MITRE) or
+				player:HasCollectible(CollectibleType.COLLECTIBLE_GIMPY) then
+					baseChance = 25
+				end
+				
+				if stage == 1 then
+					-- 2.5% zealot heart
+					if roll < baseChance * 0.5 and game:GetNumPlayers() == 1 then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_ZEALOT) end
+				else
+					-- 5% fettered heart
+					if roll < baseChance then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_FETTERED)
+					-- 2.5% zealot heart
+					elseif roll < baseChance * 1.5 and game:GetNumPlayers() == 1 then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_ZEALOT) end
+				end
+			elseif st == HeartSubType.HEART_ETERNAL then
+				local baseChance = 100
+				
+				if game:GetNumPlayers() == 1 then
+					-- 10% dauntless heart
+					if roll < baseChance then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_DAUNTLESS) end
+					-- 10% baleful heart
+					if roll < baseChance * 2 then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_BALEFUL) end
+				end
+			elseif st == HeartSubType.HEART_DOUBLEPACK then
+				local baseChance = 250
+				if player:HasCollectible(CollectibleType.COLLECTIBLE_HUMBLEING_BUNDLE) then
+					baseChance = 50
+				end
+				
+				-- 25% hoarded heart
+				if roll < baseChance then 
+					morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_HOARDED)
+				end
+			elseif st == HeartSubType.HEART_BLACK then
+				local baseChance = 200
+				if player:HasCollectible(CollectibleType.COLLECTIBLE_DARK_BUM) or
+				player:HasTrinket(TrinketType.TRINKET_BLACK_LIPSTICK) or
+				player:HasTrinket(TrinketType.TRINKET_DAEMONS_TAIL) then
+					baseChance = 75
+				end
+			
+				-- 20% deserted heart
+				if roll < baseChance then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_DESERTED)
+				-- 20% benighted heart
+				elseif roll < baseChance * 2 then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_BENIGHTED) end
+			elseif st == HeartSubType.HEART_GOLDEN then
+				local baseChance = 250
+				
+				-- 25% miser heart
+				if roll < baseChance and game:GetNumPlayers() == 1 then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_MISER) end
+			elseif st == HeartSubType.HEART_HALF_SOUL then
+				
+			elseif st == HeartSubType.HEART_SCARED then
+				
+			elseif st == HeartSubType.HEART_BLENDED then
+				local baseChance = 350
+				
+				-- 35% deserted heart
+				if roll < baseChance then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_DESERTED) end
+			elseif st == HeartSubType.HEART_BONE then
+				local baseChance = 100
+				
+				-- 10% dauntless heart
+				if roll < baseChance and game:GetNumPlayers() == 1 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_DAUNTLESS) end
+			elseif st == HeartSubType.HEART_ROTTEN and game:GetNumPlayers() == 1 then
+				local baseChance = 75
+				
+				if game:GetNumPlayers() == 1 then
+					-- 7.5% empty heart
+					if roll < baseChance then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_EMPTY)
+					-- 15% soiled heart
+					elseif roll < baseChance * 3 then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_SOILED) end
+				end
+			end
+			
+			-- 0.75% capricious heart (for ANY heart)
+			if capriciousRoll < 7.5 then morphToTaintedIfUnlocked(Pickup, CustomPickups.TaintedHearts.HEART_CAPRICIOUS) end
+		end
+	end
+-- TAINTED HEARTs REPLACEMENT END --
+	
+	-- hearts
 	if Pickup.Variant == 10 then
 		if (Pickup.SubType == HeartSubType.HEART_HALF_SOUL or Pickup.SubType == HeartSubType.HEART_HALF)
 		and Pickup:GetData().fadeTimeout then
@@ -5624,120 +5808,6 @@ function rplus:PostPickupUpdate(Pickup)
 		end
 	end
 	
-	-- TAINTED HEARTS REPLACEMENT --
-	for i = 0, game:GetNumPlayers() - 1 do
-		local player = Isaac.GetPlayer(i)
-		
-		if Pickup.Variant == 10 and not noCustomHearts and room:GetType() ~= RoomType.ROOM_BOSS and Pickup.Price == 0 
-		and CustomData.Data.TaintedHearts.HEART_NO_MORPH_FRAME == 0 
-		and (Pickup:GetSprite():IsPlaying("Appear") or Pickup:GetSprite():IsPlaying("AppearFast")) and Pickup:GetSprite():GetFrame() == 1 then
-			RNGobj:SetSeed(Random() + 1, 1)
-			local roll = RNGobj:RandomFloat() * 1000
-			local capriciousRoll = RNGobj:RandomFloat() * 1000
-			local st = Pickup.SubType
-			
-			if st == HeartSubType.HEART_FULL then
-				local baseChance = 7.5
-				if player:HasCollectible(CollectibleType.COLLECTIBLE_OLD_BANDAGE) or
-				player:HasCollectible(CollectibleType.COLLECTIBLE_SHARD_OF_GLASS) then
-					baseChance = 3.75
-				end
-			
-				-- 0.75% broken heart
-				if roll < baseChance then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_BROKEN, true, true, false)
-				-- 1.125% curdled heart
-				elseif roll < baseChance * 2.5 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_CURDLED, true, true, false)
-				-- 1.125% savage heart
-				elseif roll < baseChance * 4 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_SAVAGE, true, true, false)
-				-- 0.75% harlot heart
-				elseif roll < baseChance * 5 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_HARLOT, true, true, false)
-				-- 0.75% deceiver heart
-				elseif roll < baseChance * 6 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_DECEIVER, true, true, false)
-				-- 0.75% enigma heart
-				elseif roll < baseChance * 7 and game:GetNumPlayers() == 1 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_ENIGMA, true, true, false) end
-			elseif st == HeartSubType.HEART_SOUL then
-				local baseChance = 50
-				if player:HasCollectible(CollectibleType.COLLECTIBLE_RELIC) or
-				player:HasCollectible(CollectibleType.COLLECTIBLE_MITRE) or
-				player:HasCollectible(CollectibleType.COLLECTIBLE_GIMPY) then
-					baseChance = 25
-				end
-				
-				if stage == 1 then
-					-- 2.5% zealot heart
-					if roll < baseChance * 0.5 and game:GetNumPlayers() == 1 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_ZEALOT, true, true, false) end
-				else
-					-- 5% fettered heart
-					if roll < baseChance then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_FETTERED, true, true, false)
-					-- 2.5% zealot heart
-					elseif roll < baseChance * 1.5 and game:GetNumPlayers() == 1 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_ZEALOT, true, true, false) end
-				end
-			elseif st == HeartSubType.HEART_ETERNAL then
-				local baseChance = 100
-				
-				-- 10% dauntless heart
-				if game:GetNumPlayers() == 1 then
-					if roll < baseChance then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_DAUNTLESS, true, true, false) end
-					-- 10% baleful heart
-					if roll < baseChance * 2 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_BALEFUL, true, true, false) end
-				end
-			elseif st == HeartSubType.HEART_DOUBLEPACK then
-				local baseChance = 250
-				if player:HasCollectible(CollectibleType.COLLECTIBLE_HUMBLEING_BUNDLE) then
-					baseChance = 50
-				end
-				
-				-- 25% hoarded heart
-				if roll < baseChance then 
-					Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_HOARDED, true, true, false)
-				end
-			elseif st == HeartSubType.HEART_BLACK then
-				local baseChance = 200
-				if player:HasCollectible(CollectibleType.COLLECTIBLE_DARK_BUM) or
-				player:HasTrinket(TrinketType.TRINKET_BLACK_LIPSTICK) or
-				player:HasTrinket(TrinketType.TRINKET_DAEMONS_TAIL) then
-					baseChance = 75
-				end
-			
-				-- 20% deserted heart
-				if roll < baseChance then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_DESERTED, true, true, false)
-				-- 20% benighted heart
-				elseif roll < baseChance * 2 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_BENIGHTED, true, true, false) end
-			elseif st == HeartSubType.HEART_GOLDEN then
-				local baseChance = 250
-				
-				-- 25% miser heart
-				if roll < baseChance and game:GetNumPlayers() == 1 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_MISER, true, true, false) end
-			elseif st == HeartSubType.HEART_HALF_SOUL then
-				
-			elseif st == HeartSubType.HEART_SCARED then
-				
-			elseif st == HeartSubType.HEART_BLENDED then
-				local baseChance = 350
-				
-				-- 35% deserted heart
-				if roll < baseChance then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_DESERTED, true, true, false) end
-			elseif st == HeartSubType.HEART_BONE then
-				local baseChance = 100
-				
-				-- 10% dauntless heart
-				if roll < baseChance and game:GetNumPlayers() == 1 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_DAUNTLESS, true, true, false) end
-			elseif st == HeartSubType.HEART_ROTTEN and game:GetNumPlayers() == 1 then
-				local baseChance = 75
-				
-				if game:GetNumPlayers() == 1 then
-					-- 7.5% empty heart
-					if roll < baseChance then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_EMPTY, true, true, false)
-					-- 15% soiled heart
-					elseif roll < baseChance * 3 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_SOILED, true, true, false) end
-				end
-			end
-			
-			-- 0.75% capricious heart (for ANY heart)
-			if capriciousRoll < 7.5 then Pickup:Morph(5, 10, CustomPickups.TaintedHearts.HEART_CAPRICIOUS, true, true, false) end
-		end
-	end
-	
 	-- items spawned by Auction Gavel
 	if Pickup.ShopItemId == -321 and Pickup.SpawnerType == 1 and Pickup.Price >= 6 then
 		if type(Pickup:GetData().Data) == 'nil' 
@@ -5757,6 +5827,7 @@ function rplus:PostPickupUpdate(Pickup)
 		end
 	end
 	
+	-- chests
 	if Pickup.Variant == CustomPickups.BLACK_CHEST then
 		if Pickup:GetData()['OpenFrame'] and game:GetFrameCount() >= Pickup:GetData()['OpenFrame'] + 60 then
 			sp:Play("Close")
@@ -5766,13 +5837,9 @@ function rplus:PostPickupUpdate(Pickup)
 		end
 		
 		if sp:IsFinished("Close") then sp:Play("Idle") end
-	end
-	
-	if Pickup.Variant == CustomPickups.FLESH_CHEST then
+	elseif Pickup.Variant == CustomPickups.FLESH_CHEST then
 		if sp:IsFinished("TakeHealth") then sp:Play("Idle") end
-	end
-	
-	if Pickup.Variant == CustomPickups.COFFIN then
+	elseif Pickup.Variant == CustomPickups.COFFIN then
 		if Pickup.FrameCount == 1 then Pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND end
 	end
 end
@@ -6868,6 +6935,14 @@ rplus:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, rplus.ProjectileColl
 						-- MC_PRE_PLAYER_COLLISION --										
 						-----------------------------
 function rplus:PlayerCollision(Player, Collider, _)
+-- CHARACTER UNLOCK (touch secret Isaac slot on the Home floor)
+	if game:GetLevel():GetStage() == LevelStage.STAGE8
+	and Collider.Type == 6 and Collider.Variant == 14 then
+		unlockMark(Player, "Character Unlock")
+		playAchievementPaper(Player:GetPlayerType(), "Character Unlock")
+	end
+-- 
+
 	if Player:HasTrinket(CustomTrinkets.TRICK_PENNY) and math.random(100) <= TRICKPENNY_CHANCE * Player:GetTrinketMultiplier(CustomTrinkets.TRICK_PENNY) then
 		-- cuz slots don't have their own collision callback, thanks api lmao
 		if Collider.Type == 6 then
@@ -6941,7 +7016,7 @@ function rplus:PickupAwardSpawn(_, Pos)
 		if mark then
 			if isMarkUnlocked(player, mark) == false then 
 				unlockMark(player, mark)
-				playAchievementPaper(tostring(player:GetPlayerType()), mark)
+				playAchievementPaper(player:GetPlayerType(), mark)
 			end
 		end
 		--	--
