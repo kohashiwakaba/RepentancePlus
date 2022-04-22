@@ -16,6 +16,7 @@ local rplus = RegisterMod("!rpdevbuild", 1)
 RepentancePlusMod = rplus
 local json = require("json")
 local CustomData = {}
+local LoadMCM = true 
 local marks = {
 	"Boss Rush", 
 	"Mom's Heart", 
@@ -2597,6 +2598,64 @@ function rplus:OnGameUpdate()
 	local room = game:GetRoom()
 	local level = game:GetLevel()
 	local stage = level:GetStage()
+
+	if ModConfigMenu and LoadMCM then -- mod config menu 
+		local RplusName = "Repentance Plus"
+
+		ModConfigMenu.UpdateCategory(RplusName, {
+			Info = {"Repentacne Plus Unlocks",}
+		})
+		
+		for id = 21, 37 do
+			local charactername = playerTypeToName[id]
+			ModConfigMenu.AddSpace(RplusName, charactername)
+			for _, m in pairs(marks) do
+				ModConfigMenu.AddSetting(RplusName, charactername, 
+					{
+						Type = ModConfigMenu.OptionType.BOOLEAN,
+						CurrentSetting = function()
+							return CustomData.Unlocks[tostring(id)][m].Unlocked
+						end,
+						Display = function()
+							local val = "Locked"
+							if CustomData.Unlocks[tostring(id)][m].Unlocked then
+								val = "Unlocked"
+							end
+							return tostring(m) .. ": " .. val
+						end,
+						OnChange = function(newVal)
+							CustomData.Unlocks[tostring(id)][m].Unlocked = newVal
+						end,
+						Info = {"Unlocks"},
+					}
+				)
+			end
+		end	
+		
+		ModConfigMenu.AddSpace(RplusName, "Special")
+		for _, m in pairs({"Black Chest", "Scarlet Chest", "Flesh Chest", "Coffin", "Stargazer", "Tainted Rocks", "Birth Certificate"}) do
+				ModConfigMenu.AddSetting(RplusName, "Special", 
+					{
+						Type = ModConfigMenu.OptionType.BOOLEAN,
+						CurrentSetting = function()
+							return CustomData.Unlocks["Special"][m].Unlocked
+						end,
+						Display = function()
+							local val = "Locked"
+							if CustomData.Unlocks["Special"][m].Unlocked then
+								val = "Unlocked"
+							end
+							return tostring(m) .. ": " .. val
+						end,
+						OnChange = function(newVal)
+							CustomData.Unlocks["Special"][m].Unlocked = newVal
+						end,
+						Info = {"Unlocks"},
+					}
+				)
+		end
+		LoadMCM = false
+	end
 	
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
