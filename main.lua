@@ -16,7 +16,6 @@ local rplus = RegisterMod("!rpdevbuild", 1)
 RepentancePlusMod = rplus
 local json = require("json")
 local CustomData = {}
-local LoadMCM = true 
 local marks = {
 	"Boss Rush", 
 	"Mom's Heart", 
@@ -52,7 +51,8 @@ local sfx = SFXManager()
 local music = MusicManager()
 local RNGobj = RNG()
 local HUDValueRenderOffset = Vector(20, 12)
-local noCustomHearts
+local FLAG_NO_TAINTED_HEARTS
+local FLAG_CONNECT_MCM = true
 
 -- effect helpers
 local CripplingHandsHelper = Isaac.GetEntityVariantByName("Crippling Hands Helper")
@@ -62,10 +62,18 @@ local PureSoul = Isaac.GetEntityVariantByName("Pure Soul")
 local PlacardBorder = Isaac.GetEntityVariantByName("Handicapped Placard Effect Border")
 
 -- helpers for rendering
-local hideErrorMessage
+local FLAG_DISPLAY_UNLOCKS_TIP = false	-- display tips on the screen for the first launch of v1.27 with the unlocks system
+local UnlocksTip = "   PLEASE TAKE A MOMENT TO READ THIS MESSAGE. # #Hello! Repentance Plus was updated to include the #unlocks and achievements system! You now need #to gain completion marks with tainted characters #to unlock modded content. # #You can also track your progress, or #unlock marks, in two ways: #  1. Using console commands (type #rplus_help into the console for help); #  2. Using Mod Config Menu. # #IMPORTANT NOTE: your unlock progress is saved #ONLY when you exit a run!!! # Good luck! :)" 
+local tipPaper = Sprite()
+tipPaper:Load("gfx/ui/achievement/achievements_plus.anm2", true)
+tipPaper:Play("Idle", false)
+tipPaper.Scale = Vector(1.5, 1.5)
+
+--
+local FLAG_HIDE_ERROR_MESSAGE
 local ErrorMessage = "Warning! Custom Mod Data of Repentance Plus #wasn't loaded, the mod could work incorrectly. #Custom Mod Data will be properly loaded next time you start a new run. #(Type 'hide' into the console or press H to hide this message)"
 
--- displaying achievement papers
+--
 local achievementPaper = Sprite()
 achievementPaper:Load("gfx/ui/achievement/achievements_plus.anm2", true)
 achievementPaper:Play("Appear", false)
@@ -1039,7 +1047,7 @@ end
 
 -- Handle displaying error message advising players to restart
 local function DisplayErrorMessage()
-	if not hideErrorMessage then
+	if not FLAG_HIDE_ERROR_MESSAGE then
 		local newLineOffset = 0
 		for line in string.gmatch(ErrorMessage, '([^#]+)') do 
 			Isaac.RenderText(line, 30, 220 + newLineOffset, 1, 0.2, 0.2, 1) 
@@ -1722,8 +1730,8 @@ function rplus:OnGameStart(Continued)
 	end
 
 	if not Continued then
-		hideErrorMessage = false
-		noCustomHearts = false
+		FLAG_HIDE_ERROR_MESSAGE = false
+		FLAG_NO_TAINTED_HEARTS = false
 		
 		--[[ 
 			clear CustomData table that was used pre-1.27
@@ -1743,7 +1751,7 @@ function rplus:OnGameStart(Continued)
 		--
 		
 		--[[
-			if CustomData doesn't exist, LOAD the unlocks
+			if CustomData doesn't exist, then it's first launch of v1.27, LOAD the unlocks
 			otherwise, do NOT do anything to not overwrite the table
 		--]]
 		local secondDataLoad = Isaac.LoadModData(rplus)
@@ -1916,6 +1924,7 @@ function rplus:OnGameStart(Continued)
 				}
 			}
 
+			FLAG_DISPLAY_UNLOCKS_TIP = true
 			Isaac.SaveModData(rplus, json.encode(CustomData, "CustomData"))
 		else
 			Isaac.DebugString("[REP PLUS] Loading mod data from saveX.dat...")
@@ -2000,6 +2009,67 @@ function rplus:OnGameStart(Continued)
 			end
 		end
 		
+--[[ MOD CONFIG MENU COMPATIBILITY --]]
+		if ModConfigMenu and FLAG_CONNECT_MCM then
+			local RplusName = "Repentance Plus"
+
+			ModConfigMenu.UpdateCategory(RplusName, {
+				Info = {"Repentance Plus Unlocks",}
+			})
+			
+			for id = 21, 37 do
+				local charactername = playerTypeToName[id]
+				ModConfigMenu.AddSpace(RplusName, charactername)
+				for _, m in pairs(marks) do
+					ModConfigMenu.AddSetting(RplusName, charactername, 
+						{
+							Type = ModConfigMenu.OptionType.BOOLEAN,
+							CurrentSetting = function()
+								return CustomData.Unlocks[tostring(id)][m].Unlocked
+							end,
+							Display = function()
+								local val = "Locked"
+								if CustomData.Unlocks[tostring(id)][m].Unlocked then
+									val = "Unlocked"
+								end
+								return tostring(m) .. ": " .. val
+							end,
+							OnChange = function(newVal)
+								CustomData.Unlocks[tostring(id)][m].Unlocked = newVal
+							end,
+							Info = {"Unlocks"},
+						}
+					)
+				end
+			end
+			
+			ModConfigMenu.AddSpace(RplusName, "Special")
+			for _, m in pairs({"Black Chest", "Scarlet Chest", "Flesh Chest", "Coffin", "Stargazer", "Tainted Rocks", "Birth Certificate"}) do
+					ModConfigMenu.AddSetting(RplusName, "Special", 
+						{
+							Type = ModConfigMenu.OptionType.BOOLEAN,
+							CurrentSetting = function()
+								return CustomData.Unlocks["Special"][m].Unlocked
+							end,
+							Display = function()
+								local val = "Locked"
+								if CustomData.Unlocks["Special"][m].Unlocked then
+									val = "Unlocked"
+								end
+								return tostring(m) .. ": " .. val
+							end,
+							OnChange = function(newVal)
+								CustomData.Unlocks["Special"][m].Unlocked = newVal
+							end,
+							Info = {"Unlocks"},
+						}
+					)
+			end
+			
+			FLAG_CONNECT_MCM = false
+		end
+--[[ COMPATIBILITY END --]]
+		
 		--[[ Spawn items/trinkets or turn on debug commands for testing here if necessary
 		! DEBUG: 3 - INFINITE HP, 4 - HIGH DAMAGE, 8 - INFINITE CHARGES, 10 - INSTAKILL ENEMIES !
 		
@@ -2010,7 +2080,6 @@ function rplus:OnGameStart(Continued)
 		
 		--[[ Process custom challenges --]]
 		local p = Isaac.GetPlayer(0)
-		
 		if Isaac.GetChallenge() == CustomChallenges.JUDGEMENT then
 			p:AddCollectible(CustomCollectibles.BOOK_OF_JUDGES)
 			p:AddCollectible(CustomCollectibles.CHERUBIM)
@@ -2095,17 +2164,17 @@ rplus:AddCallback(ModCallbacks.MC_POST_GAME_END, rplus.GameEnded)
 						--------------------
 function rplus:OnCommandExecute(command, args)
 	if command == 'hide' then
-		hideErrorMessage = true
+		FLAG_HIDE_ERROR_MESSAGE = true
 		print('Error message hidden. To see it again, type `show` into the console')
 	elseif command == 'show' then
-		hideErrorMessage = false
+		FLAG_HIDE_ERROR_MESSAGE = false
 	end
 	
 	if command == "customhearts_none" then
-		noCustomHearts = true
+		FLAG_NO_TAINTED_HEARTS = true
 		print('No more hearts from Repentance Plus mod! To be able to see them again, type `customhearts_all` into the console')
 	elseif command == "customhearts_all" then
-		noCustomHearts = false
+		FLAG_NO_TAINTED_HEARTS = false
 		print('Tainted hearts are back! To prevent them from spawning, type `customhearts_none` into the console')
 	end
 	
@@ -2598,64 +2667,6 @@ function rplus:OnGameUpdate()
 	local room = game:GetRoom()
 	local level = game:GetLevel()
 	local stage = level:GetStage()
-
-	if ModConfigMenu and LoadMCM then -- mod config menu 
-		local RplusName = "Repentance Plus"
-
-		ModConfigMenu.UpdateCategory(RplusName, {
-			Info = {"Repentacne Plus Unlocks",}
-		})
-		
-		for id = 21, 37 do
-			local charactername = playerTypeToName[id]
-			ModConfigMenu.AddSpace(RplusName, charactername)
-			for _, m in pairs(marks) do
-				ModConfigMenu.AddSetting(RplusName, charactername, 
-					{
-						Type = ModConfigMenu.OptionType.BOOLEAN,
-						CurrentSetting = function()
-							return CustomData.Unlocks[tostring(id)][m].Unlocked
-						end,
-						Display = function()
-							local val = "Locked"
-							if CustomData.Unlocks[tostring(id)][m].Unlocked then
-								val = "Unlocked"
-							end
-							return tostring(m) .. ": " .. val
-						end,
-						OnChange = function(newVal)
-							CustomData.Unlocks[tostring(id)][m].Unlocked = newVal
-						end,
-						Info = {"Unlocks"},
-					}
-				)
-			end
-		end	
-		
-		ModConfigMenu.AddSpace(RplusName, "Special")
-		for _, m in pairs({"Black Chest", "Scarlet Chest", "Flesh Chest", "Coffin", "Stargazer", "Tainted Rocks", "Birth Certificate"}) do
-				ModConfigMenu.AddSetting(RplusName, "Special", 
-					{
-						Type = ModConfigMenu.OptionType.BOOLEAN,
-						CurrentSetting = function()
-							return CustomData.Unlocks["Special"][m].Unlocked
-						end,
-						Display = function()
-							local val = "Locked"
-							if CustomData.Unlocks["Special"][m].Unlocked then
-								val = "Unlocked"
-							end
-							return tostring(m) .. ": " .. val
-						end,
-						OnChange = function(newVal)
-							CustomData.Unlocks["Special"][m].Unlocked = newVal
-						end,
-						Info = {"Unlocks"},
-					}
-				)
-		end
-		LoadMCM = false
-	end
 	
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
@@ -4273,9 +4284,15 @@ function rplus:PostPlayerUpdate(Player)
 	local level = game:GetLevel()
 	local room = game:GetRoom()
 	
-	if Input.IsButtonTriggered(Keyboard.KEY_H, Player.ControllerIndex) and not hideErrorMessage then
+	if Input.IsButtonTriggered(Keyboard.KEY_H, Player.ControllerIndex) and not FLAG_HIDE_ERROR_MESSAGE then
 		print('Error message hidden. To see it again, type `show` into the console')
-		hideErrorMessage = true
+		FLAG_HIDE_ERROR_MESSAGE = true
+	end
+	
+	if FLAG_DISPLAY_UNLOCKS_TIP and game:GetFrameCount() >= 180 
+	and (Input.IsButtonTriggered(Keyboard.KEY_E, Player.ControllerIndex) or Input.IsButtonTriggered(Keyboard.KEY_ENTER, Player.ControllerIndex)
+	or Input.IsButtonTriggered(Keyboard.KEY_SPACE, Player.ControllerIndex)) then
+		FLAG_DISPLAY_UNLOCKS_TIP = false
 	end
 	
 -- replacing locked items in player's inventory
@@ -4597,6 +4614,18 @@ function rplus:OnGameRender()
 	local level = game:GetLevel()
 	local room = game:GetRoom()
 	local ho = Options.HUDOffset
+	
+	if FLAG_DISPLAY_UNLOCKS_TIP then
+		tipPaper:Update()
+		for i = 0, 3 do
+			tipPaper:RenderLayer(i, GetScreenCenterPosition(), Vector.Zero, Vector.Zero)
+		end
+		local newLineOffset = 0
+		for line in string.gmatch(UnlocksTip, '([^#]+)') do 
+			Isaac.RenderText(line, 90, 40 + newLineOffset, 0.5, 0.5, 0.75, 1) 
+			newLineOffset = newLineOffset + 12
+		end
+	end
 	
 	if not CustomData.Data then
 		DisplayErrorMessage()
@@ -5126,67 +5155,67 @@ function rplus:OnPickupInit(Pickup)
 	end
 -- CHALLENGE END
 	
-	-- morph modded content if it hasn't been unlocked yet
-		-- CHESTS
-		if Pickup.Variant == CustomPickups.BLACK_CHEST and not isMarkUnlocked("Special", "Black Chest") then
-			Pickup:Morph(5, PickupVariant.PICKUP_REDCHEST, 0, true, true, true)
-		elseif Pickup.Variant == CustomPickups.FLESH_CHEST and not isMarkUnlocked("Special", "Flesh Chest") then
-			Pickup:Morph(5, PickupVariant.PICKUP_SPIKEDCHEST, 0, true, true, true)
-		elseif Pickup.Variant == CustomPickups.COFFIN and not isMarkUnlocked("Special", "Coffin") then
-			Pickup:Morph(5, PickupVariant.PICKUP_BOMBCHEST, 0, true, true, true)
-		elseif Pickup.Variant == CustomPickups.SCARLET_CHEST and not isMarkUnlocked("Special", "Scarlet Chest") then
-			Pickup:Remove()
-		end
+-- morph modded content if it hasn't been unlocked yet
+	-- CHESTS
+	if Pickup.Variant == CustomPickups.BLACK_CHEST and not isMarkUnlocked("Special", "Black Chest") then
+		Pickup:Morph(5, PickupVariant.PICKUP_REDCHEST, 0, true, true, true)
+	elseif Pickup.Variant == CustomPickups.FLESH_CHEST and not isMarkUnlocked("Special", "Flesh Chest") then
+		Pickup:Morph(5, PickupVariant.PICKUP_SPIKEDCHEST, 0, true, true, true)
+	elseif Pickup.Variant == CustomPickups.COFFIN and not isMarkUnlocked("Special", "Coffin") then
+		Pickup:Morph(5, PickupVariant.PICKUP_BOMBCHEST, 0, true, true, true)
+	elseif Pickup.Variant == CustomPickups.SCARLET_CHEST and not isMarkUnlocked("Special", "Scarlet Chest") then
+		Pickup:Remove()
+	end
+	
+	-- COLLECTIBLES
+	if Pickup.Variant == 100 and Pickup.SubType >= CustomCollectibles.ORDINARY_LIFE and Pickup.SubType <= CustomCollectibles.SIBLING_RIVALRY
+	and not isPickupUnlocked(100, Pickup.SubType) and not isChallengeCoreItem(Pickup.SubType) then
+		local id = GetUnlockedVanillaCollectible(false, true)
+		print("Item -> " .. id)
 		
-		-- COLLECTIBLES
-		if Pickup.Variant == 100 and Pickup.SubType >= CustomCollectibles.ORDINARY_LIFE and Pickup.SubType <= CustomCollectibles.SIBLING_RIVALRY
-		and not isPickupUnlocked(100, Pickup.SubType) and not isChallengeCoreItem(Pickup.SubType) then
-			local id = GetUnlockedVanillaCollectible(false, true)
-			print("Item -> " .. id)
-			
-			Pickup:Morph(5, 100, id, true, true, false)
-		end
+		Pickup:Morph(5, 100, id, true, true, false)
+	end
+	
+	-- CARDS & RUNES
+	if Pickup.Variant == 300 and Pickup.SubType >= CustomConsumables.RED_RUNE and Pickup.SubType <= CustomConsumables.JACK_OF_HEARTS 
+	and not (Pickup.SubType >= CustomConsumables.CANINE_OF_WRATH and Pickup.SubType <= CustomConsumables.ACID_OF_SLOTH) 
+	and not isPickupUnlocked(300, Pickup.SubType) then
+		local isRune = Pickup.SubType == CustomConsumables.RED_RUNE or Pickup.SubType == CustomConsumables.QUASAR_SHARD
+		local card = game:GetItemPool():GetCard(Pickup.DropSeed, not isRune, isRune, isRune)
+		print("Card/Rune -> " .. card)
 		
-		-- CARDS & RUNES
-		if Pickup.Variant == 300 and Pickup.SubType >= CustomConsumables.RED_RUNE and Pickup.SubType <= CustomConsumables.JACK_OF_HEARTS 
-		and not (Pickup.SubType >= CustomConsumables.CANINE_OF_WRATH and Pickup.SubType <= CustomConsumables.ACID_OF_SLOTH) 
-		and not isPickupUnlocked(300, Pickup.SubType) then
-			local isRune = Pickup.SubType == CustomConsumables.RED_RUNE or Pickup.SubType == CustomConsumables.QUASAR_SHARD
-			local card = game:GetItemPool():GetCard(Pickup.DropSeed, not isRune, isRune, isRune)
-			print("Card/Rune -> " .. card)
-			
-			Pickup:Morph(5, 300, card, true, true, true)
-		end
+		Pickup:Morph(5, 300, card, true, true, true)
+	end
+	
+	-- JEWELS
+	if Pickup.Variant == 300 and Pickup.SubType >= CustomConsumables.CANINE_OF_WRATH and Pickup.SubType <= CustomConsumables.ACID_OF_SLOTH
+	and not isMarkUnlocked(35, "Isaac") then	-- is Pure Soul unlocked?
+		local rune = game:GetItemPool():GetCard(Pickup.DropSeed, false, true, true)
+		print("Jewel -> " .. rune)
 		
-		-- JEWELS
-		if Pickup.Variant == 300 and Pickup.SubType >= CustomConsumables.CANINE_OF_WRATH and Pickup.SubType <= CustomConsumables.ACID_OF_SLOTH
-		and not isMarkUnlocked(35, "Isaac") then	-- is Pure Soul unlocked?
-			local rune = game:GetItemPool():GetCard(Pickup.DropSeed, false, true, true)
-			print("Jewel -> " .. rune)
-			
-			Pickup:Morph(5, 300, rune, true, true, true)
+		Pickup:Morph(5, 300, rune, true, true, true)
+	end
+	
+	-- HEARTS
+	if Pickup.Variant == 10 and Pickup.SubType >= CustomPickups.TaintedHearts.HEART_BROKEN and Pickup.SubType <= CustomPickups.TaintedHearts.HEART_DESERTED
+	and not isPickupUnlocked(10, Pickup.SubType) then
+		if Pickup.SubType == 98 or Pickup.SubType == 99 then
+			Pickup:Morph(5, 10, HeartSubType.HEART_SOUL, true, true, false)
+		elseif Pickup.SubType == 85 or Pickup.SubType == 92 or Pickup.SubType == 94 then
+			Pickup:Morph(5, 10, HeartSubType.HEART_ETERNAL, true, true, false)
+		elseif Pickup.SubType == 86 then
+			Pickup:Morph(5, 10, HeartSubType.HEART_DOUBLEPACK, true, true, false)
+		elseif Pickup.SubType == 91 or Pickup.SubType == 100 then
+			Pickup:Morph(5, 10, HeartSubType.HEART_BLACK, true, true, false)
+		elseif Pickup.SubType == 96 then
+			Pickup:Morph(5, 10, HeartSubType.HEART_GOLDEN, true, true, false)
+		elseif Pickup.SubType == 97 or Pickup.SubType == 88 then
+			Pickup:Morph(5, 10, HeartSubType.HEART_ROTTEN, true, true, false)
+		else
+			Pickup:Morph(5, 10, HeartSubType.HEART_FULL, true, true, false)
 		end
-		
-		-- HEARTS
-		if Pickup.Variant == 10 and Pickup.SubType >= CustomPickups.TaintedHearts.HEART_BROKEN and Pickup.SubType <= CustomPickups.TaintedHearts.HEART_DESERTED
-		and not isPickupUnlocked(10, Pickup.SubType) then
-			if Pickup.SubType == 98 or Pickup.SubType == 99 then
-				Pickup:Morph(5, 10, HeartSubType.HEART_SOUL, true, true, false)
-			elseif Pickup.SubType == 85 or Pickup.SubType == 92 or Pickup.SubType == 94 then
-				Pickup:Morph(5, 10, HeartSubType.HEART_ETERNAL, true, true, false)
-			elseif Pickup.SubType == 86 then
-				Pickup:Morph(5, 10, HeartSubType.HEART_DOUBLEPACK, true, true, false)
-			elseif Pickup.SubType == 91 or Pickup.SubType == 100 then
-				Pickup:Morph(5, 10, HeartSubType.HEART_BLACK, true, true, false)
-			elseif Pickup.SubType == 96 then
-				Pickup:Morph(5, 10, HeartSubType.HEART_GOLDEN, true, true, false)
-			elseif Pickup.SubType == 97 or Pickup.SubType == 88 then
-				Pickup:Morph(5, 10, HeartSubType.HEART_ROTTEN, true, true, false)
-			else
-				Pickup:Morph(5, 10, HeartSubType.HEART_FULL, true, true, false)
-			end
-		end
-	--
+	end
+--
 	
 	-- morph Joker? on final floors
 	if Pickup.Variant == 300 and Pickup.SubType == CustomConsumables.JOKER_Q
@@ -5721,7 +5750,7 @@ function rplus:PostPickupUpdate(Pickup)
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
 		
-		if Pickup.Variant == 10 and not noCustomHearts and room:GetType() ~= RoomType.ROOM_BOSS and Pickup.Price == 0 
+		if Pickup.Variant == 10 and not FLAG_NO_TAINTED_HEARTS and room:GetType() ~= RoomType.ROOM_BOSS and Pickup.Price == 0 
 		and CustomData.Data.TaintedHearts.HEART_NO_MORPH_FRAME == 0 
 		and (Pickup:GetSprite():IsPlaying("Appear") or Pickup:GetSprite():IsPlaying("AppearFast")) and Pickup:GetSprite():GetFrame() == 1 then
 			RNGobj:SetSeed(Random() + 1, 1)
