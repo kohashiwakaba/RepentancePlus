@@ -3149,7 +3149,7 @@ function rplus:OnGameUpdate()
 		
 		-- TAINTED HEARTS
 		if CustomData.Data and i == 0 then 
-			if CustomData.Data.TaintedHearts.HEART_RENDER_FRAME > 0 and game:GetFrameCount() == CustomData.Data.TaintedHearts.HEART_RENDER_FRAME + 1then 
+			if CustomData.Data.TaintedHearts.HEART_RENDER_FRAME > 0 and game:GetFrameCount() == CustomData.Data.TaintedHearts.HEART_RENDER_FRAME + 1 then 
 				for j = 1, CustomData.Data.TaintedHearts.ZEALOT do
 					newID = GetUnlockedVanillaCollectible(false, false)
 					player:AddItemWisp(newID, player.Position, true)
