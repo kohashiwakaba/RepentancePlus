@@ -159,7 +159,6 @@
 		<Item Name="Vault of Havoc" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="greedBoss">
-		<Item Name="Ordinary Life" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="greedShop">
 		<Item Name="Rubik's Cube" Weight="1" DecreaseBy="0.5" RemoveOn="0.1" />

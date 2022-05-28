@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="08.02.2022 23:37:18" Version="121" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="26.05.2022 12:32:24" Version="122" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="items\pick ups\black_chest.png" Id="0"/>

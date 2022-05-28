@@ -4597,7 +4597,7 @@
 			<entity type="5" variant="150" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="19240" name="Ultrasecret1" type="29" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
+	<room variant="19240" name="Ultrasecret1" type="29" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -4694,7 +4694,7 @@
 			<entity type="4000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="19241" name="Ultrasecret2" type="29" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
+	<room variant="19241" name="Ultrasecret2" type="29" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -4751,7 +4751,7 @@
 			<entity type="5" variant="300" subtype="78" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="19242" name="Ultrasecret3" type="29" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
+	<room variant="19242" name="Ultrasecret3" type="29" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -4958,7 +4958,7 @@
 			<entity type="1940" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="19245" name="Ultrasecret6" type="29" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
+	<room variant="19245" name="Ultrasecret6" type="29" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -5780,7 +5780,7 @@
 			<entity type="5" variant="10" subtype="98" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="2933" name="Secret4_coffins" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
+	<room variant="2933" name="Secret4_coffins" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.1">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -5847,7 +5847,7 @@
 			<entity type="1940" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="2934" name="Secret4_coffins (copy)" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
+	<room variant="2934" name="Secret4_coffins (copy)" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -5930,7 +5930,7 @@
 			<entity type="1940" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="2935" name="Secret4_coffins (copy) (1)" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
+	<room variant="2935" name="Secret4_coffins (copy) (1)" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -6011,7 +6011,7 @@
 			<entity type="1940" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="2936" name="Secret4_coffins (copy) (2)" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
+	<room variant="2936" name="Secret4_coffins (copy) (2)" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>
@@ -6058,7 +6058,7 @@
 			<entity type="33" variant="2" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
-	<room variant="2937" name="Secret4_coffins (copy) (3)" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.5">
+	<room variant="2937" name="Secret4_coffins (copy) (3)" type="7" subtype="0" shape="1" width="13" height="7" difficulty="1" weight="0.25">
 		<door exists="True" x="-1" y="3"/>
 		<door exists="True" x="6" y="-1"/>
 		<door exists="True" x="6" y="7"/>

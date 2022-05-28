@@ -7,7 +7,7 @@
 	-->
 	
 	<!-- T.Isaac -->
-	<passive id="8" name="Ordinary Life" description="Tears up + you feel nostalgic" gfx="01_ordinarylife.png" quality="3" cache="firedelay" tags="offensive summonable" />
+	<passive id="8" name="Ordinary Life" description="Tears up + you feel nostalgic" gfx="01_ordinarylife.png" quality="3" cache="firedelay" tags="offensive summonable nogreed" />
 	<trinket name="Basement Key" description="Open your memories" gfx="t01_basementkey.png" tags="nogreed" />
 	<active id="12" name="Magic Cube" description="Did you set the world record?" gfx="04_magiccube.png" quality="4" maxcharges="4" />  
 	<active id="11" name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="03_rubikscube.png" quality="0" maxcharges="2" tags="offensive" />
@@ -18,7 +18,7 @@
 	<active id="13" name="Cookie Cutter" description="Cut out your hearts!" gfx="05_cookiecutter.png" quality="0" maxcharges="0" tags="nokeeper nolostbr"/>
 	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="t02_keytotheheart.png" tags="nogreed" />
 	<passive id="1" name="Cherry Friends" description=":3" gfx="06_cherryfriends.png" quality="2" tags="nolostbr summonable" />
-	<active id="32" quality="3" gfx="47_0_bloodvessel.png" description="Delay the inevitable" name="Blood Vessel" maxcharges="0" chargetype="special" tags="nolostbr nokeeper" />
+	<active id="32" quality="2" gfx="47_0_bloodvessel.png" description="Delay the inevitable" name="Blood Vessel" maxcharges="0" chargetype="special" tags="nolostbr nokeeper" />
 	
 	<!-- T. Cain -->
 	<familiar id="2" name="The Mark of Cain" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="3" devilprice="1" tags="devil monstermanual offensive" />
@@ -39,7 +39,7 @@
 	<passive id="44" name="Hand-Me-Downs" description="Speed up + share your belongings" gfx="45_handmedowns.png" quality="1" cache="speed" tags="offensive" />
 
 	<!-- T. Eve -->
-	<passive id="17" name="A Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="2" cache="flying" tags="offensive" />
+	<passive id="17" name="A Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="1" cache="flying" tags="offensive" />
 	<trinket name="Adam's Rib" description="Children of God" gfx="t13_adamsrib.png" />
 	<active id="18" name="Tower of Babel" description="Divine wrath" gfx="19_towerofbabel.png" quality="1" maxcharges="6" tags="offensive" />
 	<familiar id="45" name="Ultra Flesh Kid!" description="We have Super Meat Boy at home" gfx="46_ultrafleshkid.png" quality="3" tags="offensive nokeeper" />
@@ -58,7 +58,7 @@
 	
 	<!-- T. Azazel -->
 	<trinket name="Angel's Crown" description="All virtues are awarded" gfx="t07_angelscrown.png" />
-	<active id="9" name="A Scalpel" description="Not a child's toy" gfx="26_ascalpel.png" quality="1" maxcharges="0" tags="offensive" />
+	<active id="9" name="A Scalpel" description="Not a child's toy" gfx="26_ascalpel.png" quality="2" maxcharges="0" tags="offensive" />
 	<passive id="39" name="The Cross of Chaos" description="Crippling fear" gfx="35_thecrossofchaos.png" devilprice="1" quality="3" tags="devil offensive" cache="tearcolor" />
 	<active id="47" name="Book of Leviathan" description="Grow from the depths!" gfx="48_bookofleviathan.png" quality="1" maxcharges="4" tags="book devil offensive" keys="2" />
 	
@@ -88,14 +88,14 @@
 	
 	<!-- T. Apollyon -->
 	<passive id="5" blackhearts="4" name="Sinner's Heart" description="Piercing tears + DMG up" gfx="16_sinnersheart.png" quality="4" cache="damage shotspeed tearflag range" devilprice="2" tags="offensive" />
-	<active id="38" name="Bottomless Bag" description="Portable vacuum" gfx="31_bottomlessbag.png" quality="2" chargetype="timed" maxcharges="270" tags="offensive" />
+	<active id="38" name="Bottomless Bag" description="Portable vacuum" gfx="31_bottomlessbag.png" quality="1" chargetype="timed" maxcharges="270" tags="offensive" />
 	<active id="48" name="Vault of Havoc" description="Portable massacre" gfx="42_vaultofhavoc.png" quality="3" maxcharges="6" initcharge="0" tags="offensive nogreed" />
 	<trinket name="Shattered Stone" description="Shard of calamity" gfx="t20_shatteredstone.png" />
 	
 	<!-- T. Forgor -->
 	<passive id="30" name="Enraged Soul" description="You are stuck with me" gfx="17_enragedsoul.png" quality="3" devilprice="1" tags="offensive" />
 	<trinket name="Bone Meal" description="Your bones grow stronger" gfx="t16_bonemeal.png" />
-	<passive id="50" name="Pure Soul" description="Purity is a treasure" gfx="28_puresouls.png" quality="3" tags="offensive" />
+	<passive id="50" name="Pure Soul" description="Purity is a treasure" gfx="28_puresouls.png" quality="2" tags="offensive" />
 	<active id="52" name="Handicapped Placard" description="My blue badge" gfx="51_handicappedplacard.png" maxcharges="4" quality="2" tags="nolostbr" />
 
 	<!-- T. Bethany -->
@@ -111,12 +111,12 @@
 	<familiar id="36" name="Sibling Rivalry" description="I can't stand you!" gfx="27_siblingrivalry.png" quality="3" tags="offensive monstermanual" />
 	
 	<!-- TECHNICAL -->
-	<active quality="3" gfx="47_1_bloodvessel.png" description="Delay the inevitable" name="Empty Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
-	<active quality="3" gfx="47_2_bloodvessel.png" description="Delay the inevitable" name="Stained Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
-	<active quality="3" gfx="47_3_bloodvessel.png" description="Delay the inevitable" name="Half Empty Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
-	<active quality="3" gfx="47_4_bloodvessel.png" description="Delay the inevitable" name="Brimming Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
-	<active quality="3" gfx="47_5_bloodvessel.png" description="Delay the inevitable" name="Full Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
-	<active id="53" quality="3" gfx="47_6_bloodvessel.png" description="Delay the inevitable" name="Overflowing Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
+	<active quality="2" gfx="47_1_bloodvessel.png" description="Delay the inevitable" name="Empty Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
+	<active quality="2" gfx="47_2_bloodvessel.png" description="Delay the inevitable" name="Stained Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
+	<active quality="2" gfx="47_3_bloodvessel.png" description="Delay the inevitable" name="Half Empty Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
+	<active quality="2" gfx="47_4_bloodvessel.png" description="Delay the inevitable" name="Brimming Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
+	<active quality="2" gfx="47_5_bloodvessel.png" description="Delay the inevitable" name="Full Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
+	<active id="53" quality="2" gfx="47_6_bloodvessel.png" description="Delay the inevitable" name="Overflowing Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
 	<familiar name="Rejection (passive)" description="" gfx="29_rejection.png" quality="3" hidden="true" />
 	<trinket name="Wait, No!" description=":(" gfx="t11_waitno.png" />
 </items>

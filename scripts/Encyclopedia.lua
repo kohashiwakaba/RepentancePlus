@@ -64,7 +64,7 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "A familiar that creates blue flies upon clearing a room "},
-			{str = "Blocks enemy projectiles, and after blocking it has a chance to be destroyed and drop Breakfast or Nightsoil trinket"},
+			{str = "Blocks enemy projectiles, and after blocking it has a 1.25% chance to be destroyed and drop Breakfast or Nightsoil trinket"},
 			{str = "The more floors it is not destroyed, the more flies it spawns"},
 		},
 	},
@@ -115,12 +115,14 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Grants you two Lemegeton wisps at the beginning of each floor and when sleeping in bed"},
+			{str = "Gives you only one wisp when entering the starting room on each floor while doing Ascent path"}
 		},
 	},
 	[CustomCollectibles.QUASAR] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed"},
+			{str = "Can also consume items that you are currently holding above your head, similarly to Void and Abyss"}
 		},
 	},
 	[CustomCollectibles.TWO_PLUS_ONE] = {
@@ -146,6 +148,8 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Pills now have additional effects based on their color"},
+			{str = "Some effects are different for normal and horse pills"},
+			{str = "Helper icons are displayed near pills to give some clue as to what the additional effect is"}
 		},
 	},
 	[CustomCollectibles.TOWER_OF_BABEL] = {
@@ -158,8 +162,8 @@ local ItemsWiki = {
 	[CustomCollectibles.BLESS_OF_THE_DEAD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Prevents curses from appearing for the rest of the run "},
-			{str = "Preventing a curse grants you  x" .. tostring(CustomStatups.Damage.BLESS_OF_THE_DEAD_MUL) .. " damage increase"},
+			{str = "Prevents curses from appearing for the rest of the run"},
+			{str = "Preventing a curse grants you x" .. tostring(CustomStatups.Damage.BLESS_OF_THE_DEAD_MUL) .. " damage multiplier"},
 		},
 	},
 	[CustomCollectibles.TANK_BOYS] = {
@@ -173,7 +177,7 @@ local ItemsWiki = {
 	[CustomCollectibles.GUSTY_BLOOD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Killing enemies grants you  tears and speed up"},
+			{str = "Killing enemies grants you temporary tears and speed bonus"},
 			{str = "The bonus is reset when entering a new room"},
 		},
 	},
@@ -181,7 +185,7 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "+5 bombs "},
-			{str = "Grants explosion immunity "},
+			{str = "Grants explosion immunity"},
 			{str = "Allows you to throw your bombs instead of placing them on the ground"},
 		},
 	},
@@ -209,33 +213,35 @@ local ItemsWiki = {
 	[CustomCollectibles.SCALPEL] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Consumes a heart container. If you have no containers, consumes a soul heart"},
+			{str = "Consumes a heart container. If you have no heart containers or bone hearts, consumes 2 soul heart"},
 			{str = "Permanently makes Isaac fire tears in one more random direction, similarly to Eye Sore"},
-			{str = "These tears deal 75% of your damage and retain all your tear modifiers"},
+			{str = "These tears deal 75% of your damage, are shot with approximately the same rate of fire and retain all your tear modifiers"},
 		},
 	},
 	[CustomCollectibles.KEEPERS_PENNY] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns a golden penny upon entering a new floor"},
-			{str = "Shops will now sell 1-4 additional items that are drawn from shop, treasure or boss itempools"},
-			{str = "If the shop is a Greed fight, it instead spawns 3-4 items when the miniboss dies"}
+			{str = "Shops will now sell 1-4 additional items that are drawn from shop, treasure or boss item pools"},
+			{str = "If the shop is a Greed fight, 3-4 items spawn instead after it is defeated"}
 		},
 	},
 	[CustomCollectibles.NERVE_PINCH] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Shooting or moving for 8 seconds will trigger a nerve pinch. You take fake damage and gain a permanent " .. tostring(CustomStatups.Speed.NERVE_PINCH) .. " speed down when that happens"},
+			{str = "Double tap shooting button to trigger a nerve pinch. You take fake damage and gain a permanent " .. tostring(CustomStatups.Speed.NERVE_PINCH) .. " speed down when that happens"},
 			{str = "However, there is an 80% chance to activate your active item for free, even if it's uncharged"},
 			{str = "One-time use and infinite use actives cannot be used that way"},
+			{str = "Gives twice as much speed penalty if the player tries to use 6 or 12 room recharge active item"}
 		},
 	},
 	[CustomCollectibles.BLOOD_VESSELS[1]] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Taking damage doesn't actually hurt the player, instead filling the blood vessel "},
-			{str = "This can be repeated 6 times until the vessel is full "},
+			{str = "Taking damage doesn't actually hurt the player, instead filling the blood vessel"},
+			{str = "This can be repeated 6 times until the vessel is full"},
 			{str = "Once it's full, using it or taking damage will empty it and deal 3 and 3.5 hearts of damage to the player, respectively"},
+			{str = "Any non-empty Blood Vessels cannot be switched for another active item to prevent taking damage. When any is detected, it will instantly be destroyed, damaging all players in proportion to how full it was"}
 		},
 	},
 	[CustomCollectibles.SIBLING_RIVALRY] = {
@@ -260,7 +266,7 @@ local ItemsWiki = {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Summons the Stargazer beggar"},
 			{str = "Can only be charged with soul hearts, similarly to Alabaster Box. 1 soul heart needed for full charge"},
-			{str = "Can only be used once per floor"},
+			{str = "Can only be used (and hence, charged) once per floor"},
 		},
 	},
 	[CustomCollectibles.BOTTOMLESS_BAG] = {
@@ -295,8 +301,8 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns an item from the room's pool for sale"},
-			{str = "Its price will change rougly 5 times a second"},
-			{str = "The price is random, but generally increases over time until it reaches $99"},
+			{str = "Its price starts at 22 cents and will change roughly 5 times a second"},
+			{str = "The price is random, but generally increases over time until it reaches 99 coins"},
 			{str = "If you leave and re-enter the room, the item disappears"},
 			{str = "Having Steam Sale makes the prices start at only 11 cents and slows down the price increase"}
 		},
@@ -317,7 +323,7 @@ local ItemsWiki = {
 			{str = "+0.3 Shot Speed up "},
 			{str = "Your tears are replaced with piercing feathers that deal more damage the more they travel "},
 			{str = "Double tap to perform one of Dogma-related attacks (these attacks cycle between each other and are not chosen randomly):"},
-			{str = "- Spawn a friendly Dogma Baby, that behaves much like Purgatory soul"},
+			{str = "- Spawn a friendly Dogma Baby, that behaves much like Hungry Soul"},
 			{str = "- Shoot 3 slow piercing tears with Godhead aura"},
 			{str = "- Shoot a laser that deals 3.5 contact damage per hit to enemies"},
 			{str = "Has a 6 seconds cooldown"},
@@ -376,7 +382,7 @@ local ItemsWiki = {
 	[CustomCollectibles.VAULT_OF_HAVOC] = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Passively stores killed enemies. Can be used as soon as 12 enemies are stored"},
+			{str = "Passively stores killed enemies with more than 10 HP. Can be used as soon as 12 such enemies are stored"},
 			{str = "Upon use, brings you into a special room with 12 most recently killed enemies. Clearing the room spawns a reward based on total HP of spawned enemies:"},
 			{str = "- Low: soul, red and golden heart"},
 			{str = "- Medium: brown chest, golden chest and a trinket"},
@@ -467,8 +473,7 @@ local TrinketsWiki = {
 	[CustomTrinkets.ANGELS_CROWN] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "All new treasure rooms will have an angel item for sale instead of a normal item"},
-			{str = "Angels spawned from statues will not drop Key Pieces!"},
+			{str = "All newly visited treasure rooms will have an angel item for sale instead of a normal item, similarly to Stairway shops"},
 		},
 	},
 	[CustomTrinkets.MAGIC_SWORD] = {
@@ -517,7 +522,7 @@ local TrinketsWiki = {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "At the beginning of every new floor, grants:"},
 			{str = "- +10% DMG up"},
-			{str = "- Size increase "},
+			{str = "- Size increase"},
 			{str = "Both damage and size up stay if you drop the trinket"},
 		},
 	},
@@ -561,7 +566,7 @@ local TrinketsWiki = {
 	[CustomTrinkets.KEY_KNIFE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "8% chance to activate Dark Arts effect when taking damage "},
+			{str = "8% chance to activate Dark Arts effect when taking damage"},
 		},
 	},
 	[CustomTrinkets.SHATTERED_STONE] = {
@@ -728,9 +733,9 @@ local CardsWiki = {
 	[CustomConsumables.BAG_TISSUE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "All pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight, the item of such quality is then spawned "},
+			{str = "All pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight, the item of such quality is then spawned"},
 			{str = "The most valuable pickups are the rarest ones, e.g. eternal hearts or mega batteries"},
-			{str = "If used in a room with less then 8 pickups, no item will spawn!"},
+			{str = "Can freely be used in rooms that contain less than 8 pickups at once"},
 		},
 	},
 	[CustomConsumables.JOKER_Q] = {
@@ -748,14 +753,14 @@ local CardsWiki = {
 	[CustomConsumables.LOADED_DICE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Grants 10 Luck for the current room"},
+			{str = "Grants +10 Luck for the current room"},
 		},
 	},
 	[CustomConsumables.BEDSIDE_QUEEN] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns 1-12 random keys "},
-			{str = "There is a chance to spawn a charged key"},
+			{str = "There is a small chance to spawn a charged key"},
 		},
 	},
 	[CustomConsumables.QUEEN_OF_CLUBS] = {
@@ -812,7 +817,7 @@ local CardsWiki = {
 	[CustomConsumables.LIBRARY_CARD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Activates a random book"},
+			{str = "Activates a random book effect"},
 		},
 	},
 	[CustomConsumables.MOMS_ID] = {
@@ -876,7 +881,7 @@ local CardsWiki = {
 	[CustomConsumables.CURSED_CARD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "For the current room, every hit of damage you would take is negated "},
+			{str = "For the current room, every hit of damage you would take is negated"},
 			{str = "Instead, it gives you a broken heart and a permanent tears boost"},
 		},
 	},
@@ -921,7 +926,7 @@ local CardsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Every enemy in a room explodes, taking 15 damage "},
-			{str = "The explosion can hurt you too "},
+			{str = "The explosion can hurt you too"},
 			{str = "Every enemy that dies from the explosion will give you a temporary damage boost"},
 			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
 		},
