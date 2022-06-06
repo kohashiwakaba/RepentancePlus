@@ -1,7 +1,7 @@
 <challenges version="1">
 	<!-- challenge name="" startingitems="" startingitems2="" playertype="" endstage="" roomfilter="" canshoot="" altpath="" -->
-	<challenge name="The Commander" playertype="0" endstage="10" altpath="true" />	<!-- every item is tank boys -->
-	<challenge name="Judgement" playertype="8" endstage="10" altpath="true" altpath="true" startingitems="568" canshoot="false" roomfilter="4,24"/>		<!-- blindfolded, book of judges + divine intervention + familiar. book does no damage to you and more to enemies -->
+	<challenge name="The Commander" playertype="0" endstage="11" altpath="true" />	<!-- every item is tank boys -->
+	<challenge name="Judgement" playertype="8" endstage="10" altpath="true" altpath="true" startingitems="568" canshoot="false" roomfilter="4,24"/>		<!-- blindfolded, book of judges + divine intervention + cherubim. book does no damage to you and more to enemies -->
 	<challenge name="The Sacrifice" playertype="3" endstage="6" startingitems="216" roomfilter="4,24" />		<!-- judas with ceremonial blade and robes, starts taking damage if has no dmg boosts given by sacrificial blood -->
-	<challenge name="Living in the Light" playertype="0" endstage="11" altpath="true" roomfilter="4,24" startingitems="-105,633,276" canshoot="false" />
+	<challenge name="Living in the Light" playertype="0" difficulty="1" endstage="11" roomfilter="4,24" startingitems="-105,633,276" canshoot="false" megasatan="true" />
 </challenges>

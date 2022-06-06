@@ -119,7 +119,7 @@ local animLength
 local FLAG_FAKE_POPUP_PAUSE
 -------------
 -- chances	
-local BASEMENTKEY_CHANCE = 15			-- chance to replace golden chest with an old chest
+local BASEMENTKEY_CHANCE = 25			-- chance to replace golden chest with an old chest
 local HEARTKEY_CHANCE = 5				-- chance for enemy to drop Flesh chest on death
 local SUPERBERSERK_ENTER_CHANCE = 25	-- chance to enter berserk state via Temper Tantrum
 local SUPERBERSERK_DELETE_CHANCE = 5	-- chance to erase enemies while in this state
@@ -362,13 +362,14 @@ CustomItempools = {
 		36, -- Poop
 		45, -- Yum Heart
 		46, -- Lucky Foot
+		55,	-- Mom's Eye
 		73, -- Cube of Meat
 		103, -- Common Cold
 		155, -- The Peeper
+		157, -- Bloody Lust
 		176, -- Stem Cells
-		214, -- Anemic
 		218, -- Placenta
-		236, -- E. Coli
+		253, -- Magic Scab
 		254, -- Blood Clot
 		273, -- Bob's Brain
 		276, -- Isaac's Heart
@@ -379,11 +380,13 @@ CustomItempools = {
 		453, -- Compound Fracture
 		454, -- Polydactyly
 		458, -- Belly Button
+		460, -- Glaucoma
 		467, -- Finger
 		502, -- Large Zit
 		509, -- Bloodshot Eye
 		525, -- Leprosy
 		529, -- Pop!
+		531, -- Haemolacria
 		541, -- Marrow
 		542, -- Slipped Rib
 		544, -- Pointy Rib
@@ -398,11 +401,10 @@ CustomItempools = {
 		658, -- Giant Cell
 		676, -- Empty Heart
 		680, -- Montezuma's Revenge
-		688, -- Inner Child
+		683, -- Bone Spurs
 		695, -- Bloody Gust
 		725, -- IBS
 		729, -- Decap Attack
-		730, -- Glass Eye
 		731 -- Stye
 	},
 	FLESH_CHEST_TRINKETS = {
@@ -664,8 +666,7 @@ local VECTOR_CARDINAL = {
 	Vector(-1, 0), 
 	Vector(0, -1), 
 	Vector(1, 0)
-}							
-
+}
 
 
 						----------------------
@@ -924,6 +925,7 @@ local function isPickupUnlocked(pickupVar, pickupSubType)
 	
 	return false
 end
+RepentancePlusMod.isPickupUnlocked = isPickupUnlocked
 
 local function morphToTaintedIfUnlocked(heartPickup, taintedType)
 	if isPickupUnlocked(10, taintedType) then
@@ -945,6 +947,7 @@ local function isPillEffectUnlocked(effect)
 	-- special
 	return isMarkUnlocked(28, "Greed") and effect == CustomPills.YUCK or false
 end
+RepentancePlusMod.isPillEffectUnlocked = isPillEffectUnlocked
 
 local function isChallengeCoreItem(item)
 	local c = Isaac.GetChallenge()
@@ -992,7 +995,7 @@ local function GetUnlockedVanillaCollectible(allPools, includeActives, excludeTa
 	return colResult
 end
 
-function GetUnlockedCollectibleFromCustomPool(poolTableEntry)
+local function GetUnlockedCollectibleFromCustomPool(poolTableEntry)
 	local freezePreventChecker = 0
 	local colResult = 25 -- good ol breakfast
 	RNGobj:SetSeed(Random() + 1, 1)
@@ -1000,7 +1003,6 @@ function GetUnlockedCollectibleFromCustomPool(poolTableEntry)
 	repeat
 		local tryID = GetUnlockedVanillaCollectible(true, true)
 		for _, el in pairs(poolTableEntry) do
-			print("trying picked id " .. tryID .. " vs " .. el .. " from table")
 			if el == tryID then
 				colResult = tryID
 				Isaac.DebugString("INFO: successfully chosen unlocked collectible #" .. tostring(colResult) .. " from custom pool!")
@@ -2115,7 +2117,6 @@ function rplus:OnGameStart(Continued)
 												     {index = -1, needToConvert = false}}}
 			},
 			Pills = {
-				LAXATIVE = {UseFrame = nil},
 				YUCK = {UseFrame = -900},
 				YUM = {NumLuck = 0, NumDamage = 0, NumRange = 0, NumTears = 0, UseFrame = -900},
 				PHANTOM_PAINS = {UseFrame = -900}
@@ -2551,6 +2552,7 @@ function rplus:OnNewLevel()
 	CustomData.Data.Items.RED_KING.redCrawlspacesData = {}
 	CustomData.Data.Trinkets.ANGELS_CROWN.treasureRoomsData = {{index = -1, needToConvert = false},
 														  {index = -1, needToConvert = false}}
+	CustomData.Data.Items.VAULT_OF_HAVOC.EnemyList = {}
 	
 	if GameOverStage and level:GetStage() == GameOverStage then 
 		for _, item in pairs(GameOverItems) do
@@ -3205,17 +3207,17 @@ function rplus:OnGameUpdate()
 			end
 		end
 		
-		if CustomData.Data and CustomData.Data.Pills.LAXATIVE.UseFrame and game:GetFrameCount() % 4 == 0 then
-			if (game:GetFrameCount() <= CustomData.Data.Pills.LAXATIVE.UseFrame + 90 and player:GetData()['usedLax'])
-			or (game:GetFrameCount() <= CustomData.Data.Pills.LAXATIVE.UseFrame + 360 and player:GetData()['usedHorseLax']) then
+		if player:GetData()['laxUseFrame'] and game:GetFrameCount() % 4 == 0 then
+			if (game:GetFrameCount() <= player:GetData()['laxUseFrame'] + 90 and player:GetData()['usedLax'])
+			or (game:GetFrameCount() <= player:GetData()['laxUseFrame'] + 360 and player:GetData()['usedHorseLax']) then
 				local vector = Vector.FromAngle(DIRECTION_VECTOR[player:GetMovementDirection()]:GetAngleDegrees() + math.random(-15, 15)):Resized(-7.5)
 				local SCorn = Isaac.Spawn(2, CustomTearVariants.CORN, 0, player.Position, vector, Player):GetSprite()
 				
 				SCorn:Play("Big0" .. math.random(4))
-				cornScale = math.random(5, 10) / 10
+				local cornScale = math.random(5, 10) / 10
 				SCorn.Scale = Vector(cornScale, cornScale)
 			else
-				CustomData.Data.Pills.LAXATIVE.UseFrame = nil
+				player:GetData()['laxUseFrame'] = nil
 				player:GetData()['usedLax'] = false
 				player:GetData()['usedHorseLax'] = false
 			end
@@ -4457,7 +4459,7 @@ function rplus:OnPillUse(pillEffect, Player, _)
 		else
 			Player:GetData()['usedHorseLax'] = true	-- increased duration for horse pill
 		end
-		CustomData.Data.Pills.LAXATIVE.UseFrame = game:GetFrameCount()
+		Player:GetData()['laxUseFrame'] = game:GetFrameCount()
 		sfx:Play(SoundEffect.SOUND_FART)
 		Player:AnimateSad()
 	end
@@ -4565,12 +4567,6 @@ function rplus:OnPillUse(pillEffect, Player, _)
 			Isaac.Spawn(5, 10, 2, Isaac.GetFreeNearPosition(Player.Position, 10), Vector.Zero, nil)
 		end
 		sfx:Play(SoundEffect.SOUND_MEAT_JUMPS)
-	end
-
-	if Player:HasTrinket(CustomTrinkets.SHATTERED_STONE) then
-		local locustRoll = RNGobj:RandomInt(5) + 1
-		local locust = Isaac.Spawn(3, FamiliarVariant.BLUE_FLY, locustRoll, player.Position, Vector.Zero, player)
-		locust:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
 	end
 end
 rplus:AddCallback(ModCallbacks.MC_USE_PILL, rplus.OnPillUse)

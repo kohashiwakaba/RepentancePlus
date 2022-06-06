@@ -532,7 +532,7 @@ if true then
 	EID:addCollectible(CustomCollectibles.BOOK_OF_JUDGES, "Passively spawns targets on the floor when entering a new room with monsters #Every 3 seconds, beams of light will strike at the targets' positions #Beams hurt enemies and inflict burn on them, but they hurt you too #Using the book cancels the effect for the current room")
 	EID:addCollectible(CustomCollectibles.BIRTH_CERTIFICATE, "{{Warning}} ONE-TIME USE #Gulps all your currently held trinkets #Teleports you into a special area that contains many trinkets, along with some other pickups #Only one trinket can be chosen; shortly after picking it up, you will be teleported back to the starting room")
 
-	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "{{DirtyChest}} While held, every Golden Chest has a 15% chance to be replaced with Old Chest")
+	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "{{DirtyChest}} While held, every Golden Chest has a 25% chance to turn into Old Chest")
 	EID:addTrinket(CustomTrinkets.KEY_TO_THE_HEART, "While held, every enemy has a chance to drop Flesh Chest upon death #Flesh Chests contain hearts, pills and body-related items and trinkets")
 	EID:addTrinket(CustomTrinkets.JUDAS_KISS, "{{Bait}} Enemies touching you become feared and targeted by other enemies (effect similar to Rotten Tomato)")
 	EID:addTrinket(CustomTrinkets.TRICK_PENNY, "{{ArrowUp}} Using coin, bomb or key on slots, beggars or locked chests has a 17% chance to not subtract it from your inventory count")
@@ -678,7 +678,7 @@ if true then
 	EID:addCollectible(CustomCollectibles.BOOK_OF_JUDGES, "Se generarán punteros al entrar a una sala con enemigos#Cada 3 segundos, caerán rayos de luz sobre estos punteros#{{Burning}} Los rayos dañan y queman a los enemigos, pero también te pueden dañar, but they hurt you too#Usar el libro anulará el efecto durante la sala", "Book of Judges", "spa")
 	EID:addCollectible(CustomCollectibles.BIRTH_CERTIFICATE, "{{Warning}} DE UN SOLO USO#Consumirá todos los trinkets que poseas#Te teletransportarás a una sala especial con demasiados trinkets, junto a otros recolectables#Sólo podrás tomar unp; después de esto, serás transportado a la sala donde estabas antes", "Birth Certificate", "spa")
 
-	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "{{ChestRoom}}Al tenerlo, cada Cofre Dorado tiene un 15% de probabilidad de convertirse en un Cofre Viejo", "Llave del Sótano", "spa")
+	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "{{ChestRoom}}Al tenerlo, cada Cofre Dorado tiene un 25% de probabilidad de convertirse en un Cofre Viejo", "Llave del Sótano", "spa")
 	EID:addTrinket(CustomTrinkets.KEY_TO_THE_HEART, "Al tenerlo, cada enemigo tiene una posibilidad de soltar un Cofre Escarlata al morir#Los Cofres Escarlata contienen: 1-4 {{Heart}}corazones/{{Pill}}píldoras O un objeto aleatorio relativo al cuerpo", "Llave al Corazón", "spa")
 	EID:addTrinket(CustomTrinkets.JUDAS_KISS, "Los enemigos que te toquen serán marcados y atacados por otros enemigos (Efecto similar al de {{Collectible618}}Tomate Podrido", "Beso de Judas", "spa")
 	EID:addTrinket(CustomTrinkets.TRICK_PENNY, "Usar una moneda, llave o bomba en una máquina, un mendigo o un cofre cerrado tendrá un 17% de probabilidad de no restarlo de tu ivnentario", "Moneda Truculenta", "spa")
@@ -800,7 +800,7 @@ if true then
 	EID:addCollectible(CustomCollectibles.BOOK_OF_JUDGES, "Пассивно создает мишени на полу при входе в новую комнату #Каждые 3 секунды лучи света будут поражать мишени #Лучи наносят урон врагам и накладывает горение, но {{Warning}}они также наносят урон игроку #Использование книги отменяет вызов лучей для текущей комнаты", "Книга Судей", "ru")
 	EID:addCollectible(CustomCollectibles.BIRTH_CERTIFICATE, "{{Warning}} Одноразовый! #При использовании, поглощает все удерживаемые брелки и телепортирует вас в комнату, в которой находится 188 брелоков, и несколько других расходников #Только один брелок может быть взять; вскоре после этого, вас телепортирует обратно в стартовую комнату текущего этажа", "Сертификат о рождении", "ru")
 	
-	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "{{ChestRoom}}Золотые Сундуки имеют 12.5% шанс стать Старым Сундуком", "Ключ от Подвала", "ru")
+	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "{{ChestRoom}}Золотые Сундуки имеют 25% шанс стать Старым Сундуком", "Ключ от Подвала", "ru")
 	EID:addTrinket(CustomTrinkets.KEY_TO_THE_HEART, "У каждого врага есть шанс создать Кожанный Сундук после смерти #Кожанные Сундуки могут содержать 1-4 {{Heart}}сердца/{{Pill}}таблетки или случайный предмет, связанный с телом", "Ключ к Сердцу", "ru")
 	EID:addTrinket(CustomTrinkets.JUDAS_KISS, "Враги, прикасающиеся к вам, будут атакованы другими врагами (похожий на эффект {{Collectible618}}Тухлого Помидора)", "Поцелуй Иуды", "ru")
 	EID:addTrinket(CustomTrinkets.TRICK_PENNY, "Трата монет, бомб или ключей на автоматы, попрошаек или запертые сундуки имеет 17 % шанс не вычесть их из вашего инвентаря", "Трюк с Монеткой", "ru")
@@ -940,7 +940,7 @@ if true then
 	EID:addCollectible(CustomCollectibles.BOOK_OF_JUDGES, "소지 시, 적이 있는 방에서 파란 타겟 여러개가 생성됩니다.#3초마다 빛줄기가 떨어지며 빛줄기는 캐릭터에게 피해를, 적에게 화상 피해를 줍니다.#사용 시 현재 방에서 빛줄기가 떨어지지 않습니다.", "심판의 책", "ko_kr")
 	EID:addCollectible(CustomCollectibles.BIRTH_CERTIFICATE, "!!! 일회용 #사용 시 현재 들고 있는 장신구를 흡수하고 아이작의 모든 장신구가 있는 방으로 이동합니다.#장신구 한개 획득 시 원래 있던 장소로 돌아갑니다.", "출생 증명서", "ko_kr")
 
-	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "{{DirtyChest}} 황금상자를 15%의 확률로 낡은 상자로 대체합니다.", "지하실 열쇠", "ko_kr")
+	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "{{DirtyChest}} 황금상자를 25%의 확률로 낡은 상자로 대체합니다.", "지하실 열쇠", "ko_kr")
 	EID:addTrinket(CustomTrinkets.KEY_TO_THE_HEART, "적 처치 시 5%의 확률로 생체상자를 드랍합니다.#생체상자에서는 하트류 픽업, 알약이나 몸체 관련 아이템 및 장신구를 드랍합니다.", "심장열쇠", "ko_kr")
 	EID:addTrinket(CustomTrinkets.JUDAS_KISS, "{{Bait}} 적과 접촉 시 해당 적에게 표식을 부여합니다. ({{Collectible618}}Rotten Tomato와 비슷한 효과)", "유다의 키스", "ko_kr")
 	EID:addTrinket(CustomTrinkets.TRICK_PENNY, "↑ 도박기계, 거지류, 잠긴 상자에서 동전/폭탄/열쇠 사용 시 17%의 확률로 소모되지 않습니다.", "속임수 동전", "ko_kr")
@@ -1080,7 +1080,7 @@ if true then
 	EID:addCollectible(CustomCollectibles.BOOK_OF_JUDGES, "持有时，【被动效果】进入未清理的房间时，在地上持续周期性（每3秒）生成圣光攻击目标 #光束会伤害敌人并灼烧它们，但同时也会伤害到你并造成1颗心伤害 #【主动效果】取消当前房间的圣光召唤", "《士师记》", "zh_cn")
 	EID:addCollectible(CustomCollectibles.BIRTH_CERTIFICATE,"{{Warning}}一次性 #如同死亡证明的效果 #使用后传送到一个特殊房间，其房间内容为游戏内包含mod的所有饰品和若干基础掉落，拾取一个饰品后传送回该层初始房间 #若房间内无法放下所有的饰品，则生成第二个房间 # 进入第二个房间后无法回到第一个房间","出生证明","zh_cn")
                  
-	EID:addTrinket(CustomTrinkets.BASEMENT_KEY,"{{ChestRoom}} 持有时，每个金宝箱都有 15% 的几率被旧宝箱取代","地下室钥匙","zh_cn")
+	EID:addTrinket(CustomTrinkets.BASEMENT_KEY,"{{ChestRoom}} 持有时，每个金宝箱都有 25% 的几率被旧宝箱取代","地下室钥匙","zh_cn")
 	EID:addTrinket(CustomTrinkets.KEY_TO_THE_HEART,"持有时，每个生命值超过10的敌人在死亡后都有几率掉落猩红宝箱 #猩红宝箱可能包含1-4{{Heart}}心 / {{Pill}}药丸或者跟身体有关的道具","心之钥","zh_cn")
 	EID:addTrinket(CustomTrinkets.JUDAS_KISS,"接触到你的敌人会成为其他敌人的攻击目标（类似烂番茄效果）","犹大之吻","zh_cn")
 	EID:addTrinket(CustomTrinkets.TRICK_PENNY,"消耗硬币，炸弹或者钥匙进行开锁，给乞丐捐钱或者开箱子时有20%概率不消耗","厚硬币","zh_cn")	
