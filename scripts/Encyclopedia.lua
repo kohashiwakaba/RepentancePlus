@@ -38,7 +38,7 @@ local ItemsWiki = {
 	[CustomCollectibles.MAGIC_PEN] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Double tap shooting button to spew a line of  creep in the direction you're firing "},
+			{str = "Double tap shooting button to spew a line of creep in the direction you're firing "},
 			{str = "Random status effect is applied to enemies walking over that creep "},
 			{str = "Has a 4 seconds cooldown"},
 		},
@@ -100,7 +100,7 @@ local ItemsWiki = {
 			{str = "Double tap shooting button to launch a ghost familiar in the direction you are firing "},
 			{str = "The ghost will latch onto the first enemy it collides with, dealing damage over time for 7 seconds or until that enemy is killed "},
 			{str = "The ghost's damage per hit starts at 7 and increases each floor "},
-			{str = "The ghost can latch onto bosses aswell "},
+			{str = "The ghost can latch onto bosses as well "},
 			{str = "Has a 7 seconds cooldown"},
 		},
 	},
@@ -200,7 +200,8 @@ local ItemsWiki = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Enemies outside your line of sight (defined by your firing direction) are paralyzed, cannot attack you in any way and cannot be damaged"},
-        },
+        	{str = "Periodically applies confusion to bosses and minibosses"},
+		},
 	},
 	[CustomCollectibles.BOOK_OF_GENESIS] = {
 		{
@@ -213,9 +214,9 @@ local ItemsWiki = {
 	[CustomCollectibles.SCALPEL] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Consumes a heart container. If you have no heart containers or bone hearts, consumes 2 soul heart"},
-			{str = "Permanently makes Isaac fire tears in one more random direction, similarly to Eye Sore"},
-			{str = "These tears deal 75% of your damage, are shot with approximately the same rate of fire and retain all your tear modifiers"},
+			{str = "Consumes a heart container. If you have no heart containers or bone hearts, consumes 2 soul hearts"},
+			{str = "Permanently makes Isaac fire more tears in random directions, similarly to Eye Sore"},
+			{str = "These tears deal 65% of your damage, are shot with approximately the same rate of fire and retain all your tear modifiers"},
 		},
 	},
 	[CustomCollectibles.KEEPERS_PENNY] = {
@@ -273,7 +274,7 @@ local ItemsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Upon use, holds the bag in the air"},
-			{str = "For 4 seconds, all nearby projectiles are sucked into the bag"},
+			{str = "For 4 seconds, the player gains invincibility and all nearby projectiles are sucked into the bag"},
 			{str = "Hold the shooting button to release all sucked projecties as homing tears in the matching direction after 4 seconds"},
 			{str = "Tears released by the bag inherit all your tear effects (e.g. they are explosive if you have Ipecac)"},
 			{str = "If the player doesn't hold a shooting button, the reflected tears are shot downwards"},
@@ -403,17 +404,17 @@ local ItemsWiki = {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Places a handicapped placard on the ground"},
 			{str = "Every enemy inside the placard's area of effect is weakened (The Strength? card effect) and spawns bone spurs on death"},
-			{str = "The area becomes bigger the more damage you take in a room"},
+			{str = "The area of effect is larger the more red hearts the player is missing"},
 			{str = "Works on bosses and minibosses too"}
         },
 	},
 	[CustomCollectibles.BOOK_OF_JUDGES] = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Passively spawns targets on the floor when entering a new room with monsters"},
-			{str = "Every 3 seconds, beams of light will strike at the targets' positions "},
-			{str = "Beams hurt enemies and inflict burn on them, but they deal full heart of damage to you as well"},
+			{str = "Passively spawns targets on the floor when entering a new room with monsters. Every 3 seconds, beams of light will strike at the targets' positions"},
+			{str = "Beams hurt enemies and inflict burn on them, but they deal full heart of damage to players as well"},
 			{str = "Using the book cancels the summoning of beams for the current room"},
+			{str = "The targets will be repeatedly randomized after each strike"},
         },
 	},
 	[CustomCollectibles.BIRTH_CERTIFICATE] = {
@@ -438,9 +439,9 @@ local TrinketsWiki = {
 	[CustomTrinkets.KEY_TO_THE_HEART] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "While held, every enemy with more than 10 HP has a chance to drop Flesh Chest upon death"},
-			{str = "Flesh Chests hurt the player for half a heart multiple times before opening up. This prioritizes red hearts"},
-			{str = "Flesh Chests contain red hearts, pills, or random body-related items and trinkets"},
+			{str = "While held, every enemy with more than 10 HP has a 5% chance to drop Flesh Chest upon death"},
+			{str = "Flesh Chests hurt the player for half red heart multiple times before opening up. This prioritizes red hearts"},
+			{str = "Flesh Chests contain red hearts, pills, body-related items and trinkets"},
 		},
 	},
 	[CustomTrinkets.JUDAS_KISS] = {
@@ -453,7 +454,7 @@ local TrinketsWiki = {
 	[CustomTrinkets.TRICK_PENNY] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Using coin, bomb or key on slots, beggars or locked chests has a 17% chance to not subtract it from your inventory count"},
+			{str = "Using coin, bomb or key on slots or beggars has a 17% chance to not subtract it from your inventory count"},
 		},
 	},
 	[CustomTrinkets.SLEIGHT_OF_HAND] = {
@@ -541,11 +542,12 @@ local TrinketsWiki = {
 			{str = "- Satanic Bible: grants you a choice of 2 (3 if you have There's Options) devil deal items after defeating a boss"},
 			{str = "- Telepathy for Dummies: grants Dunce Cap effect"},
 			{str = "- Necronomicon: summons 3 locusts of death on use"},
-			{str = "- How to Jump: when landing, shoot tears in a + or X pattern"},
+			{str = "- How to Jump: when landing, shoot tears in a '+' or 'x' pattern"},
 			{str = "- Lemegeton: Can be used at partial charge to gain remaining charges at the cost of player's red health (similarly to how Sharp Plus works)"},
 			{str = "- Monster Manual and Book of Secrets: gain 2 charges back when used"},
 			{str = "- Book of Genesis: increases the number of options to 4"},
 			{str = "- Book of Leviathan: Doesn't require keys to be used"},
+			{str = "- Book of Judges: doubles the burning damage and duration"},
 		},
 	},
 	[CustomTrinkets.EMPTY_PAGE] = {
@@ -613,7 +615,7 @@ local PillsWiki = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns 2-5 half red hearts"},
-			{str = "For 30 seconds, every picked up red heart will grant you small permanent stat upgrades, similar to Candy Heart effect"},
+			{str = "For 30 seconds, every picked up red heart will grant you small permanent stat upgrades, similarly to Candy Heart effect"},
 			{str = "HORSE: lasts for 60 seconds"},
 		},
 	},
@@ -809,7 +811,7 @@ local CardsWiki = {
 	[CustomConsumables.SACRIFICIAL_BLOOD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Gives +1.25 DMG up that depletes over the span of 20 seconds"},
+			{str = "Gives +1.25 DMG up that depletes over the span of 25 seconds"},
 			{str = "Heals you for one red heart if you have Ceremonial Robes "},
 			{str = "Stackable. Damage depletes quicker the more Blood you used subsequently"},
 		},
