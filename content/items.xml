@@ -6,7 +6,7 @@
 	<active id="11" name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="03_rubikscube.png" quality="2" maxcharges="2" tags="offensive" />
 	<passive id="7" bombs="5" name="Red Bomber" description="Can't hold 'em! +5 bombs" gfx="23_redbomber.png" quality="3" tags="offensive summonable" />
 	<active id="54" name="Birth Certificate" description="When am I?" gfx="53_birthcertificate.png" quality="3" tags="offensive" maxcharges="0" />
-	
+
 	<!-- T.Maggy -->
 	<active id="13" name="Cookie Cutter" description="Cut out your hearts!" gfx="05_cookiecutter.png" quality="0" maxcharges="0" tags="nokeeper nolostbr"/>
 	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="t02_keytotheheart.png" tags="nogreed" />
@@ -14,7 +14,7 @@
 	<active id="32" quality="2" gfx="47_0_bloodvessel.png" name="Blood Vessel" maxcharges="0" chargetype="special" tags="nolostbr nokeeper" />
 	
 	<!-- T. Cain -->
-	<familiar id="2" name="The Mark of Cain" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="3" devilprice="1" tags="devil monstermanual offensive" persistent="true" />
+	<familiar id="2" name="The Mark of Cain" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="3" devilprice="1" tags="devil offensive" persistent="true" />
 	<trinket name="Sleight of Hand" description="Faster than you'd think!" gfx="t03_sleightofhand.png" />
 	<trinket name="Trick Penny" description="Wealth of risk" gfx="t04_trickpenny.png" />
 	<passive id="29" name="Red Map" description="All secrets are unveiled to you" gfx="18_redmap.png" quality="3" tags="offensive nogreed" />
@@ -102,6 +102,10 @@
 	<familiar id="34" name="Tank Boys" description="You and what army?" gfx="44_tankboys.png" quality="3" tags="monstermanual offensive" />
 	<passive id="35" name="Red King" description="BLOOD is my reward" gfx="43_redking.png" quality="4" devilprice="2" tags="offensive nogreed" /> 
 	<familiar id="36" name="Sibling Rivalry" description="I can't stand you!" gfx="27_siblingrivalry.png" quality="3" tags="offensive monstermanual" />
+		
+	<!-- challenge unlocks ??? -->
+	<familiar id="55" name="Broken TV" description="Static overload!" gfx="54_brokenTV.png" quality="0" hidden="true" />
+
 	
 	<!-- TECHNICAL -->
 	<active quality="2" gfx="47_1_bloodvessel.png" name="Empty Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />

@@ -530,7 +530,8 @@ if true then
 	EID:addCollectible(CustomCollectibles.PURE_SOUL, "{{MiniBoss}} All sin minibosses have a 100% chance to drop their respective {{ColorRed}}Sin's Jewel{{CR}} #A ghost can spawn in {{SecretRoom}}Secret or {{SuperSecretRoom}}Super Secret room that will disappear and spawn a random sin miniboss when approached #The ghost will also spawn in the doorway that leads to a miniboss room, alarming you of what miniboss is inside")
 	EID:addCollectible(CustomCollectibles.HANDICAPPED_PLACARD, "Places a handicapped placard on the ground #{{Weakness}} Every enemy inside the placard's area of effect is weakened and spawns bone spurs on death")
 	EID:addCollectible(CustomCollectibles.BOOK_OF_JUDGES, "While in active room, beams of light will strike at random positions marked by crosshairs #Beams hurt enemies and inflict burn on them, but they hurt players too #On use, cancels the effect for the current room")
-	EID:addCollectible(CustomCollectibles.BIRTH_CERTIFICATE, "{{Warning}} ONE-TIME USE #Gulps all your currently held trinkets #Teleports you into a special area that contains many trinkets, along with some other pickups #Only one trinket can be chosen; shortly after picking it up, you will be teleported back to the starting room")
+	EID:addCollectible(CustomCollectibles.BIRTH_CERTIFICATE, "{{Warning}} ONE-TIME USE #Consumes all your currently held trinkets #Teleports you into a special area that contains many trinkets, along with some other pickups #You can choose as many trinkets as you can hold #Teleports you out of the area afterwards")
+	EID:addCollectible(CustomCollectibles.BROKEN_TV, "???")
 
 	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "{{DirtyChest}} While held, every Golden Chest has a 25% chance to turn into Old Chest")
 	EID:addTrinket(CustomTrinkets.KEY_TO_THE_HEART, "While held, every enemy has a chance to drop Flesh Chest on death")

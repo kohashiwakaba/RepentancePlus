@@ -422,7 +422,7 @@ local ItemsWiki = {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "ONE-TIME USE ITEM"},
 			{str = "Consumes all your currently held trinkets and teleports you to a room containing 188 trinkets, as well as some other pickups"},
-			{str = "Only one trinket can be chosen, and after choosing it, you will be teleported back to the starting room of the current floor"},
+			{str = "Only one trinket can be chosen (two if you have Belly Button or Mom's Purse), and after choosing, you will be transitioned back to the room where you used the item"},
 			{str = "If the total trinket pool is more than 230, there will be a secondary room adjusted to the main one which contains 52 more trinkets"},
 			{str = "You will not be able to return to the main room once you enter the secondary room, so choose carefully!"}
         },
