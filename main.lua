@@ -2866,8 +2866,8 @@ function rplus:OnNewRoom()
 			Player:EvaluateItems()
 		end
 		
-		if Player:GetData()['usedCursedCard'] then 
-			Player:GetData()['usedCursedCard'] = false
+		if Player:GetData().usedCursedCard then 
+			Player:GetData().usedCursedCard = false
 		end
 
 		if Player:GetEffects():HasCollectibleEffect(CustomCollectibles.LOADED_DICE_NULL) then
@@ -4339,8 +4339,8 @@ function rplus:OnCardUse(CardUsed, Player, _)
 	end
 	
 	if CardUsed == CustomConsumables.CURSED_CARD then
-		Player:GetEffects():AddCollectibleEffect(CustomCollectibles.CURSED_CARD_NULL, false, 1)
 		sfx:Play(SoundEffect.SOUND_DEVIL_CARD)
+		Player:GetData().usedCursedCard = true
 	end
 	
 	-- Jacks
@@ -5312,7 +5312,7 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, SourceRef, CooldownFrames)
 			end
 		end
 		
-		if Player:GetEffects():HasCollectibleEffect(CustomCollectibles.CURSED_CARD_NULL) 
+		if Player:GetData().usedCursedCard 
 		and Flags & DamageFlag.DAMAGE_FAKE ~= DamageFlag.DAMAGE_FAKE and not isSelfDamage(Flags) then 
 			Player:AddBrokenHearts(1)
 			Player:GetEffects():AddCollectibleEffect(CustomCollectibles.CURSED_CARD_NULL, false, 1)
@@ -6748,8 +6748,8 @@ function rplus:OnCacheEvaluate(Player, Flag)
 			Player.MaxFireDelay = GetFireDelay(GetTears(Player.MaxFireDelay) + CustomStatups.Tears.MOTHERS_LOVE * CustomData.Data.Items.MOTHERS_LOVE.NumStats)
 		end
 		
-		if Player:GetEffects():GetCollectibleEffectNum(CustomCollectibles.CURSED_CARD_NULL) > 1 then
-			Player.MaxFireDelay = GetFireDelay(GetTears(Player.MaxFireDelay) + CustomStatups.Tears.CURSED_CARD * (Player:GetEffects():GetCollectibleEffectNum(CustomCollectibles.CURSED_CARD_NULL) - 1))
+		if Player:GetEffects():GetCollectibleEffectNum(CustomCollectibles.CURSED_CARD_NULL) > 0 then
+			Player.MaxFireDelay = GetFireDelay(GetTears(Player.MaxFireDelay) + CustomStatups.Tears.CURSED_CARD * Player:GetEffects():GetCollectibleEffectNum(CustomCollectibles.CURSED_CARD_NULL))
 		end
 		
 		if Player:GetEffects():HasCollectibleEffect(CustomCollectibles.APPLE_OF_PRIDE_NULL) then
