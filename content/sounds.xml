@@ -1,0 +1,57 @@
+<sounds root="sfx/voiceover">
+	<!-- Jewels -->
+	<sound name="Acid of Sloth">
+		<sample weight="1" path="Acid of Sloth.wav" />
+	</sound>
+    <sound name="Apple of Pride">
+		<sample weight="1" path="Apple of Pride.wav" />
+	</sound>
+    <sound name="Canine of Wrath">
+		<sample weight="1" path="Canine of Wrath.wav" />
+	</sound>
+    <sound name="Crown of Greed">
+		<sample weight="1" path="Crown of Greed.wav" />
+	</sound>
+    <sound name="Flower of Lust">
+		<sample weight="1" path="Flower of Lust.wav" />
+	</sound>
+    <sound name="Mask of Envy">
+		<sample weight="1" path="Mask of Envy.wav" />
+	</sound>
+    <sound name="Void of Gluttony">
+		<sample weight="1" path="Void of Gluttony.wav" />
+	</sound>
+
+	<!-- Pills -->
+	<sound name="Yum">
+		<sample weight="1" path="Yum.wav" />
+	</sound>
+	<sound name="Yuck">
+		<sample weight="1" path="Yuck.wav" />
+	</sound>
+	<sound name="Phantom Pains">
+		<sample weight="1" path="Phantom Pains.wav" />
+	</sound>
+	<sound name="Laxative">
+		<sample weight="1" path="Laxative.wav" />
+	</sound>
+	<sound name="Estrogen Up">
+		<sample weight="1" path="Estrogen Up.wav" />
+	</sound>
+	
+	<sound name="Horse Yum">
+		<sample weight="1" path="Horse Yum.wav" />
+	</sound>
+	<sound name="Horse Yuck">
+		<sample weight="1" path="Horse Yuck.wav" />
+	</sound>
+	<sound name="Horse Phantom Pains">
+		<sample weight="1" path="Horse Phantom Pains.wav" />
+	</sound>
+	<sound name="Horse Laxative">
+		<sample weight="1" path="Horse Laxative.wav" />
+	</sound>
+	<sound name="Horse Estrogen Up">
+		<sample weight="1" path="Horse Estrogen Up.wav" />
+	</sound>
+</sounds>
