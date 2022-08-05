@@ -167,7 +167,7 @@ KeyTrinketsDesc["spa"] = {
 -- making a Spindown Dice Shard roll helper --
 ----------------------------------------------
 local function SpindownDiceCallback(descObj)
-	EID:appendToDescription(descObj, "#{{Collectible723}}:")
+	EID:appendToDescription(descObj, "#{{Collectible723}} : ")
 	local refID = descObj.ObjSubType
 	
 	for i = 1,EID.Config["SpindownDiceResults"] do
@@ -202,12 +202,34 @@ local function SpindownDiceShardCondition(descObj)
 end
 EID:addDescriptionModifier("Spindown Dice Shard", SpindownDiceShardCondition, SpindownDiceCallback)
 
+-- making a Red Rune Abyss helper --
+------------------------------------
+local function RedRuneCallback(descObj)
+	EID:appendToDescription(descObj, "#{{Collectible706}} : " .. EID.descriptions[EID:getLanguage() or "en_us"].abyssSynergies[descObj.ObjSubType])
+	
+	return descObj
+end
+
+local function RedRuneCondition(descObj)
+	if descObj.ObjType ~= 5 or descObj.ObjVariant ~= PickupVariant.PICKUP_COLLECTIBLE then
+		return false
+	end
+	
+	if EID.player:GetCard(0) == CustomConsumables.RED_RUNE
+	and EID.descriptions[EID:getLanguage() or "en_us"].abyssSynergies[descObj.ObjSubType] then
+		return true
+	end
+	
+	return false
+end
+EID:addDescriptionModifier("Red Rune", RedRuneCondition, RedRuneCallback)
+
 
 -- making custom helper for Torn Page bonuses to book effects --
 ----------------------------------------------------------------
 local function TornPageCallback(descObj)
 	local lang = EID:getLanguage() or "en_us"
-	EID:appendToDescription(descObj, "#{{Trinket" .. tostring(CustomTrinkets.TORN_PAGE) .. "}}: ")
+	EID:appendToDescription(descObj, "#{{Trinket" .. tostring(CustomTrinkets.TORN_PAGE) .. "}} : ")
 	local refID = descObj.ObjSubType
 	local refTables = TornPageDesc[lang] or TornPageDesc["en_us"]
 
@@ -243,7 +265,7 @@ local function KeyTrinketsCallback(descObj)
 	local refTables = KeyTrinketsDesc[lang] or KeyTrinketsDesc["en_us"]
 
 	if refTables[refID] then
-		EID:appendToDescription(descObj, "#{{Collectible" .. tostring(CustomCollectibles.BOOK_OF_LEVIATHAN) .. "}}: ")
+		EID:appendToDescription(descObj, "#{{Collectible" .. tostring(CustomCollectibles.BOOK_OF_LEVIATHAN) .. "}} : ")
 		EID:appendToDescription(descObj, refTables[refID])
 	end
 	return descObj
@@ -469,6 +491,27 @@ if true then
 	EID:addPillMetadata(CustomPills.PHANTOM_PAINS, 4, "2")
 	EID:addPillMetadata(CustomPills.YUM, 12, "3+")
 	EID:addPillMetadata(CustomPills.YUCK, 6, "2+")
+end
+
+-- adding golden trinkets --
+----------------------------
+if true then
+	--EID:addGoldenTrinketMetadata(id, appendText, numbersToMultiply, maxMultiplier, language)
+	EID:addGoldenTrinketMetadata(CustomTrinkets.BASEMENT_KEY, "", 25, 3)
+	EID:addGoldenTrinketMetadata(CustomTrinkets.KEY_TO_THE_HEART, "Chance increased")
+	EID:addGoldenTrinketMetadata(CustomTrinkets.TRICK_PENNY, "", 17, 3)
+	EID:addGoldenTrinketMetadata(CustomTrinkets.SLEIGHT_OF_HAND, "", 20, 3)
+	EID:addGoldenTrinketMetadata(CustomTrinkets.KEY_KNIFE, "", 8, 3)
+	EID:addGoldenTrinketMetadata(CustomTrinkets.NIGHT_SOIL, "Prevents all curses")
+	EID:addGoldenTrinketMetadata(CustomTrinkets.ADAMS_RIB, "{{Card86}} On revival, use Soul of Eve")
+	EID:addGoldenTrinketMetadata(CustomTrinkets.MAGIC_SWORD, "", 2, 3)
+	EID:addGoldenTrinketMetadata(CustomTrinkets.ANGELS_CROWN, "Prices reduced!")
+	EID:addGoldenTrinketMetadata(CustomTrinkets.PIECE_OF_CHALK, "", 10, 3)
+	EID:addGoldenTrinketMetadata(CustomTrinkets.BABY_SHOES, "", 10, 3)
+	EID:addGoldenTrinketMetadata(CustomTrinkets.GREEDS_HEART, "{{Coin}} If it's empty, all enemies have 15% chance to drop a coin on death")
+	EID:addGoldenTrinketMetadata(CustomTrinkets.SHATTERED_STONE, "Better chance to spawn a locust")
+	EID:addGoldenTrinketMetadata(CustomTrinkets.BONE_MEAL, "", 10, 3)
+	EID:addGoldenTrinketMetadata(CustomTrinkets.EMPTY_PAGE, "{{ArrowUp}} Random item is used multiple times")
 end
 
 
@@ -917,7 +960,7 @@ if true then
 	EID:addCollectible(CustomCollectibles.MOTHERS_LOVE, "↑ 현재 데리고 있는 패밀리어 당 능력치 증가#패밀리어의 등급에 따라 증가폭이 다르거나 적용되지 않습니다.", "엄마의 사랑", "ko_kr")
 	EID:addCollectible(CustomCollectibles.CAT_IN_A_BOX, "{{Confusion}} 캐릭터의 공격방향 범위 밖에 있는 적은 움직일 수 없으나 어떠한 피해도 받지 않습니다.", "상자 안 고양이", "ko_kr")
 	EID:addCollectible(CustomCollectibles.BOOK_OF_GENESIS, "소지한 랜덤 아이템 하나를 제거한 후 해당 아이템과 같은 등급의 아이템 3개를 소환합니다.#3개의 아이템 중 하나를 획득할 수 있습니다.#{{Blank}} (루트 진행 아이템은 영향을 받지 않음)", "창세기의 책", "ko_kr")
-	EID:addCollectible(CustomCollectibles.SCALPEL, "사용 시 최대 체력 1칸을 제거하고 발사하는 눈물의 갯수를 하나씩 추가합니다. #추가 눈물은 랜덤 방향으로 발사되며 캐릭터 공격력의 x0.65의 핏방울을 발사합니다. #{{Blank}} (눈물 이외의 무기는 영향을 받지 않음)", "외과용 메스", "ko_kr")
+	EID:addCollectible(CustomCollectibles.SCALPEL, "사용 시 최대 체력 1칸을 제거하고 발사하는 눈물의 갯수를 하나씩 추가합니다. #추가 눈물은 방향은 특정 랜덤 방향으로 고정되며 캐릭터 공격력의 x0.75의 핏방울을 발사합니다. #{{Blank}} (눈물 이외의 무기는 영향을 받지 않음)", "외과용 메스", "ko_kr")
 	EID:addCollectible(CustomCollectibles.KEEPERS_PENNY, "스테이지 진입 시 황금동전을 소환합니다. #상점에서 상점, 보물방, 보스방 배열의 추가 아이템을 1~4개 판매합니다. #Greed 미니보스 처치 시, 처치한 시점에서 추가 아이템이 3~4개 생성됩니다.", "키퍼의 페니", "ko_kr")
 	EID:addCollectible(CustomCollectibles.NERVE_PINCH, "공격키를 두번 누르면 {{Collectible486}}피해를 입지 않고 피격 시 발동 효과를 발동하며 80%의 확률로 현재 소지한 액티브 아이템을 충전량 소모 없이 발동하며:#↓ 추가로 {{SpeedSmall}}이동속도가 " .. tostring(CustomStatups.Speed.NERVE_PINCH) .. " 감소합니다.#{{TimerSmall}} (쿨타임 3초)#{{Blank}} (일회용 및 쿨타임이 없는 아이템의 경우 발동 안됨)", "신경통", "ko_kr")
 	EID:addCollectible(CustomCollectibles.BLOOD_VESSELS[1], "피격시 피해를 입는 대신 피통에 피가 채워집니다. #6회까지 채울 수 있으며 전부 채워진 후 사용하거나, 피격시 각각 세칸, 세칸 반의 피해를 받습니다.", "피통", "ko_kr")

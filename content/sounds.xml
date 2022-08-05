@@ -1,4 +1,4 @@
-<sounds root="sfx/voiceover">
+<sounds root="sfx/voiceover/">
 	<!-- Jewels -->
 	<sound name="Acid of Sloth">
 		<sample weight="1" path="Acid of Sloth.wav" />
@@ -53,5 +53,104 @@
 	</sound>
 	<sound name="Horse Estrogen Up">
 		<sample weight="1" path="Horse Estrogen Up.wav" />
+	</sound>
+
+	<!-- Special objects -->
+	<sound name="Bag Tissue">
+		<sample weight="1" path="Bag Tissue.wav" />
+	</sound>
+	<sound name="Loaded Dice">
+		<sample weight="1" path="Loaded Dice.wav" />
+	</sound>
+	<sound name="Needle and Thread">
+		<sample weight="1" path="Needle and Thread.wav" />
+	</sound>
+	<sound name="Quasar Shard">
+		<sample weight="1" path="Quasar Shard.wav" />
+	</sound>
+	<sound name="Red Rune">
+		<sample weight="1" path="Red Rune.wav" />
+	</sound>
+	<sound name="Sacrificial Blood">
+		<sample weight="1" path="Sacrificial Blood.wav" />
+	</sound>
+	<sound name="Spindown Dice Shard">
+		<sample weight="1" path="Spindown Dice Shard.wav" />
+	</sound>
+
+	<!-- Playing Cards -->
+	<sound name="Joker?">
+		<sample weight="1" path="Reverse Joker.wav" />
+	</sound>
+	<sound name="King of Spades">
+		<sample weight="1" path="King of Spades.wav" />
+	</sound>
+	<sound name="King of Clubs">
+		<sample weight="1" path="King of Clubs.wav" />
+	</sound>
+	<sound name="King of Diamonds">
+		<sample weight="1" path="King of Diamonds.wav" />
+	</sound>
+	<sound name="Jack of Clubs">
+		<sample weight="1" path="Jack of Clubs.wav" />
+	</sound>
+	<sound name="Jack of Diamonds">
+		<sample weight="1" path="Jack of Diamonds.wav" />
+	</sound>
+	<sound name="Jack of Spades">
+		<sample weight="1" path="Jack of Spades.wav" />
+	</sound>
+	<sound name="Jack of Hearts">
+		<sample weight="1" path="Jack of Hearts.wav" />
+	</sound>
+	<sound name="Bedside Queen">
+		<sample weight="1" path="Bedside Queen.wav" />
+	</sound>
+	<sound name="Queen of Clubs">
+		<sample weight="1" path="Queen of Clubs.wav" />
+	</sound>
+	<sound name="Queen of Diamonds">
+		<sample weight="1" path="Queen of Diamonds.wav" />
+	</sound>
+
+	<!-- Other Cards -->
+	<sound name="Antimaterial Card">
+		<sample weight="1" path="Antimaterial Card.wav" />
+	</sound>
+	<sound name="Business Card">
+		<sample weight="1" path="Business Card.wav" />
+	</sound>
+	<sound name="Cursed Card">
+		<sample weight="1" path="Cursed Card.wav" />
+	</sound>
+	<sound name="Demon Form">
+		<sample weight="1" path="Demon Form.wav" />
+	</sound>
+	<sound name="Fiend Fire">
+		<sample weight="1" path="Fiend Fire.wav" />
+	</sound>
+	<sound name="Flypaper">
+		<sample weight="1" path="Flypaper.wav" />
+	</sound>
+	<sound name="Funeral Services">
+		<sample weight="1" path="Funeral Services.wav" />
+	</sound>
+	<sound name="Library Card">
+		<sample weight="1" path="Library Card.wav" />
+	</sound>
+	<sound name="Mirrored Landscape">
+		<sample weight="1" path="Mirrored Landscape.wav" />
+	</sound>
+	<sound name="Mom's ID">
+		<sample weight="1" path="Mom's ID.wav" />
+	</sound>
+	<sound name="Reverse Card">
+		<sample weight="1" path="Reverse Card.wav" />
+	</sound>
+	<sound name="Spiritual Reserves">
+		<sample weight="1" path="Spiritual Reserves.wav" />
+	</sound>
+	<sound name="Valentine's Card">
+		<sample weight="1" path="Valentine's Card.wav" />
 	</sound>
 </sounds>

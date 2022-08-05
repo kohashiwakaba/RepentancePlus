@@ -1,0 +1,12 @@
+{
+    "Lua.diagnostics.globals": [],
+    "files.associations": {
+        "*.anm2": "xml"
+    },
+    "[xml]": {
+        "editor.wordWrap": "on"
+    },
+    "Lua.runtime.special" : {
+        "include" : "require"
+    }
+}

@@ -8,10 +8,10 @@
 	<active id="54" name="Birth Certificate" description="When am I?" gfx="53_birthcertificate.png" quality="3" tags="offensive" maxcharges="0" />
 
 	<!-- T.Maggy -->
-	<active id="13" name="Cookie Cutter" description="Cut out your hearts!" gfx="05_cookiecutter.png" quality="0" maxcharges="0" tags="nokeeper nolostbr"/>
+	<active id="13" name="Cookie Cutter" description="Cut out your hearts!" gfx="05_cookiecutter.png" quality="0" maxcharges="0" tags="nolostbr"/>
 	<trinket name="Key to the Heart" description="Something is hiding inside" gfx="t02_keytotheheart.png" tags="nogreed" />
 	<passive id="1" name="Cherry Friends" description=":3" gfx="06_cherryfriends.png" quality="2" tags="nolostbr summonable" />
-	<active id="32" quality="2" gfx="47_0_bloodvessel.png" name="Blood Vessel" maxcharges="0" chargetype="special" tags="nolostbr nokeeper" />
+	<active id="32" quality="2" gfx="47_0_bloodvessel.png" name="Blood Vessel" maxcharges="0" chargetype="special" tags="nolostbr" />
 	
 	<!-- T. Cain -->
 	<familiar id="2" name="The Mark of Cain" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="3" devilprice="1" tags="devil offensive" persistent="true" />
@@ -35,7 +35,7 @@
 	<passive id="17" name="A Bird of Hope" description="Catch her!" gfx="11_birdofhope.png" quality="1" cache="flying" tags="offensive" />
 	<trinket name="Adam's Rib" description="Children of God" gfx="t13_adamsrib.png" />
 	<active id="18" name="Tower of Babel" description="Divine wrath" gfx="19_towerofbabel.png" quality="1" maxcharges="6" tags="offensive" />
-	<familiar id="45" name="Ultra Flesh Kid!" description="We have Super Meat Boy at home" gfx="46_ultrafleshkid.png" quality="3" tags="offensive nokeeper" />
+	<familiar id="45" name="Ultra Flesh Kid!" description="We have Super Meat Boy at home" gfx="46_ultrafleshkid.png" quality="3" tags="offensive" />
 
 	<!-- T.Samson -->
 	<passive id="19" name="Temper Tantrum" description="GETOUTOFMYHEADGETOUTOFMYHEADGET" gfx="13_tempertantrum.png" quality="3" tags="summonable nolostbr" /> 
@@ -95,10 +95,10 @@
 	<passive id="4" name="Ceiling with the Stars" description="Look at this beauty" gfx="32_ceilingwithstars.png" quality="2" tags="offensive" />
 	<active id="31" name="Quasar" description="Cosmic wisdom" gfx="33_quasar.png" quality="4" devilprice="1" maxcharges="6" tags="offensive" />
 	<trinket name="Empty Page" description="Write on it" gfx="t17_emptypage.png" />
-	<active id="37" name="Stargazer's Hat" description="Reusable magic" gfx="34_stargazers_hat.png" quality="2" chargetype="special" maxcharges="2" tags="nokeeper offensive" />
+	<active id="37" name="Stargazer's Hat" description="Reusable magic" gfx="34_stargazers_hat.png" quality="2" chargetype="special" maxcharges="2" tags="offensive" />
 	
 	<!-- T. Jacob -->
-	<active id="33" name="Cheese Grater" description="A pound of... cheese?" gfx="22_cheesegrater.png" quality="1" maxcharges="0" cache="damage" tags="nolostbr nokeeper" persistent="true" />
+	<active id="33" name="Cheese Grater" description="A pound of... cheese?" gfx="22_cheesegrater.png" quality="1" maxcharges="0" cache="damage" tags="nolostbr" />
 	<familiar id="34" name="Tank Boys" description="You and what army?" gfx="44_tankboys.png" quality="3" tags="monstermanual offensive" />
 	<passive id="35" name="Red King" description="BLOOD is my reward" gfx="43_redking.png" quality="4" devilprice="2" tags="offensive nogreed" /> 
 	<familiar id="36" name="Sibling Rivalry" description="I can't stand you!" gfx="27_siblingrivalry.png" quality="3" tags="offensive monstermanual" />
@@ -125,10 +125,12 @@
 	<passive name="benighted hearts boost" gfx="00_NULLITEM.png" persistent="true" cache="damage" hidden="true" />
 	<passive name="crown of greed" gfx="00_NULLITEM.png" persistent="true" cache="luck" hidden="true" />
 	<passive name="cursed card" gfx="00_NULLITEM.png" persistent="true" cache="firedelay" hidden="true" />
-			<!-- yum pill stats -->
+	<passive name="cheese grater damage" gfx="00_NULLITEM.png" persistent="true" cache="damage" hidden="true" />
+		<!-- yum pill stats -->
 	<passive name="yum damage" gfx="00_NULLITEM.png" persistent="true" cache="damage" hidden="true" />
 	<passive name="yum tears" gfx="00_NULLITEM.png" persistent="true" cache="firedelay" hidden="true" />
 	<passive name="yum range" gfx="00_NULLITEM.png" persistent="true" cache="range" hidden="true" />
 	<passive name="yum luck" gfx="00_NULLITEM.png" persistent="true" cache="luck" hidden="true" />
 	<passive name="yum speed" gfx="00_NULLITEM.png" persistent="true" cache="speed" hidden="true" />
+
 </items>
