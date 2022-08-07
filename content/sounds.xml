@@ -151,6 +151,6 @@
 		<sample weight="1" path="Spiritual Reserves.wav" />
 	</sound>
 	<sound name="Valentine's Card">
-		<sample weight="1" path="Valentine's Card.wav" />
+		<sample weight="1" path="Valentine's Day Card.wav" />
 	</sound>
 </sounds>

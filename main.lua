@@ -12,6 +12,7 @@
 									---------------------
 
 local game = Game()
+local hud = game:GetHUD()
 local rplus = RegisterMod("Repentance Plus", 1)
 RepentancePlusMod = rplus
 RepentancePlusMod.NumTaintedHearts = {
@@ -442,32 +443,33 @@ CustomSounds = {
 
 local delayedSounds = {}
 local SoundDelays = {
-	[CustomSounds.CANINE_OF_WRATH] = 60,
+	[CustomSounds.CANINE_OF_WRATH] = 45,
 	[CustomSounds.CROWN_OF_GREED] = 60,
 	[CustomSounds.FLOWER_OF_LUST] = 30,
 	--
-	[CustomSounds.PILL_YUM] = 60,
-	[CustomSounds.PILL_YUCK] = 60,
+	[CustomSounds.PILL_YUM] = 45,
+	[CustomSounds.PILL_YUCK] = 45,
 	[CustomSounds.PILL_PHANTOM_PAINS] = 60,
 	[CustomSounds.PILL_ESTROGEN_UP] = 30,
 	[CustomSounds.PILL_LAXATIVE] = 60,
-	[CustomSounds.PILL_YUM_HORSE] = 60,
-	[CustomSounds.PILL_YUCK_HORSE] = 60,
+	[CustomSounds.PILL_YUM_HORSE] = 45,
+	[CustomSounds.PILL_YUCK_HORSE] = 45,
 	[CustomSounds.PILL_PHANTOM_PAINS_HORSE] = 60,
 	[CustomSounds.PILL_ESTROGEN_UP_HORSE] = 30,
 	[CustomSounds.PILL_LAXATIVE_HORSE] = 120,
 	--
-	[CustomSounds.QUASAR_SHARD] = 60,
+	[CustomSounds.QUASAR_SHARD] = 45,
 	[CustomSounds.SACRIFICIAL_BLOOD] = 30,
 	--
-	[CustomSounds.JOKER_Q] = 60,
+	[CustomSounds.JOKER_Q] = 45,
 	[CustomSounds.KING_OF_SPADES] = 60,
 	--
-	[CustomSounds.UNO_REVERSE_CARD] = 60,
+	[CustomSounds.UNO_REVERSE_CARD] = 45,
 	[CustomSounds.FUNERAL_SERVICES] = 30,
 	[CustomSounds.FIEND_FIRE] = 60,
 	[CustomSounds.VALENTINES_CARD] = 30,
-	[CustomSounds.CURSED_CARD] = 30
+	[CustomSounds.CURSED_CARD] = 30,
+	[CustomSounds.LIBRARY_CARD] = 30
 }
 
 CustomPickups = {
@@ -2015,7 +2017,7 @@ local function HeartRender(Player, heartData, heartAnim)
 		`heartAnim` (string): animation that refers to a certain Tainted heart
 	]]
 
-	if not CustomData.Data or heartData == 0 or not game:GetHUD():IsVisible()
+	if not CustomData.Data or heartData == 0 or not hud:IsVisible()
 	or game:GetLevel():GetCurses() & LevelCurse.CURSE_OF_THE_UNKNOWN == LevelCurse.CURSE_OF_THE_UNKNOWN then return end
 
 	local TopVector
@@ -3191,6 +3193,7 @@ function rplus:OnNewRoom()
 
 		-- handle Vault of Havoc rooms
 		if CustomData.Data.Items.VAULT_OF_HAVOC.Data then
+			hud:ShowItemText("Isaac vs The Vault")
 			-- turning placeholders (black flies) from BR into stored enemies
 			for i, placeholder in pairs(Isaac.FindByType(13, 0, 0, false, false)) do
 				placeholder:Remove()
@@ -3801,7 +3804,7 @@ function rplus:OnGameUpdate()
 			SGSprite:Play("Idle")
 		end
 
-		if SGSprite:IsPlaying("Teleport") or SGSprite:IsPlaying("Teleport_fast")
+		if (SGSprite:IsPlaying("Teleport") or SGSprite:IsPlaying("Teleport_fast"))
 		and SGSprite:IsEventTriggered("Disappear") then
 			repeat
 				newID = GetUnlockedVanillaCollectible(true, true)
@@ -3810,7 +3813,7 @@ function rplus:OnGameUpdate()
 			sfx:Play(SoundEffect.SOUND_SLOTSPAWN)
 		end
 
-		if SGSprite:IsPlaying("Prize") or SGSprite:IsPlaying("Prize_fast")
+		if (SGSprite:IsPlaying("Prize") or SGSprite:IsPlaying("Prize_fast"))
 		and SGSprite:IsEventTriggered("Prize") then
 			rng:SetSeed(Random() + 1, 1)
 			local Rune = rng:RandomInt(9) + 32
@@ -4026,6 +4029,7 @@ function rplus:OnItemUse(ItemUsed, _, Player, UseFlags, Slot, _)
 		local freezePreventChecker = 0
 		local ID
 		local newID
+		local option = rng:Next()
 
 		repeat
 			ID = Player:GetDropRNG():RandomInt(Isaac.GetItemConfig():GetCollectibles().Size - 1) + 1
@@ -4046,7 +4050,7 @@ function rplus:OnItemUse(ItemUsed, _, Player, UseFlags, Slot, _)
 				until Isaac.GetItemConfig():GetCollectible(newID).Quality == Q
 
 				local bookOfGenesisItem = Isaac.Spawn(5, 100, newID, game:GetRoom():FindFreePickupSpawnPosition(Player.Position, 0, true, false), Vector.Zero, nil):ToPickup()
-				bookOfGenesisItem.OptionsPickupIndex = 6
+				bookOfGenesisItem.OptionsPickupIndex = option
 			end
 
 			return {Discharge = true, Remove = false, ShowAnim = false}
@@ -4618,7 +4622,7 @@ function rplus:OnCardUse(CardUsed, Player, _)
 	elseif CardUsed == CustomConsumables.JACK_OF_HEARTS then
 		CustomData.Data.Cards.JACK.Type = "Hearts"
 		if Player:HasCollectible(CollectibleType.COLLECTIBLE_OPTIONS) then CustomData.Data.Cards.JACK.FLAG_OPTIONS_SPECIAL = true end
-		playDelayed(CustomSounds.JACK_OF_SPADES)
+		playDelayed(CustomSounds.JACK_OF_HEARTS)
 	end
 
 	-- Kings
@@ -5208,7 +5212,7 @@ function rplus:PostPlayerUpdate(Player)
 		if level:GetCurses() ~= 0 and level:GetCurses() & LevelCurse.CURSE_OF_LABYRINTH ~= LevelCurse.CURSE_OF_LABYRINTH then
 			if Player:HasCollectible(CustomCollectibles.BLESS_OF_THE_DEAD) then
 				Player:GetEffects():AddCollectibleEffect(CustomCollectibles.BLESS_OF_THE_DEAD)
-				game:GetHUD():ShowFortuneText("The Dead protect you")
+				hud:ShowFortuneText("The Dead protect you")
 				level:RemoveCurses(level:GetCurses())
 				Player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
 				Player:EvaluateItems()
@@ -5218,7 +5222,7 @@ function rplus:PostPlayerUpdate(Player)
 
 				if roll < NIGHT_SOIL_CHANCE  * Player:GetTrinketMultiplier(CustomTrinkets.NIGHT_SOIL) then
 					level:RemoveCurses(level:GetCurses())
-					game:GetHUD():ShowFortuneText("Night Soil protects you")
+					hud:ShowFortuneText("Night Soil protects you")
 					Player:AnimateHappy()
 				end
 			end
@@ -5453,7 +5457,7 @@ function rplus:OnGameRender()
 			local Player = Isaac.GetPlayer(i)
 
 			if Player:HasTrinket(CustomTrinkets.GREEDS_HEART) and not isInGhostForm(Player)
-			and game:GetHUD():IsVisible() then
+			and hud:IsVisible() then
 				if level:GetCurses() & LevelCurse.CURSE_OF_THE_UNKNOWN ~= LevelCurse.CURSE_OF_THE_UNKNOWN then
 					CoinHeartSprite:SetFrame(CustomData.Data.Trinkets.GREEDS_HEART, 0)	-- custom data value is either "CoinHeartEmpty" or "CoinHeartFull"
 				else
@@ -5479,7 +5483,7 @@ function rplus:OnGameRender()
 				end
 			end
 
-			if Player:HasCollectible(CustomCollectibles.RED_MAP) and game:GetHUD():IsVisible() then
+			if Player:HasCollectible(CustomCollectibles.RED_MAP) and hud:IsVisible() then
 				RedMapIcon:SetFrame("RedMap", 0)
 				RedMapIcon:Render(getNextMapIconPos() + Vector(-HUDValueRenderOffset.X, HUDValueRenderOffset.Y) * ho, Vector.Zero, Vector.Zero)
 			end
@@ -5502,11 +5506,11 @@ function rplus:OnGameRender()
 				DogmaAttackIcon:Render(Isaac.WorldToScreen(Player.Position + Vector(25, -45)), Vector.Zero, Vector.Zero)
 			end
 
-			if Player:GetActiveItem(0) == CustomCollectibles.VAULT_OF_HAVOC and game:GetHUD():IsVisible() then
+			if Player:GetActiveItem(0) == CustomCollectibles.VAULT_OF_HAVOC and hud:IsVisible() then
 				Isaac.RenderScaledText('x' .. tostring(math.min(12, #CustomData.Data.Items.VAULT_OF_HAVOC.EnemyList)), 21 + 20 * ho, 23 + 12 * ho, 0.85, 0.85, 0.8, 0.7, 0.7, 1)
 			end
 
-			if i == 0 and CustomData.Data.TaintedHearts.ENIGMA > 0 and game:GetHUD():IsVisible() then
+			if i == 0 and CustomData.Data.TaintedHearts.ENIGMA > 0 and hud:IsVisible() then
 				EnigmaHeartSprite:Render(EnigmaRenderPos + HUDValueRenderOffset * ho, Vector.Zero, Vector.Zero)
 				Isaac.RenderScaledText('x' .. tostring(CustomData.Data.TaintedHearts.ENIGMA), EnigmaRenderPos.X + 20 * ho, EnigmaRenderPos.Y - 4 + 12 * ho, 0.9, 0.9, 0.8, 0.7, 0.7, 1)
 			end
@@ -6338,7 +6342,7 @@ function rplus:PickupCollision(Pickup, Collider, _)
 				else
 					Player:AddHearts(8 * hasBow)
 					if Player:GetJarHearts() < 8 then
-						Player:AddJarHearts(heartsLeft)
+						Player:AddJarHearts(8 - heartsLeft)
 					end
 					sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES)
 				end
@@ -6346,7 +6350,8 @@ function rplus:PickupCollision(Pickup, Collider, _)
 				if Player:CanPickRedHearts() 
 				or (Player:GetJarHearts() < 8 and Player:HasCollectible(CollectibleType.COLLECTIBLE_THE_JAR)) then
 					Player:AddHearts(8 * hasBow)
-					Player:AddJarHearts(heartsLeft)
+					Player:AddJarHearts(8 - heartsLeft)
+					sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES)
 				else
 					return false
 				end
@@ -6440,10 +6445,12 @@ function rplus:PickupCollision(Pickup, Collider, _)
 		if Pickup.SubType == CustomPickups.TaintedHearts.HEART_HARLOT then
 			local heartsLeft = math.min(math.max(0, Player:GetEffectiveMaxHearts() - Player:GetHearts()), 2)
 
-			if Player:CanPickRedHearts() or Player:GetJarHearts() < 8 then
+			if Player:CanPickRedHearts() 
+			or (Player:GetJarHearts() < 8 and Player:HasCollectible(CollectibleType.COLLECTIBLE_THE_JAR)) then
 				Player:AddHearts(2 * hasBow)
-				Player:AddJarHearts(heartsLeft)
+				Player:AddJarHearts(2 - heartsLeft)
 				Isaac.Spawn(3, FamiliarVariant.LEPROSY, 0, Player.Position, Vector.Zero, Player)
+				sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES)
 			else
 				return false
 			end
