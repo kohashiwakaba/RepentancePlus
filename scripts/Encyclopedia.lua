@@ -913,7 +913,7 @@ local CardsWiki = {
 	[mod.CustomConsumables.VOID_OF_GLUTTONY] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "For 7 seconds, if you lack red health, you will regenerate it at the rate of 1 half a red heart per second, while also gaining -0.01 speed"},
+			{str = "For 7 seconds, if you lack red health, you will regenerate it at the rate of 1 half a red heart per second, while also gaining -0.02 speed"},
 			{str = "The duration of this effect is extended by 2 seconds each time you kill an enemy. There is no limit to how many times it can be extended"},
 			{str = "Your speed stat goes back to normal after the effect ends"},
 			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}

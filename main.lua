@@ -6128,7 +6128,7 @@ function rplus:OnCacheEvaluate(Player, Flag)
 		end
 
 		if Player:GetEffects():HasCollectibleEffect(CustomCollectibles.HEART_BENIGHTED_NULL) then
-			Player.Damage = Player.Damage * (1 + Player:GetEffects():GetCollectibleEffectNum(CustomCollectibles.HEART_BENIGHTED_NULL) * 0.666)
+			Player.Damage = Player.Damage * (1 + Player:GetEffects():GetCollectibleEffectNum(CustomCollectibles.HEART_BENIGHTED_NULL) * 0.00666)
 		end
 
 		if Player:GetEffects():HasCollectibleEffect(CustomCollectibles.APPLE_OF_PRIDE_NULL) then
