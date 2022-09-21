@@ -1,19 +1,21 @@
+local mod = RepentancePlusMod
+
 local ItemsWiki = {
-	[CustomCollectibles.ORDINARY_LIFE] = {
+	[mod.CustomCollectibles.ORDINARY_LIFE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Grants its own tears up and makes all tears up items more effective"},
 			{str = "Spawns an additional Mom and Dad related item in Treasure rooms alongside the presented items. Only one item can be taken"},
 		},
 	},
-	[CustomCollectibles.COOKIE_CUTTER] = {
+	[mod.CustomCollectibles.COOKIE_CUTTER] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Gives you one heart container and one broken heart. Heals you for 2 full red hearts"},
 			{str = "Having 12 broken hearts kills you!"},
 		},
 	},
-	[CustomCollectibles.SINNERS_HEART] = {
+	[mod.CustomCollectibles.SINNERS_HEART] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "+2 black hearts "},
@@ -22,20 +24,20 @@ local ItemsWiki = {
 			{str = "Grants spectral and piercing tears"},
 		},
 	},
-	[CustomCollectibles.RUBIKS_CUBE] = {
+	[mod.CustomCollectibles.RUBIKS_CUBE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "After each use, has a 5% (100% on 20-th use) chance to be 'solved', removed from the player and be replaced with a Magic Cube item"},
 		},
 	},
-	[CustomCollectibles.MAGIC_CUBE] = {
+	[mod.CustomCollectibles.MAGIC_CUBE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Rerolls item pedestals "},
 			{str = "Rerolled items can be drawn from any item pool"},
 		},
 	},
-	[CustomCollectibles.MAGIC_PEN] = {
+	[mod.CustomCollectibles.MAGIC_PEN] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Double tap shooting button to spew a line of creep in the direction you're firing "},
@@ -43,7 +45,7 @@ local ItemsWiki = {
 			{str = "Has a 4 seconds cooldown"},
 		},
 	},
-	[CustomCollectibles.MARK_OF_CAIN] = {
+	[mod.CustomCollectibles.MARK_OF_CAIN] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Grants you Enoch follower familiar"},
@@ -53,14 +55,14 @@ local ItemsWiki = {
 			{str = "Works only once!"},
 		},
 	},
-	[CustomCollectibles.TEMPER_TANTRUM] = {
+	[mod.CustomCollectibles.TEMPER_TANTRUM] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "25% chance to enter Berserk state when taking damage "},
 			{str = "While in this state, every enemy damaged has a 5% chance to be erased for the rest of the run"},
 		},
 	},
-	[CustomCollectibles.BAG_O_TRASH] = {
+	[mod.CustomCollectibles.BAG_O_TRASH] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "A familiar that creates blue flies upon clearing a room "},
@@ -68,33 +70,33 @@ local ItemsWiki = {
 			{str = "The more floors it is not destroyed, the more flies it spawns"},
 		},
 	},
-	[CustomCollectibles.CHERUBIM] = {
+	[mod.CustomCollectibles.CHERUBIM] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "A familiar that shoots tears with Godhead aura that deal 5 damage"},
 		},
 	},
-	[CustomCollectibles.CHERRY_FRIENDS] = {
+	[mod.CustomCollectibles.CHERRY_FRIENDS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Killing an enemy has a 20% chance to drop cherry familiar on the ground"},
 			{str = "Those cherries emit a charming fart when an enemy walks over them, and drop half a heart when a room is cleared"},
 		},
 	},
-	[CustomCollectibles.BLACK_DOLL] = {
+	[mod.CustomCollectibles.BLACK_DOLL] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Upon entering a new room, all enemies will be grouped into pairs randomly. Dealing damage to an enemy will deal 60% of that damage to another enemy in the pair"},
 		},
 	},
-	[CustomCollectibles.BIRD_OF_HOPE] = {
+	[mod.CustomCollectibles.BIRD_OF_HOPE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Upon dying you turn into invincible ghost and a bird flies out of room center in a random direction. Catching the bird in 5 seconds will save you and get you back to your death spot, otherwise you will die "},
 			{str = "Every time you die, the bird will fly faster and faster, making it harder to catch her"},
 		},
 	},
-	[CustomCollectibles.ENRAGED_SOUL] = {
+	[mod.CustomCollectibles.ENRAGED_SOUL] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Double tap shooting button to launch a ghost familiar in the direction you are firing "},
@@ -104,47 +106,47 @@ local ItemsWiki = {
 			{str = "Has a 7 seconds cooldown"},
 		},
 	},
-	[CustomCollectibles.CEREMONIAL_BLADE] = {
+	[mod.CustomCollectibles.CEREMONIAL_BLADE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "When shooting, 7% chance to launch a piercing dagger that does no damage, but inflicts bleed on enemies"},
 			{str = "All enemies that die while bleeding will drop Sacrificial Blood consumable that gives you temporary DMG up"},
 		},
 	},
-	[CustomCollectibles.CEILING_WITH_THE_STARS] = {
+	[mod.CustomCollectibles.CEILING_WITH_THE_STARS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Grants you two Lemegeton wisps at the beginning of each floor and when sleeping in bed"},
 			{str = "Gives you only one wisp when entering the starting room on each floor while doing Ascent path"}
 		},
 	},
-	[CustomCollectibles.QUASAR] = {
+	[mod.CustomCollectibles.QUASAR] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed"},
 			{str = "Can also consume items that you are currently holding above your head, similarly to Void and Abyss"}
 		},
 	},
-	[CustomCollectibles.TWO_PLUS_ONE] = {
+	[mod.CustomCollectibles.TWO_PLUS_ONE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Every third shop item on the current floor will cost 1 penny"},
 		},
 	},
-	[CustomCollectibles.RED_MAP] = {
+	[mod.CustomCollectibles.RED_MAP] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Reveals location of Ultra Secret Room"},
 			{str = "Any trinket left in a boss or treasure room will turn into Cracked Key, unless this is your first visit in such room"},
 		},
 	},
-	[CustomCollectibles.CHEESE_GRATER] = {
+	[mod.CustomCollectibles.CHEESE_GRATER] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Removes one red heart container and gives you  x" .. tostring(CustomStatups.Damage.CHEESE_GRATER_MUL) .. " damage increase and 3 Minisaacs"},
+			{str = "Removes one red heart container and gives you  x" .. tostring(mod.CustomStatups.Damage.CHEESE_GRATER_MUL) .. " damage increase and 3 Minisaacs"},
 		},
 	},
-	[CustomCollectibles.DNA_REDACTOR] = {
+	[mod.CustomCollectibles.DNA_REDACTOR] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Pills now have additional effects based on their color"},
@@ -152,21 +154,21 @@ local ItemsWiki = {
 			{str = "Helper icons are displayed near pills to give some clue as to what the additional effect is"}
 		},
 	},
-	[CustomCollectibles.TOWER_OF_BABEL] = {
+	[mod.CustomCollectibles.TOWER_OF_BABEL] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Destroys all obstacles in the current room and applies confusion to enemies in small radius around you "},
 			{str = "Also blows the doors open and opens secret room entrances"},
 		},
 	},
-	[CustomCollectibles.BLESS_OF_THE_DEAD] = {
+	[mod.CustomCollectibles.BLESS_OF_THE_DEAD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Prevents curses from appearing for the rest of the run"},
-			{str = "Preventing a curse grants you x" .. tostring(CustomStatups.Damage.BLESS_OF_THE_DEAD_MUL) .. " damage multiplier"},
+			{str = "Preventing a curse grants you x" .. tostring(mod.CustomStatups.Damage.BLESS_OF_THE_DEAD_MUL) .. " damage multiplier"},
 		},
 	},
-	[CustomCollectibles.TANK_BOYS] = {
+	[mod.CustomCollectibles.TANK_BOYS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns 2 Toy Tanks familiars that roam around the room and attack enemies that are in their line of sight "},
@@ -174,14 +176,14 @@ local ItemsWiki = {
 			{str = "Red tank: shoots rockets at enemies at a close range, moves slower"},
 		},
 	},
-	[CustomCollectibles.GUSTY_BLOOD] = {
+	[mod.CustomCollectibles.GUSTY_BLOOD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Killing enemies grants you temporary tears and speed bonus"},
 			{str = "The bonus is reset when entering a new room"},
 		},
 	},
-	[CustomCollectibles.RED_BOMBER] = {
+	[mod.CustomCollectibles.RED_BOMBER] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "+5 bombs "},
@@ -189,21 +191,21 @@ local ItemsWiki = {
 			{str = "Allows you to throw your bombs instead of placing them on the ground"},
 		},
 	},
-	[CustomCollectibles.MOTHERS_LOVE] = {
+	[mod.CustomCollectibles.MOTHERS_LOVE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Grants you stat boosts for each familiar you own"},
 			{str = "Some familiars grant greater stat boosts, and some do not grant them at all (e.g. blue flies, dips or Isaac's body parts)"},
 		},
 	},
-	[CustomCollectibles.CAT_IN_A_BOX] = {
+	[mod.CustomCollectibles.CAT_IN_A_BOX] = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Enemies outside your line of sight (defined by your firing direction) are paralyzed, cannot attack you in any way and cannot be damaged"},
         	{str = "Periodically applies confusion to bosses and minibosses"},
 		},
 	},
-	[CustomCollectibles.BOOK_OF_GENESIS] = {
+	[mod.CustomCollectibles.BOOK_OF_GENESIS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Removes a random item and spawns 3 items of the same quality "},
@@ -211,7 +213,7 @@ local ItemsWiki = {
 			{str = "Can't remove or spawn quest items"},
 		},
 	},
-	[CustomCollectibles.SCALPEL] = {
+	[mod.CustomCollectibles.SCALPEL] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Consumes a heart container. If you have no heart containers or bone hearts, consumes 2 soul hearts"},
@@ -219,7 +221,7 @@ local ItemsWiki = {
 			{str = "These tears deal 65% of your damage, are shot with approximately the same rate of fire and retain all your tear modifiers"},
 		},
 	},
-	[CustomCollectibles.KEEPERS_PENNY] = {
+	[mod.CustomCollectibles.KEEPERS_PENNY] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns a golden penny upon entering a new floor"},
@@ -227,16 +229,16 @@ local ItemsWiki = {
 			{str = "If the shop is a Greed fight, 3-4 items spawn instead after it is defeated"}
 		},
 	},
-	[CustomCollectibles.NERVE_PINCH] = {
+	[mod.CustomCollectibles.NERVE_PINCH] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
-			{str = "Double tap shooting button to trigger a nerve pinch. You take fake damage and gain a permanent " .. tostring(CustomStatups.Speed.NERVE_PINCH) .. " speed down when that happens"},
+			{str = "Double tap shooting button to trigger a nerve pinch. You take fake damage and gain a permanent " .. tostring(mod.CustomStatups.Speed.NERVE_PINCH) .. " speed down when that happens"},
 			{str = "However, there is an 80% chance to activate your active item for free, even if it's uncharged"},
 			{str = "One-time use and infinite use actives cannot be used that way"},
 			{str = "Gives twice as much speed penalty if the player tries to use 6 or 12 room recharge active item"}
 		},
 	},
-	[CustomCollectibles.BLOOD_VESSELS[1]] = {
+	[mod.CustomCollectibles.BLOOD_VESSELS[1]] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Taking damage doesn't actually hurt the player, instead filling the blood vessel"},
@@ -245,7 +247,7 @@ local ItemsWiki = {
 			{str = "Any non-empty Blood Vessels cannot be switched for another active item to prevent taking damage. When any is detected, it will instantly be destroyed, damaging all players in proportion to how full it was"}
 		},
 	},
-	[CustomCollectibles.SIBLING_RIVALRY] = {
+	[mod.CustomCollectibles.SIBLING_RIVALRY] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Grants an orbital that switches between 2 different states every 15 seconds:"},
@@ -254,7 +256,7 @@ local ItemsWiki = {
 			{str = "All orbitals block enemy shots and do contact damage"},
 		},
 	},
-	[CustomCollectibles.RED_KING] = {
+	[mod.CustomCollectibles.RED_KING] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "After defeating a boss, red crawlspace will appear in a middle of a room"},
@@ -262,7 +264,7 @@ local ItemsWiki = {
 			{str = "The crawlspace can be entered only once, but you can enter it whenever you want, not necessarily after defeating the main floor boss"},
 		},
 	},
-	[CustomCollectibles.STARGAZERS_HAT] = {
+	[mod.CustomCollectibles.STARGAZERS_HAT] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Summons the Stargazer beggar"},
@@ -270,7 +272,7 @@ local ItemsWiki = {
 			{str = "Can only be used (and hence, charged) once per floor"},
 		},
 	},
-	[CustomCollectibles.BOTTOMLESS_BAG] = {
+	[mod.CustomCollectibles.BOTTOMLESS_BAG] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Upon use, holds the bag in the air"},
@@ -280,7 +282,7 @@ local ItemsWiki = {
 			{str = "If the player doesn't hold a shooting button, the reflected tears are shot downwards"},
 		},
 	},
-	[CustomCollectibles.CROSS_OF_CHAOS] = {
+	[mod.CustomCollectibles.CROSS_OF_CHAOS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Enemies that come close to you become crippled"},
@@ -289,7 +291,7 @@ local ItemsWiki = {
 			{str = "Your tears also have a chance to cripple enemies. Base chance is 2% and it maxes out at 7% at 10 luck"},
 		},
 	},
-	[CustomCollectibles.REJECTION] = {
+	[mod.CustomCollectibles.REJECTION] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "On use, consume all your follower familiars and throw them as big piercing poisonous gut ball in your firing direction"},
@@ -298,7 +300,7 @@ local ItemsWiki = {
 			{str = "Passively grants a familiar that doesn't shoot tears, but deals 2.5 contact damage to enemies"},
 		},
 	},
-	[CustomCollectibles.AUCTION_GAVEL] = {
+	[mod.CustomCollectibles.AUCTION_GAVEL] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns an item from the room's pool for sale"},
@@ -308,7 +310,7 @@ local ItemsWiki = {
 			{str = "Having Steam Sale makes the prices start at only 11 cents and slows down the price increase"}
 		},
 	},
-	[CustomCollectibles.SOUL_BOND] = {
+	[mod.CustomCollectibles.SOUL_BOND] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Chain yourself to a random enemy in a close radius with an astral chain and freeze them "},
@@ -318,7 +320,7 @@ local ItemsWiki = {
 			{str = "Can chain bosses too. Chain-down lasts for 5 seconds"},
 		},
 	},
-	[CustomCollectibles.ANGELS_WINGS] = {
+	[mod.CustomCollectibles.ANGELS_WINGS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "+0.3 Shot Speed up "},
@@ -330,14 +332,14 @@ local ItemsWiki = {
 			{str = "Has a 6 seconds cooldown"},
 		},
 	},
-	[CustomCollectibles.HAND_ME_DOWNS] = {
+	[mod.CustomCollectibles.HAND_ME_DOWNS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "+0.2 Speed up "},
 			{str = "After your run ends, 3 random items from your inventory are spawned on the floor where it ended. They can be collected on the next run by getting to the same floor"},
 		},
 	},
-	[CustomCollectibles.BOOK_OF_LEVIATHAN] = {
+	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN] = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Requires a key to 'unlock' and use it, does nothing if used without keys. Grants 2 keys on pickup"},
@@ -355,14 +357,14 @@ local ItemsWiki = {
 			{str = "- Key Knife: Applies bleed to crippled enemies"},
         },
 	},
-	[CustomCollectibles.FRIENDLY_SACK] = {
+	[mod.CustomCollectibles.FRIENDLY_SACK] = {
 			{
 				{str = "Effects", fsize = 2, clr = 3, halign = 0},
 				{str = "After each 3rd completed room, spawns a random weak familiar. This includes blue flies, spiders, locusts, dips, mini isaacs, blood clots and wisps"},
 				{str = "If boss room is a room where Friendly Sack would pay out, it spawns a random charmed monster instead"},
 			},
 	},
-	[CustomCollectibles.MAGIC_MARKER] = {
+	[mod.CustomCollectibles.MAGIC_MARKER] = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Drops a random tarot card (normal or reversed) when picked up "},
@@ -370,7 +372,7 @@ local ItemsWiki = {
 			{str = "Can roll into cards even if they haven't been unlocked yet"},
         },
 	},
-	[CustomCollectibles.ULTRA_FLESH_KID] = {
+	[mod.CustomCollectibles.ULTRA_FLESH_KID] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Familiar that chases enemies and deals contact damage, similar to Leech"},
@@ -380,7 +382,7 @@ local ItemsWiki = {
 			{str = "Stage 3: contact damage increased, after 2 seconds of being in uncleared rooms, pops his head off and lets it bounce across the room"},
 		},
 	},
-	[CustomCollectibles.VAULT_OF_HAVOC] = {
+	[mod.CustomCollectibles.VAULT_OF_HAVOC] = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Passively stores killed enemies with more than 10 HP. Can be used as soon as 12 such enemies are stored"},
@@ -390,7 +392,7 @@ local ItemsWiki = {
 			{str = "- High: a random collectible item"},
 		},
 	},
-	[CustomCollectibles.PURE_SOUL] = {
+	[mod.CustomCollectibles.PURE_SOUL] = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "All sin minibosses have a 100% chance to drop their respective Sin's Jewel"},
@@ -399,7 +401,7 @@ local ItemsWiki = {
 			{str = "Sin's Jewels are a special set of consumables that drop when defeating a miniboss, each sin miniboss has a 7.5% default chance to drop its respective Jewel (15% for Super version)"}
         },
 	},
-	[CustomCollectibles.HANDICAPPED_PLACARD] = {
+	[mod.CustomCollectibles.HANDICAPPED_PLACARD] = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Places a handicapped placard on the ground"},
@@ -408,7 +410,7 @@ local ItemsWiki = {
 			{str = "Works on bosses and minibosses too"}
         },
 	},
-	[CustomCollectibles.BOOK_OF_JUDGES] = {
+	[mod.CustomCollectibles.BOOK_OF_JUDGES] = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Passively spawns targets on the floor when entering a new room with monsters. Every 3 seconds, beams of light will strike at the targets' positions"},
@@ -417,7 +419,7 @@ local ItemsWiki = {
 			{str = "The targets will be repeatedly randomized after each strike"},
         },
 	},
-	[CustomCollectibles.BIRTH_CERTIFICATE] = {
+	[mod.CustomCollectibles.BIRTH_CERTIFICATE] = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "ONE-TIME USE ITEM"},
@@ -430,13 +432,13 @@ local ItemsWiki = {
 }
 
 local TrinketsWiki = {
-	[CustomTrinkets.BASEMENT_KEY] = {
+	[mod.CustomTrinkets.BASEMENT_KEY] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "While held, every Golden Chest has a 15% chance to be replaced with Old Chest"},
 		},
 	},
-	[CustomTrinkets.KEY_TO_THE_HEART] = {
+	[mod.CustomTrinkets.KEY_TO_THE_HEART] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "While held, every enemy with more than 10 HP has a 5% chance to drop Flesh Chest upon death"},
@@ -444,60 +446,60 @@ local TrinketsWiki = {
 			{str = "Flesh Chests contain red hearts, pills, body-related items and trinkets"},
 		},
 	},
-	[CustomTrinkets.JUDAS_KISS] = {
+	[mod.CustomTrinkets.JUDAS_KISS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Enemies touching you become feared and targeted by other enemies (bait effect of Rotten Tomato item)"},
 			{str = "Fear effect lasts for 1.5 seconds, bait effect is permanent"},
 		},
 	},
-	[CustomTrinkets.TRICK_PENNY] = {
+	[mod.CustomTrinkets.TRICK_PENNY] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Using coin, bomb or key on slots or beggars has a 17% chance to not subtract it from your inventory count"},
 		},
 	},
-	[CustomTrinkets.SLEIGHT_OF_HAND] = {
+	[mod.CustomTrinkets.SLEIGHT_OF_HAND] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Upon spawning, every coin has a 20% chance to be upgraded to a higher value"},
 			{str = "The upgrade is as follows: penny - doublepack pennies - sticky nickel - nickel - dime - lucky penny - golden penny"},
 		},
 	},
-	[CustomTrinkets.GREEDS_HEART] = {
+	[mod.CustomTrinkets.GREEDS_HEART] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Gives you one empty coin heart"},
 			{str = "It is depleted before any of your normal hearts and can only be refilled by directly picking up money"},
 		},
 	},
-	[CustomTrinkets.ANGELS_CROWN] = {
+	[mod.CustomTrinkets.ANGELS_CROWN] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "All newly visited treasure rooms will have an angel item for sale instead of a normal item, similarly to Stairway shops"},
 		},
 	},
-	[CustomTrinkets.MAGIC_SWORD] = {
+	[mod.CustomTrinkets.MAGIC_SWORD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "x2 DMG up while held "},
 			{str = "Breaks when you take damage. Having Duct Tape prevents it from breaking"},
 		},
 	},
-	[CustomTrinkets.WAIT_NO] = {
+	[mod.CustomTrinkets.WAIT_NO] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Does nothing, it's broken"},
 		},
 	},
-	[CustomTrinkets.EDENS_LOCK] = {
+	[mod.CustomTrinkets.EDENS_LOCK] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Upon taking damage, one of your items rerolls into another random item"},
 			{str = "Doesn't take away nor give you story items"},
 		},
 	},
-	[CustomTrinkets.PIECE_OF_CHALK] = {
+	[mod.CustomTrinkets.PIECE_OF_CHALK] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "When entering uncleared room, you will leave a trail of powder underneath for 5 seconds"},
@@ -505,20 +507,20 @@ local TrinketsWiki = {
 			{str = "The powder lasts for 10 seconds"},
 		},
 	},
-	[CustomTrinkets.ADAMS_RIB] = {
+	[mod.CustomTrinkets.ADAMS_RIB] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "22% chance to revive you as Eve when you die"},
 			{str = "The Eve character retains all standard stats, health, and passive items"}
 		},
 	},
-	[CustomTrinkets.NIGHT_SOIL] = {
+	[mod.CustomTrinkets.NIGHT_SOIL] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "75% chance to prevent a curse when entering a new floor"},
 		},
 	},
-	[CustomTrinkets.BONE_MEAL] = {
+	[mod.CustomTrinkets.BONE_MEAL] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "At the beginning of every new floor, grants:"},
@@ -527,7 +529,7 @@ local TrinketsWiki = {
 			{str = "Both damage and size up stay if you drop the trinket"},
 		},
 	},
-	[CustomTrinkets.TORN_PAGE] = {
+	[mod.CustomTrinkets.TORN_PAGE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Amplifies or changes book's activation effects:"},
@@ -550,14 +552,14 @@ local TrinketsWiki = {
 			{str = "- Book of Judges: doubles the burning damage and duration"},
 		},
 	},
-	[CustomTrinkets.EMPTY_PAGE] = {
+	[mod.CustomTrinkets.EMPTY_PAGE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Books now activate another random active item on use"},
 			{str = "Doesn't proc dice (except for D20) and items that hurt or kill you"},
 		},
 	},
-	[CustomTrinkets.BABY_SHOES] = {
+	[mod.CustomTrinkets.BABY_SHOES] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Reduces the size of all enemies by 10%"},
@@ -565,13 +567,13 @@ local TrinketsWiki = {
 			{str = "Affects bosses too"},
 		},
 	},
-	[CustomTrinkets.KEY_KNIFE] = {
+	[mod.CustomTrinkets.KEY_KNIFE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "8% chance to activate Dark Arts effect when taking damage"},
 		},
 	},
-	[CustomTrinkets.SHATTERED_STONE] = {
+	[mod.CustomTrinkets.SHATTERED_STONE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Chance to spawn random locust when picking up bombs, coing or keys"},
@@ -581,7 +583,7 @@ local TrinketsWiki = {
 }
 
 local PillsWiki = {
-	[CustomPills.ESTROGEN] = {
+	[mod.CustomPills.ESTROGEN] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Turns all your red health into blood clots "},
@@ -589,21 +591,21 @@ local PillsWiki = {
 			{str = "HORSE: no difference"},
 		},
 	},
-	[CustomPills.LAXATIVE] = {
+	[mod.CustomPills.LAXATIVE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Makes you shoot out corn tears from behind for 3 seconds"},
 			{str = "HORSE: the effect lasts for 12 seconds"},
 		},
 	},
-	[CustomPills.PHANTOM_PAINS] = {
+	[mod.CustomPills.PHANTOM_PAINS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Makes Isaac take fake damage on pill use, then 15 and 30 seconds after"},
 			{str = "HORSE: when fake damage ticks, 8 bone tears are shot in a star pattern around Isaac"},
 		},
 	},
-	[CustomPills.YUCK] = {
+	[mod.CustomPills.YUCK] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns a rotten heart "},
@@ -611,7 +613,7 @@ local PillsWiki = {
 			{str = "HORSE: lasts for 60 seconds"},
 		},
 	},
-	[CustomPills.YUM] = {
+	[mod.CustomPills.YUM] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns 2-5 half red hearts"},
@@ -622,94 +624,94 @@ local PillsWiki = {
 }
 
 local PillsColors = {
-	[CustomPills.ESTROGEN] = 9,
-	[CustomPills.LAXATIVE] = 10,
-	[CustomPills.PHANTOM_PAINS] = 10,
-	[CustomPills.YUCK] = 9,
-	[CustomPills.YUM] = 9
+	[mod.CustomPills.ESTROGEN] = 9,
+	[mod.CustomPills.LAXATIVE] = 10,
+	[mod.CustomPills.PHANTOM_PAINS] = 10,
+	[mod.CustomPills.YUCK] = 9,
+	[mod.CustomPills.YUM] = 9
 }
 
 local itemPools = {
-	[CustomCollectibles.ORDINARY_LIFE] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_OLD_CHEST},
-	[CustomCollectibles.COOKIE_CUTTER] = {Encyclopedia.ItemPools.POOL_DEMON_BEGGAR, Encyclopedia.ItemPools.POOL_CURSE},
-	[CustomCollectibles.RUBIKS_CUBE] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_CRANE_GAME},
-	[CustomCollectibles.MAGIC_PEN] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_CRANE_GAME},
-	[CustomCollectibles.MARK_OF_CAIN] = {Encyclopedia.ItemPools.POOL_CURSE, Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.TEMPER_TANTRUM] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.BAG_O_TRASH] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BEGGAR, Encyclopedia.ItemPools.POOL_BABY_SHOP},
-	[CustomCollectibles.CHERUBIM] = {Encyclopedia.ItemPools.POOL_ANGEL, Encyclopedia.ItemPools.POOL_BABY_SHOP},
-	[CustomCollectibles.CHERRY_FRIENDS] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.BLACK_DOLL] = {Encyclopedia.ItemPools.POOL_CURSE, Encyclopedia.ItemPools.POOL_RED_CHEST},
-	[CustomCollectibles.BIRD_OF_HOPE] = {Encyclopedia.ItemPools.POOL_ANGEL},
-	[CustomCollectibles.ENRAGED_SOUL] = {Encyclopedia.ItemPools.POOL_DEVIL},
-	[CustomCollectibles.CEREMONIAL_BLADE] = {Encyclopedia.ItemPools.POOL_DEVIL},
-	[CustomCollectibles.CEILING_WITH_THE_STARS] = {Encyclopedia.ItemPools.POOL_SHOP},
-	[CustomCollectibles.QUASAR] = {Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ANGEL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.TWO_PLUS_ONE] = {Encyclopedia.ItemPools.POOL_SHOP},
-	[CustomCollectibles.RED_MAP] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.SINNERS_HEART] = {Encyclopedia.ItemPools.POOL_DEVIL},
-	[CustomCollectibles.CHEESE_GRATER] = {Encyclopedia.ItemPools.POOL_SHOP},
-	[CustomCollectibles.DNA_REDACTOR] = {Encyclopedia.ItemPools.POOL_SECRET},
-	[CustomCollectibles.TOWER_OF_BABEL] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_CRANE_GAME},
-	[CustomCollectibles.BLESS_OF_THE_DEAD] = {Encyclopedia.ItemPools.POOL_SECRET},
-	[CustomCollectibles.TANK_BOYS] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP},
-	[CustomCollectibles.GUSTY_BLOOD] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.RED_BOMBER] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BOMB_BUM, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.MOTHERS_LOVE] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_BEGGAR, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.CAT_IN_A_BOX] = {Encyclopedia.ItemPools.POOL_TREASURE},
-	[CustomCollectibles.BOOK_OF_GENESIS] = {Encyclopedia.ItemPools.POOL_ANGEL, Encyclopedia.ItemPools.POOL_LIBRARY},
-	[CustomCollectibles.SCALPEL] = {Encyclopedia.ItemPools.POOL_DEMON_BEGGAR, Encyclopedia.ItemPools.POOL_RED_CHEST},
-	[CustomCollectibles.KEEPERS_PENNY] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET},
-	[CustomCollectibles.NERVE_PINCH] = {Encyclopedia.ItemPools.POOL_TREASURE},
-	[CustomCollectibles.BLOOD_VESSELS[1]] = {Encyclopedia.ItemPools.POOL_CURSE},
-	[CustomCollectibles.SIBLING_RIVALRY] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP},
-	[CustomCollectibles.RED_KING] = {Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.STARGAZERS_HAT] = {Encyclopedia.ItemPools.POOL_TREASURE},
-	[CustomCollectibles.BOTTOMLESS_BAG] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_TREASURE},
-	[CustomCollectibles.CROSS_OF_CHAOS] = {Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.REJECTION] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_ROTTEN_BEGGAR},
-	[CustomCollectibles.AUCTION_GAVEL] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_CRANE_GAME, Encyclopedia.ItemPools.POOL_WOODEN_CHEST},
-	[CustomCollectibles.SOUL_BOND] = {Encyclopedia.ItemPools.POOL_ANGEL},
-	[CustomCollectibles.ANGELS_WINGS] = {Encyclopedia.ItemPools.POOL_ANGEL},
-	[CustomCollectibles.HAND_ME_DOWNS] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_BEGGAR},
-	[CustomCollectibles.BOOK_OF_LEVIATHAN] = {Encyclopedia.ItemPools.POOL_LIBRARY},
-	[CustomCollectibles.FRIENDLY_SACK] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP, Encyclopedia.ItemPools.POOL_BEGGAR},
-	[CustomCollectibles.ULTRA_FLESH_KID] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
-	[CustomCollectibles.MAGIC_MARKER] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_CRANE_GAME},
-	[CustomCollectibles.VAULT_OF_HAVOC] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_ULTRA_SECRET, Encyclopedia.ItemPools.POOL_CURSE},
-	[CustomCollectibles.PURE_SOUL] = {Encyclopedia.ItemPools.POOL_ANGEL},
-	[CustomCollectibles.HANDICAPPED_PLACARD] = {Encyclopedia.ItemPools.POOL_SHOP},
-	[CustomCollectibles.BOOK_OF_JUDGES] = {Encyclopedia.ItemPools.POOL_LIBRARY, Encyclopedia.ItemPools.POOL_ANGEL},
-	[CustomCollectibles.BIRTH_CERTIFICATE] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET}
+	[mod.CustomCollectibles.ORDINARY_LIFE] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_OLD_CHEST},
+	[mod.CustomCollectibles.COOKIE_CUTTER] = {Encyclopedia.ItemPools.POOL_DEMON_BEGGAR, Encyclopedia.ItemPools.POOL_CURSE},
+	[mod.CustomCollectibles.RUBIKS_CUBE] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_CRANE_GAME},
+	[mod.CustomCollectibles.MAGIC_PEN] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_CRANE_GAME},
+	[mod.CustomCollectibles.MARK_OF_CAIN] = {Encyclopedia.ItemPools.POOL_CURSE, Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+	[mod.CustomCollectibles.TEMPER_TANTRUM] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+	[mod.CustomCollectibles.BAG_O_TRASH] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BEGGAR, Encyclopedia.ItemPools.POOL_BABY_SHOP},
+	[mod.CustomCollectibles.CHERUBIM] = {Encyclopedia.ItemPools.POOL_ANGEL, Encyclopedia.ItemPools.POOL_BABY_SHOP},
+	[mod.CustomCollectibles.CHERRY_FRIENDS] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+	[mod.CustomCollectibles.BLACK_DOLL] = {Encyclopedia.ItemPools.POOL_CURSE, Encyclopedia.ItemPools.POOL_RED_CHEST},
+	[mod.CustomCollectibles.BIRD_OF_HOPE] = {Encyclopedia.ItemPools.POOL_ANGEL},
+	[mod.CustomCollectibles.ENRAGED_SOUL] = {Encyclopedia.ItemPools.POOL_DEVIL},
+	[mod.CustomCollectibles.CEREMONIAL_BLADE] = {Encyclopedia.ItemPools.POOL_DEVIL},
+	[mod.CustomCollectibles.CEILING_WITH_THE_STARS] = {Encyclopedia.ItemPools.POOL_SHOP},
+	[mod.CustomCollectibles.QUASAR] = {Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ANGEL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+	[mod.CustomCollectibles.TWO_PLUS_ONE] = {Encyclopedia.ItemPools.POOL_SHOP},
+	[mod.CustomCollectibles.RED_MAP] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+	[mod.CustomCollectibles.SINNERS_HEART] = {Encyclopedia.ItemPools.POOL_DEVIL},
+	[mod.CustomCollectibles.CHEESE_GRATER] = {Encyclopedia.ItemPools.POOL_SHOP},
+	[mod.CustomCollectibles.DNA_REDACTOR] = {Encyclopedia.ItemPools.POOL_SECRET},
+	[mod.CustomCollectibles.TOWER_OF_BABEL] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_CRANE_GAME},
+	[mod.CustomCollectibles.BLESS_OF_THE_DEAD] = {Encyclopedia.ItemPools.POOL_SECRET},
+	[mod.CustomCollectibles.TANK_BOYS] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP},
+	[mod.CustomCollectibles.GUSTY_BLOOD] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+	[mod.CustomCollectibles.RED_BOMBER] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BOMB_BUM, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+	[mod.CustomCollectibles.MOTHERS_LOVE] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_BEGGAR, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+	[mod.CustomCollectibles.CAT_IN_A_BOX] = {Encyclopedia.ItemPools.POOL_TREASURE},
+	[mod.CustomCollectibles.BOOK_OF_GENESIS] = {Encyclopedia.ItemPools.POOL_ANGEL, Encyclopedia.ItemPools.POOL_LIBRARY},
+	[mod.CustomCollectibles.SCALPEL] = {Encyclopedia.ItemPools.POOL_DEMON_BEGGAR, Encyclopedia.ItemPools.POOL_RED_CHEST},
+	[mod.CustomCollectibles.KEEPERS_PENNY] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET},
+	[mod.CustomCollectibles.NERVE_PINCH] = {Encyclopedia.ItemPools.POOL_TREASURE},
+	[mod.CustomCollectibles.BLOOD_VESSELS[1]] = {Encyclopedia.ItemPools.POOL_CURSE},
+	[mod.CustomCollectibles.SIBLING_RIVALRY] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP},
+	[mod.CustomCollectibles.RED_KING] = {Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+	[mod.CustomCollectibles.STARGAZERS_HAT] = {Encyclopedia.ItemPools.POOL_TREASURE},
+	[mod.CustomCollectibles.BOTTOMLESS_BAG] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_TREASURE},
+	[mod.CustomCollectibles.CROSS_OF_CHAOS] = {Encyclopedia.ItemPools.POOL_DEVIL, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+	[mod.CustomCollectibles.REJECTION] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_ROTTEN_BEGGAR},
+	[mod.CustomCollectibles.AUCTION_GAVEL] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_CRANE_GAME, Encyclopedia.ItemPools.POOL_WOODEN_CHEST},
+	[mod.CustomCollectibles.SOUL_BOND] = {Encyclopedia.ItemPools.POOL_ANGEL},
+	[mod.CustomCollectibles.ANGELS_WINGS] = {Encyclopedia.ItemPools.POOL_ANGEL},
+	[mod.CustomCollectibles.HAND_ME_DOWNS] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_BEGGAR},
+	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN] = {Encyclopedia.ItemPools.POOL_LIBRARY},
+	[mod.CustomCollectibles.FRIENDLY_SACK] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP, Encyclopedia.ItemPools.POOL_BEGGAR},
+	[mod.CustomCollectibles.ULTRA_FLESH_KID] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP, Encyclopedia.ItemPools.POOL_ULTRA_SECRET},
+	[mod.CustomCollectibles.MAGIC_MARKER] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_CRANE_GAME},
+	[mod.CustomCollectibles.VAULT_OF_HAVOC] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_ULTRA_SECRET, Encyclopedia.ItemPools.POOL_CURSE},
+	[mod.CustomCollectibles.PURE_SOUL] = {Encyclopedia.ItemPools.POOL_ANGEL},
+	[mod.CustomCollectibles.HANDICAPPED_PLACARD] = {Encyclopedia.ItemPools.POOL_SHOP},
+	[mod.CustomCollectibles.BOOK_OF_JUDGES] = {Encyclopedia.ItemPools.POOL_LIBRARY, Encyclopedia.ItemPools.POOL_ANGEL},
+	[mod.CustomCollectibles.BIRTH_CERTIFICATE] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET}
 }
 
 local CardsWiki = {
-	[CustomConsumables.SPINDOWN_DICE_SHARD] = {
+	[mod.CustomConsumables.SPINDOWN_DICE_SHARD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Invokes the effect of Spindown Dice"},
 		},
 	},
-	[CustomConsumables.RED_RUNE] = {
+	[mod.CustomConsumables.RED_RUNE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Damages all enemies in a room, turns item pedestals into red permanent locusts and turns pickups into random locusts with a 50% chance"},
 		},
 	},
-	[CustomConsumables.NEEDLE_AND_THREAD] = {
+	[mod.CustomConsumables.NEEDLE_AND_THREAD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "If you have broken hearts, removes one and grants one full heart container instead"},
 		},
 	},
-	[CustomConsumables.QUEEN_OF_DIAMONDS] = {
+	[mod.CustomConsumables.QUEEN_OF_DIAMONDS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns 1-12 random coins"},
 			{str = "Coins could be nickels or dimes too"}
 		},
 	},
-	[CustomConsumables.KING_OF_SPADES] = {
+	[mod.CustomConsumables.KING_OF_SPADES] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Lose all your keys (but no more than 33) and spawn a number of pickups proportional to the amount of keys lost"},
@@ -717,7 +719,7 @@ local CardsWiki = {
 			{str = "If Isaac has Golden key, it is removed too and significantly increases total value"},
 		},
 	},
-	[CustomConsumables.KING_OF_CLUBS] = {
+	[mod.CustomConsumables.KING_OF_CLUBS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Lose all your bombs (but no more than 33) and spawn a number of pickups proportional to the amount of bombs lost"},
@@ -725,14 +727,14 @@ local CardsWiki = {
 			{str = "If Isaac has Golden bomb, it is removed too and significantly increases total value"},
 		},
 	},
-	[CustomConsumables.KING_OF_DIAMONDS] = {
+	[mod.CustomConsumables.KING_OF_DIAMONDS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Lose all your coins (but no more than 66) and spawn a number of pickups proportional to the amount of coins lost"},
 			{str = "Can spawn an item or trinket with a certain chance that grows with the amount of coins and reaches 100% at 18 or 42 coins, respectively"},
 		},
 	},
-	[CustomConsumables.BAG_TISSUE] = {
+	[mod.CustomConsumables.BAG_TISSUE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "All pickups in a room are destroyed, and 8 most valuables pickups form an item quality based on their total weight, the item of such quality is then spawned"},
@@ -740,75 +742,75 @@ local CardsWiki = {
 			{str = "Can freely be used in rooms that contain less than 8 pickups at once"},
 		},
 	},
-	[CustomConsumables.JOKER_Q] = {
+	[mod.CustomConsumables.JOKER_Q] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Teleports Isaac to a Black Market"},
 		},
 	},
-	[CustomConsumables.UNO_REVERSE_CARD] = {
+	[mod.CustomConsumables.UNO_REVERSE_CARD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Invokes the effect of Glowing Hourglass"},
 		},
 	},
-	[CustomConsumables.LOADED_DICE] = {
+	[mod.CustomConsumables.LOADED_DICE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Grants +10 Luck for the current room"},
 		},
 	},
-	[CustomConsumables.BEDSIDE_QUEEN] = {
+	[mod.CustomConsumables.BEDSIDE_QUEEN] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns 1-12 random keys "},
 			{str = "There is a small chance to spawn a charged key"},
 		},
 	},
-	[CustomConsumables.QUEEN_OF_CLUBS] = {
+	[mod.CustomConsumables.QUEEN_OF_CLUBS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns 1-12 random bombs "},
 			{str = "There is a chance to spawn a double-pack bomb"},
 		},
 	},
-	[CustomConsumables.JACK_OF_CLUBS] = {
+	[mod.CustomConsumables.JACK_OF_CLUBS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Bombs will drop more often from clearing rooms for current floor, and the average quality of bombs is increased"},
 		},
 	},
-	[CustomConsumables.JACK_OF_DIAMONDS] = {
+	[mod.CustomConsumables.JACK_OF_DIAMONDS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Coins will drop more often from clearing rooms for current floor, and the average quality of coins is increased"},
 		},
 	},
-	[CustomConsumables.JACK_OF_SPADES] = {
+	[mod.CustomConsumables.JACK_OF_SPADES] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Keys will drop more often from clearing rooms for current floor, and the average quality of keys is increased"},
 		},
 	},
-	[CustomConsumables.JACK_OF_HEARTS] = {
+	[mod.CustomConsumables.JACK_OF_HEARTS] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Hearts will drop more often from clearing rooms for current floor, and the average quality of hearts is increased"},
 		},
 	},
-	[CustomConsumables.QUASAR_SHARD] = {
+	[mod.CustomConsumables.QUASAR_SHARD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Damages all enemies in a room and turns every item pedestal into 3 Lemegeton wisps"},
 		},
 	},
-	[CustomConsumables.BUSINESS_CARD] = {
+	[mod.CustomConsumables.BUSINESS_CARD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Summons a random monster, like ones from Friend Finder"},
 		},
 	},
-	[CustomConsumables.SACRIFICIAL_BLOOD] = {
+	[mod.CustomConsumables.SACRIFICIAL_BLOOD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Gives +1.25 DMG up that depletes over the span of 25 seconds"},
@@ -816,32 +818,32 @@ local CardsWiki = {
 			{str = "Stackable. Damage depletes quicker the more Blood you used subsequently"},
 		},
 	},
-	[CustomConsumables.LIBRARY_CARD] = {
+	[mod.CustomConsumables.LIBRARY_CARD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Activates a random book effect"},
 		},
 	},
-	[CustomConsumables.MOMS_ID] = {
+	[mod.CustomConsumables.MOMS_ID] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Drops knives from above on all enemies, dealing 2x your damage"},
 		},
 	},
-	[CustomConsumables.FUNERAL_SERVICES ] = {
+	[mod.CustomConsumables.FUNERAL_SERVICES ] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns an Old Chest"},
 		},
 	},
-	[CustomConsumables.ANTIMATERIAL_CARD] = {
+	[mod.CustomConsumables.ANTIMATERIAL_CARD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Can be thrown similarly to Chaos Card"},
 			{str = "If the card touches an enemy, that enemy is erased for the rest of the run"},
 		},
 	},
-	[CustomConsumables.FIEND_FIRE] = {
+	[mod.CustomConsumables.FIEND_FIRE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Sacrifice your consumables for mass room destruction"},
@@ -850,7 +852,7 @@ local CardsWiki = {
 			{str = "40+ total: the burning damage and burning duration are quadrupled, produces a Mama Mega explosion"},
 		},
 	},
-	[CustomConsumables.DEMON_FORM] = {
+	[mod.CustomConsumables.DEMON_FORM] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Increases your damage by 0.2 for every new uncleared room you enter"},
@@ -858,21 +860,21 @@ local CardsWiki = {
 			{str = "The boost disappears when entering a new floor"},
 		},
 	},
-	[CustomConsumables.VALENTINES_CARD] = {
+	[mod.CustomConsumables.VALENTINES_CARD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Can be thrown similarly to Chaos Card"},
 			{str = "Permanently charms all enemies that it passes through and drops a full red heart on use"},
 		},
 	},
-	[CustomConsumables.SPIRITUAL_RESERVES] = {
+	[mod.CustomConsumables.SPIRITUAL_RESERVES] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns two ghostly orbital familiars that block enemy shots and shoot spectral tears that deal 2 damage each"},
 			{str = "After blocking 3 shots, each ghost dies and drops half a soul heart"},
 		},
 	},
-	[CustomConsumables.MIRRORED_LANDSCAPE] = {
+	[mod.CustomConsumables.MIRRORED_LANDSCAPE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Your active item moves to the pocket slot"},
@@ -880,35 +882,35 @@ local CardsWiki = {
 			{str = "Does nothing if you don't have active items. Doesn't work with certain active items that don't function correctly in pocket slot"},
 		},
 	},
-	[CustomConsumables.CURSED_CARD] = {
+	[mod.CustomConsumables.CURSED_CARD] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "For the current room, every hit of damage you would take is negated"},
 			{str = "Instead, it gives you a broken heart and a permanent tears boost"},
 		},
 	},
-	[CustomConsumables.CROWN_OF_GREED] = {
+	[mod.CustomConsumables.CROWN_OF_GREED] = {
         {
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Spawns 1-2 golden pennies and grants -1 luck for each penny spawned"},
 			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
         },
 	},
-	[CustomConsumables.FLOWER_OF_LUST] = {
+	[mod.CustomConsumables.FLOWER_OF_LUST] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Allows you to restart the room and grants a better room reward for clearing it"},
 			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
 		},
 	},
-	[CustomConsumables.ACID_OF_SLOTH] = {
+	[mod.CustomConsumables.ACID_OF_SLOTH] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Slows down all enemies by 50% and makes them leave poisonous gas clouds behind"},
 			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
 		},
 	},
-	[CustomConsumables.VOID_OF_GLUTTONY] = {
+	[mod.CustomConsumables.VOID_OF_GLUTTONY] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "For 7 seconds, if you lack red health, you will regenerate it at the rate of 1 half a red heart per second, while also gaining -0.01 speed"},
@@ -917,14 +919,14 @@ local CardsWiki = {
 			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
 		},
 	},
-	[CustomConsumables.APPLE_OF_PRIDE] = {
+	[mod.CustomConsumables.APPLE_OF_PRIDE] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Grants you a massive boost to all stats until you get hit"},
 			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
 		},
 	},
-	[CustomConsumables.CANINE_OF_WRATH] = {
+	[mod.CustomConsumables.CANINE_OF_WRATH] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Every enemy in a room explodes, taking 15 damage "},
@@ -933,7 +935,7 @@ local CardsWiki = {
 			{str = "Jewels have a 7.5% chance to be dropped when killing a sin miniboss (15% for Super version)"}
 		},
 	},
-	[CustomConsumables.MASK_OF_ENVY] = {
+	[mod.CustomConsumables.MASK_OF_ENVY] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Turns all your heart containers into bone hearts filled with rotten hearts"},                
@@ -943,61 +945,61 @@ local CardsWiki = {
 }
 
 local spriteToCard = {
-	[CustomConsumables.SPINDOWN_DICE_SHARD] = "Spindown Dice Shard",
-	[CustomConsumables.RED_RUNE] = "Red Rune",
-	[CustomConsumables.NEEDLE_AND_THREAD] = "Needle and Thread",
-	[CustomConsumables.QUEEN_OF_DIAMONDS] = "Queen of Diamonds",
-	[CustomConsumables.KING_OF_SPADES] = "King of Spades",
-	[CustomConsumables.KING_OF_CLUBS] = "King of Clubs",
-	[CustomConsumables.KING_OF_DIAMONDS] = "King of Diamonds",
-	[CustomConsumables.BAG_TISSUE] = "Bag Tissue",
-	[CustomConsumables.JOKER_Q] = "Joker?",
-	[CustomConsumables.UNO_REVERSE_CARD] = "Reverse Card",
-	[CustomConsumables.LOADED_DICE] = "Loaded Dice",
-	[CustomConsumables.BEDSIDE_QUEEN] = "Bedside Queen",
-	[CustomConsumables.QUEEN_OF_CLUBS] = "Queen of Clubs",
-	[CustomConsumables.JACK_OF_CLUBS] = "Jack of Clubs",
-	[CustomConsumables.JACK_OF_DIAMONDS] = "Jack of Diamonds",
-	[CustomConsumables.JACK_OF_SPADES] = "Jack of Spades",
-	[CustomConsumables.JACK_OF_HEARTS] = "Jack of Hearts",
-	[CustomConsumables.QUASAR_SHARD] = "Quasar Shard",
-	[CustomConsumables.BUSINESS_CARD] = "Business Card",
-	[CustomConsumables.SACRIFICIAL_BLOOD] = "Sacrificial Blood",
-	[CustomConsumables.LIBRARY_CARD] = "Library Card",
-	[CustomConsumables.ANTIMATERIAL_CARD] = "Antimaterial Card",
-	[CustomConsumables.FUNERAL_SERVICES] = "Funeral Services",
-	[CustomConsumables.MOMS_ID] = "Mom's ID",
-	[CustomConsumables.FIEND_FIRE] = "Fiend Fire",
-	[CustomConsumables.DEMON_FORM] = "Demon Form",
-	[CustomConsumables.VALENTINES_CARD] = "Valentine's Card",
-	[CustomConsumables.SPIRITUAL_RESERVES] = "Spectral Reserves",
-	[CustomConsumables.MIRRORED_LANDSCAPE] = "Mirrored Landscape",
-	[CustomConsumables.CURSED_CARD] = "Cursed Card",
-	[CustomConsumables.CROWN_OF_GREED ] = "Crown of Greed",
-	[CustomConsumables.FLOWER_OF_LUST] = "Flower of Lust",
-	[CustomConsumables.ACID_OF_SLOTH] = "Acid of Sloth",
-	[CustomConsumables.VOID_OF_GLUTTONY] = "Void of Gluttony",
-	[CustomConsumables.APPLE_OF_PRIDE] = "Apple of Pride",
-	[CustomConsumables.CANINE_OF_WRATH] = "Canine of Wrath",
-	[CustomConsumables.MASK_OF_ENVY] = "Mask of Envy"
+	[mod.CustomConsumables.SPINDOWN_DICE_SHARD] = "Spindown Dice Shard",
+	[mod.CustomConsumables.RED_RUNE] = "Red Rune",
+	[mod.CustomConsumables.NEEDLE_AND_THREAD] = "Needle and Thread",
+	[mod.CustomConsumables.QUEEN_OF_DIAMONDS] = "Queen of Diamonds",
+	[mod.CustomConsumables.KING_OF_SPADES] = "King of Spades",
+	[mod.CustomConsumables.KING_OF_CLUBS] = "King of Clubs",
+	[mod.CustomConsumables.KING_OF_DIAMONDS] = "King of Diamonds",
+	[mod.CustomConsumables.BAG_TISSUE] = "Bag Tissue",
+	[mod.CustomConsumables.JOKER_Q] = "Joker?",
+	[mod.CustomConsumables.UNO_REVERSE_CARD] = "Reverse Card",
+	[mod.CustomConsumables.LOADED_DICE] = "Loaded Dice",
+	[mod.CustomConsumables.BEDSIDE_QUEEN] = "Bedside Queen",
+	[mod.CustomConsumables.QUEEN_OF_CLUBS] = "Queen of Clubs",
+	[mod.CustomConsumables.JACK_OF_CLUBS] = "Jack of Clubs",
+	[mod.CustomConsumables.JACK_OF_DIAMONDS] = "Jack of Diamonds",
+	[mod.CustomConsumables.JACK_OF_SPADES] = "Jack of Spades",
+	[mod.CustomConsumables.JACK_OF_HEARTS] = "Jack of Hearts",
+	[mod.CustomConsumables.QUASAR_SHARD] = "Quasar Shard",
+	[mod.CustomConsumables.BUSINESS_CARD] = "Business Card",
+	[mod.CustomConsumables.SACRIFICIAL_BLOOD] = "Sacrificial Blood",
+	[mod.CustomConsumables.LIBRARY_CARD] = "Library Card",
+	[mod.CustomConsumables.ANTIMATERIAL_CARD] = "Antimaterial Card",
+	[mod.CustomConsumables.FUNERAL_SERVICES] = "Funeral Services",
+	[mod.CustomConsumables.MOMS_ID] = "Mom's ID",
+	[mod.CustomConsumables.FIEND_FIRE] = "Fiend Fire",
+	[mod.CustomConsumables.DEMON_FORM] = "Demon Form",
+	[mod.CustomConsumables.VALENTINES_CARD] = "Valentine's Card",
+	[mod.CustomConsumables.SPIRITUAL_RESERVES] = "Spectral Reserves",
+	[mod.CustomConsumables.MIRRORED_LANDSCAPE] = "Mirrored Landscape",
+	[mod.CustomConsumables.CURSED_CARD] = "Cursed Card",
+	[mod.CustomConsumables.CROWN_OF_GREED ] = "Crown of Greed",
+	[mod.CustomConsumables.FLOWER_OF_LUST] = "Flower of Lust",
+	[mod.CustomConsumables.ACID_OF_SLOTH] = "Acid of Sloth",
+	[mod.CustomConsumables.VOID_OF_GLUTTONY] = "Void of Gluttony",
+	[mod.CustomConsumables.APPLE_OF_PRIDE] = "Apple of Pride",
+	[mod.CustomConsumables.CANINE_OF_WRATH] = "Canine of Wrath",
+	[mod.CustomConsumables.MASK_OF_ENVY] = "Mask of Envy"
 }
 
 -- DO NOT touch that! 
 -- Just fill in the Wiki and itemPools tables with the desired item's entry, and it will show up in the Encyclopedia
-for i = CustomCollectibles.ORDINARY_LIFE, CustomCollectibles.SIBLING_RIVALRY do
+for i = mod.CustomCollectibles.ORDINARY_LIFE, mod.CustomCollectibles.SIBLING_RIVALRY do
 	Encyclopedia.AddItem({Class = "Repentance Plus", ID = i, WikiDesc = ItemsWiki[i], Pools = itemPools[i]})
 	--Isaac.DebugString('Item ' .. tostring(i) .. 's entry succesfully loaded into the encyclopedia')
 end
 
-for i = CustomTrinkets.BASEMENT_KEY, CustomTrinkets.EMPTY_PAGE do
+for i = mod.CustomTrinkets.BASEMENT_KEY, mod.CustomTrinkets.EMPTY_PAGE do
 	Encyclopedia.AddTrinket({Class = "Repentance Plus", ID = i, WikiDesc = TrinketsWiki[i]})
 end
 
-for i = CustomPills.ESTROGEN, CustomPills.YUCK do
+for i = mod.CustomPills.ESTROGEN, mod.CustomPills.YUCK do
 	Encyclopedia.AddPill({Class = "Repentance Plus", ID = i, WikiDesc = PillsWiki[i], Color = PillsColors[i]})
 end
 
-for i = CustomConsumables.RED_RUNE, CustomConsumables.JACK_OF_HEARTS do
+for i = mod.CustomConsumables.RED_RUNE, mod.CustomConsumables.JACK_OF_HEARTS do
 	Encyclopedia.AddCard({Class = "Repentance Plus", ID = i, WikiDesc = CardsWiki[i], 
 	Sprite = Encyclopedia.RegisterSprite("content/gfx/ui_cardfronts.anm2", tostring(spriteToCard[i]))})
 end

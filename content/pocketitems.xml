@@ -3,12 +3,12 @@
 		<card type="special" pickup="8" achievement="97" description="???" id="42" name="Chaos Card" announcer="334" mimiccharge="6" />
 		<card type="object" pickup="15" achievement="444" description="???" name="Cracked Key" id="78" mimiccharge="4" />
 	
-		!! Pill classes:
+		! Pill classes:
 			3: Major (a permanent effect, usually a stat modifier)
 			2: Medium (an effect with a significant impact, i.e. health or damage)
 			1: Minor (an effect which is only situationally useful)
 			0: Joke (an effect which is nigh useless)
-		!! Append a + or - at the end to denote a positive or negative effect, no suffix means a neutral effect
+		Append a + or - at the end to denote a positive or negative effect, no suffix means a neutral effect
 
 		<pilleffect id="0" name="Bad Gas" announcer="328" class="1+" mimiccharge="1" / 
 		
@@ -24,7 +24,7 @@
 	<card type="object" name="Loaded Dice" hud="Loaded Dice" mimiccharge="6" description="Luck is on your side" pickup="164" />
 	<rune type="rune" name="Quasar Shard" hud="Quasar Shard" mimiccharge="6" description="Shard of knowledge" pickup="165" />
 	<card type="special" name="Business Card" hud="Business Card" mimiccharge="4" description="Reusable partnership" pickup="166" />
-	<card type="object" name="Sacrificial Blood" hud="Sacrificial Blood" mimiccharge="3" description="Feed on their pain" pickup="167" />
+	<card type="object" name="Sacrificial Blood" hud="Sacrificial Blood" mimiccharge="3" description="Feed on their pain" pickup="167" achievement="999" />
 	<card type="special" name="Flypaper" hud="Flypaper" mimiccharge="12" description="Sticky!" pickup="168" />
 	<card type="special" name="Library Card" hud="Library Card" mimiccharge="6" description="8)" pickup="169" />
 	<card type="special" name="Antimaterial Card" hud="Antimaterial Card" mimiccharge="12" description="Erase thy enemy... once" pickup="170" />
@@ -40,7 +40,7 @@
     <rune type="rune" pickup="177" hud="Mask of Envy" description="Defiled from the inside" name="Mask of Envy" mimiccharge="4" />
     <rune type="rune" pickup="178" hud="Crown of Greed" description="Want, want, want" name="Crown of Greed" mimiccharge="3" />
     <rune type="rune" pickup="179" hud="Void of Gluttony" description="Devour all" name="Void of Glutonny" mimiccharge="12" />
-    <rune type="rune" pickup="180" hud="Apple of Pride" description="Succumb to being the Almighty" name="Apple of Pride" mimiccharge="3" />
+    <rune type="rune" pickup="180" hud="Apple of Pride" description="Succumb to being the Almighty" name="Apple of Pride" mimiccharge="6" />
     <rune type="rune" pickup="181" hud="Flower of Lust" description="Do anything for more" name="Flower of Lust" mimiccharge="6" />
     <rune type="rune" pickup="182" hud="Acid of Sloth" description="Embrace laziness" name="Acid of Sloth" mimiccharge="3" />
 	

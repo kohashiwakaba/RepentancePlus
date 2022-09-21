@@ -41,6 +41,9 @@
 
 <entity anm2path="items/pick ups/002.dauntless_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Dauntless Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="85">
     </entity>
+
+<entity anm2path="items/pick ups/002.1.half_dauntless_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Half Dauntless Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="101">
+    </entity>
 	
 <entity anm2path="items/pick ups/003.hoarded_heart.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Hoarded Heart" numGridCollisionPoints="24" shadowSize="17" stageHP="0" variant="10" subtype="86">
     </entity>
@@ -163,7 +166,7 @@
 
 <!-- FAMILIARS -->
 
-<entity anm2path="003.210_bagotrash.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Bag-o-Trash" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2100">
+<entity anm2path="003.210_bagotrash.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Bag-o-Trash" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2100">
 	</entity>
 
 <entity anm2path="003.211_zenbaby.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Cherubim" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2101">
@@ -224,8 +227,23 @@
 <entity anm2path="003.222_placard.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="3" name="Handicapped Placard" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="2120" >
 	</entity>
 
-<entity anm2path="003.223_tv.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="0" id="3" name="Broken TV" numGridCollisionPoints="24" shadowSize="16" stageHP="0" variant="2121" >
-	</entity>
+    <!-- BLOOD CLOTS
+        x Dauntless: tears are spectral and shielded
+        x Soiled: tears have a chance to turn enemy into poop
+        Enigma: the heart can't be "sucked out" via Sumptorium
+        Baleful: base eternal clot
+        Miser: base golden clot
+        x Empty: tears spawn flies on hit (Mulligan) ?locusts
+        x Zealot: tears have a chance to apply fear or confusion
+        -->
+
+<entity anm2path="003.238.20_dauntless_clot.anm2" baseHP="15" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Blood Baby (Dauntless)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" tags="cansacrifice" variant="238" subtype="20" />
+
+<entity anm2path="003.238.21_soiled_clot.anm2" baseHP="15" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Blood Baby (Soiled)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" tags="cansacrifice" variant="238" subtype="21" />
+
+<entity anm2path="003.238.22_empty_clot.anm2" baseHP="15" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Blood Baby (Empty)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" tags="cansacrifice" variant="238" subtype="22" />
+
+<entity anm2path="003.238.23_zealot_clot.anm2" baseHP="15" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Blood Baby (Zealot)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" tags="cansacrifice" variant="238" subtype="23" />
 	
 <!-- TEAR VARIANTS -->
 

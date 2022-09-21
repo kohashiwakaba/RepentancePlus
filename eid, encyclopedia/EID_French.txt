@@ -1,0 +1,174 @@
+TornPageDesc["fr"] = {
+	[-1] = "<Modded book, no effect>", --Modded books
+	[CustomCollectibles.BOOK_OF_GENESIS] = "Permet de choisir entre 4 objets",
+	[CustomCollectibles.BOOK_OF_LEVIATHAN] = "Ne nécessite pas de clés pour être utilisé",
+	[CustomCollectibles.BOOK_OF_JUDGES] = "Double les dégâts infligés et la durée des flammes",
+	[CollectibleType.COLLECTIBLE_NECRONOMICON] = "Invoque 3 locustes de Mort",
+	[CollectibleType.COLLECTIBLE_BIBLE] = "Retire un cœur brisé",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_REVELATIONS] = "Empêche les {{ColorCyan}}Cavaliers de l'Apocalypse{{ColorWhite}} d'apparaître dans les salles de boss",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_BELIAL] = "Donne l'effet de l'{{ColorYellow}}Œil de Bélial {{Collectible462}}",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_SIN] = "3% de chances de faire apparaître un coffre, coffre doré ou objet",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS] = "Augmente la durée du bouclier",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD] = "Ajoute un cœur d'os aux PV d'Isaac",
+	[CollectibleType.COLLECTIBLE_HOW_TO_JUMP] = "Tire des larmes en + ou x à l'atterrissage",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES] = "Les feux follets ont 50% de PV en plus",
+	[CollectibleType.COLLECTIBLE_SATANIC_BIBLE] = "Permet de choisir entre 2 pactes avec le diable",
+	[CollectibleType.COLLECTIBLE_TELEPATHY_BOOK] = "Donne l'effet de {{ColorYellow}}Chapeau d'Âne {{Collectible358}}",
+	[CollectibleType.COLLECTIBLE_ANARCHIST_COOKBOOK] = "Fait apparaître une Bombe Troll dorée à la place",
+	[CollectibleType.COLLECTIBLE_LEMEGETON] = "Peut être utilisé sans être complètement chargé au prix d'un demi-cœur rouge de dégâts par charge manquante",
+	[CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS] = "Utiliser l'objet le recharge immédiatement de deux barres",
+	[CollectibleType.COLLECTIBLE_MONSTER_MANUAL] = "Utiliser l'objet le recharge immédiatement de deux barres",
+}
+
+KeyTrinketsDesc["fr"] = {
+	[CustomTrinkets.BASEMENT_KEY] = "Tuer un ennemi étropié invoque parfois une entité squelettique",
+	[CustomTrinkets.KEY_TO_THE_HEART] = "Tuer un ennemi étropié fait parfois apparaître un demi-cœur rouge",
+	[CustomTrinkets.KEY_KNIFE] = "Les ennemis étropiés saignent",
+	[TrinketType.TRINKET_STORE_KEY] = "Tuer un ennemi étropié fait parfois apparaître une ressource",
+	[TrinketType.TRINKET_RUSTED_KEY] = "Les ennemis étropiés sont étourdis",
+	[TrinketType.TRINKET_CRYSTAL_KEY] = "Tuer un ennemi le gèle parfois",
+	[TrinketType.TRINKET_BLUE_KEY] = "Tuer un ennemi étropié fait parfois apparaître un demi-cœur d'âme",
+	[TrinketType.TRINKET_STRANGE_KEY] = "Inflige des effets aléatoires aux ennemis",
+	[TrinketType.TRINKET_GILDED_KEY] = "Peut infliger la Malédiction de Midas aux ennemis",
+}
+
+-- French EID (by biobak)
+if true then
+	EID:addCollectible(CustomCollectibles.ORDINARY_LIFE, "↑ Débit augmenté#Permet à Isaac de choisir entre un objet aléatoire et un objet de Papa ou Maman dans les {{TreasureRoom}} salles du trésor", "Vie Ordinaire", "fr")	
+	EID:addCollectible(CustomCollectibles.COOKIE_CUTTER, "{{Heart}} +1 Réceptacle de cœur#{{BrokenHeart}} +1 cœur brisé#Soigne 2 cœurs rouges", "Moule à Biscuits", "fr")
+	EID:addCollectible(CustomCollectibles.SINNERS_HEART, "{{BlackHeart}} +2 cœurs noirs #↑ Dégâts {{ColorLime}}+2 x1.5#↑ Portée {{ColorLime}}+2#↓ Vitesse des tirs {{ColorError}}-0.2#Larmes spectrales#Larmes transperçantes", "Cœur de Pécheur", "fr")
+	EID:addCollectible(CustomCollectibles.RUBIKS_CUBE, "Chaque utilisation du Rubik's Cube a 5% de chances de le résoudre#Le Rubik's Cube sera forcément résolu à la 20ème utilisation#Résoudre le Rubik's Cube le remplace par un Magic Cube", "Rubik's Cube", "fr")
+	EID:addCollectible(CustomCollectibles.MAGIC_CUBE, "Rejoue tous les objets sur piédestaux de la salle#Les objets rejoués peuvent provenir de n'importe quelle banque d'objets", "Cube Magique", "fr")
+	EID:addCollectible(CustomCollectibles.MAGIC_PEN, "Un double appui sur un bouton de tir projette une flaque arc-en ciel dans la direction du tir#Inflige un effet aléatoire aux ennemis qui marchent dans la flaque#4 secondes entre chaque utilisation", "Stylo Magique", "fr")
+	EID:addCollectible(CustomCollectibles.MARK_OF_CAIN, "Invoque un Enoch#Mourir supprime tous les autres familiers d'Isaac et le ressucite#Revivre de cette manière rend Enoch plus fort#L'effet ne peut se déclencher qu'une seule fois", "Marque de Caïn", "fr")
+	EID:addCollectible(CustomCollectibles.TEMPER_TANTRUM, "Subir un dégât a 25% de déclencher l'effet de {{ColorYellow}}Frénésie {{Collectible704}}#Les ennemis frappés pendant une frénésie ont 5% de chance d'être effacés pour le reste de la partie", "Caprice", "fr")
+	EID:addCollectible(CustomCollectibles.BAG_O_TRASH, "Invoque des mouches à chaque salle terminée#Bloque les projectiles ennemis#Chaque projectile bloqué a 1.25% de chance de détruire l'objet de de faire apparaître {{ColorYellow}} Petit Déjeuner{{ColorWhite}}{{Collectible25}} ou {{ColorYellow}}Nightsoil#Invoque plus de mouches en fonction du nombre d'étages survécus", "Sac Poubelle", "fr")
+	EID:addCollectible(CustomCollectibles.CHERUBIM, "Tire des larmes avec les effets de l'{{ColorYellow}}Œil de la Providence {{Collectible331}}", "Chérubin", "fr")
+	EID:addCollectible(CustomCollectibles.CHERRY_FRIENDS, "Tuer un ennemi a 20% de chance de faire apparaître une cerise#Les cerises pètent et envoutent les ennemis qui leur marchent dessus#Les cerises ont 33% de chance de faire apparaître un demi-cœur rouge quand une salle est terminée", "Cerisade", "fr")
+	EID:addCollectible(CustomCollectibles.BLACK_DOLL, "Tous les ennemis d'une salle sont groupés par paire#Infliger des dégâts à un des deux ennemis inflige 60% de ces dégâts à l'autre", "Poupée Noire", "fr")
+	EID:addCollectible(CustomCollectibles.BIRD_OF_HOPE, "À sa mort, Isaac se transforme en fantôme, et un oiseau vole du centre de la pièce vers une direction aléatoire#Attraper l'oiseau ramène Isaac à la vie#L'oiseau vole de plus en plus vite à chaque mort", "Oiseau d'Espérance", "fr")
+	EID:addCollectible(CustomCollectibles.ENRAGED_SOUL, "Un double appui sur un bouton de tir envoie une âme dans la direction du tir#L'âme s'accroche au premier ennemi qu'elle rencontre et lui inflige des dégâts pendant 7 secondes#L'âme peut être envoyée toutes les 7 secondes", "Âme Enragée", "fr")
+	EID:addCollectible(CustomCollectibles.CEREMONIAL_BLADE, "Isaac tire parfois une larme transperçante qui n'inflige pas de dégâts mais inflige le saignement#Tous les ennemis tués par le saignement lâchent un flacon de sang sacrificiel#Le sang sacrificiel augmente temporairement les dégâts", "Lame de Cérémonie", "fr")
+	EID:addCollectible(CustomCollectibles.CEILING_WITH_THE_STARS, "Invoque deux feux follets au début de chaque étage et à chaque sieste dans un lit", "Plafond Étoilé", "fr")
+	EID:addCollectible(CustomCollectibles.QUASAR, "Détruit tous les objets sur piédestaux dans la salle et invoque 3 feux follets de {{ColorYellow}}Lemegeton{{ColorWhite}} {{Collectible712}} pour chaque objet détruit", "Quasar", "fr")
+	EID:addCollectible(CustomCollectibles.TWO_PLUS_ONE, "Acheter deux objets dans la Boutique {{Shop}} d'un étage réduit le prix du prochain achat à 1 pièce", "2+1", "fr")
+	EID:addCollectible(CustomCollectibles.RED_MAP, "Révèle l'emplacement de la Salle Ultra Secrète {{UltraSecretRoom}}#Laisser une babiole dans une salle de boss {{BossRoom}} ou une salle du trésor {{TreasureRoom}} la transformera en Clé Brisée {{Card78}} au retour d'Isaac", "Carte Rouge", "fr")
+	EID:addCollectible(CustomCollectibles.CHEESE_GRATER, "{{Heart}} {{ColorError}}-1{{ColorWhite}} Réceptacle de cœur#↑ Dégâts {{ColorLime}}+" .. tostring(CustomStatups.Damage.CHEESE_GRATER_MUL) .. "#Invoque 3 minisaacs", "Rape à Fromage", "fr")
+	EID:addCollectible(CustomCollectibles.DNA_REDACTOR, "Les pilules ont des effets supplémentaires en fonction de leur couleur", "Effaceur d'ADN", "fr")
+	EID:addCollectible(CustomCollectibles.TOWER_OF_BABEL, "Détruit tous les obstacles de la salle et étourdit les ennemis à proximité#Explose les portes et ouvre l'entrée des salles secrètes {{SecretRoom}}{{SuperSecretRoom}}", "Tour de Babel", "fr")
+	EID:addCollectible(CustomCollectibles.BLESS_OF_THE_DEAD, "Empêche les fléaux d'apparaître pour le reste de la partie#↑ Dégâts {{ColorLime}}x" .. tostring(CustomStatups.Damage.BLESS_OF_THE_DEAD_MUL) .. "{{ColorWhite}} pour chaque fléau annulé", "Bénédiction des Morts", "fr")
+	EID:addCollectible(CustomCollectibles.TANK_BOYS, "Invoque 2 tanks#Le tank vert tire rapidement des balles à longue distance#Le tank rouge tire des fusées explosives sur les ennemis à proximité", "P'tits Tanks", "fr")
+	EID:addCollectible(CustomCollectibles.GUSTY_BLOOD, "↑ Tuer un ennemi augmente la vitesse et le débit#Les bonus se réinitialisent à chaque nouvelle salle", "Souffle Salace", "fr")
+	EID:addCollectible(CustomCollectibles.RED_BOMBER, "{{Bomb}} +5 bombes #Immunité aux explosions#Permet à Isaac de jeter ses bombes au lieu de les poser", "Bombe Rouge", "fr")
+	EID:addCollectible(CustomCollectibles.MOTHERS_LOVE, "Augmente les stats pour chaque familier possédé#Les augmentations de stats dépendent des familiers", "Amour Maternel", "fr")
+	EID:addCollectible(CustomCollectibles.CAT_IN_A_BOX, "Les ennemis en-dehors du champ de vision d'Isaac sont paralysés et ne peuvent ni infliger ni recevoir de dégâts#Étourdit aléatoirement les boss et ennemis", "Chat en Boîte", "fr")
+	EID:addCollectible(CustomCollectibles.BOOK_OF_GENESIS, "Retire à Isaac un objet aléatoire et lui permet de choisir entre 3 objets de la même qualité pour le remplacer", "Livre de la Genèse", "fr")
+	EID:addCollectible(CustomCollectibles.SCALPEL, "{{Heart}} {{ColorError}}-1{{ColorWhite}} Réceptacle de cœur#Isaac tire des larmes additionnelles autour de lui#Ces larmes infligent 65% des dégâts d'Isaac et héritent de ses effets", "Scalpel", "fr")
+	EID:addCollectible(CustomCollectibles.KEEPERS_PENNY, "Entrer dans un nouvel étage fait apparaître une pièce dorée#Les boutiques vendent 1-4 objets supplémentaires provenant de la salle de boss, de salle du trésor ou de la boutique#Si Avaraice est dans la boutique, le tuer fait apparaître 3-4 objets", "Pièce du Gariden", "fr")
+	EID:addCollectible(CustomCollectibles.NERVE_PINCH, "{{Blank}} Un double appui sur un bouton de tir:#{{ArrowDown}} Vitesse {{ColorError}}" .. tostring(CustomStatups.Speed.NERVE_PINCH) .. "#A 80% de chance d'utiliser l'objet activable sans le vider de ses charges", "Pince-Nerf", "fr")
+	EID:addCollectible(CustomCollectibles.BLOOD_VESSELS[1], "Subir un dégât ne blesse plus Isaac mais remplit le flacon de sang#Le flacon est rempli après 6 dégâts subis#Le flacon rempli peut être vidé en l'utilisant, ce qui inflige 3 dégâts à Isaac, ou en subissant un dégât, ce qui inflige 3.5 dégâts à Isaac#{{Warning}} Le flacon se brise s'il est échangé alors qu'il n'est pas vide", "Flacon de Sang", "fr")
+	EID:addCollectible(CustomCollectibles.SIBLING_RIVALRY, "{{Blank}} Alterne entre 2 formes toutes les 15 secondes :#Deux familiers orbitent Isaac#Un familier orbite Isaac, tire des dents aléatoirement et répand des flaques de sang#{{Blank}}#Les deux formes bloquent les tirs et infligent des dégâts de contact", "Rivalité Fraternelle", "fr")
+	EID:addCollectible(CustomCollectibles.RED_KING, "Battre un boss ouvre une trappe rouge au centre de la salle#Entrer dans la trappe amène Isaac à un combat de boss plus difficile#Triompher du combat permet à Isaac de choisir entre deux objets de salle Ultra Secrète {{UltraSecretRoom}}", "Roi Écarlate", "fr")
+	EID:addCollectible(CustomCollectibles.STARGAZERS_HAT, "Invoque un mendiant astronome#Doit être rechargé avec des cœurs d'âme#Ne peut être utilisé qu'une fois par étage", "Chapeau d'Astronome", "fr")
+	EID:addCollectible(CustomCollectibles.BOTTOMLESS_BAG, "Rend Isaac invulnérable et aspire tous les projectiles ennemis à proximité#Après 4 secondes, projette toutes les larmes aspirées dans la direction des tirs d'Isaac#Les larmes projetées sont autoguidées et héritent des effets de larme d'Isaac", "Sac Sans Fond", "fr")
+	EID:addCollectible(CustomCollectibles.CROSS_OF_CHAOS, "Estropie les ennemis à proximité d'Isaac#Les ennemis estropiés ralentissent et meurent en une fontaine de larmes ralentissantes après 12 secondes", "Croix du Chaos", "fr")
+	EID:addCollectible(CustomCollectibles.REJECTION, "Retire les familiers d'Isaac et les transforme en une boule qui peut être lancée avec les boutons de tir#La boule est transperçante, empoisonnée et inflige davantage de dégâts selon le nombre de familiers#Donne un familier qui ne tire pas mais inflige des dégâts de contact", "Rejet", "fr")
+	EID:addCollectible(CustomCollectibles.AUCTION_GAVEL, "Fait apparaître un objet de la banque d'objet de la salle à l'achat#Son prix change aléatoirement et augmente progressivement#Sortir et rentrer dans la salle fait disparaître l'objet", "Marteau de Président", "fr")
+	EID:addCollectible(CustomCollectibles.SOUL_BOND, "Enchaîne Isaac a un ennemi aléatoire#La chaîne inflige de lourds dégâts de contact#Tuer un ennemi enchaîné a 33% de chances de faire apparaître un cœur d'âme#Trop s'éloigner de l'ennemi enchaîné brise la chaîne", "Lien Spirituel", "fr")
+	EID:addCollectible(CustomCollectibles.ANGELS_WINGS, "↑ Vitesse des tirs {{ColorLime}}+0.3#Larmes transperçantes#Les larmes d'Isaac infligent davantage de dégâts selon la distance qu'elles parcourent#Un double appui sur une touche de tir déclenche une attaque spéciale parmi trois", "Ailes Angéliques", "fr")
+	EID:addCollectible(CustomCollectibles.HAND_ME_DOWNS, "↑ Vitesse {{ColorLime}}+0.2#Mourir dépose 3 des objets d'Isaac sur le sol#Ces objets peuvent être récupérés au même étage dans la partie suivante", "Héritage", "fr")
+	EID:addCollectible(CustomCollectibles.BOOK_OF_LEVIATHAN, "{{Key}} +2 clés#{{Blank}}#Retire une clé à chaque utilisation#Estropie tous les ennemis de la salle#Les ennemis estropiés ralentissent progressivement et meurent en une fontaine de larmes ralentissantes après 12 secondes#Synergise avec les babioles de clés", "Livre du Léviathan", "fr")
+	EID:addCollectible(CustomCollectibles.FRIENDLY_SACK, "Terminer 3 salles invoque un familier faible#Si la 3ème salle terminée est une salle de boss, invoque un ennemi allié", "Sac de Potes", "fr")
+	EID:addCollectible(CustomCollectibles.MAGIC_MARKER, "Fait apparaître une carte#Utiliser l'objet rejoue les cartes de tarot en augmentant leur ID interne de 1#Diminue l'ID interne des cartes inversées", "Feutre Magique", "fr")
+	EID:addCollectible(CustomCollectibles.ULTRA_FLESH_KID, "Pourchasse les ennemis et inflige des dégâts de contact#Peut évoluer 3 fois en ramassant des cœurs#Doit ramasser 15 cœurs pour évoluer complètement", "Super Viande Garçon", "fr")
+	EID:addCollectible(CustomCollectibles.VAULT_OF_HAVOC, "Ne peut être utilisé qu'après avoir tué 12 ennemis#Téléporte Isaac dans une salle où il doit affronter les 12 derniers ennemis tués#Triompher du combat récompense Isaac en fonction du total de PV des ennemis affrontés", "Arène du Chaos", "fr")
+	EID:addCollectible(CustomCollectibles.PURE_SOUL, "Tuer un mini-boss péché fait apparaître son {{ColorYellow}}Joyau du Péché#Un fantôme fait apparaître un mini-boss péché dans les salles Secrètes et Super Secrètes s'il est approché#Un fantôme apparaît devant une salle contenant un mini-boss pour avertir Isaac", "Âme Pure", "fr")
+	EID:addCollectible(CustomCollectibles.HANDICAPPED_PLACARD, "Pose un panneau \"handicap\" au sol#Les ennemis dans l'aura du panneau sont affaiblis, ralentis et invoquent des os à leur mort", "Pancarte Handicap", "fr")
+	EID:addCollectible(CustomCollectibles.BOOK_OF_JUDGES, "Des rayons de lumières frappent aléatoirement un curseur dans les salles hostiles#Les rayons de lumière infligent des dégâts aux ennemis et à Isaac#Utiliser l'objet stoppe les rayons de lumières pour la durée de la salle", "Livre des Juges", "fr")
+	EID:addCollectible(CustomCollectibles.BIRTH_CERTIFICATE, "{{Warning}} USAGE UNIQUE#Avale toutes les babioles d'Isaac#Téléporte Isaac dans une salle contenant toutes les babioles du jeu#Isaac peut choisir autant de babioles qu'il peut en porter, puis est ramené dans la salle précédente", "Acte de Naissance", "fr")
+	EID:addCollectible(CustomCollectibles.BROKEN_TV, "???")
+
+	EID:addTrinket(CustomTrinkets.BASEMENT_KEY, "Les Coffres Dorés {{GoldenChest}} ont 25% de chance d'être convertis en Coffres Antiques {{DirtyChest}} ", "Clé du Sous-Sol", "fr")
+	EID:addTrinket(CustomTrinkets.KEY_TO_THE_HEART, "Tuer un ennemi a une chance de faire apparaître un Coffre de Chair", "Clé du Cœur", "fr")
+	EID:addTrinket(CustomTrinkets.JUDAS_KISS, "Les ennemis qui entrent en contact avec Isaac sont terrifiés et pris pour cible par les autres ennemis", "Baiser de Judas", "fr")
+	EID:addTrinket(CustomTrinkets.TRICK_PENNY, "Dépenser une pièce, bombe ou carte pour une machine ou un mendiant a 17% de chances de ne pas en retirer au compteur", "Pièce Piégée", "fr")
+	EID:addTrinket(CustomTrinkets.SLEIGHT_OF_HAND, "Les pièces ont 20% de chances d'être converties en une pièce de plus grande valeur", "Agilité", "fr")
+	EID:addTrinket(CustomTrinkets.GREEDS_HEART, "{{EmptyCoinHeart}} +1 Réceptacle de pièce#Subir un dégât vide ce réceptacle en premier", "Cœur d'Avarice", "fr")
+	EID:addTrinket(CustomTrinkets.ANGELS_CROWN, "Les salles du trésor {{TreasureRoom}} proposent des objets angéliques à la vente", "Couronne des Anges", "fr")
+	EID:addTrinket(CustomTrinkets.MAGIC_SWORD, "↑ Dégâts {{ColorLime}}x2#Subir un dégât casse la babiole#Posséder Ruban Adhésif {{Trinket109}} empêche la babiole de se casser", "Épée Magique", "fr")
+	EID:addTrinket(CustomTrinkets.WAIT_NO, "Aucun effet, il est cassé", "Oh non...", "fr")
+	EID:addTrinket(CustomTrinkets.EDENS_LOCK, "Subir un dégât rejoue un objet d'Isaac#Ne peut pas donner ou retirer d'objets importants", "Mèche d'Éden", "fr")
+	EID:addTrinket(CustomTrinkets.PIECE_OF_CHALK, "Entrer dans une salle hostile répand une traînée de poudre derrière Isaac#La poudre ralentit grandement les ennemis qui marchent dessus", "Bâton de Craie", "fr")
+	EID:addTrinket(CustomTrinkets.ADAMS_RIB, "22% de chances de ressuciter en Ève", "Côte d'Adam", "fr")
+	EID:addTrinket(CustomTrinkets.NIGHT_SOIL, "75% de chances d'annuler les fléaux en entrant dans un nouvel étage", "Sac d'Engrais", "fr")
+	EID:addTrinket(CustomTrinkets.BONE_MEAL, "À chaque nouvel étage : #↑ Dégâts {{ColorLime}}+10%#↑ Taille augmentée#{{Blank}}#Les bonus persistent après avoir lâché la babiole", "Poudre d'Os", "fr")
+	EID:addTrinket(CustomTrinkets.TORN_PAGE, "Renforce ou modifie les effets des livres", "Page Déchirée", "fr")
+	EID:addTrinket(CustomTrinkets.EMPTY_PAGE, "Utiliser un Livre active également l'effet d'un autre objet activable aléatoire#Les effets supplémentaires ne peuvent pas blesser, tuer ou rejouer Isaac", "Page Vierge", "fr")
+	EID:addTrinket(CustomTrinkets.BABY_SHOES, "Diminue la taille et la hitbox de tous les ennemis et boss de 10%", "Chaussures pour Bébé", "fr")
+	EID:addTrinket(CustomTrinkets.KEY_KNIFE, "Subir un dégât a 8% de chance de déclencher l'effet d'{{ColorYellow}}Arts Obscurs {{Collectible705}}", "Clé Pointue", "fr")
+	EID:addTrinket(CustomTrinkets.SHATTERED_STONE, "Ramasser une bombe, pièce ou clé peut invoquer un locuste#Les chances augmentent en fonction de la rareté de la ressource", "Fragment de Roche", "fr")
+
+	EID:addCard(CustomConsumables.SPINDOWN_DICE_SHARD, "Déclenche l'effet du {{ColorYellow}}Dé Compteur {{Collectible723}}", "Fragment de Dé Compteur", "fr")
+	EID:addCard(CustomConsumables.RED_RUNE, "Inflige des dégâts à tous les ennemis#Détruit les objets sur piédestaux et les convertit en locustes abyssaux#Détruit les ressources et a 50% de chances de les convertir en locustes", "Rune Rouge", "fr")
+	EID:addCard(CustomConsumables.NEEDLE_AND_THREAD, "Remplace un cœur brisé par un réceptale de cœur", "Matériel de Couture", "fr")
+	EID:addCard(CustomConsumables.QUEEN_OF_DIAMONDS, "Fait apparaître 1-12 pièces", "Dame de Carreau", "fr")
+	EID:addCard(CustomConsumables.KING_OF_SPADES, "Retire jusqu'à 33 clés et fait apparaître des ressources en conséquence#Peut faire apparaître une babiole ou un objet selon le nombre de clés#{{GoldenKey}} Retire la clé dorée", "Roi de Pique", "fr")
+	EID:addCard(CustomConsumables.KING_OF_CLUBS, "Retire jusqu'à 33 bombes et fait apparaître des ressources en conséquence#Peut faire apparaître une babiole ou un objet selon le nombre de bombes#{{GoldenBomb}} Retire la bombe dorée", "Roi de Trèfle", "fr")
+	EID:addCard(CustomConsumables.KING_OF_DIAMONDS, "Retire jusqu'à 66 pièces et fait apparaître des ressources en conséquence#Peut faire apparaître une babiole ou un objet selon le nombre de pièces", "Roi de Carreau", "fr")
+	EID:addCard(CustomConsumables.BAG_TISSUE, "Détruit toutes les ressources dans la pièce et fabrique un objet à partir des 8 plus rares", "Lambeau de Sac", "fr")
+	EID:addCard(CustomConsumables.JOKER_Q, "Téléporte Isaac dans un Marché Noir {{LadderRoom}}", "Joker ?", "fr")
+	EID:addCard(CustomConsumables.UNO_REVERSE_CARD, "Déclenche l'effet du {{ColorYellow}}Sablier Luisant {{Collectible422}}", "Carte Inversion", "fr")
+	EID:addCard(CustomConsumables.LOADED_DICE, "↑ Chance {{ColorLime}}+10{{ColorWhite}} pour la durée d'une salle", "Dé Pipé", "fr")
+	EID:addCard(CustomConsumables.BEDSIDE_QUEEN, "Fait apparaître 1-12 clés", "Dame de Pique", "fr")
+	EID:addCard(CustomConsumables.QUEEN_OF_CLUBS, "Fait apparaître 1-12 bombes", "Dame de Trèfle", "fr")
+	EID:addCard(CustomConsumables.JACK_OF_CLUBS, "Augmente la fréquence d'apparition des bombes et leur qualité pour la durée de l'étage", "Valet de Trèfle", "fr")
+	EID:addCard(CustomConsumables.JACK_OF_DIAMONDS, "Augmente la fréquence d'apparition des pièces et leur qualité pour la durée de l'étage", "Valet de Carreau", "fr")
+	EID:addCard(CustomConsumables.JACK_OF_SPADES, "Augmente la fréquence d'apparition des clés et leur qualité pour la durée de l'étage", "Valet de Pique", "fr")
+	EID:addCard(CustomConsumables.JACK_OF_HEARTS, "Augmente la fréquence d'apparition des cœurs et leur qualité pour la durée de l'étage", "Valet de Cœur", "fr")
+	EID:addCard(CustomConsumables.QUASAR_SHARD, "Inflige des dégâts à tous les ennemis#Détruit les objets sur piédestaux et invoque 3 feux follets de {{ColorYellow}}Lemegeton{{ColorWhite}}{{Collectible712}} pour chacun", "Fragment de Quasar", "fr")
+	EID:addCard(CustomConsumables.BUSINESS_CARD, "Déclenche l'effet de {{ColorYellow}}Amis Imaginaires {{Collectible687}}", "Carte de Visite", "fr")
+	EID:addCard(CustomConsumables.SACRIFICIAL_BLOOD, "↑ Dégâts {{ColorLime}}+1.25{{ColorWhite}} pour 25 secondes#Soigne un cœur rouge si Isaac possède {{ColorYellow}}Robes Cérémoniales {{Collectible216}}", "Sang Sacrificiel", "fr")
+	EID:addCard(CustomConsumables.LIBRARY_CARD, "Déclenche l'effet d'un livre au hasard", "Carte de Bibliothèque", "fr")
+	EID:addCard(CustomConsumables.FLY_PAPER, "Invoque 8 mouches qui orbitent Isaac", "Piège à Mouches", "fr")
+	EID:addCard(CustomConsumables.MOMS_ID, "Fait tomber un couteau sur chaque ennemi dans la salle#Les couteaux infligent {{ColorLime}}dégâts x2", "Carte d'Identité", "fr")
+	EID:addCard(CustomConsumables.FUNERAL_SERVICES, "Fait apparaître un coffre antique {{DirtyChest}}", "Carte de Condoléances", "fr")
+	EID:addCard(CustomConsumables.ANTIMATERIAL_CARD, "Utiliser cette carte la lance dans la direction où se déplace Isaac#Toucher un ennemi avec la carte l'empêche d'apparaître pour le reste de la partie", "Carte Antimatérielle", "fr")
+	EID:addCard(CustomConsumables.FIEND_FIRE, "Sacrifie les ressources d'Isaac :#3-20 : Inflige 15 dégâts et enflamme les ennemis#20-40 : inflige 30 dégâts, enflamme les ennemis et détruit les obstacles à proximité#40+ : inflige 60 dégâts, enflamme les ennemis et déclenche une énorme explosion", "Feu Ennemi", "fr")
+	EID:addCard(CustomConsumables.DEMON_FORM, "↑ Dégâts {{ColorLime}}+0.2{{ColorWhite}} en entrant dans une salle hostile#↑ Dégâts {{ColorLime}}+0.2{{ColorWhite}} en entrant dans une salle de boss#Les bonus se réinitialisent à la fin de l'étage", "Forme Démoniaque", "fr")
+	EID:addCard(CustomConsumables.VALENTINES_CARD, "Utiliser cette carte la lance dans la direction où se déplace Isaac et fait apparaître un cœur#Toucher un ennemi avec la carte l'envoûte", "Carte de Saint Valentin", "fr")
+	EID:addCard(CustomConsumables.SPIRITUAL_RESERVES, "Invoque 2 orbitaux fantômes qui tirent et bloquent les projectiles ennemis#Les fantômes meurent et font apparaître une demi-cœur d'âme après avoir bloqué 3 projectiles", "Réserves Spirituelles", "fr")
+	EID:addCard(CustomConsumables.MIRRORED_LANDSCAPE, "Déplace l'objet activable d'Isaac vers l'emplacement des cartes#Si un objet occupe déjà l'emplacement des cartes, il est posé sur un piédestal", "Paysage Myriadiare", "fr")
+	EID:addCard(CustomConsumables.CURSED_CARD, "Les dégâts reçus ne retirent pas de PV mais brisent un des cœurs d'Isaac et augmentent le débit de manière permanente#L'effet de la carte persiste pour la durée d'une salle", "Carte Maudite", "fr")
+	--
+	EID:addCard(CustomConsumables.CROWN_OF_GREED , "Fait apparaître 1-2 pièces dorées#↓ Chance {{ColorError}}-1{{ColorWhite}} pour chaque pièce générée", "Couronne d'Avarice", "fr")
+	EID:addCard(CustomConsumables.FLOWER_OF_LUST, "Rejoue une salle hostile et garantit une meilleure récompense", "Fleur de Luxure", "fr")
+	EID:addCard(CustomConsumables.ACID_OF_SLOTH, "Les ennemis sont ralentis de moitié mais créent des nuages de poison toutes les 2 secondes", "Acide de Paresse", "fr")
+	EID:addCard(CustomConsumables.VOID_OF_GLUTTONY, "Régénère un demi-cœur rouge toutes les secondes#↓ Vitesse {{ColorError}}-0.01{{ColorWhite}} pour chaque demi-cœur régénéré#{{Blank}}#{{Timer}} L'effet persiste pendant 7 secondes et est rallongé de 2 secondes pour chaque ennemi tué", "Néant de Gourmandise", "fr")
+	EID:addCard(CustomConsumables.APPLE_OF_PRIDE, "Augmente toutes les statistiques d'Isaac#Subir un dégât retire les bonus", "Pomme d'Orgueil", "fr")
+	EID:addCard(CustomConsumables.CANINE_OF_WRATH, "Explose tous les ennemis dans la salle#↑ Dégâts {{ColorLime}}+1.25{{ColorWhite}} termporairement pour chaque ennemi tué par une explosion", "Canine de Colère", "fr")
+	EID:addCard(CustomConsumables.MASK_OF_ENVY, "Convertit tous les réceptacles de cœurs rouges d'Isaac en cœurs d'os moisis", "Masque d'Envie", "fr")
+
+	EID:addPill(CustomPills.ESTROGEN, "Transforme tous les cœurs rouges d'Isaac sauf un en pâtés", "Œstrogène", "fr")
+	EID:addPill(CustomPills.LAXATIVE, "Isaac tire des grains de maïs derrière lui pendant 3 secondes", "Laxatifs", "fr")
+	EID:addPill(CustomPills.PHANTOM_PAINS, "Inflige un dégât factice à Isaac, puis un autre après 15 et 30 secondes", "Douleurs Fantômes", "fr")
+	EID:addPill(CustomPills.YUCK, "Fait apparaître un cœur moisi#Pendant 30 secondes, ramasser un cœur rouge fait apparaître une mouche bleue", "Beurk !", "fr")
+	EID:addPill(CustomPills.YUM, "Fait apparaître 2-5 demi-cœurs rouges#Pendant 30 secondes, ramasser un cœur rouge augmente une stat aléatoire de manière permanente", "Miam !", "fr")
+
+	EID:addEntity(5, 10, 84, "Cœur Blessé", "{{Heart}} +1 Réceptacle de cœur#{{BrokenHeart}} +1 Cœur brisé", "fr")
+	EID:addEntity(5, 10, 85, "Cœur Vaillant", "Si le nombre total de cœurs d'Isaac est impair, tuer un ennemi a 20% de chance de faire apparaître un demi-cœur temporaire", "fr")
+	EID:addEntity(5, 10, 86, "Cœur Collectionneur", "Soigne 4 cœurs rouges", "", "fr")
+	EID:addEntity(5, 10, 87, "Cœur Traître", "Se sépare en un demi-cœur rouge et une ressource quand Isaac s'en approche", "fr")
+	EID:addEntity(5, 10, 88, "Cœur Fumant", "Terminer une salle fait apparaître 0-2 crottes alliées", "fr")
+	EID:addEntity(5, 10, 89, "Cœur Grumeleux", "Soigne un cœur rouge et fait apparaître un pâté", "fr")
+	EID:addEntity(5, 10, 90, "Cœur Sauvage", "Soigne un cœur rouge#↑ Dégâts {{ColorLime}}+1.25{{ColorWhite}} temporairement#Augmente davantage les dégâts si les cœurs rouges d'Isaac sont déjà tous remplis", "fr")
+	EID:addEntity(5, 10, 91, "Cœur Occulté", "↑ Dégâts {{ColorLime}}+0.16", "", "fr")
+	EID:addEntity(5, 10, 92, "Cœur Énigmatique", "Permet à Isaac de ressusciter avec un demi-cœur rouge#Chaque cœur énigmatique supplémentaire soigne Isaac de deux cœurs rouges quand il ressuscite", "fr")
+	EID:addEntity(5, 10, 93, "Cœur Capricieux", "Se sépare en 3 cœurs aléatoires quand il est ramassé", "", "fr")
+	EID:addEntity(5, 10, 94, "Cœur Funeste", "Invoque des fantômes quand Isaac est à proximité d'ennemis#Posséder d'autres cœurs funestes augmente les dégâts et la portée des fantômes", "fr")
+	EID:addEntity(5, 10, 95, "Cœur Débauché", "Soigne un cœur rouge#Invoque un familier {{ColorYellow}}Lèpre {{Collectible525}}", "fr")
+	EID:addEntity(5, 10, 96, "Cœur Liardeur", "Réduit les prix de 15%#Détruire ce cœur rejoue les objets et les ressources de la salle", "fr")
+	EID:addEntity(5, 10, 97, "Cœur Abyssal", "Entrer dans un nouvel étage invoque un locuste abyssal", "fr")
+	EID:addEntity(5, 10, 98, "Cœur Inséparable", "Nécessite une clé pour être ramassé#Invoque un familier fantôme", "fr")
+	EID:addEntity(5, 10, 99, "Cœur Fervent", "Entrer dans un nouvel étage invoque un feu follet de {{ColorYellow}}Lemegeton {{Collectible712}}", "fr")
+	EID:addEntity(5, 10, 100, "Cœur Déserteur", "Soigne un cœur rouge ou donne un cœur noir en fonction des réceptacles de cœur d'Isaac", "fr")
+end
