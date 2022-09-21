@@ -271,7 +271,7 @@ mod:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pickup)
             elseif roll < baseChance * 3 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_SAVAGE)
             elseif roll < baseChance * 4 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_HARLOT)
             elseif roll < baseChance * 5 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_DECEIVER)
-            elseif roll < baseChance * 6 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_ENIGMA) end
+            elseif roll < baseChance * 6 and game:GetNumPlayers() == 1 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_ENIGMA) end
 
         elseif subtype == HeartSubType.HEART_SOUL then
             baseChance = getTrueTaintedMorphChance("soul")
@@ -1049,8 +1049,7 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
 				return pickup:IsShopItem()
 			end
 
-		elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_ENIGMA 
-        and game:GetNumPlayers() == 1 then
+		elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_ENIGMA then
 			SetEnigmaHearts(collider, GetEnigmaHearts(collider) + 1)
 
         elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_CAPRICIOUS then
