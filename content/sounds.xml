@@ -152,5 +152,13 @@
 	</sound>
 	<sound name="Valentine's Card">
 		<sample weight="1" path="Valentine's Day Card.wav" />
+		
+	<!-- DSS -->
 	</sound>
+	    	<sound name="deadseascrolls_pop">
+        	<sample weight="1" path="deadseascrolls/pop.wav"/>
+    	</sound>
+    	<sound name="deadseascrolls_whoosh">
+    	    <sample weight="1" path="deadseascrolls/whoosh.wav"/>
+    	</sound>
 </sounds>
