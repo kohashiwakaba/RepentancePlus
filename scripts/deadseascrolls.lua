@@ -1,7 +1,8 @@
 -- A lot of this code is based on Antibirth Announcer+ Dead Sea Scrolls Menu 
--- Thanks to Jerb for making it possible
+-- Thanks to Jerb for making it possible!! <3
 --
 local DSSModName = "Dead Sea Scrolls (Repentance Plus)"
+local mod = RepentancePlusMod
 
 local bossMarks = {
     "Boss Rush",
@@ -13,14 +14,22 @@ local bossMarks = {
     "Character Unlock"
 }
 
-local specialunlocks = {"Black Chest", "Scarlet Chest", "Flesh Chest", "Coffin", "Stargazer", "Tainted Rocks", "Birth Certificate"}
+local specialUnlocks = {
+    "Black Chest",
+    "Scarlet Chest",
+    "Flesh Chest",
+    "Coffin",
+    "Stargazer",
+    "Tainted Rocks",
+    "Birth Certificate"
+}
 
-local specialunlockdescriptions = {
-    ["Black Chest"] = {"enter a", "devil room", "5 times"}, 
-    ["Scarlet Chest"] = {"enter an", "ultra secret", "room", "3 times"}, 
+local specialUnlocksDescriptions = {
+    ["Black Chest"] = {"enter a", "devil room", "5 times"},
+    ["Scarlet Chest"] = {"enter an", "ultra secret", "room", "3 times"},
     ["Flesh Chest"] = {"enter a", "curse room", "10 times"},
     ["Coffin"] = {"enter a", "secret room", "10 times"},
-    ["Stargazer"] = {"enter a", "planetarium", "3 times"}, 
+    ["Stargazer"] = {"enter a", "planetarium", "3 times"},
     ["Tainted Rocks"] = {"enter a", "super secret", "room", "5 times"},
     ["Birth Certificate"] = {"earn all", "repentance+", "unlocks"}
 }
@@ -45,7 +54,7 @@ local playerTypeToName = {
     [37] = "jacob"
 }
 
-local heartnames = {
+local heartTypeToName = {
     [84] = "broken heart",
     [85] = "dauntless heart",
     [86] = "hoarder heart",
@@ -70,20 +79,20 @@ local DSSCoreVersion = 6
 local MenuProvider = {}
 
 function MenuProvider.SaveSaveData()
-    rplus.StoreSaveData()
+    mod.StoreSaveData()
 end
 
 function MenuProvider.GetPaletteSetting()
-    return rplus.GetSaveData().MenuPalette
+    return mod.GetSaveData().MenuPalette
 end
 
 function MenuProvider.SavePaletteSetting(var)
-    rplus.GetSaveData().MenuPalette = var
+    mod.GetSaveData().MenuPalette = var
 end
 
 function MenuProvider.GetHudOffsetSetting()
     if not REPENTANCE then
-        return rplus.GetSaveData().HudOffset
+        return mod.GetSaveData().HudOffset
     else
         return Options.HUDOffset * 10
     end
@@ -91,170 +100,171 @@ end
 
 function MenuProvider.SaveHudOffsetSetting(var)
     if not REPENTANCE then
-        rplus.GetSaveData().HudOffset = var
+        mod.GetSaveData().HudOffset = var
     end
 end
 
 function MenuProvider.GetGamepadToggleSetting()
-    return rplus.GetSaveData().GamepadToggle
+    return mod.GetSaveData().GamepadToggle
 end
 
 function MenuProvider.SaveGamepadToggleSetting(var)
-    rplus.GetSaveData().GamepadToggle = var
+    mod.GetSaveData().GamepadToggle = var
 end
 
 function MenuProvider.GetMenuKeybindSetting()
-    return rplus.GetSaveData().MenuKeybind
+    return mod.GetSaveData().MenuKeybind
 end
 
 function MenuProvider.SaveMenuKeybindSetting(var)
-    rplus.GetSaveData().MenuKeybind = var
+    mod.GetSaveData().MenuKeybind = var
 end
 
 function MenuProvider.GetMenuHintSetting()
-    return rplus.GetSaveData().MenuHint
+    return mod.GetSaveData().MenuHint
 end
 
 function MenuProvider.SaveMenuHintSetting(var)
-    rplus.GetSaveData().MenuHint = var
+    mod.GetSaveData().MenuHint = var
 end
 
 function MenuProvider.GetMenuBuzzerSetting()
-    return rplus.GetSaveData().MenuBuzzer
+    return mod.GetSaveData().MenuBuzzer
 end
 
 function MenuProvider.SaveMenuBuzzerSetting(var)
-    rplus.GetSaveData().MenuBuzzer = var
+    mod.GetSaveData().MenuBuzzer = var
 end
 
 function MenuProvider.GetMenusNotified()
-    return rplus.GetSaveData().MenusNotified
+    return mod.GetSaveData().MenusNotified
 end
 
 function MenuProvider.SaveMenusNotified(var)
-    rplus.GetSaveData().MenusNotified = var
+    mod.GetSaveData().MenusNotified = var
 end
 
 function MenuProvider.GetMenusPoppedUp()
-    return rplus.GetSaveData().MenusPoppedUp
+    return mod.GetSaveData().MenusPoppedUp
 end
 
 function MenuProvider.SaveMenusPoppedUp(var)
-    rplus.GetSaveData().MenusPoppedUp = var
+    mod.GetSaveData().MenusPoppedUp = var
 end
 
 local DSSInitializerFunction = include("scripts.dssmenucore")
 local dssmod = DSSInitializerFunction(DSSModName, DSSCoreVersion, MenuProvider)
 
-local rplusdirectory = {
+-- Some configs are wrong and cause errors, this is a handler for them
+local function getNameFromConfig(desc)
+    if desc then
+        return desc.Name
+    end
+
+    return "error string"
+end
+
+local modDirectory = {
     main = {
-    title = 'repentance plus',
+        title = 'repentance plus',
         buttons = {
+            dssmod.gamepadToggleButton,
+            dssmod.menuKeybindButton,
+            dssmod.paletteButton,
             {str = 'resume game', action = 'resume'},
             {str = 'unlocks', dest = 'unlocks'},
-            {str = 'fart button',
-            func = function(button, item, menuObj)
-                SFXManager():Play(SoundEffect.SOUND_FART , 1, 0, false, math.random(11, 13) / 10)
-            end}
+            {
+                str = 'fart button',
+                func = function(button, item, menuObj)
+                    SFXManager():Play(SoundEffect.SOUND_FART , 1, 0, false, math.random(11, 13) / 10)
+                end
+            }
         },
         tooltip = dssmod.menuOpenToolTip
     },
     unlocks = {
         title = 'unlocks',
-        buttons = {
-            dssmod.gamepadToggleButton,
-            dssmod.menuKeybindButton,
-            dssmod.paletteButton,
-
-        }
+        buttons = {}
     }
 }
 
-
 for p = 21, 37 do
-	local Charactername = playerTypeToName[p]
-	if Charactername == "???" then Charactername = "bluebaby" end
-	local unlockpage = {
-        title = playerTypeToName[p],
-        buttons = {
-            dssmod.gamepadToggleButton,
-            dssmod.menuKeybindButton,
-            dssmod.paletteButton,
-        }
+	local characterName = playerTypeToName[p]
+
+	modDirectory[characterName] = {
+        title = characterName,
+        buttons = {}
     }
-	rplusdirectory[Charactername] = unlockpage
-	rplusdirectory.unlocks.buttons[#rplusdirectory.unlocks.buttons+1] = {str = 'tainted '..playerTypeToName[p], dest = Charactername}
-    rplusdirectory.unlocks.buttons[#rplusdirectory.unlocks.buttons+1] = {str = "", fsize = 1, nosel = true}
+	modDirectory.unlocks.buttons[#modDirectory.unlocks.buttons + 1] = {str = 'tainted '..characterName, dest = characterName}
+    modDirectory.unlocks.buttons[#modDirectory.unlocks.buttons + 1] = {str = "", fsize = 1, nosel = true}
+
     for _, boss in pairs(bossMarks) do
-        local button
-        local itemname 
-        local text = {'defeat', string.lower(boss), 'as', 't. '..playerTypeToName[p]}
-        local variant = rplus.GetSaveData()[tostring(p)][boss].Variant
-        local subtype = rplus.GetSaveData()[tostring(p)][boss].SubType
-        if variant == 100 then 
-            itemname = Isaac.GetItemConfig():GetCollectible(subtype).Name
-        elseif variant == 350 then 
-            itemname = Isaac.GetItemConfig():GetTrinket(subtype).Name
-        elseif variant == 10 then  
-            itemname = heartnames[subtype]
-            text = {'unlock', 't. '..playerTypeToName[p]}
-        elseif variant == 300 then 
-            itemname = Isaac.GetItemConfig():GetCard(subtype).Name
+        local itemname = "???"
+        local text = {
+            'defeat',
+            string.lower(boss),
+            'as',
+            't. ' .. characterName
+        }
+        local variant = mod.GetSaveData()[tostring(p)][boss].Variant
+        local subtype = mod.GetSaveData()[tostring(p)][boss].SubType
+
+        if variant == 100 then
+            itemname = getNameFromConfig(Isaac.GetItemConfig():GetCollectible(subtype))
+        elseif variant == 350 then
+            itemname = getNameFromConfig(Isaac.GetItemConfig():GetTrinket(subtype))
+        elseif variant == 10 then
+            itemname = heartTypeToName[subtype]
+            text = {'unlock', 't. ' .. characterName}
+        elseif variant == 300 then
+            itemname = getNameFromConfig(Isaac.GetItemConfig():GetCard(subtype))
         else
-            itemname = Isaac.GetItemConfig():GetPillEffect(subtype).Name
+            itemname = getNameFromConfig(Isaac.GetItemConfig():GetPillEffect(subtype))
         end
-        
-        button = {
+
+        modDirectory[characterName].buttons[#modDirectory[characterName].buttons + 1] = {
             str = string.lower(itemname),
             choices = {'locked', 'unlocked'},
-            variable = tostring(p).."_"..boss,
+            variable = tostring(p).. "_" .. boss,
             setting = 2,
             load = function()
-                return rplus.savedata[tostring(p)][boss].Unlocked and 2 or 1
+                return mod.savedata[tostring(p)][boss].Unlocked and 2 or 1
             end,
             store = function(var)
-                rplus.savedata[tostring(p)][boss].Unlocked = var == 2
+                mod.savedata[tostring(p)][boss].Unlocked = var == 2
             end,
             tooltip = {strset = text}
         }
-        rplusdirectory[Charactername].buttons[#rplusdirectory[Charactername].buttons+1] = button 
 
     end
-     
 end
 
-local unlockpage = {
+modDirectory["special"] = {
     title = 'special unlocks',
-    buttons = {
-        dssmod.gamepadToggleButton,
-        dssmod.menuKeybindButton,
-        dssmod.paletteButton,
-    }
+    buttons = {}
 }
-rplusdirectory["special"] = unlockpage
-rplusdirectory.unlocks.buttons[#rplusdirectory.unlocks.buttons+1] = {str = "-----------------", fsize = 3, nosel = true}
-rplusdirectory.unlocks.buttons[#rplusdirectory.unlocks.buttons+1] = {str = "", fsize = 1, nosel = true}
-rplusdirectory.unlocks.buttons[#rplusdirectory.unlocks.buttons+1] = {str = 'special unlocks', dest = "special"}
+modDirectory.unlocks.buttons[#modDirectory.unlocks.buttons + 1] = {str = "-----------------", fsize = 3, nosel = true}
+modDirectory.unlocks.buttons[#modDirectory.unlocks.buttons + 1] = {str = "", fsize = 1, nosel = true}
+modDirectory.unlocks.buttons[#modDirectory.unlocks.buttons + 1] = {str = 'special unlocks', dest = "special"}
 
-for _, unlock in pairs(specialunlocks) do
-    local button = {
+for _, unlock in pairs(specialUnlocks) do
+    modDirectory["special"].buttons[#modDirectory["special"].buttons + 1] = {
         str = string.lower(unlock),
         choices = {'locked', 'unlocked'},
         variable = unlock,
         setting = 2,
         load = function()
-            return rplus.savedata["Special"][unlock].Unlocked and 2 or 1
+            return mod.savedata["Special"][unlock].Unlocked and 2 or 1
         end,
         store = function(var)
-            rplus.savedata["Special"][unlock].Unlocked = var == 2
+            mod.savedata["Special"][unlock].Unlocked = var == 2
         end,
-        tooltip = {strset = specialunlockdescriptions[unlock]}
+        tooltip = {strset = specialUnlocksDescriptions[unlock]}
     }
-    rplusdirectory["special"].buttons[#rplusdirectory["special"].buttons+1] = button 
 end
 
-local rplusdirectorykey = {
-    Item = rplusdirectory.main,
+local modDirectorykey = {
+    Item = modDirectory.main,
     Main = 'main',
     Idle = false,
     MaskAlpha = 1,
@@ -263,9 +273,17 @@ local rplusdirectorykey = {
     Path = {},
 }
 
-
-
-DeadSeaScrollsMenu.AddMenu("Repentance Plus", {Run = dssmod.runMenu, Open = dssmod.openMenu, Close = dssmod.closeMenu, Directory = rplusdirectory, DirectoryKey = rplusdirectorykey})
+-- add the menu
+DeadSeaScrollsMenu.AddMenu(
+    "Repentance Plus",
+    {
+        Run = dssmod.runMenu,
+        Open = dssmod.openMenu,
+        Close = dssmod.closeMenu,
+        Directory = modDirectory,
+        DirectoryKey = modDirectorykey
+    }
+)
 
 
 

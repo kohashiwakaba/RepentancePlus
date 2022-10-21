@@ -26,7 +26,7 @@
 	<trinket name="Key Knife" description="Pain is key" gfx="t19_keyknife.png" />
 	
 	<!-- T. ??? -->
-	<familiar id="15" name="Bag o Trash" description="Will you take it out already?!" gfx="10_bagotrash.png" quality="2" tags="summonable monstermanual offensive" />
+	<familiar id="15" name="Bag-o-Trash" description="Will you take it out already?!" gfx="10_bagotrash.png" quality="2" tags="summonable monstermanual offensive" />
 	<trinket name="Night Soil" description="Eww.." gfx="t14_nightsoil.png" />
 	<passive id="16" name="Bless of the Dead" description="What doesn't kill you makes you stronger" gfx="21_blessofthedead.png" quality="3" tags="summonable offensive" persistent="true" />
 	<passive id="44" name="Hand-Me-Downs" description="Speed up + share your belongings" gfx="45_handmedowns.png" quality="1" cache="speed" tags="offensive" />
@@ -102,10 +102,6 @@
 	<familiar id="34" name="Tank Boys" description="You and what army?" gfx="44_tankboys.png" quality="3" tags="monstermanual offensive" />
 	<passive id="35" name="Red King" description="BLOOD is my reward" gfx="43_redking.png" quality="4" devilprice="2" tags="offensive nogreed" /> 
 	<familiar id="36" name="Sibling Rivalry" description="I can't stand you!" gfx="27_siblingrivalry.png" quality="3" tags="offensive monstermanual" />
-		
-	<!-- challenge unlocks ??? -->
-	<familiar id="55" name="Broken TV" description="Static overload!" gfx="54_brokenTV.png" quality="0" hidden="true" />
-
 	
 	<!-- TECHNICAL -->
 	<active quality="2" gfx="47_1_bloodvessel.png" name="Empty Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
@@ -118,7 +114,7 @@
 	<trinket name="Wait, No!" description=":(" gfx="t11_waitno.png" />
 	<active quality="2" gfx="31_1_bottomlessbag_open.png" name="Opened Bottomless Bag" maxcharges="390" chargetype="timed" hidden="true" />
 
-		<!-- NULLS -->
+	<!-- NULLS -->
 	<passive name="loaded dice" gfx="00_NULLITEM.png" persistent="true" cache="luck" hidden="true" />
 	<passive name="apple of pride" gfx="00_NULLITEM.png" persistent="true" cache="damage luck firedelay speed range" hidden="true" />
 	<passive name="demon form" gfx="00_NULLITEM.png" persistent="true" cache="damage" hidden="true" />

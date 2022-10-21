@@ -70,10 +70,10 @@ return function(DSSModName, DSSCoreVersion, MenuProvider)
     mfdat['>'] = { 57, 5, 7, 10 };
 
     dssmod.menusounds = {
-        Pop2 = { Sound = Isaac.GetSoundIdByName("deadseascrolls_pop"), PitchVariance = .1 },
-        Pop3 = { Sound = Isaac.GetSoundIdByName("deadseascrolls_pop"), Pitch = .8, PitchVariance = .1 },
-        Open = { Sound = Isaac.GetSoundIdByName("deadseascrolls_whoosh"), Volume = .5, PitchVariance = .1 },
-        Close = { Sound = Isaac.GetSoundIdByName("deadseascrolls_whoosh"), Volume = .5, Pitch = .8, PitchVariance = .1 }
+        Pop2 = { Sound = Isaac.GetSoundIdByName("DSS pop"), PitchVariance = .1 },
+        Pop3 = { Sound = Isaac.GetSoundIdByName("DSS pop"), Pitch = .8, PitchVariance = .1 },
+        Open = { Sound = Isaac.GetSoundIdByName("DSS whoosh"), Volume = .5, PitchVariance = .1 },
+        Close = { Sound = Isaac.GetSoundIdByName("DSS whoosh"), Volume = .5, Pitch = .8, PitchVariance = .1 }
     }
 
     dssmod.playSound = function(...) -- A simpler method to play sounds, allows ordered or paired tables.
@@ -583,7 +583,7 @@ return function(DSSModName, DSSCoreVersion, MenuProvider)
                 if module.size == nil then module.size = fsize end
                 if module.height == nil then module.height = fontspacers[module.size] end
 
-                local fullstr = module.str
+                local fullstr = module.str or "[error]"
                 if type(module.str) == "table" then
                     fullstr = ''
                     for _, val in ipairs(module.str) do

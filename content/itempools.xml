@@ -2,7 +2,7 @@
 	<Pool Name="treasure">
 		<Item Name="Rubik's Cube" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Magic Pen" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Bag o Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Cherry Friends" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Tower of Babel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<item Name="Tank Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -76,7 +76,7 @@
 		<Item Name="Black Doll" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="beggar">
-		<Item Name="Bag o Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Hand-Me-Downs" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="demonBeggar">
@@ -119,7 +119,7 @@
 	</Pool>
 	<Pool Name="babyShop">
 		<Item Name="Cherubim" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Bag o Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<item Name="Tank Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Sibling Rivalry" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Friendly Sack" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -149,7 +149,7 @@
 	<Pool Name="greedTreasure">
 		<Item Name="Rubik's Cube" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Magic Pen" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
-		<Item Name="Bag o Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<item Name="Tank Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Gusty Blood" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Red Bomber" Weight="1" DecreaseBy="1" RemoveOn="0.1" />

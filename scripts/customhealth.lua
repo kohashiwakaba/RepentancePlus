@@ -175,7 +175,6 @@ local function handleHeartsDupe()
                 if oldHeart.FrameCount > 0
                 and newHeart.InitSeed == oldHeart.InitSeed then
                     newHeart:GetData().noTaintedMorph = true
-                    newHeart:ToPickup():Morph(5, 10, oldHeart.SubType, true, true, true)
                 end
            end
         end
@@ -248,6 +247,17 @@ local function getTrueTaintedMorphChance(kind)
 
             return 125
         end
+    elseif kind == "golden" then
+        for i = 0, game:GetNumPlayers() - 1 do
+            local player = Isaac.GetPlayer(i)
+
+            -- T. Eve breaks Miser hearts for now, so they are banned
+            if player:GetPlayerType() == PlayerType.PLAYER_EVE_B then
+                return 0
+            end
+
+            return 250
+        end
     end
 end
 
@@ -296,7 +306,9 @@ mod:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pickup)
             if roll < baseChance then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_BENIGHTED) end
 
         elseif subtype == HeartSubType.HEART_GOLDEN then
-            if roll < 250 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_MISER) end
+            baseChance = getTrueTaintedMorphChance("golden")
+            if roll < baseChance then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_MISER) end
+
         elseif subtype == HeartSubType.HEART_BLENDED then
             if roll < 400 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_DESERTED) end
 
@@ -357,8 +369,8 @@ CustomHealthAPI.Library.RegisterSoulHealth(
     {
         AnimationFilename = "gfx/ui/ui_taintedhearts.anm2",
         AnimationName = {"ZealotHeartHalf", "ZealotHeartFull"},
-        SortOrder = 100,
-        AddPriority = 125,
+        SortOrder = 200,
+        AddPriority = 225,
         HealFlashRO = 189/255, 
         HealFlashGO = 95/255,
         HealFlashBO = 182/255,
@@ -386,7 +398,7 @@ mod:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, function()
         local player = Isaac.GetPlayer(i)
 
         if CustomHealthAPI.Library.GetHPOfKey(player, "HEART_ZEALOT") > 0 then
-            for _ = 1, CustomHealthAPI.Library.GetHPOfKey(player, "HEART_ZEALOT") // 2 do
+            for _ = 1, (CustomHealthAPI.Library.GetHPOfKey(player, "HEART_ZEALOT") + 1) // 2 do
                 player:AddItemWisp(mod.GetUnlockedVanillaCollectible(false, false), player.Position, true)
             end
         end
@@ -479,17 +491,17 @@ CustomHealthAPI.Library.RegisterSoulHealth(
     }
 )
 
-mod:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, function(_, player)
-    if not player:HasCollectible(CollectibleType.COLLECTIBLE_WAFER) then
-        local eff = player:GetEffects()
+CustomHealthAPI.Library.AddCallback("RepentancePlus", CustomHealthAPI.Enums.Callbacks.POST_HEALTH_DAMAGED, 0, function(player, flags, key, hpDamaged, wasDepleted, wasLastDamaged)
+	if key == "HEART_DAUNTLESS"
+    and CustomHealthAPI.Library.GetHPOfKey(player, "HEART_DAUNTLESS") == 0 then
+        player:GetEffects():RemoveCollectibleEffect(CollectibleType.COLLECTIBLE_WAFER, 1)
+    end
+end)
 
-        if CustomHealthAPI.Library.GetHPOfKey(player, "HEART_DAUNTLESS") > 0
-        and not eff:HasCollectibleEffect(CollectibleType.COLLECTIBLE_WAFER) then
-            eff:AddCollectibleEffect(CollectibleType.COLLECTIBLE_WAFER, false, 1)
-        elseif CustomHealthAPI.Library.GetHPOfKey(player, "HEART_DAUNTLESS") == 0
-        and eff:HasCollectibleEffect(CollectibleType.COLLECTIBLE_WAFER) then
-            eff:RemoveCollectibleEffect(CollectibleType.COLLECTIBLE_WAFER, 1)
-        end
+mod:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, function(_, player)
+    if CustomHealthAPI.Library.GetHPOfKey(player, "HEART_DAUNTLESS") > 0
+    and not player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_WAFER) then
+        player:GetEffects():AddCollectibleEffect(CollectibleType.COLLECTIBLE_WAFER, false, 1)
     end
 end)
 
@@ -576,10 +588,24 @@ mod:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, function(_)
             rng:SetSeed(player.InitSeed + Random(), 1)
 
             for j = 1, CustomHealthAPI.Library.GetHPOfKey(player, "HEART_SOILED") do
-                local randomdip = rng:RandomInt(45)
+                -- normal dips (subtypes 0-14, so 14/45 ~ 30% to spawn any dip)
+                local randomDip = rng:RandomInt(45)
+                if randomDip < 15 then
+                    Isaac.Spawn(3, FamiliarVariant.DIP, randomDip, player.Position, Vector.Zero, player)
+                end
 
-                if randomdip < 15 then
-                    Isaac.Spawn(3, FamiliarVariant.DIP, randomdip, player.Position, Vector.Zero, player)
+                -- Fiend Folio special dips (17% chance to spawn one)
+                if FiendFolio and rng:RandomFloat() < 0.17 then
+                    local FFDips = {
+                        666,    -- drop
+                        667,    -- cursed
+                        668,    -- bee
+                        669,    -- platinum
+                        670,    -- spider
+                        671     -- evil
+                    }
+                    local randomFFDip = FFDips[rng:RandomInt(#FFDips) + 1]
+                    Isaac.Spawn(3, FamiliarVariant.DIP, randomFFDip, player.Position, Vector.Zero, player)
                 end
             end
         end
@@ -594,15 +620,14 @@ end)
 
 -- put the getters beforehand because they are needed for GetRightmostHeartForRender
 local function GetBalefulHearts(player)
-    return player:GetData().CustomHealthAPISavedata.Overlays["HEART_BALEFUL"] or 0
+    return player:GetData().CustomHealthAPISavedata and player:GetData().CustomHealthAPISavedata.Overlays["HEART_BALEFUL"] or 0
 end
 local function GetEmptyHearts(player)
-    return player:GetData().CustomHealthAPISavedata.Overlays["HEART_EMPTY"] or 0
+    return player:GetData().CustomHealthAPISavedata and player:GetData().CustomHealthAPISavedata.Overlays["HEART_EMPTY"] or 0
 end
 
 local function GetRightmostHeartForRender(player, reduceHigherPriority)
     -- If true, reduce the number of Baleful hearts from the value, because they have higher rendering priority then Empty hearts
-
     reduceHigherPriority = reduceHigherPriority or false
 	local rm
 
@@ -651,7 +676,7 @@ balefulSprite:Play("BalefulHeart", true)
 
 local function AddBalefulHearts(player, amount)
     -- remove them with negative numbers
-    --
+
     local b = player:GetData().CustomHealthAPISavedata.Overlays["HEART_BALEFUL"]
 
     if amount >= 0 then
@@ -800,7 +825,7 @@ enigmaSprite:Load("gfx/ui/ui_taintedhearts.anm2", true)
 enigmaSprite:SetFrame("EnigmaHeart", 0)
 
 local function GetEnigmaHearts(player)
-    return player:GetData().CustomHealthAPISavedata.NumEnigmaHearts or 0
+    return player:GetData().CustomHealthAPISavedata and player:GetData().CustomHealthAPISavedata.NumEnigmaHearts or 0
 end
 mod.GetEnigmaHearts = GetEnigmaHearts
 
@@ -948,7 +973,7 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
     local bowMultiplier = collider:HasCollectible(CollectibleType.COLLECTIBLE_MAGGYS_BOW) and 2 or 1
 	local hasApple = collider:HasTrinket(TrinketType.TRINKET_APPLE_OF_SODOM)
     local sprite = pickup:GetSprite()
-    
+
     if pickup:IsShopItem() and (pickup.Price > collider:GetNumCoins() or not collider:IsExtraAnimationFinished()) then
         return true
     elseif sprite:IsPlaying("Collect") then
@@ -1051,6 +1076,7 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
 
 		elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_ENIGMA then
 			SetEnigmaHearts(collider, GetEnigmaHearts(collider) + 1)
+            sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES)
 
         elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_CAPRICIOUS then
 			rng:SetSeed(pickup.DropSeed, 1)
@@ -1070,11 +1096,14 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
 
 		elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_HARLOT then
 			local heartsLeft = math.min(math.max(0, collider:GetEffectiveMaxHearts() - collider:GetHearts()), 2)
+
 			if collider:CanPickRedHearts()
 			or (collider:GetJarHearts() < 8 and collider:HasCollectible(CollectibleType.COLLECTIBLE_THE_JAR)) then
 				collider:AddHearts(2 * bowMultiplier)
 				collider:AddJarHearts(2 - heartsLeft)
 				local lep = Isaac.Spawn(3, FamiliarVariant.LEPROSY, 0, collider.Position, Vector.Zero, collider):ToFamiliar()
+                lep:GetSprite():ReplaceSpritesheet(0, "gfx/familiar/harlot_heart_leprosy.png")
+                lep:GetSprite():LoadGraphics()
 				sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES)
 			else
 				return pickup:IsShopItem()
