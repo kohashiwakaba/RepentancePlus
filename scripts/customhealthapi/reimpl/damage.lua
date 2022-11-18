@@ -1,4 +1,3 @@
-CustomHealthAPI.PersistentData.DebugThreeActive = CustomHealthAPI.PersistentData.DebugThreeActive or false
 local heartsDamaged = {}
 
 function CustomHealthAPI.Helper.AddProcessTakeDamageCallback()
@@ -15,8 +14,19 @@ CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_ENTITY_TAKE_DMG] = Cus
 CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_ENTITY_TAKE_DMG][EntityType.ENTITY_PLAYER] = CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_ENTITY_TAKE_DMG][EntityType.ENTITY_PLAYER] or {}
 table.insert(CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_ENTITY_TAKE_DMG][EntityType.ENTITY_PLAYER], CustomHealthAPI.Helper.RemoveProcessTakeDamageCallback)
 
+function CustomHealthAPI.Helper.IsDebugThreeActive()
+	local s = Isaac.ExecuteCommand("debug 3")
+	Isaac.ExecuteCommand("debug 3")
+	
+	return s == "Disabled debug flag."
+end
+
 function CustomHealthAPI.Mod:ProcessTakeDamageCallback(ent, amount, flags, source, countdown)
 	if ent.Type ~= EntityType.ENTITY_PLAYER then
+		return
+	end
+	
+	if CustomHealthAPI.Helper.IsDebugThreeActive() then
 		return
 	end
 	
@@ -26,17 +36,6 @@ function CustomHealthAPI.Mod:ProcessTakeDamageCallback(ent, amount, flags, sourc
 		local prevent = callback.Function(player, amount, flags, source, countdown)
 		if prevent ~= nil then
 			return false
-		end
-	end
-	
-	if CustomHealthAPI.PersistentData.DebugThreeActive then
-		if flags & DamageFlag.DAMAGE_FAKE ~= DamageFlag.DAMAGE_FAKE then
-			player:GetData().CHAPIDamageCallback = Game():GetFrameCount()
-			player:TakeDamage(amount, flags | DamageFlag.DAMAGE_FAKE, source, countdown)
-			player:GetData().CHAPIDamageCallback = nil
-			return false
-		else
-			return
 		end
 	end
 	
@@ -106,7 +105,10 @@ function CustomHealthAPI.Mod:ProcessTakeDamageCallback(ent, amount, flags, sourc
 			player:GetData().CustomHealthAPISavedata.HandlingDamageCanShackle = not (player:GetEffects():HasNullEffect(NullItemID.ID_SPIRIT_SHACKLES_SOUL) or 
 																					 player:GetEffects():HasNullEffect(NullItemID.ID_SPIRIT_SHACKLES_DISABLED))
 			player:GetData().CustomHealthAPISavedata.HandlingDamage = true
+			player:GetData().CustomHealthAPISavedata.HandlingDamageAmount = amount
 			player:GetData().CustomHealthAPISavedata.HandlingDamageFlags = flags
+			player:GetData().CustomHealthAPISavedata.HandlingDamageSource = source
+			player:GetData().CustomHealthAPISavedata.HandlingDamageCountdown = countdown
 			
 			player:GetData().CustomHealthAPIOtherData.InDamageCallback = nil
 			return
@@ -180,6 +182,12 @@ function CustomHealthAPI.Helper.FinishDamageDesync(player)
 		Game().Challenge = Challenge.CHALLENGE_NULL
 	end
 	
+	for i = 2, 0, -1 do
+		if player:GetActiveItem(i) == CollectibleType.COLLECTIBLE_ALABASTER_BOX then
+			player:SetActiveCharge(0, i)
+		end
+	end
+	
 	CustomHealthAPI.Helper.ClearBasegameHealth(player)
 	
 	for i = 2, 0, -1 do
@@ -227,11 +235,17 @@ function CustomHealthAPI.Helper.FinishDamageDesync(player)
 	
 	player:ClearEntityFlags(EntityFlag.FLAG_BLEED_OUT)
 	
+	local amount = data.HandlingDamageAmount
 	local flags = data.HandlingDamageFlags
+	local source = data.HandlingDamageSource
+	local countdown = data.HandlingDamageCountdown
 	local canShackle = data.HandlingDamageCanShackle
 	
 	data.HandlingDamage = nil
+	data.HandlingDamageAmount = nil
 	data.HandlingDamageFlags = nil
+	data.HandlingDamageSource = nil
+	data.HandlingDamageCountdown = nil
 	data.HandlingDamageCanShackle = nil
 	
 	if player:HasCollectible(CollectibleType.COLLECTIBLE_HEARTBREAK) and CustomHealthAPI.Helper.GetTotalHP(player) == 0 then
@@ -267,7 +281,7 @@ function CustomHealthAPI.Helper.FinishDamageDesync(player)
 				end
 				
 				if not prevent then
-					CustomHealthAPI.Library.AddHealth(player, key, hp, false, false, false, false, false, true)
+					CustomHealthAPI.Library.AddHealth(player, key, hp, true, false, false, false, false, true)
 				end
 			end
 		end
@@ -310,7 +324,7 @@ function CustomHealthAPI.Helper.FinishDamageDesync(player)
 				end
 				
 				if not prevent then
-					CustomHealthAPI.Library.AddHealth(player, key, hp, false, false, false, false, false, true)
+					CustomHealthAPI.Library.AddHealth(player, key, hp, true, false, false, false, false, true)
 				end
 			end
 		end
@@ -341,8 +355,17 @@ function CustomHealthAPI.Helper.FinishDamageDesync(player)
 		local otherdata = player:GetData().CustomHealthAPIOtherData
 		
 		if not otherdata.ActivatedScapular and flags & DamageFlag.DAMAGE_RED_HEARTS ~= DamageFlag.DAMAGE_RED_HEARTS then
-			CustomHealthAPI.Library.AddHealth(player, "SOUL_HEART", 2)
+			CustomHealthAPI.Helper.UpdateHealthMasks(player, "SOUL_HEART", 2)
+			CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
 			otherdata.ActivatedScapular = true
+		end
+	end
+	
+	if player:HasTrinket(TrinketType.TRINKET_FINGER_BONE) and not player:IsDead() then
+		local fingerRNG = player:GetTrinketRNG(TrinketType.TRINKET_FINGER_BONE)
+		if fingerRNG:RandomFloat() <= 0.04 then
+			CustomHealthAPI.Helper.UpdateHealthMasks(player, "BONE_HEART", 1)
+			CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
 		end
 	end
 	
@@ -411,7 +434,8 @@ function CustomHealthAPI.Helper.HandleGlassCannonOnBreaking(player)
 					end
 					
 					if not prevent then
-						CustomHealthAPI.Library.AddHealth(player, key, hp, false, false, false, false, false, true)
+						CustomHealthAPI.Helper.UpdateHealthMasks(player, key, hp, true, false, true, true)
+						CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
 					end
 				end
 			end
@@ -454,12 +478,7 @@ table.insert(CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_EXECUTE_CMD]
 function CustomHealthAPI.Mod:HandleDebugThreeCallback(cmd, params)
 	if cmd == "chapi" then
 		if params:find("nodmg") then
-			CustomHealthAPI.PersistentData.DebugThreeActive = not CustomHealthAPI.PersistentData.DebugThreeActive
-			if CustomHealthAPI.PersistentData.DebugThreeActive then
-				print("Custom Health API: No damage enabled.")
-			else
-				print("Custom Health API: No damage disabled.")
-			end
+			print(Isaac.ExecuteCommand("debug 3"))
 		end
 	end
 end
@@ -494,6 +513,12 @@ function CustomHealthAPI.Helper.HandleDamageDesyncOld(player, amount, flags, sou
 		player:GetData().CHAPIDamageCallback = Game():GetFrameCount()
 	end
 	
+	for i = 2, 0, -1 do
+		if player:GetActiveItem(i) == CollectibleType.COLLECTIBLE_ALABASTER_BOX then
+			player:SetActiveCharge(0, i)
+		end
+	end
+	
 	CustomHealthAPI.Helper.ClearBasegameHealth(player)
 	
 	for i = 2, 0, -1 do
@@ -518,7 +543,19 @@ function CustomHealthAPI.Helper.HandleDamageDesyncOld(player, amount, flags, sou
 	local limit = CustomHealthAPI.PersistentData.OverriddenFunctions.GetHeartLimit(player) + postBrokenHearts * 2
 	
 	if postBrokenHearts * 2 < limit then
+		for i = 2, 0, -1 do
+			if player:GetActiveItem(i) == CollectibleType.COLLECTIBLE_ALABASTER_BOX then
+				player:SetActiveCharge(0, i)
+			end
+		end
+		
 		CustomHealthAPI.Helper.ClearBasegameHealth(player)
+		
+		for i = 2, 0, -1 do
+			if player:GetActiveItem(i) == CollectibleType.COLLECTIBLE_ALABASTER_BOX then
+				player:SetActiveCharge(24, i)
+			end
+		end
 		
 		CustomHealthAPI.Helper.AddBasegameMaxHealthWithoutModifiers(player, maxHearts)
 		CustomHealthAPI.Helper.AddBasegameBrokenHealthWithoutModifiers(player, brokenHearts)
@@ -603,6 +640,12 @@ function CustomHealthAPI.Helper.HandleDamageDesync(player, compensationFunc)
 		Game().Challenge = Challenge.CHALLENGE_NULL
 	end
 	
+	for i = 2, 0, -1 do
+		if player:GetActiveItem(i) == CollectibleType.COLLECTIBLE_ALABASTER_BOX then
+			player:SetActiveCharge(0, i)
+		end
+	end
+	
 	CustomHealthAPI.Helper.ClearBasegameHealth(player)
 	
 	for i = 2, 0, -1 do
@@ -611,7 +654,7 @@ function CustomHealthAPI.Helper.HandleDamageDesync(player, compensationFunc)
 		end
 	end
 				
-	compensationFunc(player, amount, flags, source, countdown)
+	compensationFunc(player)
 	
 	player:GetEffects():AddNullEffect(NullItemID.ID_SPIRIT_SHACKLES_DISABLED, true, shacklesDisabled)
 		

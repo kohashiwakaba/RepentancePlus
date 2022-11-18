@@ -3063,7 +3063,13 @@ return function(DSSModName, DSSCoreVersion, MenuProvider)
             end
         end
 
-        dssmenu.AddMenu("Menu", { Run = dssmod.runMenu, Open = dssmod.openMenu, Close = dssmod.closeMenu, Directory = dssdirectory, DirectoryKey = dssdirectorykey })
+        dssmenu.AddMenu("Menu", {
+            Run = dssmod.runMenu,
+            Open = dssmod.openMenu,
+            Close = dssmod.closeMenu,
+            Directory = dssdirectory,
+            DirectoryKey = dssdirectorykey
+        })
 
         DeadSeaScrollsMenu = dssmenu
     end
@@ -3072,7 +3078,9 @@ return function(DSSModName, DSSCoreVersion, MenuProvider)
         if dssmenu then
             dssmenu.RemoveCallbacks()
         else
-            dssmenu = { Menus = {} }
+            dssmenu = {
+                Menus = {}
+            }
         end
 
         dssmenu.CoreVersion = DSSCoreVersion

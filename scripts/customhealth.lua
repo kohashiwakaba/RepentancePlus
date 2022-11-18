@@ -44,7 +44,7 @@ local HeartNumFlies = {
 local function isNoRedHealthCharacter(p)
 	local t = p:GetPlayerType()
 
-	return t == PlayerType.PLAYER_BLUEBABY or t == PlayerType.PLAYER_THESOUL or t == PlayerType.PLAYER_JUDAS_B 
+	return t == PlayerType.PLAYER_BLUEBABY or t == PlayerType.PLAYER_THESOUL or t == PlayerType.PLAYER_JUDAS_B
     or t == PlayerType.PLAYER_BLUEBABY_B or t == PlayerType.PLAYER_THEFORGOTTEN_B
 	or t == PlayerType.PLAYER_BETHANY_B or t == PlayerType.PLAYER_JACOB2_B or t == PlayerType.PLAYER_THESOUL_B
 end
@@ -156,6 +156,8 @@ mod:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, function(_, pickup)
 
         pickup:GetData().noTaintedMorph = true
 	end
+
+	keeperFlyCheck(pickup, HeartNumFlies[pickup.SubType])
 end, PickupVariant.PICKUP_HEART)
 
 ------------------------------------------------
@@ -234,6 +236,10 @@ local function getTrueTaintedMorphChance(kind)
                 return 25
             end
 
+            if player:HasCollectible(mod.CustomCollectibles.THE_HOOD) then
+                return 150
+            end
+
             return 50
         end
     elseif kind == "black" then
@@ -246,17 +252,6 @@ local function getTrueTaintedMorphChance(kind)
             end
 
             return 125
-        end
-    elseif kind == "golden" then
-        for i = 0, game:GetNumPlayers() - 1 do
-            local player = Isaac.GetPlayer(i)
-
-            -- T. Eve breaks Miser hearts for now, so they are banned
-            if player:GetPlayerType() == PlayerType.PLAYER_EVE_B then
-                return 0
-            end
-
-            return 250
         end
     end
 end
@@ -290,7 +285,7 @@ mod:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pickup)
                 if roll < baseChance * 0.5 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_ZEALOT) end
             else
                 if roll < baseChance then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_FETTERED)
-                elseif roll < baseChance * 1.5 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_ZEALOT) end
+                elseif roll < (baseChance < 150 and baseChance * 1.5 or 175) then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_ZEALOT) end
             end
 
         elseif subtype == HeartSubType.HEART_ETERNAL then
@@ -306,8 +301,7 @@ mod:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pickup)
             if roll < baseChance then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_BENIGHTED) end
 
         elseif subtype == HeartSubType.HEART_GOLDEN then
-            baseChance = getTrueTaintedMorphChance("golden")
-            if roll < baseChance then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_MISER) end
+            if roll < 250 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_MISER) end
 
         elseif subtype == HeartSubType.HEART_BLENDED then
             if roll < 400 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_DESERTED) end
@@ -371,7 +365,7 @@ CustomHealthAPI.Library.RegisterSoulHealth(
         AnimationName = {"ZealotHeartHalf", "ZealotHeartFull"},
         SortOrder = 200,
         AddPriority = 225,
-        HealFlashRO = 189/255, 
+        HealFlashRO = 189/255,
         HealFlashGO = 95/255,
         HealFlashBO = 182/255,
         MaxHP = 2,
@@ -415,7 +409,7 @@ CustomHealthAPI.Library.RegisterSoulHealth(
         AnimationName = {"MiserHeartHalf", "MiserHeartFull"},
         SortOrder = 150,
         AddPriority = 175,
-        HealFlashRO = 245/255, 
+        HealFlashRO = 245/255,
         HealFlashGO = 240/255,
         HealFlashBO = 66/255,
         MaxHP = 2,
@@ -452,9 +446,11 @@ mod:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, function(_, pickup)
     for i = 0, game:GetNumPlayers() do
         local player = Isaac.GetPlayer(i)
         local m = CustomHealthAPI.Library.GetHPOfKey(player, "HEART_MISER")
-        
-        pickup.Price = math.max(1, math.floor(pickup.Price * (1 - 0.1 * ((m + 1) // 2))))
-        pickup.AutoUpdatePrice = false
+
+        if m > 0 then
+            pickup.Price = math.max(1, math.floor(pickup.Price * (1 - 0.1 * ((m + 1) // 2))))
+            pickup.AutoUpdatePrice = false
+        end
     end
 end)
 
@@ -468,7 +464,7 @@ CustomHealthAPI.Library.RegisterSoulHealth(
         AnimationName = {"DauntlessHeartHalf", "DauntlessHeartFull"},
         SortOrder = 300,
         AddPriority = 300,
-        HealFlashRO = 155/255, 
+        HealFlashRO = 155/255,
         HealFlashGO = 168/255,
         HealFlashBO = 171/255,
         MaxHP = 2,
@@ -518,14 +514,15 @@ mod:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, function(_, npc)
 
 			if roll < 0.2 then
 				local fadingHeart = Isaac.Spawn(5, PickupVariant.PICKUP_HEART, mod.CustomPickups.TaintedHearts.HEART_DAUNTLESS_HALF, npc.Position, Vector.FromAngle(angle) * 12.5, player)
-				fadingHeart:GetData().fadeTimeout = 45
+                fadingHeart:GetData().isFading = true
+                fadingHeart:GetData().fadeTimeout = 45
 			end
         end
     end
 end)
 
 mod:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pickup)
-    if pickup.SubType ~= mod.CustomPickups.TaintedHearts.HEART_DAUNTLESS_HALF then return end
+    if not pickup:GetData().isFading then return end
 
     if not pickup:GetData().fadeTimeout or pickup:GetData().fadeTimeout <= 0 then
         pickup:Remove()
@@ -550,15 +547,15 @@ CustomHealthAPI.Library.RegisterRedHealth(
             AnimationFilenames = {
             EMPTY_HEART = "gfx/ui/ui_taintedhearts.anm2",
             BONE_HEART = "gfx/ui/ui_taintedhearts.anm2",
-        },								  
+        },
         AnimationNames = {
             EMPTY_HEART = {"SoiledHeart"},
             BONE_HEART = {"SoiledBoneHeart"},
         },
-        SortOrder = 175, 
+        SortOrder = 175,
         AddPriority = 175,
-        HealFlashRO = 107/255, 
-        HealFlashGO = 33/255, 
+        HealFlashRO = 107/255,
+        HealFlashGO = 33/255,
         HealFlashBO = 6/255,
         MaxHP = 1,
         ProtectsDealChance = true,
@@ -643,6 +640,11 @@ local function GetRightmostHeartForRender(player, reduceHigherPriority)
 	return rm - 1 - player:GetGoldenHearts()
 end
 
+local function CanPickOverlayHeart(player)
+    return GetRightmostHeartForRender(player) >= GetBalefulHearts(player) + GetEmptyHearts(player)
+end
+
+mod.CanPickOverlayHeart = CanPickOverlayHeart
 
 ----------
 -- BALEFUL
@@ -650,7 +652,7 @@ end
 CustomHealthAPI.Library.RegisterHealthOverlay(
     "HEART_BALEFUL",
     {
-        AnimationFilename = "gfx/ui/ui_taintedhearts.anm2",								  
+        AnimationFilename = "gfx/ui/ui_taintedhearts.anm2",
         AnimationName = "BalefulHeart",
         IgnoreBleeding = true,
         PickupEntities = {
@@ -691,6 +693,8 @@ local function AddBalefulHearts(player, amount)
     player:GetData().CustomHealthAPISavedata.Overlays["HEART_BALEFUL"] = b
 end
 
+mod.AddBalefulHearts = AddBalefulHearts
+
 CustomHealthAPI.Library.AddCallback("RepentancePlus", CustomHealthAPI.Enums.Callbacks.POST_RENDER_HP_BAR, 0,
     function(player, playerSlot, renderOffset)
         if GetBalefulHearts(player) > 0 then
@@ -728,7 +732,7 @@ end)
 CustomHealthAPI.Library.RegisterHealthOverlay(
     "HEART_EMPTY",
     {
-        AnimationFilename = "gfx/ui/ui_taintedhearts.anm2",								  
+        AnimationFilename = "gfx/ui/ui_taintedhearts.anm2",
         AnimationName = "EmptyHeart",
         IgnoreBleeding = true,
         PickupEntities = {
@@ -767,6 +771,8 @@ local function AddEmptyHearts(player, amount)
     player:GetData().CustomHealthAPISavedata.Overlays["HEART_EMPTY"] = b
 end
 
+mod.AddEmptyHearts = AddEmptyHearts
+
 CustomHealthAPI.Library.AddCallback("RepentancePlus", CustomHealthAPI.Enums.Callbacks.POST_RENDER_HP_BAR, 0,
     function(player, playerSlot, renderOffset)
         if GetEmptyHearts(player) > 0 then
@@ -801,7 +807,7 @@ mod:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, function(_, tookDamage, amount,
     if not player or GetBalefulHearts(player) + GetEmptyHearts(player) == 0
     or player:GetGoldenHearts() > 0 then return end
 
-    if amount == 2 or player:GetSoulHearts() % 2 == 1 
+    if amount == 2 or player:GetSoulHearts() % 2 == 1
     or (player:GetSoulHearts() == 0 and player:GetHearts() % 2 == 1) then
         if GetBalefulHearts(player) > 0 then
             AddBalefulHearts(player, -1)
@@ -929,8 +935,6 @@ end)
 mod:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pickup)
     if pickup.SubType < 84 or pickup.SubType > 100 then return end
 
-	keeperFlyCheck(pickup, HeartNumFlies[pickup.SubType])
-
 	local sprite = pickup:GetSprite()
 	if sprite:IsFinished("Appear") then
 		sprite:Play("Idle", false)
@@ -965,6 +969,8 @@ mod:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pickup)
     end
 end, PickupVariant.PICKUP_HEART)
 
+---@param pickup EntityPickup
+---@param collider EntityPlayer
 mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collider)
     if (pickup.SubType < 84 or pickup.SubType > 101) and pickup.SubType ~= HeartSubType.HEART_GOLDEN then return end
     if collider.Type ~= EntityType.ENTITY_PLAYER then return end
@@ -1110,15 +1116,11 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
 			end
 
 		elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_FETTERED then
-			if (collider:GetNumKeys() > 0 or collider:HasGoldenKey()) and collider:CanPickSoulHearts() then
+			if (collider:GetNumKeys() > 0 or collider:HasGoldenKey())
+            and (collider:CanPickSoulHearts() or collider:HasCollectible(mod.CustomCollectibles.THE_HOOD)) then
 				collider:AddSoulHearts(2)
-				local fren = Isaac.Spawn(3, 2113, 0, collider.Position, Vector.Zero, collider)
-				fren:ToFamiliar():AddKeys(3)
-				if not collider:GetData()['usedSpiritualReserves'] then
-					collider:GetData()['usedSpiritualReserves'] = {0, 1}
-				else
-					collider:GetData()['usedSpiritualReserves'][2] = collider:GetData()['usedSpiritualReserves'][2] + 1
-				end
+				collider:GetEffects():AddCollectibleEffect(mod.CustomCollectibles.ORBITAL_GHOSTS, false, 100)
+                collider:AddCacheFlags(CacheFlag.CACHE_FAMILIARS)
 				collider:AddKeys(collider:HasGoldenKey() and 0 or -1)
 				sfx:Play(SoundEffect.SOUND_HOLY)
 			else
@@ -1127,21 +1129,25 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
 
 		elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_DESERTED then
 			if collider:CanPickRedHearts() or collider:CanPickBlackHearts() then
-                for _ = 1, 2 do
-                    if collider:CanPickRedHearts() then
-                        collider:AddHearts(1)
-                        sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES)
-                    elseif collider:CanPickBlackHearts() then
-                        collider:AddBlackHearts(1)
-                        sfx:Play(SoundEffect.SOUND_UNHOLY)
-                    end
+                local redHeartsToFill = collider:GetEffectiveMaxHearts() - collider:GetHearts() - collider:GetRottenHearts()
+
+                if redHeartsToFill == 0 then
+                    collider:AddBlackHearts(2)
+                    sfx:Play(SoundEffect.SOUND_UNHOLY)
+                elseif redHeartsToFill == 1 then
+                    collider:AddBlackHearts(1)
+                    collider:AddHearts(1)
+                    sfx:Play(SoundEffect.SOUND_UNHOLY)
+                else
+                    collider:AddHearts(2)
+                    sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES)
                 end
             else
                 return pickup:IsShopItem()
             end
 
         -- OVERLAY HEARTS
-        elseif GetRightmostHeartForRender(collider) >= GetBalefulHearts(collider) + GetEmptyHearts(collider) then
+        elseif CanPickOverlayHeart(collider) then
             if pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_BALEFUL  then
                 AddBalefulHearts(collider, 1)
             elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_EMPTY  then
@@ -1150,7 +1156,7 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
                 collider:AddGoldenHearts(1)
                 sfx:Play(SoundEffect.SOUND_GOLD_HEART, 1, 2, false, 1, 0)
             end
-        
+
         else
             return pickup:IsShopItem()
         end
@@ -1168,19 +1174,19 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
         if pickup:IsShopItem() then
             local pickupSprite = pickup:GetSprite()
             local holdSprite = Sprite()
-            
+
             holdSprite:Load(pickupSprite:GetFilename(), true)
             holdSprite:Play(pickupSprite:GetAnimation(), true)
             holdSprite:SetFrame(pickupSprite:GetFrame())
             collider:AnimatePickup(holdSprite)
-            
+
             if pickup.Price > 0 then
                 collider:AddCoins(-1 * pickup.Price)
             end
-            
+
             CustomHealthAPI.Library.TriggerRestock(pickup)
             CustomHealthAPI.Helper.TryRemoveStoreCredit(collider)
-            
+
             pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
             pickup:Remove()
         else
@@ -1188,11 +1194,11 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
             pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
             pickup:Die()
         end
-        
+
         game:GetLevel():SetHeartPicked()
         game:ClearStagesWithoutHeartsPicked()
         game:SetStateFlag(GameStateFlag.STATE_HEART_BOMB_COIN_PICKED, true)
-        
+
         return true
     else
         return false

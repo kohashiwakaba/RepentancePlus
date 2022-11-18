@@ -1,8 +1,8 @@
 -- A lot of this code is based on Antibirth Announcer+ Dead Sea Scrolls Menu 
 -- Thanks to Jerb for making it possible!! <3
---
 local DSSModName = "Dead Sea Scrolls (Repentance Plus)"
 local mod = RepentancePlusMod
+local json = require("json")
 
 local bossMarks = {
     "Boss Rush",
@@ -12,16 +12,6 @@ local bossMarks = {
     "Isaac",
     "Greed",
     "Character Unlock"
-}
-
-local specialUnlocks = {
-    "Black Chest",
-    "Scarlet Chest",
-    "Flesh Chest",
-    "Coffin",
-    "Stargazer",
-    "Tainted Rocks",
-    "Birth Certificate"
 }
 
 local specialUnlocksDescriptions = {
@@ -75,24 +65,37 @@ local heartTypeToName = {
 }
 
 local DSSCoreVersion = 6
-
 local MenuProvider = {}
 
+local function getDssSettings()
+	return CustomData.DssSettings
+end
+mod.getDssSettings = getDssSettings
+
+local function storeDssSettings()
+	Isaac.SaveModData(mod, json.encode(CustomData))
+end
+mod.storeDssSettings = storeDssSettings
+
 function MenuProvider.SaveSaveData()
-    mod.StoreSaveData()
+    mod.storeDssSettings()
 end
 
+--[[
+    SETTERS AND GETTERS
+]]
+
 function MenuProvider.GetPaletteSetting()
-    return mod.GetSaveData().MenuPalette
+    return mod.getDssSettings().MenuPalette
 end
 
 function MenuProvider.SavePaletteSetting(var)
-    mod.GetSaveData().MenuPalette = var
+    mod.getDssSettings().MenuPalette = var
 end
 
 function MenuProvider.GetHudOffsetSetting()
     if not REPENTANCE then
-        return mod.GetSaveData().HudOffset
+        return mod.getDssSettings().HudOffset
     else
         return Options.HUDOffset * 10
     end
@@ -100,63 +103,67 @@ end
 
 function MenuProvider.SaveHudOffsetSetting(var)
     if not REPENTANCE then
-        mod.GetSaveData().HudOffset = var
+        mod.getDssSettings().HudOffset = var
     end
 end
 
 function MenuProvider.GetGamepadToggleSetting()
-    return mod.GetSaveData().GamepadToggle
+    return mod.getDssSettings().GamepadToggle
 end
 
 function MenuProvider.SaveGamepadToggleSetting(var)
-    mod.GetSaveData().GamepadToggle = var
+    mod.getDssSettings().GamepadToggle = var
 end
 
 function MenuProvider.GetMenuKeybindSetting()
-    return mod.GetSaveData().MenuKeybind
+    return mod.getDssSettings().MenuKeybind
 end
 
 function MenuProvider.SaveMenuKeybindSetting(var)
-    mod.GetSaveData().MenuKeybind = var
+    mod.getDssSettings().MenuKeybind = var
 end
 
 function MenuProvider.GetMenuHintSetting()
-    return mod.GetSaveData().MenuHint
+    return mod.getDssSettings().MenuHint
 end
 
 function MenuProvider.SaveMenuHintSetting(var)
-    mod.GetSaveData().MenuHint = var
+    mod.getDssSettings().MenuHint = var
 end
 
 function MenuProvider.GetMenuBuzzerSetting()
-    return mod.GetSaveData().MenuBuzzer
+    return mod.getDssSettings().MenuBuzzer
 end
 
 function MenuProvider.SaveMenuBuzzerSetting(var)
-    mod.GetSaveData().MenuBuzzer = var
+    mod.getDssSettings().MenuBuzzer = var
 end
 
 function MenuProvider.GetMenusNotified()
-    return mod.GetSaveData().MenusNotified
+    return mod.getDssSettings().MenusNotified
 end
 
 function MenuProvider.SaveMenusNotified(var)
-    mod.GetSaveData().MenusNotified = var
+    mod.getDssSettings().MenusNotified = var
 end
 
 function MenuProvider.GetMenusPoppedUp()
-    return mod.GetSaveData().MenusPoppedUp
+    return mod.getDssSettings().MenusPoppedUp
 end
 
 function MenuProvider.SaveMenusPoppedUp(var)
-    mod.GetSaveData().MenusPoppedUp = var
+    mod.getDssSettings().MenusPoppedUp = var
 end
+
+--[[
+    CORE
+]]
 
 local DSSInitializerFunction = include("scripts.dssmenucore")
 local dssmod = DSSInitializerFunction(DSSModName, DSSCoreVersion, MenuProvider)
 
 -- Some configs are wrong and cause errors, this is a handler for them
-local function getNameFromConfig(desc)
+local function getConfigName(desc)
     if desc then
         return desc.Name
     end
@@ -171,6 +178,7 @@ local modDirectory = {
             dssmod.gamepadToggleButton,
             dssmod.menuKeybindButton,
             dssmod.paletteButton,
+            dssmod.menuHintButton,
             {str = 'resume game', action = 'resume'},
             {str = 'unlocks', dest = 'unlocks'},
             {
@@ -195,47 +203,49 @@ for p = 21, 37 do
         title = characterName,
         buttons = {}
     }
-	modDirectory.unlocks.buttons[#modDirectory.unlocks.buttons + 1] = {str = 'tainted '..characterName, dest = characterName}
-    modDirectory.unlocks.buttons[#modDirectory.unlocks.buttons + 1] = {str = "", fsize = 1, nosel = true}
+	table.insert(modDirectory.unlocks.buttons, {str = 'tainted '..characterName, dest = characterName})
+    table.insert(modDirectory.unlocks.buttons, {str = "", fsize = 1, nosel = true})
 
     for _, boss in pairs(bossMarks) do
-        local itemname = "???"
-        local text = {
-            'defeat',
-            string.lower(boss),
-            'as',
-            't. ' .. characterName
-        }
-        local variant = mod.GetSaveData()[tostring(p)][boss].Variant
-        local subtype = mod.GetSaveData()[tostring(p)][boss].SubType
-
-        if variant == 100 then
-            itemname = getNameFromConfig(Isaac.GetItemConfig():GetCollectible(subtype))
-        elseif variant == 350 then
-            itemname = getNameFromConfig(Isaac.GetItemConfig():GetTrinket(subtype))
-        elseif variant == 10 then
-            itemname = heartTypeToName[subtype]
-            text = {'unlock', 't. ' .. characterName}
-        elseif variant == 300 then
-            itemname = getNameFromConfig(Isaac.GetItemConfig():GetCard(subtype))
-        else
-            itemname = getNameFromConfig(Isaac.GetItemConfig():GetPillEffect(subtype))
-        end
-
-        modDirectory[characterName].buttons[#modDirectory[characterName].buttons + 1] = {
-            str = string.lower(itemname),
+        table.insert(modDirectory[characterName].buttons, {
+            str = "???",
             choices = {'locked', 'unlocked'},
             variable = tostring(p).. "_" .. boss,
             setting = 2,
             load = function()
-                return mod.savedata[tostring(p)][boss].Unlocked and 2 or 1
+                return CustomData.Unlocks[tostring(p)][boss].Unlocked and 2 or 1
             end,
             store = function(var)
-                mod.savedata[tostring(p)][boss].Unlocked = var == 2
+                CustomData.Unlocks[tostring(p)][boss].Unlocked = var == 2
             end,
-            tooltip = {strset = text}
-        }
+            generate = function(button, item, tbl)
+                local itemname
+                local v = CustomData.Unlocks[tostring(p)][boss].Variant
+                local s = CustomData.Unlocks[tostring(p)][boss].SubType
+                local text = {
+                    'defeat',
+                    string.lower(boss),
+                    'as',
+                    't. ' .. characterName
+                }
 
+                if v == 100 then
+                    itemname = getConfigName(Isaac.GetItemConfig():GetCollectible(s))
+                elseif v == 350 then
+                    itemname = getConfigName(Isaac.GetItemConfig():GetTrinket(s))
+                elseif v == 10 then
+                    itemname = heartTypeToName[s]
+                    text = {'unlock', 't. ' .. characterName}
+                elseif v == 300 then
+                    itemname = getConfigName(Isaac.GetItemConfig():GetCard(s))
+                else
+                    itemname = getConfigName(Isaac.GetItemConfig():GetPillEffect(s))
+                end
+
+                button.str = string.lower(itemname)
+                button.tooltip = {strset = text}
+            end
+        })
     end
 end
 
@@ -243,27 +253,34 @@ modDirectory["special"] = {
     title = 'special unlocks',
     buttons = {}
 }
-modDirectory.unlocks.buttons[#modDirectory.unlocks.buttons + 1] = {str = "-----------------", fsize = 3, nosel = true}
-modDirectory.unlocks.buttons[#modDirectory.unlocks.buttons + 1] = {str = "", fsize = 1, nosel = true}
-modDirectory.unlocks.buttons[#modDirectory.unlocks.buttons + 1] = {str = 'special unlocks', dest = "special"}
 
-for _, unlock in pairs(specialUnlocks) do
-    modDirectory["special"].buttons[#modDirectory["special"].buttons + 1] = {
+table.insert(modDirectory.unlocks.buttons, {
+    str = "-----------------",
+    fsize = 3,
+    nosel = true
+})
+table.insert(modDirectory.unlocks.buttons, {
+    str = 'special unlocks',
+    dest = "special"
+})
+
+for _, unlock in pairs({"Black Chest", "Scarlet Chest", "Flesh Chest", "Coffin", "Stargazer", "Tainted Rocks", "Birth Certificate"}) do
+    table.insert(modDirectory["special"].buttons, {
         str = string.lower(unlock),
         choices = {'locked', 'unlocked'},
         variable = unlock,
         setting = 2,
         load = function()
-            return mod.savedata["Special"][unlock].Unlocked and 2 or 1
+            return CustomData.Unlocks["Special"][unlock].Unlocked and 2 or 1
         end,
         store = function(var)
-            mod.savedata["Special"][unlock].Unlocked = var == 2
+            CustomData.Unlocks["Special"][unlock].Unlocked = var == 2
         end,
         tooltip = {strset = specialUnlocksDescriptions[unlock]}
-    }
+    })
 end
 
-local modDirectorykey = {
+local modDirectoryKey = {
     Item = modDirectory.main,
     Main = 'main',
     Idle = false,
@@ -273,7 +290,6 @@ local modDirectorykey = {
     Path = {},
 }
 
--- add the menu
 DeadSeaScrollsMenu.AddMenu(
     "Repentance Plus",
     {
@@ -281,10 +297,8 @@ DeadSeaScrollsMenu.AddMenu(
         Open = dssmod.openMenu,
         Close = dssmod.closeMenu,
         Directory = modDirectory,
-        DirectoryKey = modDirectorykey
+        DirectoryKey = modDirectoryKey
     }
 )
-
-
 
 

@@ -52,7 +52,6 @@ CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_POST_GAME_STARTED] = C
 table.insert(CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_POST_GAME_STARTED], CustomHealthAPI.Helper.RemoveHandleSaveDataOnGameStartCallback)
 
 function CustomHealthAPI.Mod:HandleSaveDataOnGameStartCallback(isContinued)
-	CustomHealthAPI.PersistentData.DebugThreeActive = false
 	CustomHealthAPI.PersistentData.HiddenPlayerHealthBackup = {}
 	CustomHealthAPI.PersistentData.HiddenSubplayerHealthBackup = {}
 	CustomHealthAPI.PersistentData.RestockInfo = {}

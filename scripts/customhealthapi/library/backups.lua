@@ -94,6 +94,12 @@ function CustomHealthAPI.Helper.LoadHealthOfPlayerFromBackup(player, healthData)
 			Game().Challenge = Challenge.CHALLENGE_NULL
 		end
 		
+		for i = 2, 0, -1 do
+			if player:GetActiveItem(i) == CollectibleType.COLLECTIBLE_ALABASTER_BOX then
+				player:SetActiveCharge(0, i)
+			end
+		end
+		
 		CustomHealthAPI.Helper.ClearBasegameHealth(player)
 		
 		for i = 2, 0, -1 do

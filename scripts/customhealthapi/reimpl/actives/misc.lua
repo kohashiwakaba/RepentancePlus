@@ -175,7 +175,9 @@ function CustomHealthAPI.Mod:PreUseItemCallback(collectible, rng, player)
 	   collectible == CollectibleType.COLLECTIBLE_YUCK_HEART or
 	   collectible == CollectibleType.COLLECTIBLE_BLANK_CARD or
 	   collectible == CollectibleType.COLLECTIBLE_PLACEBO or
-	   collectible == CollectibleType.COLLECTIBLE_CLEAR_RUNE
+	   collectible == CollectibleType.COLLECTIBLE_CLEAR_RUNE or
+	   collectible == CollectibleType.COLLECTIBLE_ABYSS or
+	   collectible == CollectibleType.COLLECTIBLE_VOID
 	then
 		CustomHealthAPI.Helper.CheckIfHealthOrderSet()
 		CustomHealthAPI.Helper.CheckHealthIsInitializedForPlayer(player)

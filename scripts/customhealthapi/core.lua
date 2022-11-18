@@ -1,7 +1,7 @@
 -- sorry for the lack of documentation atm
 -- this isn't version 1.0 for a reason
 
-local version = 0.94
+local version = 0.943
 local root = "scripts.customhealthapi."
 local modname = "Custom Health API (Repentance Plus)"
 local modinitials = "RP"
@@ -72,45 +72,63 @@ if shouldLoadMod then
 	CustomHealthAPI.Mod.AddedCallbacks = false
 	
 	CustomHealthAPI.PersistentData.OriginalAddCallback = CustomHealthAPI.PersistentData.OriginalAddCallback or Isaac.AddCallback
-	CustomHealthAPI.ForceEndCallbacksToAdd = {}
-	CustomHealthAPI.ForceEndCallbacksToRemove = {}
-	CustomHealthAPI.OtherCallbacksToAdd = {}
-	CustomHealthAPI.OtherCallbacksToRemove = {}
-	
-	function CustomHealthAPI.Helper.CallbackHandler(self, callbackId, fn, entityId)
-		CustomHealthAPI.PersistentData.OriginalAddCallback(self, callbackId, fn, entityId)
-		
-		local funcsToRemove = CustomHealthAPI.ForceEndCallbacksToRemove[callbackId]
-		if funcsToRemove ~= nil then
-			for subid, subfuncs in pairs(funcsToRemove) do
-				if type(subfuncs) == "table" then
-					if entityId == -1 or entityId == nil or entityId == subid then
-						for _, func in pairs(subfuncs) do
-							func()
-						end
-					end
-				else
-					subfuncs()
-				end
-			end
-		end
-		
-		local funcsToAdd = CustomHealthAPI.ForceEndCallbacksToAdd[callbackId]
-		if funcsToAdd ~= nil then
-			for subid, subfuncs in pairs(funcsToAdd) do
-				if type(subfuncs) == "table" then
-					if entityId == -1 or entityId == nil or entityId == subid then
-						for _, func in pairs(subfuncs) do
-							func()
-						end
-					end
-				else
-					subfuncs()
-				end
-			end
-		end
+	CustomHealthAPI.ForceEndCallbacksToAdd = CustomHealthAPI.ForceEndCallbacksToAdd or {}
+	CustomHealthAPI.ForceEndCallbacksToRemove = CustomHealthAPI.ForceEndCallbacksToRemove or {}
+	CustomHealthAPI.OtherCallbacksToAdd = CustomHealthAPI.OtherCallbacksToAdd or {}
+	CustomHealthAPI.OtherCallbacksToRemove = CustomHealthAPI.OtherCallbacksToRemove or {}
+
+	for k,_ in pairs(CustomHealthAPI.ForceEndCallbacksToAdd) do
+		CustomHealthAPI.ForceEndCallbacksToAdd[k] = nil
 	end
-	Isaac.AddCallback = CustomHealthAPI.Helper.CallbackHandler
+
+	for k,_ in pairs(CustomHealthAPI.ForceEndCallbacksToRemove) do
+		CustomHealthAPI.ForceEndCallbacksToRemove[k] = nil
+	end
+
+	for k,_ in pairs(CustomHealthAPI.OtherCallbacksToAdd) do
+		CustomHealthAPI.OtherCallbacksToAdd[k] = nil
+	end
+
+	for k,_ in pairs(CustomHealthAPI.OtherCallbacksToRemove) do
+		CustomHealthAPI.OtherCallbacksToRemove[k] = nil
+	end
+	
+	if not CustomHealthAPI.PersistentData.CallbackHandler then
+		function CustomHealthAPI.PersistentData.CallbackHandler(self, callbackId, fn, entityId)
+			CustomHealthAPI.PersistentData.OriginalAddCallback(self, callbackId, fn, entityId)
+			
+			local funcsToRemove = CustomHealthAPI.ForceEndCallbacksToRemove[callbackId]
+			if funcsToRemove ~= nil then
+				for subid, subfuncs in pairs(funcsToRemove) do
+					if type(subfuncs) == "table" then
+						if entityId == -1 or entityId == nil or entityId == subid then
+							for _, func in pairs(subfuncs) do
+								func()
+							end
+						end
+					else
+						subfuncs()
+					end
+				end
+			end
+			
+			local funcsToAdd = CustomHealthAPI.ForceEndCallbacksToAdd[callbackId]
+			if funcsToAdd ~= nil then
+				for subid, subfuncs in pairs(funcsToAdd) do
+					if type(subfuncs) == "table" then
+						if entityId == -1 or entityId == nil or entityId == subid then
+							for _, func in pairs(subfuncs) do
+								func()
+							end
+						end
+					else
+						subfuncs()
+					end
+				end
+			end
+		end
+		Isaac.AddCallback = CustomHealthAPI.PersistentData.CallbackHandler
+	end
 
 	include(root .. "definitions.enums")
 	include(root .. "library.callbacks")
@@ -220,7 +238,6 @@ if shouldLoadMod then
 	
 	if not CustomHealthAPI.PersistentData.ShownDisclaimer then
 		print("Custom Health API: v" .. version .. " Loaded")
-		print("DISCLAIMER: Custom Health API causes \"debug 3\" to no longer function. The command \"chapi nodmg\" has been provided as a replacement.")
 		CustomHealthAPI.PersistentData.ShownDisclaimer = true
 	end
 end

@@ -307,6 +307,13 @@ CustomHealthAPI.Helper.HookFunctions.AddCollectible = function(player, item, cha
 			CustomHealthAPI.Helper.CheckSubPlayerInfoOfPlayer(player)
 			CustomHealthAPI.Helper.ResyncHealthOfPlayer(player)
 		end
+		
+		player:GetData().CustomHealthAPIPersistent = player:GetData().CustomHealthAPIPersistent or {}
+		local pdata = player:GetData().CustomHealthAPIPersistent
+		
+		pdata.HasFunGuyTransformation = player:HasPlayerForm(PlayerForm.PLAYERFORM_MUSHROOM)
+		pdata.HasSeraphimTransformation = player:HasPlayerForm(PlayerForm.PLAYERFORM_ANGEL)
+		pdata.HasLeviathanTransformation = player:HasPlayerForm(PlayerForm.PLAYERFORM_EVIL_ANGEL)
 	end
 	
 	CustomHealthAPI.PersistentData.OverriddenFunctions.AddCollectible(player, 
@@ -320,6 +327,13 @@ CustomHealthAPI.Helper.HookFunctions.AddCollectible = function(player, item, cha
 		if not CustomHealthAPI.Helper.PlayerIsIgnored(player) and firstTimePickingUp then
 			CustomHealthAPI.Helper.HandleCollectibleHP(player, item)
 		end
+		
+		player:GetData().CustomHealthAPIPersistent = player:GetData().CustomHealthAPIPersistent or {}
+		local pdata = player:GetData().CustomHealthAPIPersistent
+		
+		pdata.HasFunGuyTransformation = player:HasPlayerForm(PlayerForm.PLAYERFORM_MUSHROOM)
+		pdata.HasSeraphimTransformation = player:HasPlayerForm(PlayerForm.PLAYERFORM_ANGEL)
+		pdata.HasLeviathanTransformation = player:HasPlayerForm(PlayerForm.PLAYERFORM_EVIL_ANGEL)
 	end
 end
 
@@ -557,7 +571,7 @@ CustomHealthAPI.Helper.HookFunctions.GetBoneHearts = function(player)
 		if isEvaluateCacheFunction <= 0 then
 			CustomHealthAPI.Helper.ResyncHealthOfPlayer(player)
 		end
-		return CustomHealthAPI.Helper.GetTotalBoneHP(player, basegameFormat)
+		return CustomHealthAPI.Helper.GetTotalBoneHP(player, true)
 	else
 		return CustomHealthAPI.PersistentData.OverriddenFunctions.GetBoneHearts(player)
 	end

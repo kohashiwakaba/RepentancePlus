@@ -125,35 +125,47 @@ function CustomHealthAPI.Helper.ClearBasegameHealth(player)
 	local isBethany = CustomHealthAPI.Helper.PlayerIsBethany(player)
 	local isTaintedBethany = CustomHealthAPI.Helper.PlayerIsTaintedBethany(player)
 
-	CustomHealthAPI.PersistentData.OverriddenFunctions.AddGoldenHearts(player, -99)
-	CustomHealthAPI.PersistentData.OverriddenFunctions.AddEternalHearts(player, -99)
+	local goldenTotal = CustomHealthAPI.PersistentData.OverriddenFunctions.GetGoldenHearts(player)
+	CustomHealthAPI.PersistentData.OverriddenFunctions.AddGoldenHearts(player, -1 * goldenTotal)
+	
+	local eternalTotal = CustomHealthAPI.PersistentData.OverriddenFunctions.GetEternalHearts(player)
+	CustomHealthAPI.PersistentData.OverriddenFunctions.AddEternalHearts(player, -1 * eternalTotal)
 	
 	if not isTheSoul then
 		if not isTaintedBethany then
-			CustomHealthAPI.PersistentData.OverriddenFunctions.AddHearts(player, -99)
+			local redTotal = CustomHealthAPI.PersistentData.OverriddenFunctions.GetHearts(player)
+			CustomHealthAPI.PersistentData.OverriddenFunctions.AddHearts(player, -1 * redTotal)
 		end
-		CustomHealthAPI.PersistentData.OverriddenFunctions.AddMaxHearts(player, -99)
+		local maxTotal = CustomHealthAPI.PersistentData.OverriddenFunctions.GetMaxHearts(player)
+		CustomHealthAPI.PersistentData.OverriddenFunctions.AddMaxHearts(player, -1 * maxTotal)
 	end
 	
-	CustomHealthAPI.PersistentData.OverriddenFunctions.AddBrokenHearts(player, -99)
+	local brokenTotal = CustomHealthAPI.PersistentData.OverriddenFunctions.GetBrokenHearts(player)
+	CustomHealthAPI.PersistentData.OverriddenFunctions.AddBrokenHearts(player, -1 * brokenTotal)
 	
 	if not isTheSoul then
-		CustomHealthAPI.PersistentData.OverriddenFunctions.AddBoneHearts(player, -99)
+		local boneTotal = CustomHealthAPI.PersistentData.OverriddenFunctions.GetBoneHearts(player)
+		CustomHealthAPI.PersistentData.OverriddenFunctions.AddBoneHearts(player, -1 * boneTotal)
 	end
 	
 	if not (isTheForgotten or isBethany) then
-		CustomHealthAPI.PersistentData.OverriddenFunctions.AddSoulHearts(player, -99)
+		local soulTotal = CustomHealthAPI.PersistentData.OverriddenFunctions.GetSoulHearts(player)
+		CustomHealthAPI.PersistentData.OverriddenFunctions.AddSoulHearts(player, -1 * soulTotal)
 	end
 end
 
 function CustomHealthAPI.Helper.ClearBasegameHealthNoOther(player)
 	local isTheSoul = CustomHealthAPI.Helper.PlayerIsTheSoul(player)
+
+	local goldenTotal = CustomHealthAPI.PersistentData.OverriddenFunctions.GetGoldenHearts(player)
+	CustomHealthAPI.PersistentData.OverriddenFunctions.AddGoldenHearts(player, -1 * goldenTotal)
 	
-	CustomHealthAPI.Helper.AddBasegameGoldenHealthWithoutModifiers(player, -99)
-	CustomHealthAPI.Helper.AddBasegameEternalHealthWithoutModifiers(player, -99)
+	local eternalTotal = CustomHealthAPI.PersistentData.OverriddenFunctions.GetEternalHearts(player)
+	CustomHealthAPI.PersistentData.OverriddenFunctions.AddEternalHearts(player, -1 * eternalTotal)
 	
 	if not isTheSoul then
-		CustomHealthAPI.PersistentData.OverriddenFunctions.AddHearts(player, -99)
+		local redTotal = CustomHealthAPI.PersistentData.OverriddenFunctions.GetHearts(player)
+		CustomHealthAPI.PersistentData.OverriddenFunctions.AddHearts(player, -1 * redTotal)
 	end
 end
 
@@ -198,6 +210,12 @@ function CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
 	local rottenHealth = CustomHealthAPI.Helper.GetTotalHPOfKey(player, "ROTTEN_HEART")
 	local redHealth = redHealthTotal - (rottenHealth * 2)
 	
+	for i = 2, 0, -1 do
+		if player:GetActiveItem(i) == CollectibleType.COLLECTIBLE_ALABASTER_BOX then
+			player:SetActiveCharge(0, i)
+		end
+	end
+	
 	CustomHealthAPI.Helper.ClearBasegameHealth(player)
 	
 	for i = 2, 0, -1 do
@@ -237,7 +255,7 @@ function CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
 	CustomHealthAPI.Helper.AddBasegameEternalHealthWithoutModifiers(player, data.Overlays["ETERNAL_HEART"])
 	
 	player:GetEffects():AddNullEffect(NullItemID.ID_SPIRIT_SHACKLES_DISABLED, true, shacklesDisabled)
-		
+	
 	for i = 2, 0, -1 do
 		if alabasterSlots[i] then
 			player:SetActiveCharge(alabasterCharges[i], i)

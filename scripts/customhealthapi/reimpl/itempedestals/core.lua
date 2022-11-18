@@ -139,37 +139,44 @@ end
 function CustomHealthAPI.Helper.HandleCollectibleHP(player, item)
 	local playerType = player:GetPlayerType()
 	
+	local manuallyHandleTransformations = false
 	if item == CollectibleType.COLLECTIBLE_BIRTHRIGHT then
 		if playerType == PlayerType.PLAYER_MAGDALENE or playerType == PlayerType.PLAYER_MAGDALENE_B then
 			CustomHealthAPI.Helper.UpdateHealthMasks(player, "EMPTY_HEART", 2)
 			CustomHealthAPI.Helper.UpdateHealthMasks(player, "RED_HEART", 2)
 			CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
+			manuallyHandleTransformations = true
 		end
 	elseif item == CollectibleType.COLLECTIBLE_EXPERIMENTAL_TREATMENT then
-		-- not handled atm
-	elseif item == CollectibleType.COLLECTIBLE_GREEDS_GULLET then
 		-- not handled atm
 	elseif item == CollectibleType.COLLECTIBLE_ABADDON then
 		CustomHealthAPI.Helper.HandleAbaddon(player)
 		CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
+		manuallyHandleTransformations = true
 	elseif item == CollectibleType.COLLECTIBLE_MARROW then
 		CustomHealthAPI.Helper.UpdateHealthMasks(player, "BONE_HEART", 1)
 		CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
+		manuallyHandleTransformations = true
 	elseif item == CollectibleType.COLLECTIBLE_DIVORCE_PAPERS then
 		CustomHealthAPI.Helper.UpdateHealthMasks(player, "BONE_HEART", 1)
 		CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
+		manuallyHandleTransformations = true
 	elseif item == CollectibleType.COLLECTIBLE_BRITTLE_BONES then
 		CustomHealthAPI.Helper.HandleBrittleBones(player)
 		CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
+		manuallyHandleTransformations = true
 	elseif item == CollectibleType.COLLECTIBLE_HEARTBREAK then
 		CustomHealthAPI.Helper.UpdateHealthMasks(player, "BROKEN_HEART", 3)
 		CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
+		manuallyHandleTransformations = true
 	elseif item == CollectibleType.COLLECTIBLE_FATE then
 		CustomHealthAPI.Helper.UpdateHealthMasks(player, "ETERNAL_HEART", 1)
 		CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
+		manuallyHandleTransformations = true
 	elseif item == CollectibleType.COLLECTIBLE_ACT_OF_CONTRITION then
 		CustomHealthAPI.Helper.UpdateHealthMasks(player, "ETERNAL_HEART", 1)
 		CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
+		manuallyHandleTransformations = true
 	else
 		local config = Isaac:GetItemConfig():GetCollectible(item)
 		if config ~= nil then
@@ -198,7 +205,25 @@ function CustomHealthAPI.Helper.HandleCollectibleHP(player, item)
 			
 			if needToUpdateState then
 				CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
+				manuallyHandleTransformations = true
 			end
+		end
+	end
+	
+	if manuallyHandleTransformations then
+		player:GetData().CustomHealthAPIPersistent = player:GetData().CustomHealthAPIPersistent or {}
+		local pdata = player:GetData().CustomHealthAPIPersistent
+		
+		if not pdata.HasFunGuyTransformation and player:HasPlayerForm(PlayerForm.PLAYERFORM_MUSHROOM) then
+			CustomHealthAPI.Helper.UpdateHealthMasks(player, "EMPTY_HEART", 2)
+			CustomHealthAPI.Helper.UpdateHealthMasks(player, "RED_HEART", 2)
+			CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
+		elseif not pdata.HasSeraphimTransformation and player:HasPlayerForm(PlayerForm.PLAYERFORM_ANGEL) then
+			CustomHealthAPI.Helper.UpdateHealthMasks(player, "SOUL_HEART", 6)
+			CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
+		elseif not pdata.HasLeviathanTransformation and player:HasPlayerForm(PlayerForm.PLAYERFORM_EVIL_ANGEL) then
+			CustomHealthAPI.Helper.UpdateHealthMasks(player, "BLACK_HEART", 4)
+			CustomHealthAPI.Helper.UpdateBasegameHealthState(player)
 		end
 	end
 end
@@ -216,6 +241,59 @@ function CustomHealthAPI.Helper.HandleCollectiblePickup(player)
 		end
 		if data ~= nil and data.CurrentQueuedItem == nil and queuedItem.Item ~= nil and not queuedItem.Touched and queuedItem.Item:IsCollectible() then
 			data.CurrentQueuedItem = queuedItem.Item.ID
+		end
+	end
+	
+	player:GetData().CustomHealthAPIPersistent = player:GetData().CustomHealthAPIPersistent or {}
+	local pdata = player:GetData().CustomHealthAPIPersistent
+	
+	pdata.HasFunGuyTransformation = player:HasPlayerForm(PlayerForm.PLAYERFORM_MUSHROOM)
+	pdata.HasSeraphimTransformation = player:HasPlayerForm(PlayerForm.PLAYERFORM_ANGEL)
+	pdata.HasLeviathanTransformation = player:HasPlayerForm(PlayerForm.PLAYERFORM_EVIL_ANGEL)
+end
+
+function CustomHealthAPI.Helper.AddClearOnVoidCallback()
+	CustomHealthAPI.PersistentData.OriginalAddCallback(CustomHealthAPI.Mod, ModCallbacks.MC_USE_ITEM, CustomHealthAPI.Mod.ClearOnVoidCallback, CollectibleType.COLLECTIBLE_VOID)
+end
+CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_USE_ITEM] = CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_USE_ITEM] or {}
+CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_USE_ITEM][CollectibleType.COLLECTIBLE_VOID] = CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_USE_ITEM][CollectibleType.COLLECTIBLE_VOID] or {}
+table.insert(CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_USE_ITEM][CollectibleType.COLLECTIBLE_VOID], CustomHealthAPI.Helper.AddClearOnVoidCallback)
+
+function CustomHealthAPI.Helper.RemoveClearOnVoidCallback()
+	CustomHealthAPI.Mod:RemoveCallback(ModCallbacks.MC_USE_ITEM, CustomHealthAPI.Mod.ClearOnVoidCallback)
+end
+CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_USE_ITEM] = CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_USE_ITEM] or {}
+CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_USE_ITEM][CollectibleType.COLLECTIBLE_VOID] = CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_USE_ITEM][CollectibleType.COLLECTIBLE_VOID] or {}
+table.insert(CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_USE_ITEM][CollectibleType.COLLECTIBLE_VOID], CustomHealthAPI.Helper.RemoveClearOnVoidCallback)
+
+function CustomHealthAPI.Mod:ClearOnVoidCallback(collectible, rng, player, useflags)
+	CustomHealthAPI.Helper.HandleItemRecycle(player)
+end
+
+function CustomHealthAPI.Helper.AddClearOnAbyssCallback()
+	CustomHealthAPI.PersistentData.OriginalAddCallback(CustomHealthAPI.Mod, ModCallbacks.MC_USE_ITEM, CustomHealthAPI.Mod.ClearOnAbyssCallback, CollectibleType.COLLECTIBLE_ABYSS)
+end
+CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_USE_ITEM] = CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_USE_ITEM] or {}
+CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_USE_ITEM][CollectibleType.COLLECTIBLE_ABYSS] = CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_USE_ITEM][CollectibleType.COLLECTIBLE_ABYSS] or {}
+table.insert(CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_USE_ITEM][CollectibleType.COLLECTIBLE_ABYSS], CustomHealthAPI.Helper.AddClearOnAbyssCallback)
+
+function CustomHealthAPI.Helper.RemoveClearOnAbyssCallback()
+	CustomHealthAPI.Mod:RemoveCallback(ModCallbacks.MC_USE_ITEM, CustomHealthAPI.Mod.ClearOnAbyssCallback)
+end
+CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_USE_ITEM] = CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_USE_ITEM] or {}
+CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_USE_ITEM][CollectibleType.COLLECTIBLE_ABYSS] = CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_USE_ITEM][CollectibleType.COLLECTIBLE_ABYSS] or {}
+table.insert(CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_USE_ITEM][CollectibleType.COLLECTIBLE_ABYSS], CustomHealthAPI.Helper.RemoveClearOnAbyssCallback)
+
+function CustomHealthAPI.Mod:ClearOnAbyssCallback(collectible, rng, player, useflags)
+	CustomHealthAPI.Helper.HandleItemRecycle(player)
+end
+
+function CustomHealthAPI.Helper.HandleItemRecycle(player)
+	if not CustomHealthAPI.Helper.PlayerIsIgnored(player) then
+		local data = player:GetData().CustomHealthAPISavedata
+		
+		if data ~= nil and data.CurrentQueuedItem ~= nil then
+			data.CurrentQueuedItem = nil
 		end
 	end
 end

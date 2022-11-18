@@ -1,20 +1,11 @@
-<data>
-	<!-- Examples from Deliverance and IPECAC mod:
-		<entity BaseHP="1"  Group="Stage" 
-		ID="761" Image="deliverance/761.4000.0 - Munchubus.png" 
-		Kind="Deliverance" Name="Munchubus" Subtype="0" Variant="4000" />
-		
-		<entity Group="(IPECAC) Bosses" ID="5" 
-		Image="IPECAC/Treasure Chest.png" Kind="Pickups" 
-		Name="Treasure Chest" Subtype="0" Variant="1666" />
-	-->
-	
+<data>	
 	<entity Group="Beggars" ID="6" Image="repentanceplus/Stargazer Beggar.png" Kind="Repentance Plus" Name="Stargazer Beggar" Subtype="0" Variant="335" />
 	
 	<entity Group="Chests" ID="5" Image="repentanceplus/Black Chest.png" Kind="Repentance Plus" Name="Black Chest" Subtype="0" Variant="514" />
 	<entity Group="Chests" ID="5" Image="repentanceplus/Flesh Chest.png" Kind="Repentance Plus" Name="Flesh Chest" Subtype="0" Variant="513" />
 	<entity Group="Chests" ID="5" Image="repentanceplus/Scarlet Chest.png" Kind="Repentance Plus" Name="Scarlet Chest" Subtype="0" Variant="512" />
 	<entity Group="Chests" ID="5" Image="repentanceplus/Coffin.png" Kind="Repentance Plus" Name="Coffin" Subtype="0" Variant="515" />
+	<entity Group="Chests" ID="5" Image="repentanceplus/White Sack.png" Kind="Repentance Plus" Name="White Sack" Subtype="7" Variant="69" />
 	
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Broken Heart.png" Kind="Repentance Plus" Name="Broken Heart" Subtype="84" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Dauntless Heart.png" Kind="Repentance Plus" Name="Dauntless Heart" Subtype="85" Variant="10" />
@@ -39,4 +30,5 @@
 	<entity Group="Consumables" ID="5" Image="repentanceplus/Quasar Shard.png" Kind="Repentance Plus" Name="Quasar Shard" Subtype="165" Variant="300" />
 	<entity Group="Consumables" ID="5" Image="repentanceplus/Red Rune.png" Kind="Repentance Plus" Name="Red Rune" Subtype="160" Variant="300" />
 	
+	<entity Group="Enemies" ID="894" Image="repentanceplus/Jewel Crawler (Random).png" Kind="Repentance Plus" Name="Jewel Crawler (Random)" Subtype="0" Variant="10" />
 </data>

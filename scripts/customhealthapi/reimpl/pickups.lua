@@ -12,6 +12,320 @@ CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_PRE_PICKUP_COLLISION] 
 CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_PRE_PICKUP_COLLISION][PickupVariant.PICKUP_HEART] = CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_PRE_PICKUP_COLLISION][PickupVariant.PICKUP_HEART] or {}
 table.insert(CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_PRE_PICKUP_COLLISION][PickupVariant.PICKUP_HEART], CustomHealthAPI.Helper.RemoveHeartCollisionCallback)
 
+function CustomHealthAPI.Helper.IsHoldingTaintedForgotten(player)
+	local forgo = player:GetOtherTwin()
+	return math.abs(forgo.Position.X - player.Position.X) < 0.000001 and
+	       math.abs(forgo.Position.Y - player.Position.Y) < 0.000001 and
+	       player:IsHoldingItem() and
+	       forgo:HasEntityFlags(EntityFlag.FLAG_HELD)
+end
+
+function CustomHealthAPI.Helper.CheckIfHeartShouldUseCustomLogic(player, pickup)
+	CustomHealthAPI.Helper.CheckIfHealthOrderSet()
+	CustomHealthAPI.Helper.CheckHealthIsInitializedForPlayer(player)
+	CustomHealthAPI.Helper.CheckSubPlayerInfoOfPlayer(player)
+	CustomHealthAPI.Helper.ResyncHealthOfPlayer(player)
+	
+	if CustomHealthAPI.Helper.PlayerIsIgnored(player) then 
+		return false
+	end
+
+	local hearttype = pickup.SubType
+	local redIsDoubled = player:HasCollectible(CollectibleType.COLLECTIBLE_MAGGYS_BOW)
+	
+	if hearttype == HeartSubType.HEART_FULL then
+		if redIsDoubled then
+			return CustomHealthAPI.Helper.CheckIfRedShouldUseCustomLogic(player, 4)
+		else
+			return CustomHealthAPI.Helper.CheckIfRedShouldUseCustomLogic(player, 2)
+		end
+	elseif hearttype == HeartSubType.HEART_HALF then
+		if redIsDoubled then
+			return CustomHealthAPI.Helper.CheckIfRedShouldUseCustomLogic(player, 2)
+		else
+			return CustomHealthAPI.Helper.CheckIfRedShouldUseCustomLogic(player, 1)
+		end
+	elseif hearttype == HeartSubType.HEART_SOUL then
+		return CustomHealthAPI.Helper.CheckIfSoulShouldUseCustomLogic(player, 2)
+	elseif hearttype == HeartSubType.HEART_ETERNAL then
+		return CustomHealthAPI.Helper.CheckIfEternalShouldUseCustomLogic(player, 1)
+	elseif hearttype == HeartSubType.HEART_DOUBLEPACK then
+		if redIsDoubled then
+			return CustomHealthAPI.Helper.CheckIfRedShouldUseCustomLogic(player, 8)
+		else
+			return CustomHealthAPI.Helper.CheckIfRedShouldUseCustomLogic(player, 4)
+		end
+	elseif hearttype == HeartSubType.HEART_BLACK then
+		return CustomHealthAPI.Helper.CheckIfBlackShouldUseCustomLogic(player, 2)
+	elseif hearttype == HeartSubType.HEART_HALF_SOUL then
+		return CustomHealthAPI.Helper.CheckIfSoulShouldUseCustomLogic(player, 1)
+	elseif hearttype == HeartSubType.HEART_SCARED then
+		if redIsDoubled then
+			return CustomHealthAPI.Helper.CheckIfRedShouldUseCustomLogic(player, 4)
+		else
+			return CustomHealthAPI.Helper.CheckIfRedShouldUseCustomLogic(player, 2)
+		end
+	elseif hearttype == HeartSubType.HEART_BONE then
+		return CustomHealthAPI.Helper.CheckIfBoneShouldUseCustomLogic(player, 1)
+	elseif hearttype == HeartSubType.HEART_ROTTEN then
+		return CustomHealthAPI.Helper.CheckIfRottenShouldUseCustomLogic(player, 2)
+	else
+		return true
+	end
+end
+
+function CustomHealthAPI.Helper.CheckIfRedShouldUseCustomLogic(player, hp)
+	if player:GetPlayerType() == PlayerType.PLAYER_THESOUL then
+		if player:GetSubPlayer() ~= nil then
+			return CustomHealthAPI.Helper.CheckIfRedShouldUseCustomLogic(player:GetSubPlayer(), hp)
+		end
+		return false
+	elseif player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B then
+		if player:GetOtherTwin() ~= nil then
+			return CustomHealthAPI.Helper.CheckIfRedShouldUseCustomLogic(player:GetOtherTwin(), hp)
+		end
+		return false
+	elseif CustomHealthAPI.Helper.PlayerIsIgnored(player) then
+		return false
+	elseif CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[player:GetPlayerType()] then
+		return false
+	end
+	
+	local basegameRedCapacity = CustomHealthAPI.PersistentData.OverriddenFunctions.GetMaxHearts(player) + 
+	                            CustomHealthAPI.PersistentData.OverriddenFunctions.GetBoneHearts(player) * 2
+	local basegameRedToFullHealth = basegameRedCapacity - CustomHealthAPI.PersistentData.OverriddenFunctions.GetHearts(player)
+	
+	if basegameRedToFullHealth >= hp then
+		return false
+	end
+	
+	local data = player:GetData().CustomHealthAPISavedata
+	local redMasks = data.RedHealthMasks
+	
+	local addPriorityOfRed = CustomHealthAPI.PersistentData.HealthDefinitions["RED_HEART"].AddPriority
+	for i = 1, #redMasks do
+		local mask = redMasks[i]
+		for j = 1, #mask do
+			local health = mask[j]
+			if health.Key ~= "RED_HEART" and
+			   addPriorityOfRed >= CustomHealthAPI.PersistentData.HealthDefinitions[health.Key].AddPriority
+			then
+				return true
+			end
+		end
+	end
+	
+	local customUnoccupiedRedCapacity = CustomHealthAPI.Helper.GetAmountUnoccupiedContainers(player) * 2
+	local customMissingRed = CustomHealthAPI.Helper.GetHealableRedHP(player)
+	local customRedToFullHealth = customMissingRed + customUnoccupiedRedCapacity
+	
+	if customRedToFullHealth <= basegameRedToFullHealth then
+		return false
+	end
+	
+	return true
+end
+
+function CustomHealthAPI.Helper.CheckIfRottenShouldUseCustomLogic(player, hp)
+	if player:GetPlayerType() == PlayerType.PLAYER_THESOUL then
+		if player:GetSubPlayer() ~= nil then
+			return CustomHealthAPI.Helper.CheckIfRottenShouldUseCustomLogic(player:GetSubPlayer(), hp)
+		end
+		return false
+	elseif player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B then
+		if player:GetOtherTwin() ~= nil then
+			return CustomHealthAPI.Helper.CheckIfRottenShouldUseCustomLogic(player:GetOtherTwin(), hp)
+		end
+		return false
+	elseif CustomHealthAPI.Helper.PlayerIsIgnored(player) then
+		return false
+	elseif CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[player:GetPlayerType()] then
+		return false
+	end
+	
+	if CustomHealthAPI.PersistentData.OverriddenFunctions.CanPickRottenHearts(player) ~= CustomHealthAPI.Helper.CanPickKey(player, "ROTTEN_HEART") then
+		return true
+	end
+	return false
+end
+
+function CustomHealthAPI.Helper.CheckIfSoulShouldUseCustomLogic(player, hp)
+	if player:GetPlayerType() == PlayerType.PLAYER_THEFORGOTTEN then
+		if player:GetSubPlayer() ~= nil then
+			return CustomHealthAPI.Helper.CheckIfSoulShouldUseCustomLogic(player:GetSubPlayer(), hp)
+		end
+		return false
+	elseif player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B then
+		if player:GetOtherTwin() ~= nil then
+			return CustomHealthAPI.Helper.CheckIfSoulShouldUseCustomLogic(player:GetOtherTwin(), hp)
+		end
+		return false
+	elseif player:GetPlayerType() == PlayerType.PLAYER_BETHANY then
+		return false
+	elseif CustomHealthAPI.Helper.PlayerIsIgnored(player) then
+		return false
+	end
+	
+	local alabasterChargesToAdd = 0
+	for i = 0, 2 do
+		if player:GetActiveItem(i) == CollectibleType.COLLECTIBLE_ALABASTER_BOX then
+			alabasterChargesToAdd = alabasterChargesToAdd + (12 - player:GetActiveCharge(i))
+		end
+	end
+	if alabasterChargesToAdd >= hp then
+		return false
+	end
+	local hp = hp - alabasterChargesToAdd
+	
+	local numShacklesDisabled = player:GetEffects():GetNullEffectNum(NullItemID.ID_SPIRIT_SHACKLES_DISABLED)
+	if numShacklesDisabled > 0 then
+		if hp <= 2 then
+			return false
+		end
+		hp = hp - 2
+	end
+	
+	local basegameSoulToFullHealth = CustomHealthAPI.PersistentData.OverriddenFunctions.GetHeartLimit(player) -
+	                                 (math.ceil(CustomHealthAPI.PersistentData.OverriddenFunctions.GetMaxHearts(player) / 2) * 2 +
+	                                  CustomHealthAPI.PersistentData.OverriddenFunctions.GetBoneHearts(player) * 2 +
+	                                  CustomHealthAPI.PersistentData.OverriddenFunctions.GetSoulHearts(player))
+	
+	if basegameSoulToFullHealth >= hp then
+		return false
+	end
+	
+	local data = player:GetData().CustomHealthAPISavedata
+	local otherMasks = data.OtherHealthMasks
+	
+	local addPriorityOfSoul = CustomHealthAPI.PersistentData.HealthDefinitions["SOUL_HEART"].AddPriority
+	for i = 1, #otherMasks do
+		local mask = otherMasks[i]
+		for j = 1, #mask do
+			local health = mask[j]
+			if CustomHealthAPI.Library.GetInfoOfHealth(health, "Type") == CustomHealthAPI.Enums.HealthTypes.SOUL then
+				if health.Key ~= "SOUL_HEART" and
+				   addPriorityOfSoul >= CustomHealthAPI.PersistentData.HealthDefinitions[health.Key].AddPriority
+				then
+					return true
+				end
+			end
+		end
+	end
+	
+	local customUnoccupiedSoulCapacity = CustomHealthAPI.Helper.GetRoomForOtherKeys(player) * 2
+	local customMissingSoul = CustomHealthAPI.Helper.GetHealableSoulHP(player)
+	local customSoulToFullHealth = customMissingSoul + customUnoccupiedSoulCapacity
+	
+	if customSoulToFullHealth <= basegameSoulToFullHealth then
+		return false
+	end
+	
+	return true
+end
+
+function CustomHealthAPI.Helper.CheckIfBlackShouldUseCustomLogic(player, hp)
+	if player:GetPlayerType() == PlayerType.PLAYER_THEFORGOTTEN then
+		if player:GetSubPlayer() ~= nil then
+			return CustomHealthAPI.Helper.CheckIfBlackShouldUseCustomLogic(player:GetSubPlayer(), hp)
+		end
+		return false
+	elseif player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B then
+		if player:GetOtherTwin() ~= nil then
+			return CustomHealthAPI.Helper.CheckIfBlackShouldUseCustomLogic(player:GetOtherTwin(), hp)
+		end
+		return false
+	elseif player:GetPlayerType() == PlayerType.PLAYER_BETHANY then
+		return false
+	elseif CustomHealthAPI.Helper.PlayerIsIgnored(player) then
+		return false
+	end
+	
+	local alabasterChargesToAdd = 0
+	for i = 0, 2 do
+		if player:GetActiveItem(i) == CollectibleType.COLLECTIBLE_ALABASTER_BOX then
+			alabasterChargesToAdd = alabasterChargesToAdd + (12 - player:GetActiveCharge(i))
+		end
+	end
+	if alabasterChargesToAdd >= hp then
+		return false
+	end
+	local hp = hp - alabasterChargesToAdd
+	
+	local numShacklesDisabled = player:GetEffects():GetNullEffectNum(NullItemID.ID_SPIRIT_SHACKLES_DISABLED)
+	if numShacklesDisabled > 0 then
+		if hp <= 2 then
+			return false
+		end
+		hp = hp - 2
+	end
+	
+	if CustomHealthAPI.PersistentData.OverriddenFunctions.CanPickBlackHearts(player) ~= CustomHealthAPI.Helper.CanPickKey(player, "BLACK_HEART") then
+		return true
+	end
+	return false
+end
+
+function CustomHealthAPI.Helper.CheckIfEternalShouldUseCustomLogic(player, hp)
+	if player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B then
+		if player:GetOtherTwin() ~= nil then
+			return CustomHealthAPI.Helper.CheckIfEternalShouldUseCustomLogic(player:GetOtherTwin(), hp)
+		end
+		return false
+	elseif CustomHealthAPI.Helper.PlayerIsIgnored(player) then
+		return false
+	end
+	
+	local completedEternals = math.floor((CustomHealthAPI.PersistentData.OverriddenFunctions.GetEternalHearts(player) + hp) / 2)
+	if completedEternals <= 0 then
+		return false
+	else
+		return true
+	end
+end
+
+function CustomHealthAPI.Helper.CheckIfBoneShouldUseCustomLogic(player, hp)
+	if player:GetPlayerType() == PlayerType.PLAYER_THEFORGOTTEN then
+		if player:GetSubPlayer() ~= nil then
+			return CustomHealthAPI.Helper.CheckIfBoneShouldUseCustomLogic(player:GetSubPlayer(), hp)
+		end
+		return false
+	elseif player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B then
+		if player:GetOtherTwin() ~= nil then
+			return CustomHealthAPI.Helper.CheckIfBoneShouldUseCustomLogic(player:GetOtherTwin(), hp)
+		end
+		return false
+	elseif player:GetPlayerType() == PlayerType.PLAYER_BETHANY then
+		return false
+	elseif CustomHealthAPI.Helper.PlayerIsIgnored(player) then
+		return false
+	end
+	
+	local basegameBoneToFullHealth = math.ceil((CustomHealthAPI.PersistentData.OverriddenFunctions.GetHeartLimit(player) -
+	                                           (math.ceil(CustomHealthAPI.PersistentData.OverriddenFunctions.GetMaxHearts(player) / 2) * 2 +
+	                                            CustomHealthAPI.PersistentData.OverriddenFunctions.GetBoneHearts(player) * 2 +
+	                                            CustomHealthAPI.PersistentData.OverriddenFunctions.GetSoulHearts(player))) / 2)
+	
+	if basegameBoneToFullHealth >= hp then
+		return false
+	end
+	
+	local data = player:GetData().CustomHealthAPISavedata
+	local otherMasks = data.OtherHealthMasks
+	
+	local addPriorityOfBone = CustomHealthAPI.PersistentData.HealthDefinitions["BONE_HEART"].AddPriority
+	for i = 1, #otherMasks do
+		local mask = otherMasks[i]
+		for j = 1, #mask do
+			local health = mask[j]
+			if CustomHealthAPI.Library.GetInfoOfHealth(health, "Type") == CustomHealthAPI.Enums.HealthTypes.SOUL then
+				return false
+			end
+		end
+	end
+	
+	return true
+end
+
 function CustomHealthAPI.Mod:HeartCollisionCallback(pickup, collider)
 	if collider.Type == EntityType.ENTITY_PLAYER then
 		local player = collider:ToPlayer()
@@ -28,6 +342,8 @@ function CustomHealthAPI.Mod:HeartCollisionCallback(pickup, collider)
 		   player:GetPlayerType() == PlayerType.PLAYER_THELOST_B 
 		then
 			return
+		elseif player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B and CustomHealthAPI.Helper.IsHoldingTaintedForgotten(player) then
+			return CustomHealthAPI.Mod:HeartCollisionCallback(pickup, player:GetOtherTwin())
 		elseif pickup:IsShopItem() and (pickup.Price > player:GetNumCoins() or not player:IsExtraAnimationFinished()) then
 			return true
 		elseif sprite:IsPlaying("Collect") then
@@ -35,10 +351,15 @@ function CustomHealthAPI.Mod:HeartCollisionCallback(pickup, collider)
 		elseif pickup.Wait > 0 then
 			return not (sprite:IsPlaying("Idle") or sprite:IsPlaying("IdlePanic"))
 		elseif sprite:WasEventTriggered("DropSound") or sprite:IsPlaying("Idle") or sprite:IsPlaying("IdlePanic") then
+			if not CustomHealthAPI.Helper.CheckIfHeartShouldUseCustomLogic(player, pickup) then
+				return
+			end
+			
 			local redHealthBefore = player:GetHearts()
 			local soulHealthBefore = player:GetSoulHearts()
 			
 			if pickup.Price == PickupPrice.PRICE_SPIKES then
+---@diagnostic disable-next-line: param-type-mismatch
 				local tookDamage = player:TakeDamage(2.0, 268435584, EntityRef(nil), 30)
 				if not tookDamage then
 					return pickup:IsShopItem()
@@ -375,6 +696,7 @@ function CustomHealthAPI.Helper.HandleSodomAppleEffects(player, pickup, mod)
 		local gibpos = pickup.Position + Vector.FromAngle(rng:RandomFloat() * 360) * 0.5 * pickup.Size
 		local gibvel = Vector.FromAngle(rng:RandomFloat() * 360) * (rng:RandomFloat() * 4.0 + 2.0)
 		
+---@diagnostic disable-next-line: param-type-mismatch
 		local gib = Isaac.Spawn(1000, 5, 0, gibpos, gibvel, nil)
 		gib:Update()
     end

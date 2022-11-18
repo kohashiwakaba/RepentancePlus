@@ -27,16 +27,39 @@ function CustomHealthAPI.Library.RegisterRedHealth(key, info)
 		ProtectsDealChance = info.ProtectsDealChance,
 		PrioritizeHealing = info.PrioritizeHealing,
 		PickupEntities = info.PickupEntities,
-		SumptoriumSubType = info.SumptoriumSubType,
+		--SumptoriumSubType = info.SumptoriumSubType,
 		SumptoriumSplatColor = info.SumptoriumSplatColor,
 		SumptoriumTrailColor = info.SumptoriumTrailColor,
 		SumptoriumCollectSoundSettings = info.SumptoriumCollectSoundSettings
 	}
 	
-	redHealthOrder = nil
 	if info.SumptoriumSubType ~= nil then
-		CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[info.SumptoriumSubType] = key
+		if info.SumptoriumSubType >= 0 and info.SumptoriumSubType <= 6 then
+			CustomHealthAPI.PersistentData.HealthDefinitions[key].SumptoriumSubType = info.SumptoriumSubType
+			
+			if not CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] then
+				local overlapSubtype = info.SumptoriumSubType + 907
+				while CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[overlapSubtype] ~= nil do
+					overlapSubtype = overlapSubtype + 7
+				end
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] = overlapSubtype
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[overlapSubtype] = key
+			end
+		elseif info.SumptoriumSubType == 7 then
+			print("Custom Health API ERROR: Custom health \"" + key + "\" defined with Lil Clot sumptorium subtype.")
+		else
+			CustomHealthAPI.PersistentData.HealthDefinitions[key].SumptoriumSubType = info.SumptoriumSubType
+			CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[info.SumptoriumSubType] = key
+			
+			if CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] then
+				local overlapSubtype = CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key]
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[overlapSubtype] = nil
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] = nil
+			end
+		end
 	end
+	
+	redHealthOrder = nil
 end
 
 function CustomHealthAPI.Library.RegisterSoulHealth(key, info)
@@ -60,16 +83,39 @@ function CustomHealthAPI.Library.RegisterSoulHealth(key, info)
 		HealFlashBO = info.HealFlashBO,
 		PrioritizeHealing = info.PrioritizeHealing,
 		PickupEntities = info.PickupEntities,
-		SumptoriumSubType = info.SumptoriumSubType,
+		--SumptoriumSubType = info.SumptoriumSubType,
 		SumptoriumSplatColor = info.SumptoriumSplatColor,
 		SumptoriumTrailColor = info.SumptoriumTrailColor,
 		SumptoriumCollectSoundSettings = info.SumptoriumCollectSoundSettings
 	}
 	
-	otherHealthOrder = nil
 	if info.SumptoriumSubType ~= nil then
-		CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[info.SumptoriumSubType] = key
+		if info.SumptoriumSubType >= 0 and info.SumptoriumSubType <= 6 then
+			CustomHealthAPI.PersistentData.HealthDefinitions[key].SumptoriumSubType = info.SumptoriumSubType
+			
+			if not CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] then
+				local overlapSubtype = info.SumptoriumSubType + 907
+				while CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[overlapSubtype] ~= nil do
+					overlapSubtype = overlapSubtype + 7
+				end
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] = overlapSubtype
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[overlapSubtype] = key
+			end
+		elseif info.SumptoriumSubType == 7 then
+			print("Custom Health API ERROR: Custom health \"" + key + "\" defined with Lil Clot sumptorium subtype.")
+		else
+			CustomHealthAPI.PersistentData.HealthDefinitions[key].SumptoriumSubType = info.SumptoriumSubType
+			CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[info.SumptoriumSubType] = key
+			
+			if CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] then
+				local overlapSubtype = CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key]
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[overlapSubtype] = nil
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] = nil
+			end
+		end
 	end
+	
+	otherHealthOrder = nil
 end
 
 function CustomHealthAPI.Library.RegisterHealthContainer(key, info)
@@ -98,16 +144,39 @@ function CustomHealthAPI.Library.RegisterHealthContainer(key, info)
 		CanHaveHalfCapacity = info.CanHaveHalfCapacity,
 		ProtectsDealChance = info.ProtectsDealChance,
 		PickupEntities = info.PickupEntities,
-		SumptoriumSubType = info.SumptoriumSubType,
+		--SumptoriumSubType = info.SumptoriumSubType,
 		SumptoriumSplatColor = info.SumptoriumSplatColor,
 		SumptoriumTrailColor = info.SumptoriumTrailColor,
 		SumptoriumCollectSoundSettings = info.SumptoriumCollectSoundSettings
 	}
 	
-	otherHealthOrder = nil
 	if info.SumptoriumSubType ~= nil then
-		CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[info.SumptoriumSubType] = key
+		if info.SumptoriumSubType >= 0 and info.SumptoriumSubType <= 6 then
+			CustomHealthAPI.PersistentData.HealthDefinitions[key].SumptoriumSubType = info.SumptoriumSubType
+			
+			if not CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] then
+				local overlapSubtype = info.SumptoriumSubType + 907
+				while CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[overlapSubtype] ~= nil do
+					overlapSubtype = overlapSubtype + 7
+				end
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] = overlapSubtype
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[overlapSubtype] = key
+			end
+		elseif info.SumptoriumSubType == 7 then
+			print("Custom Health API ERROR: Custom health \"" + key + "\" defined with Lil Clot sumptorium subtype.")
+		else
+			CustomHealthAPI.PersistentData.HealthDefinitions[key].SumptoriumSubType = info.SumptoriumSubType
+			CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[info.SumptoriumSubType] = key
+			
+			if CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] then
+				local overlapSubtype = CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key]
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[overlapSubtype] = nil
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] = nil
+			end
+		end
 	end
+	
+	otherHealthOrder = nil
 end
 
 function CustomHealthAPI.Library.RegisterHealthOverlay(key, info)
@@ -125,14 +194,36 @@ function CustomHealthAPI.Library.RegisterHealthOverlay(key, info)
 		AnimationName = info.AnimationName,
 		IgnoreBleeding = info.IgnoreBleeding,
 		PickupEntities = info.PickupEntities,
-		SumptoriumSubType = info.SumptoriumSubType,
+		--SumptoriumSubType = info.SumptoriumSubType,
 		SumptoriumSplatColor = info.SumptoriumSplatColor,
 		SumptoriumTrailColor = info.SumptoriumTrailColor,
 		SumptoriumCollectSoundSettings = info.SumptoriumCollectSoundSettings
 	}
 	
 	if info.SumptoriumSubType ~= nil then
-		CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[info.SumptoriumSubType] = key
+		if info.SumptoriumSubType >= 0 and info.SumptoriumSubType <= 6 then
+			CustomHealthAPI.PersistentData.HealthDefinitions[key].SumptoriumSubType = info.SumptoriumSubType
+			
+			if not CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] then
+				local overlapSubtype = info.SumptoriumSubType + 907
+				while CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[overlapSubtype] ~= nil do
+					overlapSubtype = overlapSubtype + 7
+				end
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] = overlapSubtype
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[overlapSubtype] = key
+			end
+		elseif info.SumptoriumSubType == 7 then
+			print("Custom Health API ERROR: Custom health \"" + key + "\" defined with Lil Clot sumptorium subtype.")
+		else
+			CustomHealthAPI.PersistentData.HealthDefinitions[key].SumptoriumSubType = info.SumptoriumSubType
+			CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[info.SumptoriumSubType] = key
+			
+			if CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] then
+				local overlapSubtype = CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key]
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[overlapSubtype] = nil
+				CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[key] = nil
+			end
+		end
 	end
 end
 

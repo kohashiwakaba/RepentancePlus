@@ -127,6 +127,7 @@ function CustomHealthAPI.Helper.ResyncRedHealthOfPlayer(player)
 		return
 	end
 	
+	local ignoreRed = diffRotten > 0 and diffRotten >= diffTotal
 	if diffRotten ~= 0 then
 		CustomHealthAPI.Helper.UpdateHealthMasks(player, "ROTTEN_HEART", diffRotten * 2, true, false, true, true)
 		
@@ -138,9 +139,10 @@ function CustomHealthAPI.Helper.ResyncRedHealthOfPlayer(player)
 	
 		diffRotten = actualRotten - expectedRotten
 		diffTotal = actualTotal - expectedTotal
+		diffRed = diffTotal - (diffRotten * 2)
 	end
-	if diffTotal ~= 0 then
-		CustomHealthAPI.Helper.UpdateHealthMasks(player, "RED_HEART", diffTotal, true, false, true, true)
+	if not ignoreRed and diffRed ~= 0 then
+		CustomHealthAPI.Helper.UpdateHealthMasks(player, "RED_HEART", diffRed, true, false, true, true)
 	end
 	
 	local data = player:GetData().CustomHealthAPISavedata
@@ -244,7 +246,8 @@ function CustomHealthAPI.Helper.ResyncOtherHealthOfPlayer(player)
 	end
 	
 	if diffSoulTotal ~= 0 or diffBlack ~= 0 or diffBone ~= 0 then
-		if diffSoulTotal > 0 then
+		local ignoreSoul = diffBlack > 0 and diffBlack * 2 >= diffSoulTotal
+		if not ignoreSoul and diffSoulTotal > 0 then
 			CustomHealthAPI.Helper.UpdateHealthMasks(player, "SOUL_HEART", diffSoulTotal, true, false, true, true)
 			
 			expectedSoulTotal = CustomHealthAPI.Helper.GetTotalSoulHP(player, true)
@@ -354,7 +357,7 @@ function CustomHealthAPI.Helper.ResyncOtherHealthOfPlayer(player)
 			diffBroken = actualBroken - expectedBroken
 		end]]--
 		
-		if diffSoulTotal < 0 then
+		if not ignoreSoul and diffSoulTotal < 0 then
 			CustomHealthAPI.Helper.UpdateHealthMasks(player, "SOUL_HEART", diffSoulTotal, true, false, true, true)
 			
 			expectedSoulTotal = CustomHealthAPI.Helper.GetTotalSoulHP(player, true)
@@ -454,6 +457,12 @@ function CustomHealthAPI.Helper.ResyncOtherHealthOfPlayer(player)
 	local redTotal = CustomHealthAPI.PersistentData.OverriddenFunctions.GetHearts(player)
 	local rotten = CustomHealthAPI.PersistentData.OverriddenFunctions.GetRottenHearts(player)
 	local red = redTotal - (rotten * 2)
+	
+	for i = 2, 0, -1 do
+		if player:GetActiveItem(i) == CollectibleType.COLLECTIBLE_ALABASTER_BOX then
+			player:SetActiveCharge(0, i)
+		end
+	end
 	
 	CustomHealthAPI.Helper.ClearBasegameHealth(player)
 	
@@ -565,6 +574,7 @@ function CustomHealthAPI.Helper.ResyncHealthOfPlayer(player, isSubPlayer)
 				alabasterChargesToAdd = alabasterChargesToAdd + (12 - player:GetActiveCharge(i))
 			end
 		end
+		player:GetData().CustomHealthAPIOtherData.AlabasterChargesAdded = math.max(0, (player:GetData().CustomHealthAPIOtherData.AlabasterChargesToAdd or alabasterChargesToAdd) - alabasterChargesToAdd)
 		player:GetData().CustomHealthAPIOtherData.AlabasterChargesToAdd = alabasterChargesToAdd
 		
 		CustomHealthAPI.Helper.FinishDamageDesync(player)
@@ -584,6 +594,8 @@ function CustomHealthAPI.Helper.ResyncHealthOfPlayer(player, isSubPlayer)
 		for _, callback in ipairs(callbacks) do
 			callback.Function(player, isSubPlayer)
 		end
+		
+		player:GetData().CustomHealthAPIOtherData.AlabasterChargesAdded = 0
 		
 		avoidRecursive = false
 	end

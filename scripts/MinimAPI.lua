@@ -3,6 +3,7 @@
 
 local Icons = Sprite()
 Icons:Load("gfx/ui/ui_minimapi_icons_rplus.anm2", true)
+local mod = RepentancePlusMod
 
 -- stargazer beggar
 MinimapAPI:AddIcon("stargazerslot", Icons, "stargazerslot", 0)
@@ -71,4 +72,9 @@ MinimapAPI:AddIcon("zealotheart", Icons, "zealotheart", 0)
 MinimapAPI:AddPickup("zealotheart", "zealotheart", 5, 10, 99, MinimapAPI.PickupNotCollected, "hearts", 10650)
 
 MinimapAPI:AddIcon("desertedheart", Icons, "desertedheart", 0)
-MinimapAPI:AddPickup("desertedheart", "desertedheart", 5, 10, 100, MinimapAPI.PickupNotCollected, "hearts", 10250)	
+MinimapAPI:AddPickup("desertedheart", "desertedheart", 5, 10, 100, MinimapAPI.PickupNotCollected, "hearts", 10250)
+
+-- cards with custom backs
+MinimapAPI:AddPickup("SpiritualReservesCard", "MagicCard", 5, 300, mod.CustomConsumables.SPIRITUAL_RESERVES, MinimapAPI.PickupNotCollected, "card", 1100)
+MinimapAPI:AddPickup("MirroredLandscapeCard", "MagicCard", 5, 300, mod.CustomConsumables.MIRRORED_LANDSCAPE, MinimapAPI.PickupNotCollected, "card", 1100)
+MinimapAPI:AddPickup("UnoReverseCard", "UnusCard", 5, 300, mod.CustomConsumables.UNO_REVERSE_CARD, MinimapAPI.PickupNotCollected, "cards", 1200)

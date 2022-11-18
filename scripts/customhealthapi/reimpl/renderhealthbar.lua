@@ -231,7 +231,7 @@ function CustomHealthAPI.Helper.GetHealthSprite(filename)
 	end
 end
 
-function CustomHealthAPI.Helper.RenderHealth(sprite, player, playerSlot, i, renderOffset, numOtherHearts, offset)
+function CustomHealthAPI.Helper.RenderHealth(sprite, player, playerSlot, i, renderOffset, numOtherHearts, offset, ignoreEsauFlipX)
 	local bottomRight = Game():GetRoom():GetRenderSurfaceTopLeft() * 2 + Vector(442,286) -- thank-q stageapi
 	local hudOffset = Options.HUDOffset * 10
 	local heartDistanceX = CustomHealthAPI.Constants.HEART_PIXEL_WIDTH_DEFAULT
@@ -256,7 +256,9 @@ function CustomHealthAPI.Helper.RenderHealth(sprite, player, playerSlot, i, rend
 		                     bottomRight.Y - 27 - math.floor(hudOffset * 1.2 + 0.5) / 2 + heartDistanceY * math.floor(i / 3)) + offset, 
 		              Vector.Zero, Vector.Zero)
 	elseif playerSlot == -1 then -- Esau
-		sprite.FlipX = true
+		if not ignoreEsauFlipX then
+			sprite.FlipX = true
+		end
 		sprite:Render(Vector(bottomRight.X - 48 - math.floor(hudOffset * 1.6 + 0.5) - heartDistanceX * (i % 6), 
 		                     bottomRight.Y - 27 - math.floor(hudOffset * 1.2 + 0.5) / 2 + heartDistanceY * math.floor(i / 6)) + offset, 
 		              Vector.Zero, Vector.Zero)
@@ -705,7 +707,7 @@ function CustomHealthAPI.Helper.RenderCurseOfTheUnknown(player, playerSlot, rend
 	healthSprite.Color = color
 	
 	if not prevent then
-		CustomHealthAPI.Helper.RenderHealth(healthSprite, player, playerSlot, 0, renderOffset, 1)
+		CustomHealthAPI.Helper.RenderHealth(healthSprite, player, playerSlot, 0, renderOffset, 1, nil, true)
 	end
 end
 
@@ -727,7 +729,9 @@ function CustomHealthAPI.Helper.RenderHolyMantle(player, playerSlot, renderOffse
 		end
 		local keyLimit = math.ceil(CustomHealthAPI.Helper.GetTrueHeartLimit(player) / 2)
 		
-		if numKeys >= keyLimit and numKeys % 6 == 0 then
+		if numKeys >= keyLimit and numKeys % 6 == 0 and 
+		   not (player:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) or player:GetPlayerType() == PlayerType.PLAYER_JACOB2_B) 
+		then
 			local prevent = false
 			local healthIndex = numKeys - 1
 			local additionalOffset = Vector(CustomHealthAPI.Constants.HEART_PIXEL_WIDTH_DEFAULT / 2, 0)
@@ -768,6 +772,9 @@ function CustomHealthAPI.Helper.RenderHolyMantle(player, playerSlot, renderOffse
 		else
 			local prevent = false
 			local healthIndex = numKeys
+			if player:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) or player:GetPlayerType() == PlayerType.PLAYER_JACOB2_B then
+				healthIndex = 0
+			end
 			local additionalOffset = Vector.Zero
 			
 			local callbacks = CustomHealthAPI.Helper.GetCallbacks(CustomHealthAPI.Enums.Callbacks.PRE_RENDER_HOLY_MANTLE)
@@ -882,14 +889,16 @@ function CustomHealthAPI.Helper.RenderCustomHealth()
 	end
 
 	if esauToRender then
-		CustomHealthAPI.Helper.RenderCustomHealthOfPlayer(esauToRender, -1, false, Vector.Zero)
-		CustomHealthAPI.Helper.RenderHolyMantle(esauToRender, -1, Vector.Zero)
-		
 		if Game():GetLevel():GetCurses() & LevelCurse.CURSE_OF_THE_UNKNOWN == 0 then
+			CustomHealthAPI.Helper.RenderCustomHealthOfPlayer(esauToRender, -1, false, Vector.Zero)
+			CustomHealthAPI.Helper.RenderHolyMantle(esauToRender, -1, Vector.Zero)
+			
 			local callbacks = CustomHealthAPI.Helper.GetCallbacks(CustomHealthAPI.Enums.Callbacks.POST_RENDER_HP_BAR)
 			for _, callback in ipairs(callbacks) do
 				callback.Function(esauToRender, -1, Vector.Zero)
 			end
+		else
+			CustomHealthAPI.Helper.RenderCurseOfTheUnknown(esauToRender, -1, Vector.Zero)
 		end
 	end
 end

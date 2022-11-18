@@ -7,7 +7,7 @@
 function CustomHealthAPI.Library.AddHealth(player, k, h, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone, ignoreStrength, ignoreAlabasterBox, ignoreHaveAHeart)
 	if player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B then
 		if player:GetOtherTwin() ~= nil then
-			return CustomHealthAPI.Library.AddHealth(player:GetOtherTwin(), k, h, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone)
+			return CustomHealthAPI.Library.AddHealth(player:GetOtherTwin(), k, h, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone, ignoreStrength, ignoreAlabasterBox, ignoreHaveAHeart)
 		end
 	end
 	
@@ -17,7 +17,7 @@ function CustomHealthAPI.Library.AddHealth(player, k, h, ignoreTaintedMaggieDoub
 		if not (player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B or CustomHealthAPI.Helper.IsFoundSoul(player) or player:IsCoopGhost()) then
 			CustomHealthAPI.Helper.UseOverriddenAddFunctionForKeeperAndLost(player, k, h)
 		end
-		return 
+		return
 	end
 	CustomHealthAPI.Helper.CheckSubPlayerInfoOfPlayer(player)
 	CustomHealthAPI.Helper.ResyncHealthOfPlayer(player)
@@ -26,7 +26,7 @@ function CustomHealthAPI.Library.AddHealth(player, k, h, ignoreTaintedMaggieDoub
 	local hp = h
 	local callbacks = CustomHealthAPI.Helper.GetCallbacks(CustomHealthAPI.Enums.Callbacks.PRE_ADD_HEALTH)
 	for _, callback in ipairs(callbacks) do
-		returnA, returnB = callback.Function(player, key, hp)
+		local returnA, returnB = callback.Function(player, key, hp)
 		if returnA == true then
 			return
 		elseif returnA ~= nil and returnB ~= nil then
@@ -54,7 +54,7 @@ function CustomHealthAPI.Library.AddHealth(player, k, h, ignoreTaintedMaggieDoub
 		elseif playerType == PlayerType.PLAYER_THESOUL then
 			local subplayer = player:GetSubPlayer()
 			if subplayer ~= nil then
-				CustomHealthAPI.Library.AddHealth(subplayer, key, hp, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone)
+				CustomHealthAPI.Library.AddHealth(subplayer, key, hp, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone, ignoreStrength, ignoreAlabasterBox, ignoreHaveAHeart)
 			end
 			return
 		elseif CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[playerType] then
@@ -76,7 +76,7 @@ function CustomHealthAPI.Library.AddHealth(player, k, h, ignoreTaintedMaggieDoub
 		elseif playerType == PlayerType.PLAYER_THEFORGOTTEN then
 			local subplayer = player:GetSubPlayer()
 			if subplayer ~= nil then
-				CustomHealthAPI.Library.AddHealth(subplayer, key, hp, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone)
+				CustomHealthAPI.Library.AddHealth(subplayer, key, hp, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone, ignoreStrength, ignoreAlabasterBox, ignoreHaveAHeart)
 			end
 			return
 		end
@@ -117,13 +117,30 @@ function CustomHealthAPI.Library.AddHealth(player, k, h, ignoreTaintedMaggieDoub
 			CustomHealthAPI.Helper.SubtractTemporaryHP(player, key, hpDiff)
 		end
 	elseif healthType == CustomHealthAPI.Enums.HealthTypes.CONTAINER then
-		if playerType == PlayerType.PLAYER_THESOUL and 
+		if playerType == PlayerType.PLAYER_THEFORGOTTEN and 
 		   CustomHealthAPI.Library.GetInfoOfKey(key, "MaxHP") <= 0 and
 		   CustomHealthAPI.Library.GetInfoOfKey(key, "KindContained") ~= CustomHealthAPI.Enums.HealthKinds.NONE
 		then
-			local subplayer = player:GetSubPlayer()
-			if subplayer ~= nil then
-				CustomHealthAPI.Library.AddHealth(subplayer, key, hp, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone)
+			local hpToAdd = math.ceil(hp)
+			if CustomHealthAPI.PersistentData.HealthDefinitions[key].CanHaveHalfCapacity then
+				hpToAdd = math.ceil(hpToAdd / 2)
+			end
+			CustomHealthAPI.Library.AddHealth(player, "BONE_HEART", hpToAdd, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone, ignoreStrength, ignoreAlabasterBox, ignoreHaveAHeart)
+			return
+		elseif playerType == PlayerType.PLAYER_THESOUL and 
+		   CustomHealthAPI.Library.GetInfoOfKey(key, "KindContained") ~= CustomHealthAPI.Enums.HealthKinds.NONE
+		then
+			if CustomHealthAPI.Library.GetInfoOfKey(key, "MaxHP") > 0 then
+				local subplayer = player:GetSubPlayer()
+				if subplayer ~= nil then
+					CustomHealthAPI.Library.AddHealth(subplayer, key, hp, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone, ignoreStrength, ignoreAlabasterBox, ignoreHaveAHeart)
+				end
+			else
+				local hpToAdd = math.ceil(hp)
+				if not CustomHealthAPI.PersistentData.HealthDefinitions[key].CanHaveHalfCapacity then
+					hpToAdd = hpToAdd * 2
+				end
+				CustomHealthAPI.Library.AddHealth(player, "SOUL_HEART", hpToAdd, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone, ignoreStrength, ignoreAlabasterBox, ignoreHaveAHeart)
 			end
 			return
 		elseif CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[playerType] and 
@@ -137,7 +154,7 @@ function CustomHealthAPI.Library.AddHealth(player, k, h, ignoreTaintedMaggieDoub
 			if playerType == PlayerType.PLAYER_BLUEBABY and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) then
 				hpToAdd = hpToAdd * 2
 			end
-			CustomHealthAPI.Library.AddHealth(player, CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[playerType], hpToAdd, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone)
+			CustomHealthAPI.Library.AddHealth(player, CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[playerType], hpToAdd, ignoreTaintedMaggieDoubling, ignoreBethanyCharges, avoidRemovingBone, ignoreStrength, ignoreAlabasterBox, ignoreHaveAHeart)
 			return
 		end
 		
@@ -173,6 +190,12 @@ function CustomHealthAPI.Library.AddHealth(player, k, h, ignoreTaintedMaggieDoub
 	local challengeIsHaveAHeart = Game().Challenge == Challenge.CHALLENGE_HAVE_A_HEART
 	if challengeIsHaveAHeart then
 		Game().Challenge = Challenge.CHALLENGE_NULL
+	end
+	
+	for i = 2, 0, -1 do
+		if player:GetActiveItem(i) == CollectibleType.COLLECTIBLE_ALABASTER_BOX then
+			player:SetActiveCharge(0, i)
+		end
 	end
 	
 	CustomHealthAPI.Helper.ClearBasegameHealth(player)
@@ -449,7 +472,7 @@ end
 function CustomHealthAPI.Helper.UpdateHealthMasks(player, k, h, ignoreTaintedMaggieDoubling, avoidRemovingBone, ignoreAlabasterBox, ignoreHaveAHeart)
 	if player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B then
 		if player:GetOtherTwin() ~= nil then
-			return CustomHealthAPI.Helper.UpdateHealthMasks(player:GetOtherTwin(), k, h, ignoreTaintedMaggieDoubling, avoidRemovingBone)
+			return CustomHealthAPI.Helper.UpdateHealthMasks(player:GetOtherTwin(), k, h, ignoreTaintedMaggieDoubling, avoidRemovingBone, ignoreAlabasterBox, ignoreHaveAHeart)
 		end
 	end
 	
@@ -465,7 +488,7 @@ function CustomHealthAPI.Helper.UpdateHealthMasks(player, k, h, ignoreTaintedMag
 	local hp = h
 	local callbacks = CustomHealthAPI.Helper.GetCallbacks(CustomHealthAPI.Enums.Callbacks.PRE_ADD_HEALTH)
 	for _, callback in ipairs(callbacks) do
-		returnA, returnB = callback.Function(player, key, hp)
+		local returnA, returnB = callback.Function(player, key, hp)
 		if returnA == true then
 			return
 		elseif returnA ~= nil and returnB ~= nil then
@@ -488,7 +511,7 @@ function CustomHealthAPI.Helper.UpdateHealthMasks(player, k, h, ignoreTaintedMag
 		elseif playerType == PlayerType.PLAYER_THESOUL then
 			local subplayer = player:GetSubPlayer()
 			if subplayer ~= nil then
-				CustomHealthAPI.Helper.UpdateHealthMasks(subplayer, key, hp, ignoreTaintedMaggieDoubling, avoidRemovingBone)
+				CustomHealthAPI.Helper.UpdateHealthMasks(subplayer, key, hp, ignoreTaintedMaggieDoubling, avoidRemovingBone, ignoreAlabasterBox, ignoreHaveAHeart)
 			end
 			return
 		elseif CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[playerType] then
@@ -507,7 +530,7 @@ function CustomHealthAPI.Helper.UpdateHealthMasks(player, k, h, ignoreTaintedMag
 		elseif playerType == PlayerType.PLAYER_THEFORGOTTEN then
 			local subplayer = player:GetSubPlayer()
 			if subplayer ~= nil then
-				CustomHealthAPI.Helper.UpdateHealthMasks(subplayer, key, hp, ignoreTaintedMaggieDoubling, avoidRemovingBone, ignoreStrength)
+				CustomHealthAPI.Helper.UpdateHealthMasks(subplayer, key, hp, ignoreTaintedMaggieDoubling, avoidRemovingBone, ignoreAlabasterBox, ignoreHaveAHeart)
 			end
 			return
 		end
@@ -524,10 +547,10 @@ function CustomHealthAPI.Helper.UpdateHealthMasks(player, k, h, ignoreTaintedMag
 		end
 		
 		if not ignoreAlabasterBox then
-			local alabasterChargesToAdd = player:GetData().CustomHealthAPIOtherData.AlabasterChargesToAdd
-			if alabasterChargesToAdd ~= nil and alabasterChargesToAdd > 0 and hpToAdd > 0 then
-				player:GetData().CustomHealthAPIOtherData.AlabasterChargesToAdd = math.max(0, alabasterChargesToAdd - hpToAdd)
-				hpToAdd = math.max(0, hpToAdd - alabasterChargesToAdd)
+			local alabasterChargesAdded = player:GetData().CustomHealthAPIOtherData.AlabasterChargesAdded
+			if alabasterChargesAdded ~= nil and alabasterChargesAdded > 0 and hpToAdd > 0 then
+				player:GetData().CustomHealthAPIOtherData.AlabasterChargesAdded = math.max(0, alabasterChargesAdded - hpToAdd)
+				hpToAdd = math.max(0, hpToAdd - alabasterChargesAdded)
 			end
 		end
 		
@@ -537,17 +560,34 @@ function CustomHealthAPI.Helper.UpdateHealthMasks(player, k, h, ignoreTaintedMag
 		end
 		
 		local hpDiff = hpToAdd - leftoverHP
-		if hpDiff < 0 and not ignoreStrength then
+		if hpDiff < 0 then --and not ignoreStrength then
 			CustomHealthAPI.Helper.SubtractTemporaryHP(player, key, hpDiff)
 		end
 	elseif healthType == CustomHealthAPI.Enums.HealthTypes.CONTAINER then
-		if playerType == PlayerType.PLAYER_THESOUL and 
+		if playerType == PlayerType.PLAYER_THEFORGOTTEN and 
 		   CustomHealthAPI.Library.GetInfoOfKey(key, "MaxHP") <= 0 and
 		   CustomHealthAPI.Library.GetInfoOfKey(key, "KindContained") ~= CustomHealthAPI.Enums.HealthKinds.NONE
 		then
-			local subplayer = player:GetSubPlayer()
-			if subplayer ~= nil then
-				CustomHealthAPI.Helper.UpdateHealthMasks(subplayer, key, hp, ignoreTaintedMaggieDoubling, avoidRemovingBone)
+			local hpToAdd = math.ceil(hp)
+			if CustomHealthAPI.PersistentData.HealthDefinitions[key].CanHaveHalfCapacity then
+				hpToAdd = math.ceil(hpToAdd / 2)
+			end
+			CustomHealthAPI.Helper.UpdateHealthMasks(player, "BONE_HEART", hpToAdd, ignoreTaintedMaggieDoubling, avoidRemovingBone, ignoreAlabasterBox, ignoreHaveAHeart)
+			return
+		elseif playerType == PlayerType.PLAYER_THESOUL and 
+		   CustomHealthAPI.Library.GetInfoOfKey(key, "KindContained") ~= CustomHealthAPI.Enums.HealthKinds.NONE
+		then
+			if CustomHealthAPI.Library.GetInfoOfKey(key, "MaxHP") > 0 then
+				local subplayer = player:GetSubPlayer()
+				if subplayer ~= nil then
+					CustomHealthAPI.Helper.UpdateHealthMasks(subplayer, key, hp, ignoreTaintedMaggieDoubling, avoidRemovingBone, ignoreAlabasterBox, ignoreHaveAHeart)
+				end
+			else
+				local hpToAdd = math.ceil(hp)
+				if not CustomHealthAPI.PersistentData.HealthDefinitions[key].CanHaveHalfCapacity then
+					hpToAdd = hpToAdd * 2
+				end
+				CustomHealthAPI.Helper.UpdateHealthMasks(player, "SOUL_HEART", hpToAdd, ignoreTaintedMaggieDoubling, avoidRemovingBone, ignoreAlabasterBox, ignoreHaveAHeart)
 			end
 			return
 		elseif CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[playerType] and 
@@ -561,7 +601,7 @@ function CustomHealthAPI.Helper.UpdateHealthMasks(player, k, h, ignoreTaintedMag
 			if playerType == PlayerType.PLAYER_BLUEBABY and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) then
 				hpToAdd = hpToAdd * 2
 			end
-			CustomHealthAPI.Helper.UpdateHealthMasks(player, CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[playerType], hpToAdd, ignoreTaintedMaggieDoubling, avoidRemovingBone)
+			CustomHealthAPI.Helper.UpdateHealthMasks(player, CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[playerType], hpToAdd, ignoreTaintedMaggieDoubling, avoidRemovingBone, ignoreAlabasterBox, ignoreHaveAHeart)
 			return
 		end
 		
@@ -569,7 +609,7 @@ function CustomHealthAPI.Helper.UpdateHealthMasks(player, k, h, ignoreTaintedMag
 		local leftoverHP = CustomHealthAPI.Helper.AddContainerMain(player, key, hpToAdd, avoidRemovingBone)
 		
 		local hpDiff = hpToAdd - leftoverHP
-		if hpDiff < 0 and not ignoreStrength then
+		if hpDiff < 0 then --and not ignoreStrength then
 			CustomHealthAPI.Helper.SubtractTemporaryHP(player, key, hpDiff)
 		end
 	elseif healthType == CustomHealthAPI.Enums.HealthTypes.OVERLAY then

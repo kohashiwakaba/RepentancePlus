@@ -6,6 +6,7 @@
 		<Item Name="Cherry Friends" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Tower of Babel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<item Name="Tank Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<item Name="Helicopter Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Gusty Blood" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Red Bomber" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="A Cat in the Box" Weight="0.25" DecreaseBy="0.25" RemoveOn="0.025" />
@@ -30,6 +31,7 @@
 		<Item Name="Stargazer's Hat" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Handicapped Placard" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Birth Certificate" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
+		<Item Name="Bag of Jewels" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 	</Pool>
 	<Pool Name="boss">
 		
@@ -53,6 +55,7 @@
 		<Item Name="Angel's Wings" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Pure Soul" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Book of Judges" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Spiritual Amends" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="secret">
 		<Item Name="Temper Tantrum" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -63,9 +66,11 @@
 		<Item Name="Bottomless Bag" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Birth Certificate" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Ordinary Life" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="The Hood" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Bag of Jewels" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="library">
-		<Item Name="Book of Genesis" Weight="0.25" DecreaseBy="0.25" RemoveOn="0.025" />
+		<Item Name="Book of Genesis" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
 		<Item Name="Book of Leviathan" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Book of Judges" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
@@ -121,6 +126,7 @@
 		<Item Name="Cherubim" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<item Name="Tank Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<item Name="Helicopter Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Sibling Rivalry" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Friendly Sack" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Ultra Flesh Kid!" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -151,6 +157,7 @@
 		<Item Name="Magic Pen" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<item Name="Tank Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<item Name="Helicopter Boys" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Gusty Blood" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Red Bomber" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Nerve Pinch" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -167,6 +174,7 @@
 		<Item Name="2+1" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.1" />
 		<Item Name="Magic Marker" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Handicapped Placard" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.1" />
+		<Item Name="Bag of Jewels" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="greedDevil">
 		<Item Name="Sinner's Heart" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />

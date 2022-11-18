@@ -135,6 +135,9 @@
 	<sound name="Funeral Services">
 		<sample weight="1" path="voiceover/Funeral Services.wav" />
 	</sound>
+	<sound name="Funeral Services?">
+		<sample weight="1" path="voiceover/Reverse Funeral Services.wav" />
+	</sound>
 	<sound name="Library Card">
 		<sample weight="1" path="voiceover/Library Card.wav" />
 	</sound>

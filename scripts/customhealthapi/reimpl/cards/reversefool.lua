@@ -363,7 +363,7 @@ function CustomHealthAPI.Helper.HandleReverseFool(player)
 				end
 			end
 			
-			hpToSpawn = hpToSpawn - i
+			hpToSpawn = hpToSpawn - 1
 		end
 	end
 end

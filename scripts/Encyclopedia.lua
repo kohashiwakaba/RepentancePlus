@@ -429,6 +429,43 @@ local ItemsWiki = {
 			{str = "You will not be able to return to the main room once you enter the secondary room, so choose carefully!"}
         },
 	},
+	[mod.CustomCollectibles.HELICOPTER_BOYS] = {
+        {
+                {str = "Effects", fsize = 2, clr = 3, halign = 0},
+                {str = "Spawns 2 Toy Helicopters that fly around the room and attack enemies that are in their line of sight "},
+                {str = "Green: very rapidly shoots weak bullets at enemies and moves more quickly "},
+                {str = "Red: summons airstrikes at enemies' positions, moves slower"},
+        },
+	},
+	[mod.CustomCollectibles.THE_HOOD] = {
+			{
+					{str = "Effects", fsize = 2, clr = 3, halign = 0},
+					{str = "Triples the chance to turn a Soul heart into a Fettered heart "},
+					{str = "Fettered hearts can now be picked up even at full soul health "},
+					{str = "Fettered ghosts gain homing tears"},
+			},
+	},
+	[mod.CustomCollectibles.PENANCE] = {
+			{
+					{str = "Effects", fsize = 2, clr = 3, halign = 0},
+					{str = "Making a sacrifice has a 50% chance to spawn a friendly orbital ghost "},
+					{str = "The ghosts now drop eternal hearts instead of half soul hearts when they die"},
+			},
+	},
+	[mod.CustomCollectibles.BAG_OF_JEWELS] = {
+			{
+					{str = "Effects", fsize = 2, clr = 3, halign = 0},
+					{str = "Gives you a random Sinful Jewel on use"},
+			},
+	},
+	[mod.CustomCollectibles.LIL_CRAWLER] = {
+			{
+					{str = "Effects", fsize = 2, clr = 3, halign = 0},
+					{str = "Spawns a friendly Jewel Crawler familiar"},
+					{str = "Blocks enemy projectiles "},
+					{str = "After blocking projectiles 3 times, it dies, drops its respective jewel and respawns on the next floor with a different skin"},
+			},
+	},
 }
 
 local TrinketsWiki = {
@@ -580,6 +617,25 @@ local TrinketsWiki = {
 			{str = "Chance increases with pickup's quality"},
 		},
 	},
+	[mod.CustomTrinkets.CRACKED_CROSS] = {
+        {
+                {str = "Effects", fsize = 2, clr = 3, halign = 0},
+                {str = "When entering a new room, one random enemy will be crippled"},
+        },
+	},
+	[mod.CustomTrinkets.MY_SOUL] = {
+			{
+					{str = "Effects", fsize = 2, clr = 3, halign = 0},
+					{str = "Spawns one permanent orbital ghost that shoots spectral tears and can block enemy projectiles"},
+			},
+	},
+	[mod.CustomTrinkets.JEWEL_DIADEM] = {
+			{
+					{str = "Effects", fsize = 2, clr = 3, halign = 0},
+					{str = "Removes the negative effect of using a Sinful Jewel, if it has one"},
+					{str = "Flower of Lust is left unchanged, and Apple of Pride grants you one Holy Mantle shield on use instead"}
+			},
+	},
 }
 
 local PillsWiki = {
@@ -682,7 +738,12 @@ local itemPools = {
 	[mod.CustomCollectibles.PURE_SOUL] = {Encyclopedia.ItemPools.POOL_ANGEL},
 	[mod.CustomCollectibles.HANDICAPPED_PLACARD] = {Encyclopedia.ItemPools.POOL_SHOP},
 	[mod.CustomCollectibles.BOOK_OF_JUDGES] = {Encyclopedia.ItemPools.POOL_LIBRARY, Encyclopedia.ItemPools.POOL_ANGEL},
-	[mod.CustomCollectibles.BIRTH_CERTIFICATE] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET}
+	[mod.CustomCollectibles.BIRTH_CERTIFICATE] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET},
+	[mod.CustomCollectibles.HELICOPTER_BOYS] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP},
+	[mod.CustomCollectibles.THE_HOOD] = {Encyclopedia.ItemPools.POOL_SECRET},
+	[mod.CustomCollectibles.PENANCE] = {Encyclopedia.ItemPools.POOL_ANGEL},
+	[mod.CustomCollectibles.BAG_OF_JEWELS] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET},
+	[mod.CustomCollectibles.LIL_CRAWLER] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP},
 }
 
 local CardsWiki = {

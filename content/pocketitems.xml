@@ -3,7 +3,7 @@
 		<card type="special" pickup="8" achievement="97" description="???" id="42" name="Chaos Card" announcer="334" mimiccharge="6" />
 		<card type="object" pickup="15" achievement="444" description="???" name="Cracked Key" id="78" mimiccharge="4" />
 	
-		! Pill classes:
+		Pill classes:
 			3: Major (a permanent effect, usually a stat modifier)
 			2: Medium (an effect with a significant impact, i.e. health or damage)
 			1: Minor (an effect which is only situationally useful)
@@ -34,6 +34,10 @@
 	<card type="special" name="Demon Form" hud="Demon Form" mimiccharge="12" description="Your demons grow stronger" pickup="174" />
 	<card type="special" name="Valentine's Card" hud="Valentine's Card" mimiccharge="6" description="<3" pickup="175" />
 	<card type="special" name="Cursed Card" hud="Cursed Card" mimiccharge="2" description="Grief and sorrow" pickup="183" />
+
+	<!-- extras -->
+	<rune type="rune" name="Dark Remnants" hud="Dark Remnants" mimiccharge="4" description="Mass cripple" pickup="184" />
+	<card type="special" name="Funeral Services?" hud="Funeral Services?" mimiccharge="12" description="???" pickup="185" />
 	
 	<!-- Sin's Jewels -->
 	<rune type="rune" pickup="176" hud="Canine of Wrath" description="Subconscious anger" name="Canine of Wrath" mimiccharge="6" />

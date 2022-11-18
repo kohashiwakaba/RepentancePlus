@@ -2,7 +2,9 @@
     "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
     "Lua.diagnostics.disable": [
         "param-type-mismatch",
-        "cast-local-type"
+        "cast-local-type",
+        "duplicate-index",
+        "assign-type-mismatch"
     ],
     "diagnostics.globals": [
         "ActionTriggers",
@@ -143,9 +145,20 @@
         "CustomGameOver",
         "Encyclopedia",
         "DetailedRespawn",
-        "MinimapAPI"
+        "MinimapAPI",
+        "Sewn_API",
+        "ANDROMEDA",
+        "XalumMods",
+        "hiddenChest",
+        "RedemptionExports",
+        "ModConfigMenu",
+        "FasterAnimationsMod",
+        "GiantBookAPI",
+        "StageAPI",
+        "FiendFolio"
     ],
+    "runtime.version": "Lua 5.3",
     "workspace.library": [
-        "c:\\Users\\Egor\\.vscode\\extensions\\filloax.isaac-lua-api-vscode-1.3.2\\out\\emmylua"
+        "c:\\Users\\Egor\\.vscode\\extensions\\filloax.isaac-lua-api-vscode-1.3.8\\out\\emmylua"
     ]
 }

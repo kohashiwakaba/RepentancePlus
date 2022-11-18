@@ -442,9 +442,7 @@ function CustomHealthAPI.Helper.RemoveLowestPriorityRedKey(player, healingOverfl
 			local health = mask[j]
 			local addPriorityOfHealth = CustomHealthAPI.PersistentData.HealthDefinitions[health.Key].AddPriority
 			
-			if health.Key ~= key and
-			   (healthToRemove == nil or addPriorityOfHealth < CustomHealthAPI.PersistentData.HealthDefinitions[healthToRemove.Key].AddPriority)
-			then
+			if healthToRemove == nil or addPriorityOfHealth < CustomHealthAPI.PersistentData.HealthDefinitions[healthToRemove.Key].AddPriority then
 				healthToRemove = health
 				healthMaskIndex = i
 				healthIndexInMask = j

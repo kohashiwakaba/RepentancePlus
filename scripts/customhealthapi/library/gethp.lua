@@ -435,6 +435,41 @@ function CustomHealthAPI.Helper.GetAmountUnoccupiedContainers(player)
 	return totalContainers - totalRed
 end
 
+function CustomHealthAPI.Helper.GetHealableRedHP(player)
+	local data = player:GetData().CustomHealthAPISavedata
+	
+	local totalHealableRedHP = 0
+	
+	local redHealthMasks = data.RedHealthMasks
+	for i = 1, #redHealthMasks do
+		local mask = redHealthMasks[i]
+		for j = 1, #mask do
+			totalHealableRedHP = totalHealableRedHP + (CustomHealthAPI.PersistentData.HealthDefinitions[mask[j].Key].MaxHP - mask[j].HP)
+		end
+	end
+	
+	return totalHealableRedHP
+end
+
+function CustomHealthAPI.Helper.GetHealableSoulHP(player)
+	local data = player:GetData().CustomHealthAPISavedata
+	
+	local totalHealableSoulHP = 0
+	
+	local otherHealthMasks = data.OtherHealthMasks
+	for i = 1, #otherHealthMasks do
+		local mask = otherHealthMasks[i]
+		for j = 1, #mask do
+			local health = mask[j]
+			if CustomHealthAPI.PersistentData.HealthDefinitions[health.Key].Type == CustomHealthAPI.Enums.HealthTypes.SOUL then
+				totalHealableSoulHP = totalHealableSoulHP + (CustomHealthAPI.PersistentData.HealthDefinitions[health.Key].MaxHP - health.HP)
+			end
+		end
+	end
+	
+	return totalHealableSoulHP
+end
+
 function CustomHealthAPI.Helper.GetTrueHeartLimit(player)
 	local limit = CustomHealthAPI.PersistentData.OverriddenFunctions.GetHeartLimit(player)
 	local brokenHearts = CustomHealthAPI.PersistentData.OverriddenFunctions.GetBrokenHearts(player)

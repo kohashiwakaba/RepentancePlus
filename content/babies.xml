@@ -1,4 +1,4 @@
-<babies root="gfx/Characters/Player2/">
+<babies root="gfx/characters/player2/">
 	<baby id="1001" name="Broken Baby" skin="01_brokenbaby.png" />
 	<baby id="1002" name="Dauntless Baby" skin="02_dauntlessbaby.png" />
 	<baby id="1003" name="Hoarder Baby" skin="03_hoarderbaby.png" />

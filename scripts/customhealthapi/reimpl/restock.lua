@@ -54,7 +54,28 @@ function CustomHealthAPI.Library.TriggerRestock(pickup, noSpawn)
 		else
 			restockInfo.TimeTilRestock = 30
 		end
+		
+		pickup.AutoUpdatePrice = false
 	end
+end
+
+function CustomHealthAPI.Helper.HasCustomRestocked(pickup)
+	local level = Game():GetLevel()
+	local room = Game():GetRoom()
+	
+	local roomIndex = level:GetCurrentRoomIndex()
+	local dimension = CustomHealthAPI.Helper.GetDimension()
+	
+	local shopid = pickup.ShopItemId
+	local timesPurchased = 0
+	if CustomHealthAPI.PersistentData.RestockInfo["a"..dimension] and 
+	   CustomHealthAPI.PersistentData.RestockInfo["a"..dimension]["a"..roomIndex] and
+	   CustomHealthAPI.PersistentData.RestockInfo["a"..dimension]["a"..roomIndex]["a"..shopid]
+	then
+		timesPurchased = (CustomHealthAPI.PersistentData.RestockInfo["a"..dimension]["a"..roomIndex]["a"..shopid].TimesPurchased or 0)
+	end
+	
+	return timesPurchased > 0
 end
 
 function CustomHealthAPI.Helper.AddRestockPickupsCallback()
@@ -92,6 +113,7 @@ function CustomHealthAPI.Mod:RestockPickupsCallback()
 					                           nil):ToPickup()
 					
 					pickup.AutoUpdatePrice = true
+---@diagnostic disable-next-line: assign-type-mismatch
 					pickup.ShopItemId = tonumber(string.sub(shopid, 2))
 					pickup.Price = 1
 					
@@ -109,11 +131,19 @@ function CustomHealthAPI.Mod:RestockPickupsCallback()
 		end
 	end
 	
-	for _, p in ipairs(Isaac.FindByType(5)) do
-		local pickup = p:ToPickup()
-		if pickup.Variant ~= PickupVariant.PICKUP_COLLECTIBLE and pickup:IsShopItem() and pickup.AutoUpdatePrice then
-			pickup.Price = CustomHealthAPI.Helper.GetPriceOfPickup(pickup)
-			pickup:GetData().CHAPILastPriceUpdate = Game():GetFrameCount()
+	if not Game():IsGreedMode() then
+		for _, p in ipairs(Isaac.FindByType(5)) do
+			local pickup = p:ToPickup()
+			if CustomHealthAPI.Helper.HasCustomRestocked(pickup) then
+				if pickup.Variant ~= PickupVariant.PICKUP_COLLECTIBLE and pickup:IsShopItem() then
+					if pickup.AutoUpdatePrice and not pickup:IsDead() then
+						pickup.Price = CustomHealthAPI.Helper.GetPriceOfPickup(pickup)
+						pickup:GetData().CHAPILastPriceUpdate = Game():GetFrameCount()
+					elseif pickup:IsDead() then
+						pickup.AutoUpdatePrice = false
+					end
+				end
+			end
 		end
 	end
 end
@@ -249,8 +279,13 @@ CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_POST_PICKUP_UPDATE] = 
 table.insert(CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_POST_PICKUP_UPDATE], CustomHealthAPI.Helper.RemoveUpdatePickupPriceCallback)
 
 function CustomHealthAPI.Mod:UpdatePickupPriceCallback(pickup)
-	if pickup.Variant ~= PickupVariant.PICKUP_COLLECTIBLE and pickup:IsShopItem() and pickup.AutoUpdatePrice then
-		
+	if pickup.Variant ~= PickupVariant.PICKUP_COLLECTIBLE and 
+	   pickup:IsShopItem() and 
+	   pickup.AutoUpdatePrice and 
+	   not pickup:IsDead() and 
+	   not Game():IsGreedMode() and
+	   CustomHealthAPI.Helper.HasCustomRestocked(pickup)
+	then
 		pickup.Price = CustomHealthAPI.Helper.GetPriceOfPickup(pickup, true)
 		pickup:GetData().CHAPILastPriceUpdate = Game():GetFrameCount()
 	end

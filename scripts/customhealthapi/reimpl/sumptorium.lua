@@ -9,6 +9,8 @@
 
 CustomHealthAPI.PersistentData.IgnoreSumptoriumHandling = CustomHealthAPI.PersistentData.IgnoreSumptoriumHandling or false
 CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey = CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey or {}
+CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType = CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType or {}
+CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey = CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey or {}
 
 function CustomHealthAPI.Helper.AddPreventSumptoriumReloadOnRecallBugCallback()
 	CustomHealthAPI.PersistentData.OriginalAddCallback(CustomHealthAPI.Mod, ModCallbacks.MC_PRE_GAME_EXIT, CustomHealthAPI.Mod.PreventSumptoriumReloadOnRecallBugCallback, -1)
@@ -41,18 +43,32 @@ end
 CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_PRE_ENTITY_SPAWN] = CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_PRE_ENTITY_SPAWN] or {}
 table.insert(CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_PRE_ENTITY_SPAWN], CustomHealthAPI.Helper.RemoveSumptoriumPreSpawnCallback)
 
+local keyOfNextOverlapClotSpawned = nil
 function CustomHealthAPI.Mod:SumptoriumPreSpawnCallback(typ, var, subt, pos, vel, spawner, seed)
 	if typ == EntityType.ENTITY_FAMILIAR and 
 	   var == FamiliarVariant.BLOOD_BABY
 	then
 		if subt >= 900 and subt <= 906 then
+			keyOfNextOverlapClotSpawned = nil
 			return {EntityType.ENTITY_FAMILIAR, FamiliarVariant.BLOOD_BABY, subt - 900, seed}
+		end
+		
+		if CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[subt] then
+			keyOfNextOverlapClotSpawned = CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[subt]
+			return {EntityType.ENTITY_FAMILIAR, 
+			        FamiliarVariant.BLOOD_BABY, 
+			        CustomHealthAPI.PersistentData.HealthDefinitions[keyOfNextOverlapClotSpawned].SumptoriumSubType, 
+			        seed}
+		end
+		
+		if CustomHealthAPI.PersistentData.IgnoreSumptoriumHandling then
+			keyOfNextOverlapClotSpawned = nil
+			return
 		end
 		
 		if spawner and 
 		   spawner.Type == EntityType.ENTITY_PLAYER and 
-		   CustomHealthAPI.PersistentData.SaveDataLoaded and
-		   not CustomHealthAPI.PersistentData.IgnoreSumptoriumHandling
+		   CustomHealthAPI.PersistentData.SaveDataLoaded
 		then
 			--WHY IS PLAYER:ISCOOPGHOST() NIL WHEN USING SPAWNER:TOPLAYER() HERE WHAT THE FUCK
 			local player
@@ -99,13 +115,19 @@ function CustomHealthAPI.Mod:SumptoriumPreSpawnCallback(typ, var, subt, pos, vel
 					player:GetData().CustomHealthAPIOtherData.SpawningSumptorium = nil
 					
 					if earliestKey == nil then
+						keyOfNextOverlapClotSpawned = nil
 						return
 					end
 					
 					local newSubt = CustomHealthAPI.PersistentData.HealthDefinitions[earliestKey].SumptoriumSubType
 					if newSubt ~= nil then
+						keyOfNextOverlapClotSpawned = nil
+						if CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[earliestKey] then
+							keyOfNextOverlapClotSpawned = earliestKey
+						end
 						return {EntityType.ENTITY_FAMILIAR, FamiliarVariant.BLOOD_BABY, newSubt, seed}
 					else
+						keyOfNextOverlapClotSpawned = nil
 						return
 					end
 				elseif subt == 1 or subt == 2 or subt == 5 then
@@ -146,13 +168,19 @@ function CustomHealthAPI.Mod:SumptoriumPreSpawnCallback(typ, var, subt, pos, vel
 					player:GetData().CustomHealthAPIOtherData.SpawningSumptorium = nil
 					
 					if earliestKey == nil then
+						keyOfNextOverlapClotSpawned = nil
 						return
 					end
 					
 					local newSubt = CustomHealthAPI.PersistentData.HealthDefinitions[earliestKey].SumptoriumSubType
 					if newSubt ~= nil then
+						keyOfNextOverlapClotSpawned = nil
+						if CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[earliestKey] then
+							keyOfNextOverlapClotSpawned = earliestKey
+						end
 						return {EntityType.ENTITY_FAMILIAR, FamiliarVariant.BLOOD_BABY, newSubt, seed}
 					else
+						keyOfNextOverlapClotSpawned = nil
 						return
 					end
 				end
@@ -177,7 +205,10 @@ table.insert(CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_FAMILIAR_INI
 
 function CustomHealthAPI.Mod:SumptoriumInitCallback(fam)
 	local key = CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[fam.SubType]
-	if key ~= nil and CustomHealthAPI.PersistentData.SaveDataLoaded then
+	
+	if keyOfNextOverlapClotSpawned then
+		fam:GetData().TrueKeyOfClot = keyOfNextOverlapClotSpawned
+	elseif key ~= nil and CustomHealthAPI.PersistentData.SaveDataLoaded then
 		local splatColor = CustomHealthAPI.PersistentData.HealthDefinitions[key].SumptoriumSplatColor
 		if splatColor ~= nil then
 			local splat = Isaac.Spawn(EntityType.ENTITY_EFFECT, 
@@ -190,6 +221,7 @@ function CustomHealthAPI.Mod:SumptoriumInitCallback(fam)
 			splat:GetSprite().Color = splatColor
 		end
 	end
+	keyOfNextOverlapClotSpawned = nil
 end
 
 function CustomHealthAPI.Helper.AddSumptoriumUpdateCallback()
@@ -250,21 +282,49 @@ function CustomHealthAPI.Mod:SumptoriumUpdateCallback(fam)
 		end
 	elseif fam.SubType >= 0 and fam.SubType <= 6 then
 		if fam.State == -2 or fam.State > 0 then
-			fam.SubType = fam.SubType + 900
+			if fam:GetData().TrueKeyOfClot then
+				fam.SubType = CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType[fam:GetData().TrueKeyOfClot]
+			else
+				fam.SubType = fam.SubType + 900
+			end
 		elseif fam:GetData().ReenableVisible then
 			fam.Visible = true
 			fam:GetData().ReenableVisible = false
 		end
-	elseif fam.SubType >= 900 and fam.SubType <= 906 then
+	elseif (fam.SubType >= 900 and fam.SubType <= 906) or CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[fam.SubType] then
 		if fam.State == -1000 then
-			fam.SubType = fam.SubType - 900
+			fam.SubType = (fam.SubType - 900) % 7
 			fam.Visible = false
 			fam:GetData().ReenableVisible = true
 		elseif fam.State >= 89 and 
 		   fam.Player and 
 		   (fam.Position - fam.Player.Position):Length() <= 20.0 
 		then
-			if fam.SubType == 900 and CustomHealthAPI.Helper.CanPickKey(fam.Player, "RED_HEART") then
+			local overlapKey = CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[fam.SubType]
+			if overlapKey and CustomHealthAPI.Helper.CanPickKey(fam.Player, overlapKey) then
+				local maxHP = CustomHealthAPI.Library.GetInfoOfKey(overlapKey, "MaxHP")
+				local typ = CustomHealthAPI.Library.GetInfoOfKey(overlapKey, "Type")
+				
+				if (typ == CustomHealthAPI.Enums.HealthTypes.RED or typ == CustomHealthAPI.Enums.HealthTypes.SOUL) and maxHP <= 1 then
+					CustomHealthAPI.Library.AddHealth(fam.Player, overlapKey, 2)
+				elseif typ == CustomHealthAPI.Enums.HealthTypes.CONTAINER then
+					CustomHealthAPI.Library.AddHealth(fam.Player, overlapKey, maxHP)
+				else
+					CustomHealthAPI.Library.AddHealth(fam.Player, overlapKey, 1)
+				end
+				
+				local collectSoundSettings = CustomHealthAPI.PersistentData.HealthDefinitions[overlapKey].SumptoriumCollectSoundSettings
+				if collectSoundSettings ~= nil then
+					SFXManager():Play(collectSoundSettings.ID, 
+							 collectSoundSettings.Volume or 1.0, 
+							 collectSoundSettings.FrameDelay or 2, 
+							 collectSoundSettings.Loop or false, 
+							 collectSoundSettings.Pitch or 1.0, 
+							 collectSoundSettings.Pan or 0)
+				end
+				
+				fam:Remove()
+			elseif fam.SubType == 900 and CustomHealthAPI.Helper.CanPickKey(fam.Player, "RED_HEART") then
 				CustomHealthAPI.Library.AddHealth(fam.Player, "RED_HEART", 1)
 				SFXManager():Play(SoundEffect.SOUND_BOSS2_BUBBLES, 1, 0, false, 1.0)
 				fam:Remove()
@@ -317,6 +377,24 @@ function CustomHealthAPI.Mod:SumptoriumUpdateCallback(fam)
 		elseif CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[fam.SubType] ~= nil then
 			local key = CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[fam.SubType]
 			color = CustomHealthAPI.PersistentData.HealthDefinitions[key].SumptoriumTrailColor
+		elseif CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey[fam.SubType] ~= nil then
+			local basegameSubType = (fam.SubType - 900) % 7
+			
+			if basegameSubType == 0 then
+				color = Color(0.85, 0.00, 0.00, 0.40, 0.00, 0.00, 0.00)
+			elseif basegameSubType == 1 then
+				color = Color(0.30, 0.80, 1.00, 0.40, 0.00, 0.00, 0.00)
+			elseif basegameSubType == 2 then
+				color = Color(0.10, 0.10, 0.10, 0.40, 0.00, 0.00, 0.00)
+			elseif basegameSubType == 3 then
+				color = Color(1.00, 1.00, 1.00, 0.40, 0.00, 0.00, 0.00)
+			elseif basegameSubType == 4 then
+				color = Color(1.00, 0.80, 0.00, 0.40, 0.00, 0.00, 0.00)
+			elseif basegameSubType == 5 then
+				color = Color(1.00, 1.00, 1.00, 0.40, 0.00, 0.00, 0.00)
+			elseif basegameSubType == 6 then
+				color = Color(0.85, 0.30, 0.20, 0.40, 0.00, 0.00, 0.00)
+			end
 		end
 		
 		if color ~= nil then
