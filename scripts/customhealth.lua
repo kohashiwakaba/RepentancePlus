@@ -584,15 +584,15 @@ mod:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, function(_)
         if CustomHealthAPI.Library.GetHPOfKey(player, "HEART_SOILED") > 0 then
             rng:SetSeed(player.InitSeed + Random(), 1)
 
-            for j = 1, CustomHealthAPI.Library.GetHPOfKey(player, "HEART_SOILED") do
+            for _ = 1, CustomHealthAPI.Library.GetHPOfKey(player, "HEART_SOILED") do
                 -- normal dips (subtypes 0-14, so 14/45 ~ 30% to spawn any dip)
-                local randomDip = rng:RandomInt(45)
+                local randomDip = rng:RandomInt(70)
                 if randomDip < 15 then
                     Isaac.Spawn(3, FamiliarVariant.DIP, randomDip, player.Position, Vector.Zero, player)
                 end
 
-                -- Fiend Folio special dips (17% chance to spawn one)
-                if FiendFolio and rng:RandomFloat() < 0.17 then
+                -- Fiend Folio special dips (12% chance to spawn one)
+                if FiendFolio and rng:RandomFloat() < 0.12 then
                     local FFDips = {
                         666,    -- drop
                         667,    -- cursed
@@ -846,21 +846,12 @@ mod:AddCallback(ModCallbacks.MC_POST_RENDER, function(_)
 
     if GetEnigmaHearts(mainPlayer) > 0 and game:GetHUD():IsVisible() then
         enigmaSprite:Render(EnigmaRenderPos + Vector(20, 12) * hudOffset, Vector.Zero, Vector.Zero)
-        Isaac.RenderScaledText('x' .. tostring(GetEnigmaHearts(mainPlayer)), EnigmaRenderPos.X + 20 * hudOffset, EnigmaRenderPos.Y - 4 + 12 * hudOffset, 0.9, 0.9, 0.8, 0.7, 0.7, 1)
+        Isaac.RenderScaledText('x' .. tostring(GetEnigmaHearts(mainPlayer)),
+            EnigmaRenderPos.X + 20 * hudOffset, EnigmaRenderPos.Y - 4 + 12 * hudOffset,
+            0.9, 0.9, 0.75, 0.75, 0.75, 1
+        )
     end
 end)
-
-mod:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, function(_, player)
-    if not mod.isPlayerDying(player) or player:WillPlayerRevive() then return end
-
-    if GetEnigmaHearts(player) > 0 then
-        mod.reviveWithTwin(player)
-        player:AddHearts(4 * (GetEnigmaHearts(player) - 1))
-        sfx:Play(SoundEffect.SOUND_SUPERHOLY)
-        SetEnigmaHearts(player, 0)
-    end
-end)
-
 
 -------------
 -- SUMPTORIUM
@@ -966,6 +957,22 @@ mod:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pickup)
             pickup:Remove()
             sfx:Play(SoundEffect.SOUND_BROWNIE_LAUGH)
         end
+    elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_ENIGMA then
+        -- Reset transparency
+        pickup.Color = pickup.Color * Color(1, 1, 1, 1 / pickup.Color.A, 0, 0, 0)
+
+        local playersNearby = false
+
+        for j = 1, 20 do
+            if not playersNearby and #Isaac.FindInRadius(pickup.Position, j * 15, EntityPartition.PLAYER) > 0 then
+                pickup.Color = pickup.Color * Color(1, 1, 1, (21 - j) / 20, 0, 0, 0)
+                playersNearby = true
+            end
+        end
+
+        if not playersNearby then
+            pickup.Color = pickup.Color * Color(1, 1, 1, 0.05, 0, 0, 0)
+        end
     end
 end, PickupVariant.PICKUP_HEART)
 
@@ -1007,6 +1014,9 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
         elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_BROKEN then
 			collider:AddMaxHearts(2)
 			collider:AddBrokenHearts(1)
+            if collider:GetBrokenHearts() >= 12 then
+                collider:Die()
+            end
 			sfx:Play(SoundEffect.SOUND_BONE_SNAP)
 
 		elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_HOARDED then
@@ -1038,11 +1048,11 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
 			end
 
 		elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_CURDLED then
-			if collider:CanPickRedHearts() or isNoRedHealthCharacter(collider) then
-				collider:AddHearts(2 * bowMultiplier)
-				sfx:Play(SoundEffect.SOUND_MEAT_JUMPS)
-				sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES)
-				local s = isNoRedHealthCharacter(collider) and 1 or 0
+            if collider:CanPickRedHearts() or isNoRedHealthCharacter(collider) then
+                collider:AddHearts(2 * bowMultiplier)
+                sfx:Play(SoundEffect.SOUND_MEAT_JUMPS)
+                sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES)
+                local s = isNoRedHealthCharacter(collider) and 1 or 0
                 if collider:GetPlayerType() == PlayerType.PLAYER_THELOST
                 or collider:GetPlayerType() == PlayerType.PLAYER_THELOST_B
                 or collider:GetPlayerType() == PlayerType.PLAYER_BETHANY then
@@ -1053,11 +1063,13 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
                 elseif collider:GetPlayerType() == PlayerType.PLAYER_THEFORGOTTEN then
                     s = 5
                 end
-				local truecollider = collider:GetPlayerType() == PlayerType.PLAYER_THESOUL_B and collider:GetOtherTwin() or collider
-				Isaac.Spawn(3, FamiliarVariant.BLOOD_BABY, s, collider.Position, Vector.Zero, truecollider)
-			else
-				return pickup:IsShopItem()
-			end
+                local trueCollider = collider:GetPlayerType() == PlayerType.PLAYER_THESOUL_B and collider:GetOtherTwin() or collider
+                CustomHealthAPI.PersistentData.IgnoreSumptoriumHandling = true
+                Isaac.Spawn(3, FamiliarVariant.BLOOD_BABY, s, trueCollider.Position, Vector.Zero, trueCollider)
+                CustomHealthAPI.PersistentData.IgnoreSumptoriumHandling = false
+            else
+                return pickup:IsShopItem()
+            end
 
 		elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_SAVAGE then
 			if collider:CanPickRedHearts() then
@@ -1082,6 +1094,9 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
 
 		elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_ENIGMA then
 			SetEnigmaHearts(collider, GetEnigmaHearts(collider) + 1)
+            if collider:GetSubPlayer() then
+                SetEnigmaHearts(collider:GetSubPlayer(), GetEnigmaHearts(collider))
+            end
             sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES)
 
         elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_CAPRICIOUS then

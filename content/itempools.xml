@@ -18,6 +18,8 @@
 		<Item Name="Ultra Flesh Kid!" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Vault of Havoc" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Bottomless Bag" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Dead Weight" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Keeper's Annoying Fly" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="shop">
 		<Item Name="Ceiling with the Stars" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -68,6 +70,8 @@
 		<Item Name="Ordinary Life" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="The Hood" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Bag of Jewels" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="We Need To Go Sideways" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Dead Weight" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="library">
 		<Item Name="Book of Genesis" Weight="0.5" DecreaseBy="0.5" RemoveOn="0.05" />
@@ -79,6 +83,7 @@
 	</Pool>
 	<Pool Name="redChest">
 		<Item Name="Black Doll" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="We Need To Go Sideways" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="beggar">
 		<Item Name="Bag-o-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -130,6 +135,8 @@
 		<Item Name="Sibling Rivalry" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Friendly Sack" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Ultra Flesh Kid!" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Dead Weight" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Keeper's Annoying Fly" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="woodenChest">
 		<Item Name="Auction Gavel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
@@ -149,6 +156,7 @@
 		<Item Name="The Cross of Chaos" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
 		<Item Name="Ultra Flesh Kid!" Weight="1" DecreaseBy="0.4" RemoveOn="0.1" />
 		<Item Name="Vault of Havoc" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="We Need To Go Sideways" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	
 	<!-- GREED MODE ITEM POOLS -->
@@ -164,6 +172,8 @@
 		<Item Name="Sibling Rivalry" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Ultra Flesh Kid!" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 		<Item Name="Vault of Havoc" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Dead Weight" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+		<Item Name="Keeper's Annoying Fly" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
 	</Pool>
 	<Pool Name="greedBoss">
 	</Pool>

@@ -527,11 +527,12 @@ if true then
 	EID:addCardMetadata(mod.CustomConsumables.JACK_OF_HEARTS, 2, false)
 	EID:addCardMetadata(mod.CustomConsumables.JACK_OF_SPADES, 2, false)
 
-	EID:addPillMetadata(mod.CustomPills.ESTROGEN, 4, "2")
-	EID:addPillMetadata(mod.CustomPills.LAXATIVE, 2, "1+")
-	EID:addPillMetadata(mod.CustomPills.PHANTOM_PAINS, 4, "2")
-	EID:addPillMetadata(mod.CustomPills.YUM, 12, "3+")
-	EID:addPillMetadata(mod.CustomPills.YUCK, 6, "2+")
+	EID:addPillMetadata(mod.CustomPills.ESTROGEN_UP, 4, "2+")
+	EID:addPillMetadata(mod.CustomPills.LAXATIVE, 2, "0")
+	EID:addPillMetadata(mod.CustomPills.PHANTOM_PAINS, 4, "2-")
+	EID:addPillMetadata(mod.CustomPills.YUM, 12, "2+")
+	EID:addPillMetadata(mod.CustomPills.YUCK, 6, "1+")
+	EID:addPillMetadata(mod.CustomPills.SUPPOSITORY, 6, "1")
 end
 
 -- adding golden trinkets --
@@ -621,6 +622,9 @@ if true then
 	EID:addCollectible(mod.CustomCollectibles.THE_HOOD, "{{SoulHeart}} Triples the chance to turn a Soul heart into a Fettered heart #Fettered hearts can now be picked up even at full soul health #Fettered ghosts gain homing tears")
 	EID:addCollectible(mod.CustomCollectibles.SPIRITUAL_AMENDS, "{{SacrificeRoom}} Making a sacrifice has a 50% chance to spawn a friendly orbital ghost #{{EternalHeart}} The ghosts now drop eternal hearts instead of half soul hearts when they die")
 	EID:addCollectible(mod.CustomCollectibles.BAG_OF_JEWELS, "Gives you a random Sin's Jewel on use")
+	EID:addCollectible(mod.CustomCollectibles.WE_NEED_TO_GO_SIDEWAYS, "Passively spawns a special dirt patch in every secret room #{{Key}} If used elsewhere, bury all keys in a room #{{Card78}} If used on that dirt patch, dig up all buried keys as Cracked Keys")
+	EID:addCollectible(mod.CustomCollectibles.DEAD_WEIGHT, "Throwable Forgotten's Body familiar #Shoots bones upwards if hits a wall #Blocks enemy projectiles")
+	EID:addCollectible(mod.CustomCollectibles.KEEPERS_ANNOYING_FLY, "Orbital fly familiar #Block both enemy projectiles and Isaac's tears #Deals more contact damage to enemies the more tears it absorbs in a current room")
 
 	EID:addTrinket(mod.CustomTrinkets.BASEMENT_KEY, "{{DirtyChest}} While held, every Golden Chest has a 25% chance to turn into Old Chest")
 	EID:addTrinket(mod.CustomTrinkets.KEY_TO_THE_HEART, "Increases chances of replacing Spiked or Mimic chest with a Flesh chest to 100% #Chance to shoot a bloody key tear that, if kills an enemy, makes it drop temporary red hearts")
@@ -688,11 +692,12 @@ if true then
 	EID:addCard(mod.CustomConsumables.CANINE_OF_WRATH, "Every enemy in a room explodes, taking 15 damage #{{Warning}} The explosion can hurt you too #Every enemy that dies from the explosion will give you a temporary damage boost")
 	EID:addCard(mod.CustomConsumables.MASK_OF_ENVY, "{{RottenBoneHeart}} Turns all your heart containers into bone hearts filled with rotten hearts")
 
-	EID:addPill(mod.CustomPills.ESTROGEN, "{{Trinket176}} Turns all your red health into blood clots #Leaves you at one red heart, other hearts are unaffected")
+	EID:addPill(mod.CustomPills.ESTROGEN_UP, "{{Trinket176}} Turns all your red health into blood clots #Leaves you at one red heart, other hearts are unaffected")
 	EID:addPill(mod.CustomPills.LAXATIVE, "Isaac shoots out corn tears from behind for 3 seconds")
 	EID:addPill(mod.CustomPills.PHANTOM_PAINS, "Isaac takes fake damage on pill use, then 15 and 30 seconds after")
 	EID:addPill(mod.CustomPills.YUCK, "{{RottenHeart}} Spawns a rotten heart #For 30 seconds, every red heart will spawn blue flies when picked up")
 	EID:addPill(mod.CustomPills.YUM, "{{HalfHeart}} Spawns 2-5 half red hearts #{{ArrowUp}} For 30 seconds, every red heart will grant you small permanent stat upgrades when picked up")
+	EID:addPill(mod.CustomPills.SUPPOSITORY, "Drop your currently held active item down as a pedestal item")
 
 	--[[EID:addEntity(5, 10, 84, "Broken Heart", "Gives one full heart container and a broken heart")
 	EID:addEntity(5, 10, 85, "Dauntless Heart", "If your total number of red and soul hearts is odd, enemies have a chance to drop half red or soul heart on death #Dropped hearts disappear quickly")
@@ -836,7 +841,7 @@ if true then
 	EID:addCard(mod.CustomConsumables.CANINE_OF_WRATH, "Every enemy in a room explodes, taking 15 damage #{{Warning}}The explosion can hurt you too #Every enemy that dies from the explosion will give you a temporary damage boost", "Colmillo de la Ira", "spa")
 	EID:addCard(mod.CustomConsumables.MASK_OF_ENVY, "{{RottenBoneHeart}} Convierte todos tus contenedores de corazón en corazones de hueso rellenos con corazones podridos", "Máscara de la Envídia", "spa")
 
-	EID:addPill(mod.CustomPills.ESTROGEN, "Convierte todos tus {{Heart}}corazones en Coágulos#Te deja con al menos un corazón rojo, No afecta Corazones de Alma/Corazones Negros", "Estrógeno", "spa")
+	EID:addPill(mod.CustomPills.ESTROGEN_UP, "Convierte todos tus {{Heart}}corazones en Coágulos#Te deja con al menos un corazón rojo, No afecta Corazones de Alma/Corazones Negros", "Estrógeno", "spa")
 	EID:addPill(mod.CustomPills.LAXATIVE, "Hace que dispares los maíces de {{Collectible680}}Venganza de Montezuma durante 3 segundos", "Laxante", "spa")
 	EID:addPill(mod.CustomPills.PHANTOM_PAINS, "Provoca que Isaac reciba daño falso al usarse, luego a los 20 y 40 segundos de haberla consumido", "Fantasma", "spa")
 	EID:addPill(mod.CustomPills.YUCK, "Genera un corazón podrido #Por 30 segundos, cada corazón rojo tomado generará moscas azules", "Puaj", "spa")
@@ -957,7 +962,7 @@ if true then
 	EID:addCard(mod.CustomConsumables.CANINE_OF_WRATH, "Все враги в комнате взрывается нанося 15 урона #{{Warning}}Взрывы наносят урон игроку #Если враг умирает от взрыва вы получаете временную прибавку к урону", "Клык Гнева", "ru")
 	EID:addCard(mod.CustomConsumables.MASK_OF_ENVY, "Превращает все ваши контейнеры сердца в костянные сердца наполненные гнилыми сердцами", "Маска Зависти", "ru")
 	
-	EID:addPill(mod.CustomPills.ESTROGEN, "Превращает все ваши {{Heart}}сердца в блебиков #Оставляет вас по крайней мере с одним красным сердцем, не убирает сердца души/черные сердца", "Эстроген", "ru")
+	EID:addPill(mod.CustomPills.ESTROGEN_UP, "Превращает все ваши {{Heart}}сердца в блебиков #Оставляет вас по крайней мере с одним красным сердцем, не убирает сердца души/черные сердца", "Эстроген", "ru")
 	EID:addPill(mod.CustomPills.LAXATIVE, "Заставляет вас стрелять кукурузой сзади в течение 3 секунд", "Слабительное", "ru")
 	EID:addPill(mod.CustomPills.PHANTOM_PAINS, "Вы получаете фальшивый урон и получаете его снова через 15 и 30 секунд", "Фантомная Боль", "ru")
 	EID:addPill(mod.CustomPills.YUCK, "Создает гнилое сердце #В течение 30 секунд, каждое взятое красное сердце будет создавать синих мух", "Фу!", "ru")
@@ -1097,7 +1102,7 @@ if true then
 	EID:addCard(mod.CustomConsumables.CANINE_OF_WRATH, "방 안의 모든 적들이 15의 폭발 피해를 받습니다. #{{Warning}} 캐릭터도 폭발 피해를 받을 수 있음 #{{DamageSmall}} 적이 폭발로 처치될 때마다 서서히 감소하는 공격력이 증가합니다.", "분노의 송곳니", "ko_kr")
 	EID:addCard(mod.CustomConsumables.MASK_OF_ENVY, "모든 최대 체력을 {{BoneHeart}}뼈하트+{{RottenHeart}}썩은하트로 바꿉니다.", "질투의 가면", "ko_kr")
 
-	EID:addPill(mod.CustomPills.ESTROGEN, "빨간하트가 한칸이 되며 나머지 빨간하트를 전부 꼬마 클롯으로 바꿉니다.", "에스트로겐", "ko_kr")
+	EID:addPill(mod.CustomPills.ESTROGEN_UP, "빨간하트가 한칸이 되며 나머지 빨간하트를 전부 꼬마 클롯으로 바꿉니다.", "에스트로겐", "ko_kr")
 	EID:addPill(mod.CustomPills.LAXATIVE, "3초동안 캐릭터의 뒤로 옥수수 탄환을 발사합니다.", "설사약", "ko_kr")
 	EID:addPill(mod.CustomPills.PHANTOM_PAINS, "사용 시 피해를 입지 않고 피격 시 발동 효과를 발동합니다.#15초, 30초 이후에 각각 한번씩 더 발동합니다.", "헛통증", "ko_kr")
 	EID:addPill(mod.CustomPills.YUCK, "썩은하트를 하나 드랍합니다.#30초동안 빨간하트를 주울 때마다 파란 아군 파리를 소환합니다.", "우웩", "ko_kr")
@@ -1237,7 +1242,7 @@ if true then
 	EID:addCard(mod.CustomConsumables.CANINE_OF_WRATH, "房间里每个敌人都会爆炸，造成15点伤害 #{{Warning}} 角色会受到敌人爆炸伤害 #每个死于爆炸的敌人都会给予角色短暂的{{ArrowUp}} +1.25伤害提升", "愤怒之犬", "zh_cn")
 	EID:addCard(mod.CustomConsumables.MASK_OF_ENVY, "将所有心之容器转化为{{RottenBoneHeart}} 充满腐心的骨心", "嫉妒面具", "zh_cn")
 	
-	EID:addPill(mod.CustomPills.ESTROGEN,"{{Trinket176}} 只保留1颗红心，将其余红心扣除，不影响魂心/黑心", "雌激素上升", "zh_cn")
+	EID:addPill(mod.CustomPills.ESTROGEN_UP,"{{Trinket176}} 只保留1颗红心，将其余红心扣除，不影响魂心/黑心", "雌激素上升", "zh_cn")
 	EID:addPill(mod.CustomPills.LAXATIVE,"让你从背后射出玉米眼泪，持续3秒", "泻药", "zh_cn")
 	EID:addPill(mod.CustomPills.PHANTOM_PAINS,"使用后造成一次假受伤（钝刀片效果） #每过15-30秒就会再受到一次假伤害", "幻痛", "zh_cn")
 	EID:addPill(mod.CustomPills.YUCK,"生成1个{{RottenHeart}} 腐心 #30秒内每捡起一颗红心都会产生蓝苍蝇", "呸！", "zh_cn")
@@ -1377,7 +1382,7 @@ if true then
 	EID:addCard(mod.CustomConsumables.CANINE_OF_WRATH, "Explose tous les ennemis dans la salle#↑ Dégâts {{ColorLime}}+1.25{{ColorWhite}} termporairement pour chaque ennemi tué par une explosion", "Canine de Colère", "fr")
 	EID:addCard(mod.CustomConsumables.MASK_OF_ENVY, "Convertit tous les réceptacles de cœurs rouges d'Isaac en cœurs d'os moisis", "Masque d'Envie", "fr")
 
-	EID:addPill(mod.CustomPills.ESTROGEN, "Transforme tous les cœurs rouges d'Isaac sauf un en pâtés", "Œstrogène", "fr")
+	EID:addPill(mod.CustomPills.ESTROGEN_UP, "Transforme tous les cœurs rouges d'Isaac sauf un en pâtés", "Œstrogène", "fr")
 	EID:addPill(mod.CustomPills.LAXATIVE, "Isaac tire des grains de maïs derrière lui pendant 3 secondes", "Laxatifs", "fr")
 	EID:addPill(mod.CustomPills.PHANTOM_PAINS, "Inflige un dégât factice à Isaac, puis un autre après 15 et 30 secondes", "Douleurs Fantômes", "fr")
 	EID:addPill(mod.CustomPills.YUCK, "Fait apparaître un cœur moisi#Pendant 30 secondes, ramasser un cœur rouge fait apparaître une mouche bleue", "Beurk !", "fr")

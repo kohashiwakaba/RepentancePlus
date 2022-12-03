@@ -445,7 +445,7 @@ local ItemsWiki = {
 					{str = "Fettered ghosts gain homing tears"},
 			},
 	},
-	[mod.CustomCollectibles.PENANCE] = {
+	[mod.CustomCollectibles.SPIRITUAL_AMENDS] = {
 			{
 					{str = "Effects", fsize = 2, clr = 3, halign = 0},
 					{str = "Making a sacrifice has a 50% chance to spawn a friendly orbital ghost "},
@@ -458,12 +458,28 @@ local ItemsWiki = {
 					{str = "Gives you a random Sinful Jewel on use"},
 			},
 	},
-	[mod.CustomCollectibles.LIL_CRAWLER] = {
+	[mod.CustomCollectibles.WE_NEED_TO_GO_SIDEWAYS] = {
+        {
+                {str = "Effects", fsize = 2, clr = 3, halign = 0},
+                {str = "Passively spawns a special dirt patch in every secret room "},    
+                {str = "If used elsewhere, bury all normal and double-pack keys in a room "},
+                {str = "If used on that dirt patch, dig up all buried keys as Cracked Keys"},
+        },
+	},
+	[mod.CustomCollectibles.DEAD_WEIGHT] = {
 			{
 					{str = "Effects", fsize = 2, clr = 3, halign = 0},
-					{str = "Spawns a friendly Jewel Crawler familiar"},
-					{str = "Blocks enemy projectiles "},
-					{str = "After blocking projectiles 3 times, it dies, drops its respective jewel and respawns on the next floor with a different skin"},
+					{str = "Throwable Forgotten's Body familiar "},
+					{str = "Shoots bones upwards if hits a wall "},
+					{str = "Blocks enemy projectiles"},
+			},
+	},
+	[mod.CustomCollectibles.KEEPERS_ANNOYING_FLY] = {
+			{
+					{str = "Effects", fsize = 2, clr = 3, halign = 0},
+					{str = "Orbital fly familiar "},
+					{str = "Block both enemy projectiles and Isaac's tears "},
+					{str = "Contact damage increases by 3% for each tear absorbed in a current room. Resets when entering a new room"},
 			},
 	},
 }
@@ -639,7 +655,7 @@ local TrinketsWiki = {
 }
 
 local PillsWiki = {
-	[mod.CustomPills.ESTROGEN] = {
+	[mod.CustomPills.ESTROGEN_UP] = {
 		{
 			{str = "Effects", fsize = 2, clr = 3, halign = 0},
 			{str = "Turns all your red health into blood clots "},
@@ -680,7 +696,7 @@ local PillsWiki = {
 }
 
 local PillsColors = {
-	[mod.CustomPills.ESTROGEN] = 9,
+	[mod.CustomPills.ESTROGEN_UP] = 9,
 	[mod.CustomPills.LAXATIVE] = 10,
 	[mod.CustomPills.PHANTOM_PAINS] = 10,
 	[mod.CustomPills.YUCK] = 9,
@@ -741,9 +757,11 @@ local itemPools = {
 	[mod.CustomCollectibles.BIRTH_CERTIFICATE] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET},
 	[mod.CustomCollectibles.HELICOPTER_BOYS] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP},
 	[mod.CustomCollectibles.THE_HOOD] = {Encyclopedia.ItemPools.POOL_SECRET},
-	[mod.CustomCollectibles.PENANCE] = {Encyclopedia.ItemPools.POOL_ANGEL},
+	[mod.CustomCollectibles.SPIRITUAL_AMENDS] = {Encyclopedia.ItemPools.POOL_ANGEL},
 	[mod.CustomCollectibles.BAG_OF_JEWELS] = {Encyclopedia.ItemPools.POOL_SHOP, Encyclopedia.ItemPools.POOL_SECRET},
-	[mod.CustomCollectibles.LIL_CRAWLER] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP},
+	[mod.CustomCollectibles.WE_NEED_TO_GO_SIDEWAYS] = {Encyclopedia.ItemPools.POOL_SECRET, Encyclopedia.ItemPools.POOL_ULTRA_SECRET, Encyclopedia.ItemPools.POOL_RED_CHEST},
+	[mod.CustomCollectibles.DEAD_WEIGHT] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP, Encyclopedia.ItemPools.POOL_SECRET},
+	[mod.CustomCollectibles.KEEPERS_ANNOYING_FLY] = {Encyclopedia.ItemPools.POOL_TREASURE, Encyclopedia.ItemPools.POOL_BABY_SHOP},
 }
 
 local CardsWiki = {
@@ -1047,16 +1065,16 @@ local spriteToCard = {
 
 -- DO NOT touch that! 
 -- Just fill in the Wiki and itemPools tables with the desired item's entry, and it will show up in the Encyclopedia
-for i = mod.CustomCollectibles.ORDINARY_LIFE, mod.CustomCollectibles.SIBLING_RIVALRY do
+for i = mod.CustomCollectibles.ORDINARY_LIFE, mod.CustomCollectibles.BOOK_OF_LEVIATHAN_OPEN do
 	Encyclopedia.AddItem({Class = "Repentance Plus", ID = i, WikiDesc = ItemsWiki[i], Pools = itemPools[i]})
 	--Isaac.DebugString('Item ' .. tostring(i) .. 's entry succesfully loaded into the encyclopedia')
 end
 
-for i = mod.CustomTrinkets.BASEMENT_KEY, mod.CustomTrinkets.EMPTY_PAGE do
+for i = mod.CustomTrinkets.BASEMENT_KEY, mod.CustomTrinkets.JEWEL_DIADEM do
 	Encyclopedia.AddTrinket({Class = "Repentance Plus", ID = i, WikiDesc = TrinketsWiki[i]})
 end
 
-for i = mod.CustomPills.ESTROGEN, mod.CustomPills.YUCK do
+for i = mod.CustomPills.ESTROGEN_UP, mod.CustomPills.SUPPOSITORY do
 	Encyclopedia.AddPill({Class = "Repentance Plus", ID = i, WikiDesc = PillsWiki[i], Color = PillsColors[i]})
 end
 

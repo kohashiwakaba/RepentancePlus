@@ -25,10 +25,5 @@
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Zealot Heart.png" Kind="Repentance Plus" Name="Zealot Heart" Subtype="99" Variant="10" />
 	<entity Group="Hearts" ID="5" Image="repentanceplus/Deserted Heart.png" Kind="Repentance Plus" Name="Deserted Heart" Subtype="100" Variant="10" />
 	
-	<entity Group="Consumables" ID="5" Image="repentanceplus/Bag Tissue.png" Kind="Repentance Plus" Name="Bag Tissue" Subtype="163" Variant="300" />
-	<entity Group="Consumables" ID="5" Image="repentanceplus/Loaded Dice.png" Kind="Repentance Plus" Name="Loaded Dice" Subtype="164" Variant="300" />
-	<entity Group="Consumables" ID="5" Image="repentanceplus/Quasar Shard.png" Kind="Repentance Plus" Name="Quasar Shard" Subtype="165" Variant="300" />
-	<entity Group="Consumables" ID="5" Image="repentanceplus/Red Rune.png" Kind="Repentance Plus" Name="Red Rune" Subtype="160" Variant="300" />
-	
 	<entity Group="Enemies" ID="894" Image="repentanceplus/Jewel Crawler (Random).png" Kind="Repentance Plus" Name="Jewel Crawler (Random)" Subtype="0" Variant="10" />
 </data>

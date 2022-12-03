@@ -55,7 +55,7 @@
 		<sample weight="1" path="voiceover/Horse Estrogen Up.wav" />
 	</sound>
 
-	<!-- Special objects -->
+	<!-- Special objects and runes -->
 	<sound name="Bag Tissue">
 		<sample weight="1" path="voiceover/Bag Tissue.wav" />
 	</sound>
@@ -76,6 +76,9 @@
 	</sound>
 	<sound name="Spindown Dice Shard">
 		<sample weight="1" path="voiceover/Spindown Dice Shard.wav" />
+	</sound>
+	<sound name="Dark Remnants">
+		<sample weight="1" path="voiceover/Dark Remnants.wav" />
 	</sound>
 
 	<!-- Playing Cards -->

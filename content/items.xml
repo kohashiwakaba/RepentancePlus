@@ -1,6 +1,6 @@
 <items gfxroot="gfx/items/" deathanm2="gfx/death_items.anm2" version="1">	
 	<!-- T.Isaac -->
-	<passive id="8" name="Ordinary Life" description="Tears up + you feel nostalgic" gfx="01_ordinarylife.png" quality="2" cache="firedelay" tags="offensive summonable nogreed" />
+	<passive id="8" name="Ordinary Life" description="Tears up + you feel nostalgic" gfx="01_ordinarylife.png" quality="3" cache="firedelay" tags="offensive summonable nogreed" />
 	<trinket name="Basement Key" description="Open your memories" gfx="t01_basementkey.png" tags="nogreed" />
 	<active id="12" name="Magic Cube" description="Did you set the world record?" gfx="04_magiccube.png" quality="4" maxcharges="4" />  
 	<active id="11" name="Rubik's Cube" description="No more than 20 steps to solve!" gfx="03_rubikscube.png" quality="2" maxcharges="2" tags="offensive" />
@@ -11,7 +11,7 @@
 	<active id="13" name="Cookie Cutter" description="Cut out the hearts!" gfx="05_cookiecutter.png" quality="0" maxcharges="0" tags="nolostbr"/>
 	<trinket name="Key to the Heart" description="...is the ribcage" gfx="t02_keytotheheart.png" tags="nogreed" />
 	<passive id="1" name="Cherry Friends" description="Kills heal?" gfx="06_cherryfriends.png" quality="2" tags="nolostbr summonable" />
-	<active id="32" quality="1" gfx="47_0_bloodvessel.png" name="Blood Vessel" maxcharges="0" chargetype="special" tags="nolostbr" />
+	<active id="32" quality="1" gfx="47_0_bloodvessel.png" name="Blood Vessel" maxcharges="0" chargetype="special" tags="nolostbr noeden" />
 	
 	<!-- T. Cain -->
 	<familiar id="2" name="The Mark of Cain" description="Extra life... at a cost" gfx="07_themarkofcain.png" quality="3" devilprice="1" tags="devil offensive" persistent="true" />
@@ -108,14 +108,19 @@
 	<passive id="56" name="The Hood" description="Fetters up" gfx="55_thehood.png" quality="2" tags="offensive summonable" />
 	<passive id="57" name="Spiritual Amends" description="They cry for you" gfx="56_spiritualamends.png" quality="1" tags="nogreed nolostbr angel summonable" />
 	<active id="58" name="Bag of Jewels" description="Portable luxuries" gfx="57_bagofjewels.png" quality="2" maxcharges="6" tags="offensive" />
+	<familiar id="59" name="Dead Weight" description="Throwable friend" gfx="58_deadweight.png" quality="2" tags="offensive uniquefamiliar" />
+	<passive id="60" name="Keeper's Annoying Fly" description="Bzzz..." gfx="59_keepersannoyingfly.png" quality="3" tags="offensive fly summonable" />
+	<active id="61" name="We Need To Go Sideways" description="Dig paths to the other side" gfx="60_redshovel.png" quality="3" tags="offensive" maxcharges="4" />
 	<trinket name="Cracked Cross" description="Some fear you" gfx="t21_crackedcross.png" tags="nogreed" />
 	<trinket name="My Soul" description="Spiritual companionship" gfx="t22_mysoul.png" cache="familiars" />
 	<trinket name="Heavenly Keys" description="What could THEY open?" gfx="t24_heavenlykeys.png" />
 	<trinket name="Jewel Diadem" description="Better jewelry" gfx="t23_jeweldiadem.png" />
 
-	<!-- TECHNICAL -->
 	<active quality="1" gfx="48_2_bookofleviathan_unchained.png" name="Unchained Book of Leviathan" description="Grow from the depths!" maxcharges="3" hidden="true" />
 	<active quality="3" gfx="48_1_bookofleviathan_open.png" name="Open Book of Leviathan" description="Grow from the depths!" maxcharges="6" hidden="true" />
+
+	<!-- TECHNICAL -->
+	<passive quality="0" gfx="58_1_deadweightskeletonheld.png" name="Dead Weight (Held Skeleton)" hidden="true" />
 	<active quality="0" gfx="47_1_bloodvessel.png" name="Empty Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
 	<active quality="0" gfx="47_2_bloodvessel.png" name="Stained Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />
 	<active quality="0" gfx="47_3_bloodvessel.png" name="Half Empty Blood Vessel" maxcharges="0" chargetype="special" hidden="true" />

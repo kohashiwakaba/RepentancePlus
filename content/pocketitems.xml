@@ -40,13 +40,13 @@
 	<card type="special" name="Funeral Services?" hud="Funeral Services?" mimiccharge="12" description="???" pickup="185" />
 	
 	<!-- Sin's Jewels -->
-	<rune type="rune" pickup="176" hud="Canine of Wrath" description="Subconscious anger" name="Canine of Wrath" mimiccharge="6" />
-    <rune type="rune" pickup="177" hud="Mask of Envy" description="Defiled from the inside" name="Mask of Envy" mimiccharge="4" />
-    <rune type="rune" pickup="178" hud="Crown of Greed" description="Want, want, want" name="Crown of Greed" mimiccharge="3" />
-    <rune type="rune" pickup="179" hud="Void of Gluttony" description="Devour all" name="Void of Glutonny" mimiccharge="12" />
-    <rune type="rune" pickup="180" hud="Apple of Pride" description="Succumb to being the Almighty" name="Apple of Pride" mimiccharge="6" />
-    <rune type="rune" pickup="181" hud="Flower of Lust" description="Do anything for more" name="Flower of Lust" mimiccharge="6" />
-    <rune type="rune" pickup="182" hud="Acid of Sloth" description="Embrace laziness" name="Acid of Sloth" mimiccharge="3" />
+	<rune type="rune" pickup="176" hud="Canine of Wrath" description="Subconscious anger" name="Canine of Wrath" mimiccharge="6" achievement="999" />
+    <rune type="rune" pickup="177" hud="Mask of Envy" description="Defiled from the inside" name="Mask of Envy" mimiccharge="4" achievement="999" />
+    <rune type="rune" pickup="178" hud="Crown of Greed" description="Want, want, want" name="Crown of Greed" mimiccharge="3" achievement="999" />
+    <rune type="rune" pickup="179" hud="Void of Gluttony" description="Devour all" name="Void of Glutonny" mimiccharge="12" achievement="999" />
+    <rune type="rune" pickup="180" hud="Apple of Pride" description="Succumb to being the Almighty" name="Apple of Pride" mimiccharge="6" achievement="999" />
+    <rune type="rune" pickup="181" hud="Flower of Lust" description="Do anything for more" name="Flower of Lust" mimiccharge="6" achievement="999" />
+    <rune type="rune" pickup="182" hud="Acid of Sloth" description="Embrace laziness" name="Acid of Sloth" mimiccharge="3" achievement="999" />
 	
 	<!-- non-custom backs -->
 	<card type="special" name="Spiritual Reserves" hud="Spiritual Reserves" mimiccharge="12" description="Awaken your spirits" pickup="8" />
@@ -67,8 +67,9 @@
 	<!-- pill effects -->
 	<pilleffect name="Estrogen Up" mimiccharge="4" class="2+" />
 	<pilleffect name="Laxative" mimiccharge="2" class="0" />
-	<pilleffect name="Phantom Pains" mimiccharge="4" class="1+" />
-	<pilleffect name="Yum!" mimiccharge="12" class="1+" />
+	<pilleffect name="Phantom Pains" mimiccharge="4" class="2-" />
+	<pilleffect name="Yum!" mimiccharge="12" class="2+" />
 	<pilleffect name="Yuck!" mimiccharge="6" class="1+" />
+	<pilleffect name="Suppository" mimiccharge="6" class="1" />
 	
 </pocketitems>

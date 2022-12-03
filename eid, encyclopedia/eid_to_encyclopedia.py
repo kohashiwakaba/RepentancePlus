@@ -1,8 +1,8 @@
 # EID to Wiki description
 
-EID = """EID:addTrinket(mod.CustomTrinkets.CRACKED_CROSS, "When entering a new room, one random enemy will be crippled")
-	EID:addTrinket(mod.CustomTrinkets.MY_SOUL, "Spawns one permanent orbital ghost that shoot bullets and can block projectiles")
-	EID:addTrinket(mod.CustomTrinkets.JEWEL_DIADEM, "Removes the negative effect of using a Sinful Jewel, if it has one")"""
+EID = """EID:addCollectible(mod.CustomCollectibles.WE_NEED_TO_GO_SIDEWAYS, "Passively spawns a special dirt patch in every secret room #{{Key}} If used elsewhere, bury all keys in a room #{{Card78}} If used on that dirt patch, dig up all buried keys as Cracked Keys")
+	EID:addCollectible(mod.CustomCollectibles.DEAD_WEIGHT, "Throwable Forgotten's Body familiar #Shoots bones upwards if hits a wall #Blocks enemy projectiles")
+	EID:addCollectible(mod.CustomCollectibles.KEEPERS_ANNOYING_FLY, "Orbital fly familiar #Block both enemy projectiles and Isaac's tears #Deals more contact damage to enemies the more tears it absorbs in a current room")"""
 
 for description in EID.split('\n'):
     itemID = description[description.find('(') + 1:description.find(',')]
@@ -24,11 +24,9 @@ for description in EID.split('\n'):
     print('},')
 
 # Item pools to Wiki item pools
-'''
 for description in EID.split('\n'):
     itemID = description[description.find('(') + 1:description.find(',')]
     
     print('[' + itemID + '] = {Encyclopedia.ItemPools.},')
-'''
 
 
