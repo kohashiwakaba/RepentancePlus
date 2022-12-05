@@ -1047,7 +1047,7 @@ if true then
 	EID:addCollectible(mod.CustomCollectibles.THE_HOOD, "{{SoulHeart}} 소울하트가 등장할 때 굳은 하트로 등장할 확률 대폭 증가#소울하트가 꽉 찬 상태에서도 굳은 하트를 주울 수 있습니다.#굳은 하트의 유령이 유도 눈물을 발사합니다.", "후드", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.SPIRITUAL_AMENDS, "{{SacrificeRoom}}희생방에서 희생 시 50%의 확률로 캐릭터의 주변을 돌며 적의 탄환을 막는 유령을 소환합니다.#{{EternalHeart}} 유령 사망 시 이터널 하트를 드랍합니다.", "영혼의 보상", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.BAG_OF_JEWELS, "사용 시 죄의 보석 하나를 지급합니다.", "보석 주머니", "ko_kr")
-	EID:addCollectible(mod.CustomCollectibles.WE_NEED_TO_GO_SIDEWAYS, "소지한 상태에서 비밀방 입장 시 특수한 지형이 추가됩니다.#사용 시 그 방의 {{Key}}열쇠 픽업을 묻습니다.#특수한 지형이나 열쇠를 묻은 자리에서 사용 시 그 방의 모든 특수한 지형을 파내 {{Card78}}Cracked Key를 꺼냅니다.", "옆으로 가야만 해", "ko_kr")
+	EID:addCollectible(mod.CustomCollectibles.WE_NEED_TO_GO_SIDEWAYS, "{{SecretRoom}} 소지한 상태에서 비밀방 입장 시 특수한 지형이 추가됩니다.#사용 시 그 방의 {{Key}}열쇠 픽업을 묻습니다.#특수한 지형에서 사용 시 묻은 열쇠를 전부 {{Card78}}Cracked Key로 바꿉니다.", "옆으로 가야만 해", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.DEAD_WEIGHT, "Tainted Forgotten의 몸체를 던질 수 있습니다.#뼈다귀는 적의 탄환을 막아주며 벽에 부딪힐 때 뼈 눈물을 흩뿌립니다.", "묵직한 시신", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.KEEPERS_ANNOYING_FLY, "캐릭터의 주변을 돌며 적의 탄환과 {{ColorOrange}}캐릭터의 눈물{{CR}}을 막습니다.#흡수한 탄환이 많을수록 적과 접촉 시 주는 피해량이 증가합니다.", "키퍼의 짜증나는 파리", "ko_kr")
 
@@ -1070,6 +1070,7 @@ if true then
 	EID:addTrinket(mod.CustomTrinkets.BABY_SHOES, "적과 보스의 크기 및 피격 판정 범위를 10% 감소시킵니다.", "꼬까신", "ko_kr")
 	EID:addTrinket(mod.CustomTrinkets.KEY_KNIFE, "피격시 8%의 확률로 {{Collectible705}}Dark Arts 효과 발동", "열쇠칼", "ko_kr")
 	EID:addTrinket(mod.CustomTrinkets.SHATTERED_STONE, "열쇠 혹은 폭탄을 주울 시 일정 확률로 랜덤 자폭 파리를 생성합니다. #생성 확률은 주운 픽업의 레어도에 비례합니다.", "조각난 석상", "ko_kr")
+	EID:addTrinket(mod.CustomTrinkets.CRACKED_CROSS, "방 입장 시 적 하나를 무력화 시킵니다.", "부서진 십자가", "ko_kr")
 
 	EID:addTrinket(mod.CustomTrinkets.MY_SOUL, "캐릭터의 주변을 돌며 적의 탄환을 막고 공격하는 방향으로 장애물을 관통하는 눈물을 발사하는 유령을 소환합니다.", "나의 영혼", "ko_kr")
 	EID:addTrinket(mod.CustomTrinkets.HEAVENLY_KEYS, "Key Piece 소지 여부와 무관하게 Chest/Dark Room 스테이지의 금색 문을 엽니다.#{{Collectible585}} Alabaster Box의 보상을 강화시킵니다.", "천국의 열쇠", "ko_kr")
