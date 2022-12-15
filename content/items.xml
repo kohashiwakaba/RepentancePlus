@@ -47,7 +47,7 @@
 	<passive id="20" name="DNA Redactor" description="It runs in your genes" gfx="20_dnaredactor.png" quality="3" tags="offensive summonable" /> 
 	<passive id="21" name="A Cat in the Box" description="Dead or alive?" gfx="36_catinabox.png" quality="4" tags="offensive summonable" />
 	<trinket name="Torn Page" description="There's gold in them books!" gfx="t15_tornpage.png" />
-	<passive id="22" name="Nerve Pinch" description="Ouch!" gfx="26_nervepinch.png" quality="2" cache="speed" persistent="true" />
+	<passive id="22" name="Nerve Pinch" description="Ouch!" gfx="26_nervepinch.png" quality="3" cache="speed" persistent="true" />
 	
 	<!-- T. Azazel -->
 	<trinket name="Angel's Crown" description="All virtues are awarded" gfx="t07_angelscrown.png" tags="lazarussharedglobal" />
@@ -57,25 +57,25 @@
 	
 	<!-- T.Eden -->
 	<passive id="23" name="Magic Pen" description="I want to be an artist" gfx="14_magicpen.png" quality="1" tags="offensive" /> 
-	<active id="24" name="Book of Genesis" description="A new chapter" gfx="37_bookofgenesis.png" quality="4" maxcharges="6" tags="book offensive" />
+	<active id="24" name="The Book of Genesis" description="A new chapter" gfx="37_bookofgenesis.png" quality="4" maxcharges="6" tags="book offensive" />
 	<trinket name="Eden's Lock" description="???" gfx="t12_edenslock.png" />
 	<active id="49" name="Magic Marker" description="+/- 1" gfx="50_magicmarker.png" quality="1" maxcharges="4" tags="offensive" />
 	
 	<!-- T. Lost -->
-	<familiar id="25" name="Cherubim" description="All-seing friend" gfx="15_zenbaby.png" quality="3" tags="baby angel monstermanual offensive summonable" />
+	<familiar id="25" name="Cherubim" description="He sees all" gfx="15_zenbaby.png" quality="3" tags="baby angel monstermanual offensive summonable" />
 	<trinket name="A Piece of Chalk" description="Stay out, unholy!" gfx="t09_pieceofchalk.png" tags="nogreed" />
 	<active id="42" name="Soul Bond" description="Astral chains" gfx="40_soulbond.png" quality="2" maxcharges="3" tags="offensive" />
 	<passive id="43" name="Angel's Wings" description="But if we are living in the light..." gfx="41_angelswings.png" quality="4" cache="tearflag shotspeed" tags="offensive" /> 
 	
 	<!-- T. Lilith -->
-	<passive id="26" name="Mother's Love" description="Love your children" gfx="38_motherslove.png" quality="2" cache="damage luck firedelay speed range" tags="offensive" />
+	<passive id="26" name="Mother's Love" description="Love your children" gfx="38_motherslove.png" quality="3" cache="damage luck firedelay speed range" tags="offensive" />
 	<trinket name="Baby Shoes" description="So tiny" gfx="t18_babyshoes.png" />
 	<active id="41" name="Rejection" description="Sorry, little ones..." gfx="29_rejection.png" quality="2" maxcharges="2" tags="offensive" />
 	<familiar id="46" name="Friendly Sack" description="Gives friends!" gfx="49_friendlysack.png" quality="3" tags="summonable offensive" />
 
 	<!-- T. Keeper -->
 	<trinket name="Greed's Heart" description="Coin up" gfx="t06_greedsheart.png" />
-	<passive id="27" name="2+1" description="Limited Offer!!!" gfx="12_2+1.png" quality="1" tags="offensive summonable nogreed lazarussharedglobal" />
+	<passive id="27" name="2+1" description="Limited Offer!!!" gfx="12_2+1.png" quality="2" tags="offensive summonable nogreed lazarussharedglobal" />
 	<passive id="28" name="Keeper's Penny" description="Shop up" gfx="25_keeperspenny.png" quality="4" tags="offensive nogreed" />
 	<active id="40" name="Auction Gavel" description="1, 2, 3, SOLD!" gfx="39_auctiongavel.png" maxcharges="6" quality="3" tags="offensive" />
 	
@@ -109,7 +109,7 @@
 	<passive id="57" name="Spiritual Amends" description="They cry for you" gfx="56_spiritualamends.png" quality="1" tags="nogreed nolostbr angel summonable" />
 	<active id="58" name="Bag of Jewels" description="Portable luxuries" gfx="57_bagofjewels.png" quality="2" maxcharges="6" tags="offensive" />
 	<familiar id="59" name="Dead Weight" description="Throwable friend" gfx="58_deadweight.png" quality="2" tags="offensive uniquefamiliar" />
-	<passive id="60" name="Keeper's Annoying Fly" description="Bzzz..." gfx="59_keepersannoyingfly.png" quality="3" tags="offensive fly summonable" />
+	<familiar id="60" name="Keeper's Annoying Fly" description="Bzzz..." gfx="59_keepersannoyingfly.png" quality="2" tags="offensive fly summonable" />
 	<active id="61" name="We Need To Go Sideways" description="Dig paths to the other side" gfx="60_redshovel.png" quality="3" tags="offensive" maxcharges="4" />
 	<trinket name="Cracked Cross" description="Some fear you" gfx="t21_crackedcross.png" tags="nogreed" />
 	<trinket name="My Soul" description="Spiritual companionship" gfx="t22_mysoul.png" cache="familiars" />

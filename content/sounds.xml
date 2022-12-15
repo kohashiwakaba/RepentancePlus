@@ -38,6 +38,9 @@
 	<sound name="Estrogen Up">
 		<sample weight="1" path="voiceover/Estrogen Up.wav" />
 	</sound>
+	<sound name="Suppository">
+		<sample weight="1" path="voiceover/Suppository.wav" />
+	</sound>
 	
 	<sound name="Horse Yum">
 		<sample weight="1" path="voiceover/Horse Yum.wav" />
@@ -53,6 +56,9 @@
 	</sound>
 	<sound name="Horse Estrogen Up">
 		<sample weight="1" path="voiceover/Horse Estrogen Up.wav" />
+	</sound>
+	<sound name="Horse Suppository">
+		<sample weight="1" path="voiceover/Horse Suppository.wav" />
 	</sound>
 
 	<!-- Special objects and runes -->
