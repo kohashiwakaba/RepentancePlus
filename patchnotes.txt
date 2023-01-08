@@ -1,0 +1,779 @@
+Update 07.01
+- fixed Torn Page not working correctly with Lemegeton
+- fixed players not being able to encounter Yum! pill, even if it's unlocked
+- fixed Suppository pill dropping random item when used if Isaac doesn't have an active item
+- fixed Hematemesis pill being able to drop Tainted hearts
+- fixed Stomacks dropping normal Grab Bags' rewards instead of their custom loot when opened
+- fixed custom pill effects not working correctly if used simultaneously (this was most notable when Laxative was being used via the Golden pill)
+- a function that chooses a collectible from custom pool now runs [b]20x[/b] as much as before, meaning players are way less likely to get Breakfast out of Coffins, Flesh chests and secondary items spawned by Ordinary Life
+- explosion radius will now be adjusted by its length, which allows for detecting bigger explosions (like Mr. Mega) from further away
+
+Update 04.01
+Post-Christmas update!
+- removed all festive content
+- fixed Vault of Havoc being usable during the Beast fight, causing a softlock
+- several changes to Dead Weight item:
+-- increased the skeleton's contact damage from 16 to 25
+-- the skeleton will no longer randomly slide around the room
+-- the skeleton will now also put out fireplaces when thrown
+- fixed Pure Soul always spawning a friendly ghost in secret rooms rather than choosing the room at random
+- fixed Super Envy never dropping its respective Jewel
+
+Update 25.12
+Christmas update!
+
+Update: 10.12
+TWEAKS:
+- added more extras!
+- reduced chances of Soiled heart spawning each dip from 30% to 20%
+- Enigma hearts now adjust their visibility depending on how far away they are from players
+- Magic Cube will now be solved first try if the player doing it has The Mind item
+- added flat damage bonus to the gut ball shot by Rejection item, new formula is:
+	gut ball dmg = 5 + 3.75 * player dmg * (no. familiars + 1)
+- Mother's Love now drops Soul of Lilith when first picked up
+- adjusted a few item qualities
+- updated Korean EID for the mod
+- renamed Book of Genesis to The Book of Genesis to avoid name conflict with Retribution mod
+
+FIXES:
+- fixed Curdled hearts not working correctly for characters that can't have red health
+- fixed Broken hearts not killing Isaac instantly if they add 12th broken heart
+- fixed Canine of Wrath not dealing damage to enemies as intended
+- fixed the somewhat inconsistent handling of unlockable pill effects
+- fixed The Forgotten and The Soul not sharing the Enigma hearts they hold
+- fixed Estrogen Up pill not interacting correctly with Rotten and Soiled hearts
+- fixed custom revivals not having a priority queue and spontaneously overriding each other
+- fixed Magic Cube not starting off fully charged when solved
+
+Update: 20.11
+- Sin's Jewels can no longer appear naturally, but their drop rate from sin mini-bosses has been doubled
+- fixed Ultra Pride dropping Acid of Sloth instead of Apple of Pride on death
+- Flower of Lust is now guaranteed to drop from its Crawler, or from Lust mini-boss while having Pure Soul item, but only the first time they are encountered
+- fixed Enraged Soul and Red Bomber not working
+
+Update: 17.11
+- fixed the mod not saving its DSS menu settings
+- fixed Tainted rocks not dropping anything besides console errors when destroyed
+- fixed King cards rarely freezing the game and spawning way more pickups than intended
+- fixed Overflowing Blood Vessel sometimes triggering through Metronome, causing unintended behaviours
+- fixed Void of Gluttony not healing Keepers despite them being able to lack health
+- added custom MinimAPI icons for Spiritual Reserves, Mirrored Landscape and Reverse Card
+
+Update: 13.11
+TWEAKS:
+- added extras!
+- improved Key to the Heart and Book of Leviathan
+- Pure Soul ghost will now attempt to spawn on a grid cell unoccupied by a pit or a rock, to aid modded room layouts
+- Shattered Stone's effect can now also be triggered when picking up hearts or batteries
+- different modded pills that are not unlocked will now be replaced by different basegame pills
+- updated a few item qualities
+- added "lazarussharedglobal" item tag to Red Map, Night Soil, Angel's Crown, 2+1 and Red King, for better Tainted Lazarus experience
+
+FIXES:
+- updated CHAPI scripts to include most of the bug fixes and missing functionality
+- fixed the mod not saving any progress after using the DSS unlockable menu and added "Hint" feature to the menu
+- fixed the orbital ghosts sometimes not spawning half soul heart when dying due to an error
+- fixed shop items never updating their prices (for example, via Steam Sale)
+- fixed modded horse pills not working correctly since the arrival of Repentance 1.7.9 patch
+- fixed VERY weird handling of unlockable trinkets
+- fixed Mark of Cain reviving The Forgotten with no bone hearts
+- fixed the player being able to cripple friendly and charmed monsters
+- all custom hearts will now give different amounts of blue flies for Keeper and The Miser, depending on their quality (for real this time)
+- fixed Deserted hearts not interacting with half soul hearts correctly upon pickup
+
+Update: 02.10 (hotfix)
+- added dynamic id reassignment for trinkets and pills, so that the DSS menu lists unlocks correctly when playing with multiple content mods
+- fixed DSS menu sometimes sending off errors into the console when reloading the mod
+- fixed CHAPI continuously sending off errors into the console while playing as character with non-standard health (like Keeper or The Lost)
+- fixed the mod crashing Tainted Cain
+- fixed all non-empty Blood Vessels instantly killing players in ghost form when disappearing
+- Miser hearts have been temporarily disabled for Tainted Eve, to prevent unintended behaviours
+
+Update: 30.09 (FINAL)
+- Mod Config Menu for the mod has been complemented with Dead Sea Scrolls' embeddable menu paper, meaning that MCM mod dependency is removed
+- custom voiceovers for consumables are now compatible with the announcer voice mode set in options.ini
+- optimized the GetUnlockedVanillaCollectible function and loops that were using it, meaning it will no longer deplete item pools at such noticeable rates
+- Jack cards will now spawn their respective rewards in addition to base room rewards, rather than as their replacement; consequently, they are no longer affected by Options?
+- pickups dropped by King cards are no longer considered room clear rewards
+- doubled the rate at which Void of Gluttony slows you down while its effect is active
+- exposed two commands which can be used to unlock a specific mark on all characters, or all marks on a specific character
+- Sacrificial blood can no longer spawn naturally, and will only play its voiceover with a 25% chance
+- mimic charge for Apple of Pride was increased from 3 pips to 6
+- Bag-o-Trash got its sprite and hitbox size increased to the original values; however, it will now break instantly if hit by explosions
+- fixed Bag-o-Trash never actually being able to drop Nightsoil trinket when destroyed
+- fixed Ultra Flesh Kid stopping spawning red creep as soon as it's not able to pick up a red heart
+- Birth Certificate can no longer be used in a mirror dimension, to avoid softlocks
+- Torn Page + The Bible will now remove broken hearts only if the player has one; otherwise, it has a 25% chance to grant an eternal heart
+- fixed the mod printing init message into the debug console everytime you start a new run
+- added mod initials to all modded rooms' names, for convenience purposes
+- added French EID
+
+- CUSTOM HEALTH OF THE MOD NOW USES Fiend Folio's Custom Heart API/Library!
+- this comes with several fixes, changes and upgrades to the existing tainted hearts system:
+-- all hearts will now be correctly displayed on the health bar, will not overlap with each other and will not slide to the left of the bar
+-- added the ability to "suck out" the hearts using Sumptorium
+-- added custom Sumptorium Clots for Dauntless, Zealot, Empty and Soiled hearts
+-- Dauntless, Miser and Zealot hearts are now soul health, rather than health overlays
+-- all custom hearts will now give different amounts of blue flies for Keeper and The Miser, depending on their quality
+-- all hearts (both tainted and non-tainted) are now correctly duplicated by Jera rune, Crooked Penny and Diplopia
+-- tainted hearts' replacement chance is no longer dependent on the number of current players
+-- Dauntless hearts will now drop Half dauntless hearts when an enemy is killed, and will give the Wafer effect to the player holding them
+-- Miser hearts no longer activate D20 when depleted
+-- Capricious hearts can no longer replace half red hearts
+-- Broken hearts no longer heal full red heart on pickup
+-- Benighted hearts no longer give flat damage boost, instead increasing player's damage by 0.666%
+-- Dark Bum now behaves correctly in the presence of Hoarded hearts, following and collecting them
+-- Curdled hearts now have more variety on which Clot it spawns for which character
+-- Savage heart will no longer incorrectly apply double damage boost to players, regardless of whether it healed them or not
+-- Soiled hearts can spawn Fiend Folio exclusive dips if the mod is on!
+-- fixed Hoarded hearts not working correctly with Apple of Sodom
+-- fixed an oversight that allowed the cooldown of Baleful Hearts' ghost summoning to count down quicker if there are more enemies close to Isaac 
+
+Update: 06 Aug (PRE-FINAL)
+ADDITIONS:
+- added voiceovers for ALL modded consumables (thanks to Owl!)
+- added compatibility with Faster Animations mod for Stargazer Beggars
+- added compatibility with Andromeda mod for Tainted hearts (so that they could charge Singularity properly)
+- exposed functions responsible for opening Scarlet, Flesh and Black chests, particularly for a compatibility with Epiphany's Multitool pickup
+- added EID Abyss locust hint for when you are holding a Red Rune
+- added Korean EID that reflects v1.29a-c changes
+- added EID for Golden Trinket effects
+
+CHANGES:
+- Soiled hearts will no longer reduce player's deal chance when depleted, similarly to rotten hearts
+- Deserted hearts can no longer replace black hearts; replacement chance for blended hearts was increased from 35% to 40%
+- Mark of Cain will no longer recognize Key/Knife pieces as familiars suitable for removal, meaning you can't revive with the Mark if use have just them
+- players can now fill The Jar with Hoarded and Harlot hearts
+- Harlot hearts will now also properly synergize with Maggie's Bow
+
+FIXES:
+- reduced lags caused by the mod, particularly by functions that handle item pools being called way too often
+- black markets teleported to by the Joker? card will now contain a Fool Card in them, preventing softlocks
+- Soiled hearts will no longer 'linger' on player's healthbar if there's not enough red hearts to hold them
+- Vault of Havoc rooms will now display a custom header text instead of basic "Isaac vs Sloth" when entered
+- fixed Rubik's Cube jumping into main active slot if solved in a pocket slot, potentially destroying your currently held active item
+- fixed Flower of Lust triggering its effect even in boss rooms, causing unintended behaviours
+- fixed Black Doll not working
+- fixed Mark of Cain spawning more Tainted Enochs after reviving the player than intended
+- fixed players being able to use Cheese Grater infinitely for damage boosts
+- fixed Spiked chests not being recognized as a self-damage source for multiple mechanics
+- fixed The Jar being able to spawn tainted hearts on use
+- fixed a visual bug that allowed entities to 'clip' into Red King crawlspace's sprite
+- fixed Cherubim and Tank Boys not spawning correctly in their respective challenges if not unlocked
+- fixed console error caused by the Red Bomber item
+- fixed players losing modded stat-ups upon restarting the game
+- fixed Book of Genesis working incorrectly with Car Battery
+
+Update: 12 Jul
+- fixed modded items NEVER appearing in ANY item pool at all, even despite being unlocked (that was a bug sorry!)
+
+Update: 1 Jul
+- fixed Cursed Card not working correctly
+
+Update: 28 Jun
+- fixed custom chests ignoring GB Bug's ability to morph pickups
+- fixed Curdled Hearts not working correctly if picked up by Tainted Soul
+- fixed locked active items being replaced with items that have 0 charges when getting to your inventory
+
+- two trinkets can now be picked up in the Birth Certificate area if the player has Belly Button or Mom's Purse
+- players will now also be teleported out of said area with an animation and transition similar to one of Death Certificate
+- Cherry Friends now have increased hitbox, but are no longer guaranteed to drop red hearts when they disappear
+- Angel's Wings' static brimstone attack is now affected by player's damage and range stats, and Dogma Baby summon attack got its cooldown reduced by 25%
+- slightly reduced spawnrates of Capricious, Baleful and Benighted hearts
+- unlocks management system will no longer throw "player type doesn't exist" errors in console after defeating any boss with any character
+- added DAMAGE_CHEST damage flag to custom chests, for modding convenience purposes
+
+Update: 21 Jun
+- fixed certain mechanics (like Stargazers or Tainted hearts unlocks) sometimes not functioning correctly due to not registering player collision
+- fixed Nerve Pinch not doing anything when triggered without having an active item (that was a bug sorry!)
+- fixed Monster Manual being able to summon upgraded Enoch familiar, causing unintended behaviours
+- generally, Monster Manual will no longer summon modded familiars if the respective items aren't unlocked yet
+
+Update: 17 Jun
+- fixed 2+1 not working correctly in co-op
+- fixed 2+1 causing unintended behaviours when purchasing "exotic" heart types that can't be collected (e.g. buying Bone hearts in Member Card shops)
+- fixed Edens sometimes starting with locked modded trinkets
+- fixed Phantom Pains pills working incorrectly if consumed by more than one player at a time
+- fixed Phantom Pains pill not having the intended interval between fake damage ticks (20 seconds instead of 15)
+- fixed Rubik's Cube not having any interactions with Car Battery
+
+- tweaked drop table of Coffins and reduced the 3 bone hearts payout to 2
+- locked modded pills will now be replaced by Experimental Pills, rather than I Found Pills
+- Tainted Rocks can no longer appear if Red Rune (and hence, Cracked Key) hasn't been unlocked
+- updated Chinese EID to reflect 1.29 changes
+
+Update: 12 Jun
+FIXES:
+- fixed certain effects (like stat boosts) not being retained through exit & continue and/or not being co-op compatible 
+- removed Mod Compatibility Hack mod dependency
+- fixed multiple issues regarding locked modded items incorrectly rerolling into an item from current room's pool
+- fixed Mr. ME! not being able to open modded chests
+- fixed Ultra Flesh Kid shooting tears that inherit its player's tearflags
+
+TWEAKS & CHANGES
+- Handicapped Placard will no longer increase its area of effect when the player takes damage; instead, it will depend on how many empty red hearts the player has and will be calculated only when placing the Placard; the Placard now also has a much better AoE sprite
+- Enraged Soul will no longer latch onto smaller enemies (<= 10 HP) and will instead just pierce and instantly kill them
+- beams of light summoned by Book of Judges will now be repeatedly randomized after each strike
+- Bottomless Bag now grants invincibility and displays a special "opened" animation while held above the head; recharge time has been increased from 9 to 13 seconds
+- overhauled certain Vault of Havoc room layouts and changed their subtype to be miniboss rooms, to prevent players from obtaining completion marks by beating these rooms
+- Scalpel's additional tears are now shot randomly, rather than in fixed directions, and have reduced damage multiplier
+- added special interaction between Dream Catcher and Ceiling with the Stars
+- Cat in a Box will now also confuse bosses and mini bosses, alongside other effects
+- Trick Penny's effect now only applies to slots and beggars
+
+Update: 5 Jun
+- slightly tweaked item pool of flesh chests
+- adjusted difficulty and end stage of certain challenges
+- Vault of Havoc will now have its killed enemies counter reset when entering a new floor
+- increased chances of Basement Key turning gold chests into old chests from 15% to 25%
+
+Update: 29 May
+BUG FIXES:
+- fixed Found Soul triggering custom revival items, causing unintended behaviors
+- fixed Bird of Hope not working correctly
+- fixed players not being able to interact with Black Chests anymore after leaving the room while it hasn't closed back up yet
+- fixed Coffins not playing correct animation if players re-enter the room after bombing them once
+- fixed modded items being replaced when exiting and continuing the run
+- fixed Tainted hearts not working correctly with Options?
+- fixed custom pill effects not having their pre-determined counterparts, which not only was in contrary with how it works in the base game, but also led to them sometimes appearing even if not unlocked and/or causing heavy lags
+- fixed Coffins and Flesh chests sometimes spawning items that are not unlocked
+- fixed books consumed and used by the Void interacting with Torn Page, causing unintended behaviors
+
+TWEAKS AND BALANCE:
+- Tainted hearts can now spawn in boss rooms, but they can't spawn in super secret rooms
+- added Void to a list of items that can't be affected by Mirrored Landscape card
+- decreased damage multipliers given by Bless of the Dead and Cheese Grater from x1.2 and x1.12 to x1.15 and x1.07, respectively
+- special rooms spawned by Angel's Crown will no longer contain an angel statue
+-- Angel's Crown trinket effect will now also be overridden by the Devil's Crown
+- Bag-o-Trash now has slightly smaller hitbox and sprite size, spawns less flies on average and has slightly higher chance to break when blocking projectiles
+- White coloured pills are no longer guaranteed to be replicated on use with DNA Redactor; instead, the chance of it falls down with the amount of pills consumed, effectively allowing for no more than 10 uses
+- Nerve Pinch is now a double tap ability with 3 seconds of cooldown; triggering it will also give twice as much speed penalty if you're trying to use a 6 or 12 room recharge item
+- all non-empty Blood Vessels can no longer be switched for another active item to prevent taking damage; if any is detected, it will instantly be destroyed, leaving red creep, dealing damage to all players proportional to how full it was, and spawning a random amount of red hearts
+- Ceiling with the Stars is now more consistent on the Ascent; it will give one item wisp when entering a starting room for the first time
+- moved Red Map's icon to a more convenient spot on GUI and made it flexible in relation to all other map icons
+- reduced weights of all secret room layouts with Coffins and ultra secret room layouts with Scarlet chests
+- updated A LOT of item qualities
+
+MISC:
+- improved accessibility of Tainted hearts for other mods; they are now stored in `RepentancePlus.NumTaintedHearts` table and are refreshed on entering a new room
+- updated Chinese EID to reflect v1.27 changes and English EID to reflect v1.28 changes
+- updated Encyclopedia to remove outdated info
+
+
+Updates: 2,5 May
+- fixed Ordinary Life and Keeper's Penny not working as intended due to a typo
+- fixed King cards sometimes spawning Sewing Machines if used in shops
+- fixed Apollyon's name being misspelled in MCM
+
+Update: 29 Apr
+- added dynamic ID assignment to modded items and cards, to prevent other content mods from making them unobtainable, even if unlocked
+- added `rplus_reset` command, used to reset your current unlock progress
+- added a check that prevents players from retaining Soiled hearts even when losing all heart containers
+- fixed Tainted hearts still appearing after using `customhearts_none` command
+- fixed Handicapped Placard and lvl. 3 Ultra Flesh Kid not functioning correctly in challenge and Boss rush rooms
+
+Update: 25 Apr
+- fixed multiple bugged unlocks
+- fixed Tainted hearts being able to spawn when duplicating normal hearts with Diplopia/Crooked Penny
+- fixed some cards (primarily Sin's Jewels) showing up even if they are locked
+- fixed locked modded books being replaced by items from Treasure room pool if encountered in libraries
+- excluded Ordinary Life from Greed mode boss room pool and added nogreed tag to it
+
+Update: 23 Apr
+--- added unlocks and achievements system!
+- added 4 new challenges
+- updated all entries for Korean, Spanish and Russian EID
+- added card icons for EID entries
+- added missing unique Abyss locusts and BoV wisps
+- fixed Baleful hearts spawning their ghosts when standing near fireplaces, shopkeepers or invulnerable enemies
+- fixed multiple Tainted hearts being able to spawn naturally in co-op
+- tweaked the mechanics of Miser Hearts
+- fixed Red Bomber overriding Remote Detonator, causing unintended behaviours
+- fixed Scalpel not taking away bone hearts, allowing for infinite use
+- fixed several bugs related to Cheese Grater
+- fixed players being able to put Ultra Flesh Kid's helper Leech familiar into the Sewing machine
+- improved the visual clues of Coffins
+- Bag Tissue can now be used with as few pickups in a room as possible, always guaranteeing an item; average quality of spawned items was increased as well
+- droprate of the Flower of Lust was capped at 33%, regardless of whether players have Pure Soul item or not
+
+Update: 13 Apr
+- added a new item: Birth Certificate
+- added 6 remaining Tainted hearts: Dauntless, Soiled, Deceiver, Baleful, Miser and Harlot
+
+- fixed several bugs related to Tainted hearts that appear on the health HUD:
+-- fixed said hearts being displayed on the screen even when the boss VS animation is being played
+-- fixed players not being able to pick them up while in ghost form with visible health (e.g. white fire effect)
+-- fixed Genesis not removing said hearts on use
+- all Tainted hearts that could replace half red hearts will no longer do so
+- tweaked the spawn rates of almost all Tainted hearts
+- overhauled a variety of Tainted hearts:
+-- Fettered hearts now summon a special familiar when picked up, rather than just giving an extra soul health
+-- Savage hearts can now be picked up even at full health, giving double damage boost
+-- Benighted hearts got their damage boost increased to 0.16
+-- Curdled hearts now spawn Blue clots if picked up by characters who can't have red health
+-- Capricious hearts will now drop 1-3 random hearts when collected instead of just 3
+-- Enigma hearts will now be stored in a separate slot and act as a revival mechanic, rather than just giving a heart container
+
+- fixed Quasar spawning twice as many wisps with Car Battery
+- fixed Sin's Jewels turning into Blank Rune when re-entering a room
+- fixed Ordinary Life costume not accounting for player's skin color
+- Scarlet chests will now only appear in specific room layouts; their drop table has been diluted with reversed tarot cards
+- fixed active items becoming fully charged when entering pocket slot via Mirrored Landscape card, rather than retaining their actual charge
+- fixed Book of Leviathan and Berkano rune popups not working correctly with Giantbook API mod
+- fixed several bugs related to Blood Vessel
+- added Host Hat, Berserk! and Skeleton Key to Coffins' item pool, as intended
+- tweaked certain items' mechanics (Cookie Cutter, Book of Leviathan, 2+1, Stargazer's Hat and Scalpel)
+- tweaked drop table of Flesh Chests
+- increased the pay price of Stargazer Beggars
+- added 1 per room spawn limit for Tainted Rocks
+
+- adjusted a few item qualities and item pools
+- revised a variety of custom room layouts and their weights
+- added all missing MinimAPI icons
+- revised and updated all Encyclopedia and English EID entries for the mod
+
+Update: 24 Mar
+ADDITIONS:
+- added unique Abyss locusts for the remaining items
+- added missing pickup images for MinimAPI
+- updated Chinese EID for the mod
+
+FIXES:
+- fixed Quasar giving only one set of wisps for all pedestals in a room, even if they are not choice pedestals
+- fixed Red Map not working when using Forget Me Now
+- fixed 2 secret room layouts with coffins not having an entrance at the top wall, making players unable to bomb in and out of the room from this side
+- fixed Vault of Havoc displaying its number at incorrect position at higher HUD offset values
+- fixed Blood Vessel not working correctly for Tainted Eden
+- fixed several bugs related to A Cat in the Box item
+- fixed Bone Meal displaying "One makes you larger" pop-up message when its effect takes place
+- fixed Sin's Jewels not having the intended sprite Y offset and "appear" animation length
+
+TWEAKS AND BALANCE:
+- Sin's Jewels can no longer be spawned naturally alongside other runes and during Mega Satan fight
+- changed several Jewels' mechanics:
+-- enemies affected by Acid of Sloth now leave gas clouds behind them rather than a poisonous creep
+-- Mask of Envy no longer gives tears up and no longer moves bone hearts to after the soul health
+-- Void of Gluttony now allows you to regenerate your red health overtime at the expense of speed down
+- Tainted hearts can no longer be spawned by 0 - The Fool?, V - The Hierophant, VI - The Lovers, Queen of Hearts and Jera
+- Tainted hearts spawned on a room clear now properly synergize with Options? item
+- Jack cards now properly synergize with Options?: 2 choices of a respective pickup will spawn
+- excluded Piece of Chalk, Basement Key and Key to the Heart from Greed mode trinket pool
+- improved sprites of beam targets spawned by Book of Judges and eyes spawned by A Cat in the Box
+- Adam's Rib now only has a 22% chance to revive you as Eve, gives you Eve's starting health and items, and is not consumed on revival, to be on par with Broken Ankh
+- added missing interaction between Apple of Sodom trinket and Hoarded hearts
+- Joker? card can no longer appear on final floors, to prevent softlocks
+- Bless of the Dead and Cheese Grater now increase your damage by a certain % rather than a fixed value
+- Handicapped Placard's AoE now weakens enemies and makes them drop bone spurs only if they stay inside, rather than permanently once they enter it
+- effect of Empty Page is now chance-based, and chance increases with the book's recharge
+- Luck Foot now doubles the chance to get an item when playing Stargazer Beggars
+- Curdled and Savage hearts can now be picked up by characters that can't have red health (modded characters are not included!)
+- increased spawnrates of Savage Hearts from 1.25% to 1.5%
+
+Update: 14 Mar
+- added Chinese EID for the mod and updated Korean EID
+- added EID helpers for mimic charges of Repentance+ runes, cards and pills
+- increased the quality of pickups dropped by Black Chests
+
+- fixed Empty Page working with How to Jump
+- fixed Black Doll not working (supposedly that could also fix issues regarding the item that occured before v1.25)
+- fixed Reverse Card removing player's pocket active item on use (for real now)
+- fixed Tainted hearts not healing the player more if they have Maggy's Bow
+- fixed BFFS! and Baby Bender not having any effect on ghosts summoned by Spiritual Reserves
+- fixed a visual bug caused by Trisagion + Sinner's Heart / Angel's Wings
+
+Update: 12 Mar
+ADDITIONS:
+- added 3 new items: Pure Souls, Handicapped Placard and Book of Judges
+- added a new Cursed Card consumable
+- added custom Book of Virtues wisps for items
+
+FIXES, TWEAKS AND BALANCE:
+- fixed Bless of the Dead and Night Soil not working after using Forget Me Now
+- fixed Reverse Card removing player's pocket active item on use
+- fixed Rubik's Cube turning player's active item into Magic Cube if its usage is called by Void or Expansion Pack
+- fixed lvl. 3 Ultra Flesh Kid not functioning properly in Boss Rush and boss challenge rooms
+- replaced Red chest reward when clearing Vault of Havoc room with a trinket to avoid softlock caused by teleporting player to a Devil room
+- added Shoop da Whoop! and Bob's Rotten Head to Mirrored Landscape card's blacklist
+- Hoarded hearts now split into 2 doublepack hearts on collision if the player has Dark Bum
+- Ultra Flesh Kid now pulls red hearts towards him instead of collecting them, to prevent unintended behaviours
+- spawnrates of Tainted rocks were further reduced in favour of better drops quality
+- moderately increased prices of items spawned by Auction Gavel
+- overhauled most of Vault of Havoc rooms
+- corrected several EID descriptions
+- updated a few item qualities and item pools
+
+Update: 28 Feb
+ADDITIONS:
+- added a new item: Vault of Havoc
+- added 2 more Tainted hearts: Curdled and Savage hearts
+- added Torn Page and Empty Page trinkets back into the trinket pool
+- added couple more room layouts
+
+BUG FIXES:
+- fixed Ultra Flesh Kid being able to pick up hearts that are on sale
+- fixed Stargazer beggars not dying when blown up by Mama Mega! explosions
+- added Placebo, Blank Card and Clear Rune to Mirrored Landscape card's blacklist
+- fixed players getting hurt by Estrogen blood clots' projectiles when having certain item combos
+- fixed custom Error room layouts not having trapdoors
+
+TWEAKS AND BALANCE:
+- Quasar and Quasar Shard now consume items held by the player and give wisps only once for a set of on-choice pedestals, similarly to how Void and Abyss work
+- Coffins now also spawn 3 friendly Bonies if they pay out with bone orbitals
+- creep produced by Magic Pen now applies more effect to enemies; however, they are now temporary
+- reduced the chances to erase enemy while in Temper Tantrum active state from 10 to 5%
+
+Update: 18 Feb
+ADDITIONS:
+- added 2 new items: Magic Marker and Ultra Flesh Kid!
+- added a new trinket: Shattered Stone
+- added a new chest type: Coffin
+- added more proper item tags to items
+- added Repentance+ items to greed mode pools
+- added giantbook animation for Book of Leviathan
+
+BUG FIXES:
+- fixed a system of functions responsible for checking/giving unlockable items
+- fixed Scalpel's backwards tears not having a proper offset
+- fixed all custom tear variants not leaving splashes when they land
+- fixed players being able to donate health to flesh chests more than once in one hit
+- fixed several bugs and oversights related to Zealot and Empty hearts
+- fixed items spawned by Auction Gavel instantly disappearing when switched to another item
+- fixed Mirrored Landscape moving certain items into the pocket slot despite not working correctly there (D Infinity, Eraser etc.)
+- fixed players not being able to pick up Tainted hearts while holding Stargazer's Hat
+- fixed certain modded rooms being extremely rare or even impossible to encounter
+
+BALANCE CHANGES:
+- King cards how have a certain % chance to spawn a trinket or an item that grows with the number of consumed pickups, rather than spawning it on fixed amount of pickups
+- tweaked drop table of Black chests, effectively reducing the chances to get black sacks out of them
+- the damage inflicted by Soul Bond chain now scales with the current floor
+- Red King boss rooms are now different depending on the current chapter (including alt path); each chapter has 4 unique rooms to be drawn from
+- Yum! and Yuck! pills now give different stat bonuses/amounts of flies depending on what red heart you picked up
+- items of Q4 are now sold for 30 cents in Angel's Crown item rooms
+- updated a few item qualities
+
+Updates: 2 Feb (v1.22) & 3 Feb (v1.22a)
+ADDITIONS:
+- added 2 new items: Friendly Sack, Book of Leviathan
+- added 2 more Tainted hearts
+- added over 50 special room layouts with modded pickups and trinkets
+- added golden effects for certain trinkets
+- added the rest of Torn Page book buffs and EID helper texts for them
+- added EID Spindown Dice helper texts for SDD shard
+- added new version of Korean EID for the mod
+- added new console command `rplus_version` to get mod version
+
+BUG FIXES:
+- Angel's Crown trinket now works consistently on XL floors, the angel room backdrop is now applied without a delay, looks cleaner and stays even after you drop the trinket and re-enter the room
+- Red King is now less prone to the "infinite crawlspace" bug, works consistently on XL floors and has custom boss rooms instead of vanilla ones; red crawlspaces can no longer be pushed around and drop consumables when exploded
+- fixed Steam Sale not having any impact on items spawned by Auction Gavel
+- fixed certain familiars blocking projectiles shot by friendly monsters
+- fixed Stargazer's Hat not recharching while in secondary item slot
+- fixed Stargazer beggars giving player items that they already have
+- fixed Ceiling with the Stars giving wisps even if the player touched the bed without actually sleeping in it
+- fixed Cherry familiars being able to fly out of bounds if hit by explosion
+- fixed players being able to pick up Deserted hearts while at full health
+
+BALANCE AND OTHER CHANGES:
+- Torn Page and Empty Page trinkets were excluded from trinket rotation, meaning they can only be found in special library layouts
+- the ghosts summoned by the Spiritual Reserves card now gain short invincibility frames after getting hit; their tear damage has been increased to 2.25
+- Demon Form card now grants +0.2 damage when entering a new room and +1 damage when entering a boss room; damage bonuses now also slightly scale with player's current damage
+- Soul Bond can now also chain bosses; chain-down lasts for 5 seconds
+- Valentine's Card is now piercing, and charms every enemy it passes through
+- completely revised the mechanics of Cat in the Box item
+- reduced the amount of pickups needed for each attack level of a Fiend Fire card
+- bombing Stargazer Beggar now grants + devil deal %
+- improved the visuals of Rejection item
+- slightly reduced spawnrates of all Tainted hearts
+- updated a few item qualities
+
+Update: 18 Jan @ 11:37 pm
+ADDITIONS:
+- added a new item: Hand-Me-Downs
+- added 2 new cards: Spiritual Reserves and Mirrored Landscape
+- added custom Abyss locusts for Repentance Plus items
+- added Korean EID and updated Russian and Spanish EID
+- added a costume, animated pedestal sprite and attack's readiness visual indicator for Angel's Wings item
+
+FIXES AND CHANGES:
+- Black chests no longer have custom itempool, instead drawing items from the Curse room pool
+- Tainted hearts can no longer replace hearts that are on sale, to prevent unintended behaviours
+- fixed Bone Meal not retaining the damage bonus when dropping it and transitioning to the next floor
+- updated a few item qualities
+- added the intended interaction between Stargazer Beggars and a new Andromeda character: while playing as this character, the beggar has only 15% chance to appear in Planetariums
+
+Update: 10 Jan @ 12:10 pm
+ADDITIONS:
+- added a new item: Angel's Wings
+- added a new card: Valentine's Card
+- added Sewing Machine support for Cherubim, Tank Boys and Bag-o-Trash
+
+BALANCE CHANGES:
+- increased Basement Key chance from 5% to 15%
+- decreased spawn rates of Tainted rocks from 25% to 12.5%
+- Mom's ID no longer charms enemies in the room; instead it makes knives drop down on enemies that deal 2x of your damage
+- Mark of Cain no longer gives you dmg up on revival, instead granting you a familiar that becomes stronger if you revive via the Mark
+- added a variety of buffs to the Soul Bond item
+- increased the speed and hitbox size of Rejection gut tear
+- Cracked Orb is no longer one of the items that can get you Scarlet Chest drops and/or open them
+- Red Map now shows the Ultra Secret Room for the floor it's picked up on
+- Judas' Kiss trinket now also inflicts fear on enemies touching you
+- Red King now spawns Cracked Key instead of an item if the boss is defeated on the Ascent path
+
+BUG FIXES:
+- Flesh Chests no longer give player trinkets that they already have
+- Flesh Chest no longer instantly hurt the player if spawned on top of them
+- Mimic chests can no longer turn into Flesh chests when approached by player
+- fixed players being able to use King cards in boss and bossrush rooms, causing unintended behaviours
+- fixed Torn Page and Empty Page bonuses unexpectedly triggering on black heart loss or using XIII - Death/Black Rune
+- fixed Sinner's Heart tears not being rotated properly
+- fixed Rejection taking away Lilith's Incubus on use
+- fixed Benighted Hearts not giving their damage boost if picked up by Tainted Soul
+- fixed several incorrect descriptions from EID and Encyclopedia
+
+Update: 28 Dec @ 10:38 pm
+ADDITIONS:
+- added 3 new items: Auction Gavel, Rejection, and Soul Bond
+- added a new Key Knife trinket
+
+BUG FIXES:
+- fixed opening Black chests not counting as self-damage
+- fixed Tainted Hearts not playing animations when picked up
+- fixed Antimaterial Card ending the Beast fight just like Temper Tantrum did
+- fixed the drops caused by Jack cards overriding item reward for completing Boss Rush
+- fixed Scarlet Chests opening instantly if spawned on top of the player that can open them
+- limited the amount of Bloody rocks per floor to 2 (for real now)
+-- fixed Tainted rocks losing their sprites when re-entering a room
+- fixed Bag Tissue not accepting Tainted hearts for crafting
+- fixed multiple copies of Sibling Rivalry and Tank Boys being useless
+- fixed Sibling Rivalry doing uncontrollable mitosis sometimes
+
+OTHER CHANGES:
+- Flesh chests now don't open instantly, instead consuming your red health in a similar manner to Mega chests
+-- opening a Flesh Chest now results in either an item or a combination of pills, hearts and 1 trinket
+- enhanced the itempools of Flesh and Black chests
+- updated Spanish EID translations
+- added EID transformation icons to items that needed them
+- added MinimAPI support for modded pickups
+
+Update: 17 Dec @ 11:17 pm
+ADDITIONS:
+- added a new item: Cross of Chaos
+
+BUG FIXES:
+- fixed not being able to launch Enraged soul familiar horizontally
+- fixed the player being able to erase enemies for the rest of the run if they lose Temper Tantrum while in super berserk state
+-- fixed the player being able to skip solid chunks of a Beast fight by erasing one of smaller enemies participating in the fight (like UF's flies or UD's scythes) via Temper Tantrum
+- fixed Stargazers spawning items right inside the blue fire standing nearby, which is a very common layout in planetariums
+- fixed the drops caused by Jack cards overriding the effect of Options? item
+- fixed Quasar Shard, Red Rune and King cards triggering Empty Page trinket's effect
+- added missing interaction with Marked for Cherubim
+-- the interaction with King Baby was deemed redundant, because the familiar already shoots homing tears
+- fixed Tainted rocks being invisible in the Mines
+- Bottomless Bag can now only fire back after 4 seconds of holding it, so that the player can't interrupt the vacuum by pressing shooting button
+- improved co-op compatibility for certain callbacks
+
+BALANCE AND OTHER CHANGES:
+- Flesh chests can no longer replace red chests; the replacement rates for spiked and mimic chests are increased
+- reduced the spawn rates of Scarlet chests, Black chests, Capricious hearts and Bloody rocks
+- limited the amount of Bloody rocks per floor to 2
+- "jamming" Scarlet chests with Crystal key now plays the sound and drops normal room clear rewards
+- improved the variety of drops from Black chests
+- removed the unnecessary x0.9 dmg multiplier on Ceremonial Blade
+-- the launched Blade tears are now also piercing, and they inflict bleed on all enemies they pass through
+- improved the mechanics of Chalk Piece trinket
+- added a visual clue to Book of Genesis as to what item got removed from your inventory
+- the spawn rates of certain Tainted hearts are now affected by playing certain characterts or having certain items, for balance reasons
+-- Tainted hearts can no longer spawn in boss rooms
+-- added console commands to completely nullify and to restore the spawn rates of Tainted hearts
+- slightly reduced the amount of consumables needed for maximum payouts of King of Spades/Clubs cards, and increased one for King of Diamonds
+-- set the limit of pickups consumed by the King cards to 33 and 66($), rather than 99
+
+Update: 12 Dec @ 5:52pm
+- Tainted rocks no longer repeatedly drop pickups everytime you re-enter the room 
+- opening Scarlet chests with Cracked key no longer removes your pocket active item, if you have one
+- Fettered hearts can no longer replace soul hearts on the first floor of chapters 1 and 1.5
+- Red king can no longer spawn its crawlspaces after defeating final bosses (from chapter 5 onwards)
+- added missing sound effects for spawning chests
+- added the ability to manually stop Bottomless bag's projectile sucking by tapping the fire button
+
+Update: 11 Dec @ 12:23am
+ADDITIONS:
+- added 3 new items: Red King, Stargazer's Hat and Bottomless Bag
+- added Black Chests - devil counterpart of Eternal Chests
+-- Black Chests have a chance to appear in devil deals; they hurt you when opened
+- replaced Scarlet Chests with Flesh Chests
+-- their itempool has been improved, and they can now be encountered without having Key to the Heart trinket
+- added new Scarlet Chests
+-- they are now drawn and made in the theme of red rooms; they can only be encountered if the player has anything to open red doors with and are opened in the same manner
+- added 7 new heart pickup subtypes inspired by Steam achievement icons for unlocking tainted characters
+- added Tainted (Bloody) rocks - "Tinted" alternative of Spiked rocks
+-- they have a chance to replace spiked rocks and drop consumables when blown up
+- added new beggar variant - Stargazer
+-- the beggar can be encountered in planetariums or rarely in arcades; it takes 5 cents to play him
+- added custom mini-icons for modded items that appear on deathnote and pause screen menu
+
+FIXES:
+- fixed Keeper's Penny spawning items in mirror world 
+- certain custom pill effects now can no longer be encountered when the player has PhD/False PhD
+- all Blood Vessel variants except for the Empty one now have a 'hidden' tag to prevent Eden starting with them or being able to craft them
+- fixed Bless of the Dead giving only half as much damage up as intended
+
+BALANCE CHANGES:
+- enemies paired by Black Doll now take 60% damage dealt to their partner instead of 50%
+- Gusty Blood now gives better stats the more enemies you kill in a room
+- reduced the average amount of flies spawned by Bag-o-Trash
+- triggering Nerve Pinch when walking/shooting in any direction is now its normal mechanic. To account for the possible unintended triggers, the hold duration was increased from 5 to 8 seconds, and chance to use an item was increased from 75% to 80%
+- reduced the amount of pickups needed to trigger each level of Fiend Fire card's destruction
+- updated a few item qualities and itempools
+
+Update: 30 Nov @ 11:17pm
+BUG FIXES:
+- fixed all weird and unintended behaviours related to Mother's Love item
+- fixed Torn Page and Empty Page trinkets being able to appear multiple times in libraries throughout a run
+- fixed Blood Vessel replicating itself after being used by the player who has 2 item slots, one of which is unoccupied
+- fixed Nerve Pinch triggering Alabaster Box or Eden's Soul, resulting in infinite items
+- fixed modded familiars not being duplicated by Box of Friends
+
+OTHER CHANGES:
+- Blood Vessel now deals 7 instances of damage (instead of 6) if depleted by being hit 
+- Keeper's Penny no longer spawns items instantly in a shop that contains a Greed fight; instead, it spawns 3-4 items after the miniboss is defeated
+- added missing interactions with BFFS! for Cherubim and Tank Boys
+- added missing Torn Page bonus for Necronomicon: -1 charge decrease
+- Encyclopedia entry for Torn Page trinket now has all of its effects listed
+
+Update: 27 Nov @ 12:32am
+NEW CONTENT:
+- added new Sibling Rivalry item and 4 new trinkets: Torn Page, Empty Page, Baby Shoes and Bone Meal
+- added 2 new cards: Demon Form and Fiend Fire
+- added new co-op babies (or not. who really cares about them anyway?)
+
+BUG FIXES:
+- fixed Mark of Cain, Adam's Rib and Bird of Hope not working on ghost characters that can't have health
+- fixed Phantom Pains pill having its effect on characters in ghost form (for real now)
+- fixed Angel's Crown turning mirrored item room into an angel shop, making player unable to obtain Knife Piece I
+- fixed mod conflicts making Scarlet Chests unopenable; tweaked their drop pools
+- fixed several interactions:
+-- Magic Sword no longer breaks when taking intentional (self-) damage
+-- Eden's Lock no longer rerolls your items when taking intentional damage
+-- coin heart from Greed's Heart no longer depletes when using IV bag or sacrifice room spikes
+-- Blood Vessel no longer prevents player from taking damage on sacrifice room spikes or Mausoleum entrance door
+- PHD/False PHD and DNA redactor are now blacklisted from being in a run together to prevent unintended behaviour
+
+Update: 19 Nov @ 11:58pm
+NEW CONTENT:
+- added 7 new items: Book of Genesis, Mother's Love, Cat in the Box, A Scalpel, Nerve Pinch, Keeper's Penny and Blood Vessel
+
+BALANCE AND QOL CHANGES:
+- added Mom's Ring to Mom&Dad item pool of Ordinary Life item and added Repentance+ items to the new Ultra Secret Room pool
+- removed Red Map from the shop itempool, for balancing reasons
+- added (partial) Russian EID support and updated the Encyclopedia entries
+
+VISUALS:
+- improved the GFX of several items and trinkets
+- UI icons for Greed's Heart and Red Map are now more flexible and dependant on the player's HUD offset
+
+BUG FIXES:
+- fixed Tank Boys being able to attack charmed and friendly monsters
+- fixed Basement Key and Sleight of Hand being really bad at recognizing when a chest/coin should be upgraded and when it shouldn't
+- fixed fake damage being able to deplete Greed's Heart and break the Magic Sword trinket
+
+Update: 12 Nov @ 12:24pm
+- fixed Enraged Soul being launched in the opposite X direction if player's in a mirror dimension
+- fixed typos that caused items not showing up in intended itempools and game crashing when T. Cain has 8 pickups in his bag (supposedly that also fixed a crash caused by entering the Knife Piece 2 chase sequence area)
+
+Update: 8 Nov @ 11:09pm
+- added horse pill effects for custom pills
+- fixed a bug that allowed 'infinite 1 cent exploit' when player has 2+1, Restock and Member Card
+- several items/trinkets were blacklisted for the new Sodom & Gomorrah characters
+
+Update: 7 Nov @ 12:10am 
+- edited Sinner's Heart EID and Encyclopedia entries
+- changed the render position of Red Map indicator
+
+Update: 6 Nov @ 11:50pm
+VISUALS
+- improved costumes for Ordinary Life, Bird of Hope, Sinner's Heart, Ceiling with the Stars and Red Bomber
+- improved the look of Piece of Chalk powder
+
+BALANCE CHANGES
+- chance to remove a curse via Night Soil trinket was increased from 40% to 75%
+- amount of MinIsaacs spawned when using Cheese Grater was increased from 2 to 3
+- chance to launch a ceremonial blade tear was increased from 5% to 7%; Sacrifical Blood damage boost was increased from 1 to 1.25
+- Zen Baby was renamed to Cherubim; its firerate was decreased in favor of tear damage (3.5 to 5)
+- Sinner's Heart now grants spectral + piercing tears instead of homing
+
+Update: 5 Nov @ 11:33am
+- Greed's heart trinket and Phantom pains pill no longer have their effects on ALL characters in a ghost form
+- Angel's crown and More options! now work correctly together
+- Enraged Soul's damage has been buffed, it now increases depending on the floor
+- added visual clues for Enraged Soul, Red Map and Magic Pen
+
+Update: 2 Nov @ 11:13pm
+- fixed some EIDs being shown in Spanish
+- tweaked mimic charges (Blank Card/Clear Rune) for custom cards and runes, for balancing reasons
+
+Update: 2 Nov @ 7:09pm
+NEW CONTENT
+- added Antimaterial, Funeral Services and Mom's ID cards
+
+ITEMS OVERHAUL
+- Sinner's Heart now gives 2 black hearts; tears' animations have been enhanced
+- Magic Pen no longer spawns creep underneath Isaac's tears; instead it allows you to spew a line of creep by double tapping the shooting button
+- Improved helper icons for DNA Redacted horse pills
+
+QOL CHANGES
+- updated EID and Encyclopedia entries for the items
+
+BUG FIXES
+- red tank from Tank Boys item can no longer shoot rockets immediately upon entering a new room, causing unfair damage
+- Yuck! and Yum! pills will no longer cause infinite fly spawn / stat increase
+- Red Bomber no longer gives player infinite bombs once they get down to 1 bomb; the costume animation has been 'stabilized'
+
+Update: 31 Oct @ 2:36am
+NEW CONTENT
+- added Gusty Blood, Tank Boys and Red Bomber items
+- added Phantom Pains, Yum! and Yuck! pill effects
+
+ITEMS OVERHAUL
+- Ordinary Life now spawns an additional mom/dad item in treasure rooms, allowing you to choose one item
+- DNA Redactor item now grants different effects to normal and horse pills; the latter now have amplified effects (namely R key use). Helper icons have been improved as well
+
+QOL CHANGES
+- added Spanish EID support!
+- added Encyclopedia mod support!
+
+BUG FIXES
+- fixed the DNA redacted pill that invoked The Fool? effect to also drop this same pill and erase player's pocket active item
+- fixed game crashing when the player takes damage with the smelted Magic Sword trinket
+- Thumbs Up animation from upgrading coins via Sleight of Hand was degraded to just a sound to prevent interrupting player's current animations, making them unable to shoot
+
+Update: 18 Oct @ 5:58pm
+- fixed "PostPlayerUpdate" debug messages when entering a new floor
+- fixed Bless of the Dead and Night Soil 'preventing' Curse of Labyrinth and giving dmg up twice for doing so
+- improved custom data loading error message and added options to hide it from the screen
+
+- changed trinket sprites and names: Bitten Penny -> Sleight of Hand and Sleight of Hand -> Trick Penny. Functionality stayed the same
+- changed Bless of the Dead and Red Map items quality from 4/2 to 3/3
+
+Update: 17 Oct @ 11:32pm
+- custom mod data for Repentance+ is now saved when exiting the run and loaded back when it's continued, meaning that the mod no longer requires you to finish your runs in one go!
+- fixed Quasar and Quasar Shard crashing the game or giving you only BoV wisps when used inside of a library
+- fixed players being able to use Reverse Card infinitely and/or eventually crash the game when doing so
+
+Update: 17 Oct @ 12:08am
+- fixed Enraged Soul not working with a controller
+- fixed Ordinary Life being a very wanky tears up; it no longer can severely mess up your firerate
+- fixed coin heart's state from Greed's Heart trinket being visible even under Curse of the Unknown effect
+-- fixed healing 2 coin hearts when having the trinket and picking up coins with Keeper/The Miser
+- fixed the Mark of Cain consuming familiars that give extra lives; the effect can now trigger only if you have no extra lives
+- fixed Magic Sword and Oh, no! trinkets not being handled properly when gulped
+
+- increased dmg upgrades from the Mark of Cain and Cheese Grater up to +0.4 and +0.5, respectively
+- Tower of Babylon was changed to a 6-room recharge, but it now inflicts confusion on enemies in a small radius around Isaac when used
+- added costume for Sinner's Heart
+- updated EID-s to match the true functionality of items
+- tweaked item qualities a little bit
+
+Update: 15 Oct @ 12:03am
+- fixed game freezing when vanilla achievement paper is being rendered on screen
+- improved DNA Redactor helper icons; the additional explosive pill effect now hurts Isaac

@@ -568,7 +568,7 @@ local CustomPickups = {
 		HEART_DAUNTLESS_HALF = 101
 	},
 	WHITE_SACK = 7,
-	STOMACK = 55,
+	STOMACK = 8,
 	HEARTTERY_RED = 51,
 	HEARTTERY_SOUL = 52
 }
@@ -578,6 +578,7 @@ local CustomSlots = {
 	SLOT_STARGAZER = Isaac.GetEntityVariantByName("Stargazer"),
 	SLOT_RED_KING_CRAWLSPACE = Isaac.GetEntityVariantByName("Red Trapdoor")
 }
+RepentancePlusMod.CustomSlots = CustomSlots
 
 local CustomPills = {
 	ESTROGEN_UP = Isaac.GetPillEffectByName("Estrogen Up"),
@@ -1644,7 +1645,7 @@ local function isPillEffectUnlocked(effect)
 	end
 
 	-- double unlock: Yuck! and Yum! pills
-	if effect == CustomPills.YUCK then
+	if effect == CustomPills.YUM then
 		return isMarkUnlocked(28, "Greed")
 	end
 
@@ -1738,9 +1739,9 @@ local function GetUnlockedCollectibleFromCustomPool(poolTableEntry)
 		end
 
 		freezePreventChecker = freezePreventChecker + 1
-	until (colResult ~= CollectibleType.COLLECTIBLE_BREAKFAST) or freezePreventChecker == 75
+	until (colResult ~= CollectibleType.COLLECTIBLE_BREAKFAST) or freezePreventChecker == 1500
 
-	if freezePreventChecker == 75 then
+	if freezePreventChecker == 1500 then
 		print("WARNING: pool is exhausted and will not return any valid items!")
 		Isaac.DebugString("WARNING: trying to grab a new item from a pool that is likely exhausted; returning Breakfast...")
 	end
@@ -3344,7 +3345,7 @@ function rplus:OnNewRoom()
 			}
 
 			if room:IsFirstVisit() and (room:GetType() == RoomType.ROOM_SUPERSECRET and CustomData.Data.Items.PURE_SOUL.isPortalSuperSecret
-			or room:GetType() == RoomType.ROOM_SECRET) then
+			or room:GetType() == RoomType.ROOM_SECRET and not CustomData.Data.Items.PURE_SOUL.isPortalSuperSecret) then
 				rng:SetSeed(Random() + 1, 1)
 				local sinType = rng:RandomInt(7) + EntityType.ENTITY_SLOTH
 				local sinVariant = rng:RandomInt(2)
@@ -3606,11 +3607,14 @@ function rplus:OnGameUpdate()
 		-- COUNTDOWNS FOR PILLS
 		if Player:GetData().yuckDuration and Player:GetData().yuckDuration > 0 then
 			Player:GetData().yuckDuration = Player:GetData().yuckDuration - 1
-		elseif Player:GetData().yumDuration and Player:GetData().yumDuration > 0 then
+		end
+		if Player:GetData().yumDuration and Player:GetData().yumDuration > 0 then
 			Player:GetData().yumDuration = Player:GetData().yumDuration - 1
-		elseif Player:GetData().phantomPainsDuration and Player:GetData().phantomPainsDuration > 0 then
+		end
+		if Player:GetData().phantomPainsDuration and Player:GetData().phantomPainsDuration > 0 then
 			Player:GetData().phantomPainsDuration = Player:GetData().phantomPainsDuration - 1
-		elseif Player:GetData().laxativeDuration and Player:GetData().laxativeDuration > 0 then
+		end
+		if Player:GetData().laxativeDuration and Player:GetData().laxativeDuration > 0 then
 			Player:GetData().laxativeDuration = Player:GetData().laxativeDuration - 1
 		end
 
@@ -3937,7 +3941,7 @@ function rplus:OnGameUpdate()
 	end
 
 	-- Stargazer
-	for _, sg in pairs(Isaac.FindByType(6, CustomSlots.SLOT_STARGAZER, -1, false, false)) do
+	for _, sg in pairs(Isaac.FindByType(6, CustomSlots.SLOT_STARGAZER, 0, false, false)) do
 		local SGSprite = sg:GetSprite()
 
 		if SGSprite:IsFinished("PayPrize") or SGSprite:IsFinished("PayPrize_fast") then
@@ -4067,7 +4071,7 @@ function rplus:OnItemUse(itemUsed, _, Player, UseFlags, Slot, _)
 			Player:GetData().tornPageSatanicBible = true
 
 		elseif itemUsed == CollectibleType.COLLECTIBLE_LEMEGETON then
-			Player:GetData().tornPageLe.tornPageLemegetonUse = true
+			Player:GetData().tornPageLemegetonUse = true
 		end
 	end
 	--[[ VANILLA END ]]
@@ -4421,7 +4425,9 @@ function rplus:OnItemUse(itemUsed, _, Player, UseFlags, Slot, _)
 	end
 
 	if itemUsed == CustomCollectibles.VAULT_OF_HAVOC then
-		if #CustomData.Data.Items.VAULT_OF_HAVOC.enemyList >= 12 then
+		if #CustomData.Data.Items.VAULT_OF_HAVOC.enemyList >= 12
+		-- Prevent using the item during the Beast fight
+		and room:GetBackdropType() ~= BackdropType.DUNGEON_BEAST then
 			rng:SetSeed(Random() + 1, 1)
 			local roll = rng:RandomInt(5) + 1
 
@@ -4478,6 +4484,8 @@ function rplus:OnItemUse(itemUsed, _, Player, UseFlags, Slot, _)
 
 	if itemUsed == CustomCollectibles.BAG_OF_JEWELS then
 		rng:SetSeed(Player.InitSeed + Random(), 1)
+		local myPocketItem = Player:GetActiveItem(ActiveSlot.SLOT_POCKET)
+		local charge = Player:GetActiveCharge(ActiveSlot.SLOT_POCKET)
 
 		local randomJewel = rng:RandomInt(7) + CustomConsumables.CANINE_OF_WRATH
 		local curCard = Player:GetCard(0)
@@ -4487,6 +4495,10 @@ function rplus:OnItemUse(itemUsed, _, Player, UseFlags, Slot, _)
 		end
 
 		Player:SetCard(0, randomJewel)
+		if myPocketItem ~= 0 then
+			Player:SetPocketActiveItem(myPocketItem, ActiveSlot.SLOT_POCKET, false)
+			Player:SetActiveCharge(charge, ActiveSlot.SLOT_POCKET)
+		end
 		return {Discharge = true, Remove = false, ShowAnim = true}
 	end
 
@@ -5119,17 +5131,24 @@ function rplus:OnPillUse(pillEffect, Player, _)
 	end
 
 	if pillEffect == CustomPills.SUPPOSITORY then
-		local item = Player:GetActiveItem(ActiveSlot.SLOT_PRIMARY)
-		local charge = Player:GetActiveCharge(ActiveSlot.SLOT_PRIMARY)
-		Player:RemoveCollectible(item, true, ActiveSlot.SLOT_PRIMARY, true)
+		if Player:GetActiveItem(ActiveSlot.SLOT_PRIMARY) > 0 then
+			local item = Player:GetActiveItem(ActiveSlot.SLOT_PRIMARY)
+			local charge = Player:GetActiveCharge(ActiveSlot.SLOT_PRIMARY)
+			Player:RemoveCollectible(item, true, ActiveSlot.SLOT_PRIMARY, true)
 
-		local newItem = Isaac.Spawn(5, 100, item, game:GetRoom():FindFreePickupSpawnPosition(Player.Position, 10, true, false), Vector.Zero, Player):ToPickup()
-		
+			Isaac.Spawn(
+				5,
+				100,
+				item,
+				game:GetRoom():FindFreePickupSpawnPosition(Player.Position, 10, true, false),
+				Vector.Zero,
+				Player
+			):ToPickup().Charge = isHorsePill and 12 or charge
+		end
+
 		if isHorsePill then
-			newItem.Charge = 12
 			playDelayed(CustomSounds.PILL_SUPPOSITORY_HORSE)
 		else
-			newItem.Charge = charge
 			playDelayed(CustomSounds.PILL_SUPPOSITORY)
 		end
 	end
@@ -5191,10 +5210,13 @@ function rplus:OnPillUse(pillEffect, Player, _)
 
 		elseif pillColor % PillColor.PILL_GIANT_FLAG == PillColor.PILL_WHITE_AZURE then
 			local myPocketItem = Player:GetActiveItem(ActiveSlot.SLOT_POCKET)
+			local charge = Player:GetActiveCharge(ActiveSlot.SLOT_POCKET)
+
 			Player:SetPill(0, 0)
 			SilentUseCard(Player, Card.CARD_REVERSE_FOOL)
 			if myPocketItem ~= 0 then
-				Player:AddCollectible(myPocketItem, 12, false, ActiveSlot.SLOT_POCKET, 0)
+				Player:SetPocketActiveItem(myPocketItem, ActiveSlot.SLOT_POCKET, false)
+				Player:SetActiveCharge(charge, ActiveSlot.SLOT_POCKET)
 			end
 
 			if isHorsePill then
@@ -5602,10 +5624,12 @@ function rplus:PostPlayerUpdate(Player)
 				sk.Visible = true
 				sk.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 				sk.Friction = 1
-				sk.Velocity = DIRECTION_VECTOR[Player:GetFireDirection()] * 25
+				sk.Velocity = Player:GetAimDirection() * 25
 				-- Controlled in FAMILIAR_UPDATE, when the familiar fully deccelerates, set collision damage back to 0
-				sk:GetData().decceleration = DIRECTION_VECTOR[Player:GetFireDirection()] * (-0.9)
-				sk.CollisionDamage = Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 32 or 16
+				sk:GetData().decceleration = Player:GetAimDirection() * (-0.9)
+				-- Extra caution to stop the familiar after a certain amount of time
+				sk:GetData().pinFrictionAfter = 60
+				sk.CollisionDamage = Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 50 or 25
 				sk.SpriteOffset = Vector(0, -30)
 
 				sfx:Play(SoundEffect.SOUND_SCAMPER)
@@ -5638,13 +5662,13 @@ function rplus:PostPlayerUpdate(Player)
 	-- handle Lemegeton + Torn Page
 	if Input.IsButtonTriggered(Keyboard.KEY_SPACE, Player.ControllerIndex)
 	and Player:HasTrinket(CustomTrinkets.TORN_PAGE) and Player:GetActiveItem(0) == CollectibleType.COLLECTIBLE_LEMEGETON
-	and Player:GetActiveCharge(0) < 6 then
+	and Player:GetActiveCharge(0) < 6 and Player:GetDamageCooldown() == 0 then
 		if not Player:GetData().tornPageLemegetonUse then
-			local heartcharges = math.min(6 - Player:GetActiveCharge(0), Player:GetHearts() + Player:GetSoulHearts() - 1)
-			Player:SetActiveCharge(Player:GetActiveCharge(0) + heartcharges, 0)
-			Player:TakeDamage(heartcharges, DamageFlag.DAMAGE_RED_HEARTS, EntityRef(Player), 0)
+			local heartCharges = math.min(6 - Player:GetActiveCharge(0), Player:GetHearts() + Player:GetSoulHearts() - 1)
+			Player:SetActiveCharge(Player:GetActiveCharge(0) + heartCharges, 0)
+			Player:TakeDamage(heartCharges, DamageFlag.DAMAGE_RED_HEARTS, EntityRef(Player), 0)
 		else
-			Player:GetData().tornPageLe.tornPageLemegetonUse = false
+			Player:GetData().tornPageLemegetonUse = false
 		end
 	end
 
@@ -5671,7 +5695,8 @@ function rplus:PostPlayerUpdate(Player)
 				end
 
 				-- for Stargazers
-				if moddedSlot.Variant == CustomSlots.SLOT_STARGAZER and Player:GetNumCoins() >= 7
+				if moddedSlot.Variant == CustomSlots.SLOT_STARGAZER and moddedSlot.SubType == 0
+				and Player:GetNumCoins() >= 7
 				and s:IsPlaying("Idle") then
 					Player:AddCoins(-7)
 					s:Play(FasterAnimationsMod and "PayPrize_fast" or "PayPrize")
@@ -6305,14 +6330,14 @@ function rplus:OnNpcDeath(npc)
 			elseif npc.Type == EntityType.ENTITY_GLUTTONY then
 				Isaac.Spawn(5, 300, CustomConsumables.VOID_OF_GLUTTONY, npc.Position, Vector.Zero, npc)
 			elseif npc.Type == EntityType.ENTITY_PRIDE
-			-- Ultra Pride
+			-- Ultra Pride (which is a variant of Sloth (blame Nicalis))
 			or (npc.Type == EntityType.ENTITY_SLOTH and npc.Variant == 2) then
 				Isaac.Spawn(5, 300, CustomConsumables.APPLE_OF_PRIDE, npc.Position, Vector.Zero, npc)
 			elseif npc.Type == EntityType.ENTITY_WRATH then
 				Isaac.Spawn(5, 300, CustomConsumables.CANINE_OF_WRATH, npc.Position, Vector.Zero, npc)
-			-- only main segment of Envy
+			-- Only main segments of Envy and Super Envy
 			elseif npc.Type == EntityType.ENTITY_ENVY
-			and npc.Variant == 0 then
+			and npc.Variant < 2 then
 				Isaac.Spawn(5, 300, CustomConsumables.MASK_OF_ENVY, npc.Position, Vector.Zero, npc)
 			end
 		end
@@ -6358,6 +6383,7 @@ function rplus:PreEntitySpawn(etype, variant, subtype, pos, vel, spawner, seed)
 	end
 
 	if etype == 6 and variant == CustomSlots.SLOT_STARGAZER
+	and subtype == 0
 	and not isMarkUnlocked("Special", "Stargazer") then
 		return {6, 3, 0, seed}
 	end
@@ -8017,6 +8043,14 @@ function rplus:FamiliarUpdate(Familiar)
 	if Familiar.Variant == CustomFamiliars.DEAD_WEIGHT then
 		if Familiar:GetData().decceleration then
 			Familiar.Velocity = Familiar.Velocity + Familiar:GetData().decceleration
+			Familiar:GetData().pinFrictionAfter = Familiar:GetData().pinFrictionAfter - 1
+
+			-- Put out the fires
+			for _, fire in pairs(Isaac.FindByType(EntityType.ENTITY_FIREPLACE)) do
+				if fire.Variant <= 1 and fire.Position:Distance(Familiar.Position) < 15 then
+					fire:Kill()
+				end
+			end
 
 			if Familiar.Velocity:Length() > 18 then
 				Familiar.SpriteOffset = Familiar.SpriteOffset + Vector(0, -0.4)
@@ -8025,9 +8059,9 @@ function rplus:FamiliarUpdate(Familiar)
 			end
 
 			if Familiar.Velocity:Length() < 1
+			or Familiar:GetData().pinFrictionAfter <= 0
 			or Familiar:CollidesWithGrid() then
 				Familiar.Velocity = Vector.Zero
-				Familiar.Friction = 0
 				Familiar.CollisionDamage = 0
 				Familiar:GetData().decceleration = nil
 
@@ -8044,6 +8078,8 @@ function rplus:FamiliarUpdate(Familiar)
 					end
 				end
 			end
+		elseif Familiar.Friction > 0 then
+			Familiar.Friction = 0
 		end
 
 		if Familiar:GetSprite():IsFinished("WallHit") then
@@ -8453,9 +8489,12 @@ rplus:AddCallback(ModCallbacks.MC_GET_PILL_EFFECT, rplus.ChangePillEffect)
 
 						-- MC_POST_EFFECT_UPDATE --							
 						---------------------------
+---@param Effect EntityEffect
 function rplus:PostEffectUpdate(Effect)
 	if Effect.Variant == EffectVariant.BOMB_EXPLOSION or Effect.Variant == EffectVariant.MAMA_MEGA_EXPLOSION then
-		local trueExplosionDist = Effect.Variant == EffectVariant.MAMA_MEGA_EXPLOSION and 1500 or 90
+		-- thanks to Xalum for mentioning that the radius may be adjusted for different explosions
+		local trueExplosionDist = Effect.Variant == EffectVariant.MAMA_MEGA_EXPLOSION and 1500
+			or 90 * Effect.SpriteScale:Length() / Vector.One:Length()
 
 		for _, bag in pairs(Isaac.FindByType(3, CustomFamiliars.BAG_O_TRASH)) do
 			if bag.Position:Distance(Effect.Position) < trueExplosionDist
@@ -8769,6 +8808,8 @@ rplus:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, rplus.PostEffectRender, He
 include("scripts/deadseascrolls.lua")
 include("scripts/customhealthapi/core.lua")
 include("scripts/customhealth.lua")
+	-- CHRISTMAS SPECIAL
+include("scripts/christmas.lua")
 
 -- EID
 if EID then

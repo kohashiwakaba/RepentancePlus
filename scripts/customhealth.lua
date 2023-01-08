@@ -121,6 +121,10 @@ mod:AddCallback(ModCallbacks.MC_USE_ITEM, function(_, _, _, _, _, _)
     cancelTaintedMorph()
 end, CollectibleType.COLLECTIBLE_THE_JAR)
 
+mod:AddCallback(ModCallbacks.MC_USE_PILL, function(_, _)
+    cancelTaintedMorph()
+end, PillEffect.PILLEFFECT_HEMATEMESIS)
+
 mod:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, function(_, pickup)
 	if pickup.SubType < 84 or pickup.SubType > 100 then return end
 
