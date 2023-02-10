@@ -3647,7 +3647,7 @@ function rplus:OnGameUpdate()
 				Powder:GetSprite():Load("gfx/1000.333_effect_chalk_powder.anm2", true)
 				Powder.Timeout = 600 * Player:GetTrinketMultiplier(CustomTrinkets.PIECE_OF_CHALK)
 				Powder:SetColor(Color(1, 1, 1, 1, 0, 0, 0), 610 * Player:GetTrinketMultiplier(CustomTrinkets.PIECE_OF_CHALK), 1, true, false)
-				Powder:Update()
+				--Powder:Update()
 			end
 		end
 

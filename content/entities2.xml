@@ -1,7 +1,7 @@
 <entities anm2root="gfx/" version="5">
 
 <!-- EFFECTS -->
-<entity anm2path="gfx/backdrop/blankanim.anm2" id="1000" name="Animated Item Dummy Entity" variant="3457435" collisionRadius="0" numGridCollisionPoints="0">
+<entity anm2path="gfx/backdrop/blankanim.anm2" id="1000" name="Animated Item Dummy Entity" variant="3457435" collisionRadius="0" numGridCollisionPoints="0" baseHP="0" boss="0" collisionDamage="0" collisionMass="0" friction="0" shadowSize="0">
 	</entity>
 
 <entity anm2path="1000.666_cripple_hands_helper.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Crippling Hands Helper" numGridCollisionPoints="1" shadowSize="0" stageHP="0" variant="666">
@@ -245,7 +245,7 @@
 <entity anm2path="003.219_spiritual_reserves_moon.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionInterval="2" collisionMass="3" collisionRadius="10" collisionRadiusXMulti="0.66" friction="1" id="3" name="Spiritual Reserves (Permanent)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" variant="2113" subtype="1000">
     </entity>
 
-    <!-- 2114 IS NOW VACANT -->>
+    <!-- 2114 IS NOW VACANT -->
 	
 <entity anm2path="003.220_friendlysack.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Friendly Sack" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="2115">
 	</entity>
@@ -312,11 +312,11 @@
 
     <!-- Christmas specials -->
 
-<entity anm2path="christmas_present.anm2" name="Christmas Gift" id="5" variant="69" collisionDamage="0" collisionMass="3" collisionRadius="16" friction="1" numGridCollisionPoints="24" shadowSize="16" subtype="103">
-    </entity>
+<!--entity anm2path="christmas_present.anm2" name="Christmas Gift" id="5" variant="69" collisionDamage="0" collisionMass="3" collisionRadius="16" friction="1" numGridCollisionPoints="24" shadowSize="16" subtype="103">
+    </entity-->
 
-<entity anm2path="006.335_stargazer_christmas.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="6" name="Stargazer (Christmas)" numGridCollisionPoints="24" shadowSize="15" stageHP="0" variant="335" subtype="1">
+<!--entity anm2path="006.335_stargazer_christmas.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="6" name="Stargazer (Christmas)" numGridCollisionPoints="24" shadowSize="15" stageHP="0" variant="335" subtype="1">
         <gibs amount="6" blood="1" bone="1" eye="1" gut="1" large="0" />
-    </entity>
+    </entity-->
 
 </entities>

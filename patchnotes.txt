@@ -1,3 +1,7 @@
+Update 16.01
+- fixed a game crash caused by Guppy's Eye not being able to render "nothing" on top of a Red Chest that contains a deal teleport
+- fixed A Piece of Chalk + Lost Cork crashing the game when Isaac enters a new room
+
 Update 07.01
 - fixed Torn Page not working correctly with Lemegeton
 - fixed players not being able to encounter Yum! pill, even if it's unlocked
