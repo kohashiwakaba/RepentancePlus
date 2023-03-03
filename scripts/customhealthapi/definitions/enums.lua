@@ -35,6 +35,8 @@ CustomHealthAPI.Enums.Callbacks = {
 	PRE_HEALTH_DAMAGED = 20,
 	PRE_BLOOD_OATH_DAMAGE = 21,
 	PRE_GLASS_CANNON_HEAL = 22,
+	PRE_NOKILL_HEAL = 23,
+	POST_CHANGE_PLAYER_TYPE = 24,
 }
 
 CustomHealthAPI.Enums.PlayerSlot = {
@@ -44,4 +46,8 @@ CustomHealthAPI.Enums.PlayerSlot = {
 	PLAYER_TWO = 1,
 	PLAYER_THREE = 2,
 	PLAYER_FOUR = 3,
+}
+
+CustomHealthAPI.Enums.CallbackPriorities = {
+	LATE = 920,
 }

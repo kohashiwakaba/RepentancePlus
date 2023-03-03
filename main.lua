@@ -65,8 +65,10 @@ local HelperEffects = {
 	FALLING_KNIFE = Isaac.GetEntityVariantByName("Falling Knife Helper"),
 	ANIMATED_ITEM_DUMMY = Isaac.GetEntityVariantByName("Animated Item Dummy Entity"),
 	PURE_SOUL_GHOST = Isaac.GetEntityVariantByName("Pure Soul"),
-	HANDICAPPED_PLACARD_AOE = Isaac.GetEntityVariantByName("Handicapped Placard Effect Border")
+	HANDICAPPED_PLACARD_AOE = Isaac.GetEntityVariantByName("Handicapped Placard Effect Border"),
+	BROKEN_HEART_PEDESTAL_PRE_REROLL = Isaac.GetEntityVariantByName("Pedestal Broken Heart Helper")
 }
+RepentancePlusMod.HelperEffect = HelperEffects
 
 -- helpers for rendering
 local FLAG_DISPLAY_UNLOCKS_TIP = false	-- display tips on the screen for the first launch of v1.27 with the unlocks system
@@ -302,6 +304,7 @@ local CustomCollectibles = {
 	CURSED_CARD_NULL = Isaac.GetItemIdByName("cursed card"),
 	CHEESE_GRATER_NULL = Isaac.GetItemIdByName("cheese grater damage"),
 	ORBITAL_GHOSTS = Isaac.GetItemIdByName("orbital ghosts"),
+	HARLOT_FETUS = Isaac.GetItemIdByName("harlot fetus"),
 	YUM_DAMAGE_NULL = Isaac.GetItemIdByName("yum damage"),
 	YUM_TEARS_NULL = Isaac.GetItemIdByName("yum tears"),
 	YUM_RANGE_NULL = Isaac.GetItemIdByName("yum range"),
@@ -3095,6 +3098,11 @@ function rplus:OnNewLevel()
 			Player:EvaluateItems()
 		end
 
+		if Player:GetEffects():HasCollectibleEffect(CustomCollectibles.HARLOT_FETUS) then
+			Player:GetEffects():RemoveCollectibleEffect(CustomCollectibles.HARLOT_FETUS, Player:GetEffects():GetCollectibleEffectNum(CustomCollectibles.HARLOT_FETUS))
+			Player:AddCacheFlags(CacheFlag.CACHE_FAMILIARS)
+		end
+
 		if Player:GetData().tornPageSatanicBible then
 			Player:GetData().tornPageSatanicBible = false
 		end
@@ -4134,7 +4142,9 @@ function rplus:OnItemUse(itemUsed, _, Player, UseFlags, Slot, _)
 	if itemUsed == CustomCollectibles.MAGIC_CUBE then
 		for _, entity in pairs(Isaac.FindByType(5, 100, -1)) do
 			if entity.SubType > 0 then
-				entity:ToPickup():Morph(5, 100, GetUnlockedVanillaCollectible(true, true), true, true, false)
+				local entP = entity:ToPickup()
+				entP:Morph(5, 100, GetUnlockedVanillaCollectible(true, true), true, true, false)
+				entP.Touched = false
 			end
 		end
 
@@ -4445,7 +4455,7 @@ function rplus:OnItemUse(itemUsed, _, Player, UseFlags, Slot, _)
 		else
 			local placard = Isaac.Spawn(3, CustomFamiliars.HANDICAPPED_PLACARD, 0, Player.Position, Vector.Zero, Player)
 			placard:GetData().area = 1 + (Player:GetEffectiveMaxHearts() - Player:GetHearts()) * 0.1
-			local eff = Isaac.Spawn(1000, HelperEffects.HANDICAPPEDd_PLACARD_AOE, 0, placard.Position, Vector.Zero, placard):ToEffect()
+			local eff = Isaac.Spawn(1000, HelperEffects.HANDICAPPED_PLACARD_AOE, 0, placard.Position, Vector.Zero, placard):ToEffect()
 			eff.SpriteScale = Vector(placard:GetData().area * 2.75, placard:GetData().area * 2.75)
 		end
 	end
@@ -4790,7 +4800,7 @@ function rplus:OnCardUse(cardUsed, Player, _)
 	end
 
 	if cardUsed == CustomConsumables.SPIRITUAL_RESERVES then
-		Player:GetEffects():AddCollectibleEffect(CustomCollectibles.ORBITAL_GHOSTS, false, 11)
+		Player:GetEffects():AddCollectibleEffect(CustomCollectibles.ORBITAL_GHOSTS, false, 3)
 		Player:AddCacheFlags(CacheFlag.CACHE_FAMILIARS)
 		Player:EvaluateItems()
 		playDelayed(CustomSounds.SPIRITUAL_RESERVES)
@@ -6036,7 +6046,7 @@ function rplus:EntityTakeDmg(Entity, Amount, Flags, SourceRef, CooldownFrames)
 				Player:GetEffects():AddCollectibleEffect(CustomCollectibles.ORBITAL_GHOSTS, 1)
 				Player:AddCacheFlags(CacheFlag.CACHE_FAMILIARS)
 			elseif roll < 0.5 then
-				Player:GetEffects():AddCollectibleEffect(CustomCollectibles.ORBITAL_GHOSTS, 10)
+				Player:GetEffects():AddCollectibleEffect(CustomCollectibles.ORBITAL_GHOSTS, 2)
 				Player:AddCacheFlags(CacheFlag.CACHE_FAMILIARS)
 			end
 		end
@@ -7232,11 +7242,11 @@ function rplus:OnCacheEvaluate(Player, Flag)
 		-- orbital ghosts
 		if Player:GetEffects():HasCollectibleEffect(CustomCollectibles.ORBITAL_GHOSTS) then
 			local g = Player:GetEffects():GetCollectibleEffectNum(CustomCollectibles.ORBITAL_GHOSTS)
-			for _, v in pairs({1, 10, 100}) do
-				Player:CheckFamiliar(CustomFamiliars.ORBITAL_GHOST, (g % (v * 10)) // v, Player:GetCollectibleRNG(1), nil, v)
+			for _, v in pairs({1, 2, 8}) do
+				Player:CheckFamiliar(CustomFamiliars.ORBITAL_GHOST, (g % (v * 2)) // v, Player:GetCollectibleRNG(1), nil, v)
 			end
 		end
-		Player:CheckFamiliar(CustomFamiliars.ORBITAL_GHOST, Player:GetTrinketMultiplier(CustomTrinkets.MY_SOUL), Player:GetCollectibleRNG(1), nil, 1000)
+		Player:CheckFamiliar(CustomFamiliars.ORBITAL_GHOST, Player:GetTrinketMultiplier(CustomTrinkets.MY_SOUL), Player:GetCollectibleRNG(1), nil, 16)
 
 		Player:CheckFamiliar(CustomFamiliars.BAG_O_TRASH, getTrueFamiliarNum(Player, CustomCollectibles.BAG_O_TRASH), Player:GetCollectibleRNG(CustomCollectibles.BAG_O_TRASH))
 		Player:CheckFamiliar(CustomFamiliars.CHERUBIM, getTrueFamiliarNum(Player, CustomCollectibles.CHERUBIM), Player:GetCollectibleRNG(CustomCollectibles.CHERUBIM))
@@ -7253,11 +7263,11 @@ function rplus:OnCacheEvaluate(Player, Flag)
 			Player:CheckFamiliar(CustomFamiliars.ENOCH, getTrueFamiliarNum(Player, CustomCollectibles.MARK_OF_CAIN), Player:GetCollectibleRNG(CustomCollectibles.MARK_OF_CAIN))
 		end
 		Player:CheckFamiliar(CustomFamiliars.FRIENDLY_SACK, getTrueFamiliarNum(Player, CustomCollectibles.FRIENDLY_SACK), Player:GetCollectibleRNG(CustomCollectibles.FRIENDLY_SACK))
-		if Player:GetData()['UFCLevel'] == 1 or not Player:GetData()['UFCLevel'] then
+		if Player:GetData().UFKLevel == 1 or not Player:GetData().UFKLevel then
 			Player:CheckFamiliar(CustomFamiliars.ULTRA_FLESH_KID_L1, getTrueFamiliarNum(Player, CustomCollectibles.ULTRA_FLESH_KID), Player:GetCollectibleRNG(CustomCollectibles.ULTRA_FLESH_KID))
-		elseif Player:GetData()['UFCLevel'] == 2 then
+		elseif Player:GetData().UFKLevel == 2 then
 			Player:CheckFamiliar(CustomFamiliars.ULTRA_FLESH_KID_L2, getTrueFamiliarNum(Player, CustomCollectibles.ULTRA_FLESH_KID), Player:GetCollectibleRNG(CustomCollectibles.ULTRA_FLESH_KID))
-		elseif Player:GetData()['UFCLevel'] == 3 then
+		elseif Player:GetData().UFKLevel == 3 then
 			Player:CheckFamiliar(CustomFamiliars.ULTRA_FLESH_KID_L3, getTrueFamiliarNum(Player, CustomCollectibles.ULTRA_FLESH_KID), Player:GetCollectibleRNG(CustomCollectibles.ULTRA_FLESH_KID))
 		end
 
@@ -7266,6 +7276,7 @@ function rplus:OnCacheEvaluate(Player, Flag)
 
 		Player:CheckFamiliar(CustomFamiliars.KEEPERS_ANNOYING_FLY, getTrueFamiliarNum(Player, CustomCollectibles.KEEPERS_ANNOYING_FLY), Player:GetCollectibleRNG(CustomCollectibles.KEEPERS_ANNOYING_FLY))
 		Player:CheckFamiliar(CustomFamiliars.DEAD_WEIGHT, getTrueFamiliarNum(Player, CustomCollectibles.DEAD_WEIGHT), Player:GetCollectibleRNG(CustomCollectibles.DEAD_WEIGHT))
+		Player:CheckFamiliar(FamiliarVariant.GEMINI, Player:GetEffects():GetCollectibleEffectNum(CustomCollectibles.HARLOT_FETUS), Player:GetCollectibleRNG(CustomCollectibles.HARLOT_FETUS), nil, 10)
 	end
 
 	if Flag == CacheFlag.CACHE_LUCK then
@@ -7766,7 +7777,7 @@ function rplus:FamiliarUpdate(Familiar)
 		if s:IsPlaying("Death") then
 			if s:IsEventTriggered("Remove") then
 				Isaac.Spawn(5, 10,
-				(Player:HasCollectible(CustomCollectibles.SPIRITUAL_AMENDS) and Familiar.SubType ~= 100) and HeartSubType.HEART_ETERNAL or HeartSubType.HEART_HALF_SOUL,
+				(Player:HasCollectible(CustomCollectibles.SPIRITUAL_AMENDS) and Familiar.SubType ~= 8) and HeartSubType.HEART_ETERNAL or HeartSubType.HEART_HALF_SOUL,
 				Familiar.Position, Vector.Zero, Familiar)
 				Player:GetEffects():RemoveCollectibleEffect(CustomCollectibles.ORBITAL_GHOSTS, Familiar.SubType)
 				Player:AddCacheFlags(CacheFlag.CACHE_FAMILIARS)
@@ -7792,8 +7803,9 @@ function rplus:FamiliarUpdate(Familiar)
 			if Familiar.FireCooldown <= 0 and TearVector then
 				local Tear = Familiar:FireProjectile(TearVector):ToTear()
 				Tear.TearFlags = Tear.TearFlags | TearFlags.TEAR_SPECTRAL
+
 				if Player:HasTrinket(TrinketType.TRINKET_BABY_BENDER)
-				or (Player:HasCollectible(CustomCollectibles.THE_HOOD) and Familiar.SubType == 100) then
+				or (Player:HasCollectible(CustomCollectibles.THE_HOOD) and Familiar.SubType == 8) then
 					Tear:AddTearFlags(TearFlags.TEAR_HOMING)
 				end
 				Tear.CollisionDamage = Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 4 or 2
@@ -7834,7 +7846,7 @@ function rplus:FamiliarUpdate(Familiar)
 				}
 				rng:SetSeed(Random() + 1, 1)
 				local roll = rng:RandomInt(6) + 1
-				local roll2
+				local roll2 = 0
 				if roll == 1 then
 					roll2 = rng:RandomInt(5) + 1
 				elseif roll == 3 then
@@ -7843,13 +7855,13 @@ function rplus:FamiliarUpdate(Familiar)
 					roll2 = rng:RandomInt(8) + 1
 				elseif roll == 5 then
 					roll2 = rng:RandomInt(6) + 1
-				else
-					roll2 = 0
 				end
 
 				fsp.PlaybackSpeed = 0.5
 				fsp:Play("Spawn")
+				CustomHealthAPI.PersistentData.IgnoreSumptoriumHandling = true
 				Isaac.Spawn(3, friends[roll], roll2, Familiar.Position, Vector.Zero, Familiar.Player)
+				CustomHealthAPI.PersistentData.IgnoreSumptoriumHandling = false
 			end
 
 			Familiar.RoomClearCount = 0
@@ -7965,9 +7977,9 @@ function rplus:FamiliarUpdate(Familiar)
 								Familiar:Remove()
 								local Player = Familiar.Player
 								if Familiar.Variant == CustomFamiliars.ULTRA_FLESH_KID_L1 then
-									Player:GetData()['UFCLevel'] = 2
+									Player:GetData().UFKLevel = 2
 								else
-									Player:GetData()['UFCLevel'] = 3
+									Player:GetData().UFKLevel = 3
 								end
 								Player:AddCacheFlags(CacheFlag.CACHE_FAMILIARS)
 								Player:EvaluateItems()
@@ -8003,7 +8015,7 @@ function rplus:FamiliarUpdate(Familiar)
 		Familiar.Friction = 0
 		if not hasActiveChallenge(game:GetRoom()) then
 			Familiar:Remove()
-			for _, e in pairs(Isaac.FindByType(1000, HelperEffects.HANDICAPPEDd_PLACARD_AOE)) do
+			for _, e in pairs(Isaac.FindByType(1000, HelperEffects.HANDICAPPED_PLACARD_AOE)) do
 				if GetPtrHash(e.SpawnerEntity) == GetPtrHash(Familiar) then
 					e:Remove()
 				end
@@ -8221,7 +8233,7 @@ function rplus:ProjectileCollision(Projectile, Collider, _)
 			Projectile:Remove()
 
 			if not Collider:GetSprite():IsOverlayPlaying("Hit") then
-				if Collider.SubType ~= 1000 then
+				if Collider.SubType ~= 16 then
 					Collider:GetData().blockedShots = Collider:GetData().blockedShots and Collider:GetData().blockedShots + 1 or 1
 				end
 				Collider:GetSprite():PlayOverlay("Hit", true)
@@ -8998,8 +9010,8 @@ if ANDROMEDA then
 	ANDROMEDA:AddSingularityPickups(pickupTable)
 end
 
--- Redemption Community Pack
 rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
+	-- Redemption Community Pack
 	if RedemptionExports then
 		-- rune: CardType, chargeCount: number (must be 1 - 12), sprite: string (link to an image of your rune sprite. must be 32x32. For now just grab a random image), player: EntityPlayer | nil, canBreak: boolean, brokenSprite: string | nil
 		RedemptionExports.addGaldrabokRune(
@@ -9020,37 +9032,12 @@ rplus:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
 			nil
 		)
 	end
+
+	-- Better Pandora's Box Pool (obama hanging medal on himself.png)
+    if PandorasBoxTweaked then
+		table.insert(PandorasBoxTweaked.TRUE_BLUE_ITEMS, CustomCollectibles.HANDICAPPED_PLACARD)
+		table.insert(PandorasBoxTweaked.TRUE_BLUE_ITEMS, CustomCollectibles.BIRD_OF_HOPE)
+		table.insert(PandorasBoxTweaked.TRUE_BLUE_ITEMS, CustomCollectibles.SOUL_BOND)
+		table.insert(PandorasBoxTweaked.TRUE_BLUE_ITEMS, CustomCollectibles.PURE_SOUL)
+    end
 end)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

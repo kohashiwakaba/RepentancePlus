@@ -1,6 +1,26 @@
+Update 03.03
+MISC:
+- fixed item pedestal losing their "on-first-pickup" properties after being picked up and rerolled by Magic Cube
+- fixed Handicapped Placard not displaying its area's visuals
+- fixed Friendly Sack removing health from Isaac when spawning blood clots
+- fixed Void of Gluttony having its name misspelled (literally made the mod unplayable)
+
+HEARTS:
+- updated CHAPI scripts to be up-to-date with the latest Fiend Folio release
+- changed mod initials for CHAPI from "RP" to "R+"
+- revised the mechanics of certain tainted hearts:
+-- Miser hearts no longer reroll items in a room when depleted and now break in one hit; however, each heart held now gives a bigger discount (10% -> 17.5%) and spawns 2 friendly blue spiders on a room clear
+-- Broken hearts are now placed on a separate UI near Enigma hearts; Isaac can now use them to reroll one nearby pedestal at the cost of gaining one 'true' broken heart
+-- Deceiver hearts can now only appear in uncleared rooms, and will launch themselves at a random enemy as soon as they appear, dealing 75% of that enemy's health as damage
+-- Harlot hearts can no longer be put in The Jar and now heal less, but give Isaac a more special familiar when picked up
+-- Benighed hearts will now drain half red heart from Isaac on pickup, if possible
+-- extra Dauntless hearts can now only be dropped if Isaac has 1/2 or 3/2 of those; they will also spawn only if there are no Dauntless hearts in a room already
+- reduced dip spawnrates of Soiled hearts from 21% to 15% for normal dips and from 12% to 10% for Fiend Folio dips; special Platinum dip can no longer be spawned
+- Super Bum will now collect Hoarded hearts, same as Dark Bum; they will also both play a sound effect when collecting them
+
 Update 16.01
 - fixed a game crash caused by Guppy's Eye not being able to render "nothing" on top of a Red Chest that contains a deal teleport
-- fixed A Piece of Chalk + Lost Cork crashing the game when Isaac enters a new room
+- fixed A Piece of Chalk + Lost Cork making the game crash on entering a new room
 
 Update 07.01
 - fixed Torn Page not working correctly with Lemegeton
@@ -9,7 +29,7 @@ Update 07.01
 - fixed Hematemesis pill being able to drop Tainted hearts
 - fixed Stomacks dropping normal Grab Bags' rewards instead of their custom loot when opened
 - fixed custom pill effects not working correctly if used simultaneously (this was most notable when Laxative was being used via the Golden pill)
-- a function that chooses a collectible from custom pool now runs [b]20x[/b] as much as before, meaning players are way less likely to get Breakfast out of Coffins, Flesh chests and secondary items spawned by Ordinary Life
+- a function that chooses a collectible from custom pool now runs 20x as much as before, meaning players are way less likely to get Breakfast out of Coffins, Flesh chests and secondary items spawned by Ordinary Life
 - explosion radius will now be adjusted by its length, which allows for detecting bigger explosions (like Mr. Mega) from further away
 
 Update 04.01

@@ -140,6 +140,7 @@
 	<passive name="cursed card" gfx="00_NULLITEM.png" persistent="true" cache="firedelay" hidden="true" />
 	<passive name="cheese grater damage" gfx="00_NULLITEM.png" persistent="true" cache="damage" hidden="true" />
 	<passive name="orbital ghosts" gfx="00_NULLITEM.png" persistent="true" hidden="true" />
+	<passive name="harlot fetus" gfx="00_NULLITEM.png" persistent="true" hidden="true" />
 		<!-- yum pill stats -->
 	<passive name="yum damage" gfx="00_NULLITEM.png" persistent="true" cache="damage" hidden="true" />
 	<passive name="yum tears" gfx="00_NULLITEM.png" persistent="true" cache="firedelay" hidden="true" />

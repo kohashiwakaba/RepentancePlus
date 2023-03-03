@@ -2,16 +2,14 @@ local healthsprites = {}
 CustomHealthAPI.PersistentData.DisableCustomHealthRendering = CustomHealthAPI.PersistentData.DisableCustomHealthRendering or false
 
 function CustomHealthAPI.Helper.AddRenderCustomHealthCallback()
-	CustomHealthAPI.PersistentData.OriginalAddCallback(CustomHealthAPI.Mod, ModCallbacks.MC_POST_RENDER, CustomHealthAPI.Mod.RenderCustomHealthCallback, -1)
+	Isaac.AddPriorityCallback(CustomHealthAPI.Mod, ModCallbacks.MC_POST_RENDER, CustomHealthAPI.Enums.CallbackPriorities.LATE, CustomHealthAPI.Mod.RenderCustomHealthCallback, -1)
 end
-CustomHealthAPI.ForceEndCallbacksToAdd[ModCallbacks.MC_POST_RENDER] = CustomHealthAPI.ForceEndCallbacksToAdd[ModCallbacks.MC_POST_RENDER] or {}
-table.insert(CustomHealthAPI.ForceEndCallbacksToAdd[ModCallbacks.MC_POST_RENDER], CustomHealthAPI.Helper.AddRenderCustomHealthCallback)
+table.insert(CustomHealthAPI.CallbacksToAdd, CustomHealthAPI.Helper.AddRenderCustomHealthCallback)
 
 function CustomHealthAPI.Helper.RemoveRenderCustomHealthCallback()
 	CustomHealthAPI.Mod:RemoveCallback(ModCallbacks.MC_POST_RENDER, CustomHealthAPI.Mod.RenderCustomHealthCallback)
 end
-CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_POST_RENDER] = CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_POST_RENDER] or {}
-table.insert(CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_POST_RENDER], CustomHealthAPI.Helper.RemoveRenderCustomHealthCallback)
+table.insert(CustomHealthAPI.CallbacksToRemove, CustomHealthAPI.Helper.RemoveRenderCustomHealthCallback)
 
 function CustomHealthAPI.Mod:RenderCustomHealthCallback()
 	CustomHealthAPI.Helper.CheckIfHealthOrderSet()
@@ -21,16 +19,14 @@ function CustomHealthAPI.Mod:RenderCustomHealthCallback()
 end
 
 function CustomHealthAPI.Helper.AddRenderCustomHealthOfStrawmanCallback()
-	CustomHealthAPI.PersistentData.OriginalAddCallback(CustomHealthAPI.Mod, ModCallbacks.MC_POST_PLAYER_RENDER, CustomHealthAPI.Mod.RenderCustomHealthOfStrawmanCallback, -1)
+	Isaac.AddPriorityCallback(CustomHealthAPI.Mod, ModCallbacks.MC_POST_PLAYER_RENDER, CustomHealthAPI.Enums.CallbackPriorities.LATE, CustomHealthAPI.Mod.RenderCustomHealthOfStrawmanCallback, -1)
 end
-CustomHealthAPI.ForceEndCallbacksToAdd[ModCallbacks.MC_POST_PLAYER_RENDER] = CustomHealthAPI.ForceEndCallbacksToAdd[ModCallbacks.MC_POST_PLAYER_RENDER] or {}
-table.insert(CustomHealthAPI.ForceEndCallbacksToAdd[ModCallbacks.MC_POST_PLAYER_RENDER], CustomHealthAPI.Helper.AddRenderCustomHealthOfStrawmanCallback)
+table.insert(CustomHealthAPI.CallbacksToAdd, CustomHealthAPI.Helper.AddRenderCustomHealthOfStrawmanCallback)
 
 function CustomHealthAPI.Helper.RemoveRenderCustomHealthOfStrawmanCallback()
 	CustomHealthAPI.Mod:RemoveCallback(ModCallbacks.MC_POST_PLAYER_RENDER, CustomHealthAPI.Mod.RenderCustomHealthOfStrawmanCallback)
 end
-CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_POST_PLAYER_RENDER] = CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_POST_PLAYER_RENDER] or {}
-table.insert(CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_POST_PLAYER_RENDER], CustomHealthAPI.Helper.RemoveRenderCustomHealthOfStrawmanCallback)
+table.insert(CustomHealthAPI.CallbacksToRemove, CustomHealthAPI.Helper.RemoveRenderCustomHealthOfStrawmanCallback)
 
 function CustomHealthAPI.Mod:RenderCustomHealthOfStrawmanCallback(player, renderOffset)
 	if CustomHealthAPI.PersistentData.DisableCustomHealthRendering or
@@ -889,16 +885,33 @@ function CustomHealthAPI.Helper.RenderCustomHealth()
 	end
 
 	if esauToRender then
-		if Game():GetLevel():GetCurses() & LevelCurse.CURSE_OF_THE_UNKNOWN == 0 then
+		local esauType = esauToRender:GetPlayerType()
+		
+		if not (esauToRender:IsCoopGhost() or 
+		        CustomHealthAPI.Helper.IsFoundSoul(esauToRender)) and 
+		   Game():GetLevel():GetCurses() & LevelCurse.CURSE_OF_THE_UNKNOWN ~= 0 
+		then
+			CustomHealthAPI.Helper.RenderCurseOfTheUnknown(esauToRender, -1, Vector.Zero)
+		elseif esauType == PlayerType.PLAYER_KEEPER or esauType == PlayerType.PLAYER_KEEPER_B then
+			CustomHealthAPI.Helper.RenderKeeperHealth(esauToRender, -1, Vector.Zero)
+			CustomHealthAPI.Helper.RenderHolyMantle(esauToRender, -1, Vector.Zero)
+		elseif esauType == PlayerType.PLAYER_THELOST or esauType == PlayerType.PLAYER_THELOST_B then
+			CustomHealthAPI.Helper.RenderHolyMantle(esauToRender, -1, Vector.Zero)
+		elseif CustomHealthAPI.Helper.PlayerIsIgnored(esauToRender) or 
+		       esauToRender:IsCoopGhost() or 
+		       CustomHealthAPI.Helper.IsFoundSoul(esauToRender) 
+		then
+			--do nothing
+		else
 			CustomHealthAPI.Helper.RenderCustomHealthOfPlayer(esauToRender, -1, false, Vector.Zero)
 			CustomHealthAPI.Helper.RenderHolyMantle(esauToRender, -1, Vector.Zero)
+		end
 			
+		if Game():GetLevel():GetCurses() & LevelCurse.CURSE_OF_THE_UNKNOWN == 0 then
 			local callbacks = CustomHealthAPI.Helper.GetCallbacks(CustomHealthAPI.Enums.Callbacks.POST_RENDER_HP_BAR)
 			for _, callback in ipairs(callbacks) do
 				callback.Function(esauToRender, -1, Vector.Zero)
 			end
-		else
-			CustomHealthAPI.Helper.RenderCurseOfTheUnknown(esauToRender, -1, Vector.Zero)
 		end
 	end
 end

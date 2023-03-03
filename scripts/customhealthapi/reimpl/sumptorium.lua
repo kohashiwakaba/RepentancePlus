@@ -13,16 +13,14 @@ CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubType = CustomHealthAP
 CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey = CustomHealthAPI.PersistentData.BasegameOverlapSumptoriumSubTypeToKey or {}
 
 function CustomHealthAPI.Helper.AddPreventSumptoriumReloadOnRecallBugCallback()
-	CustomHealthAPI.PersistentData.OriginalAddCallback(CustomHealthAPI.Mod, ModCallbacks.MC_PRE_GAME_EXIT, CustomHealthAPI.Mod.PreventSumptoriumReloadOnRecallBugCallback, -1)
+	Isaac.AddPriorityCallback(CustomHealthAPI.Mod, ModCallbacks.MC_PRE_GAME_EXIT, CustomHealthAPI.Enums.CallbackPriorities.LATE, CustomHealthAPI.Mod.PreventSumptoriumReloadOnRecallBugCallback, -1)
 end
-CustomHealthAPI.ForceEndCallbacksToAdd[ModCallbacks.MC_PRE_GAME_EXIT] = CustomHealthAPI.ForceEndCallbacksToAdd[ModCallbacks.MC_PRE_GAME_EXIT] or {}
-table.insert(CustomHealthAPI.ForceEndCallbacksToAdd[ModCallbacks.MC_PRE_GAME_EXIT], CustomHealthAPI.Helper.AddPreventSumptoriumReloadOnRecallBugCallback)
+table.insert(CustomHealthAPI.CallbacksToAdd, CustomHealthAPI.Helper.AddPreventSumptoriumReloadOnRecallBugCallback)
 
 function CustomHealthAPI.Helper.RemovePreventSumptoriumReloadOnRecallBugCallback()
 	CustomHealthAPI.Mod:RemoveCallback(ModCallbacks.MC_PRE_GAME_EXIT, CustomHealthAPI.Mod.PreventSumptoriumReloadOnRecallBugCallback)
 end
-CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_PRE_GAME_EXIT] = CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_PRE_GAME_EXIT] or {}
-table.insert(CustomHealthAPI.ForceEndCallbacksToRemove[ModCallbacks.MC_PRE_GAME_EXIT], CustomHealthAPI.Helper.RemovePreventSumptoriumReloadOnRecallBugCallback)
+table.insert(CustomHealthAPI.CallbacksToRemove, CustomHealthAPI.Helper.RemovePreventSumptoriumReloadOnRecallBugCallback)
 
 function CustomHealthAPI.Mod:PreventSumptoriumReloadOnRecallBugCallback(shouldSave)
 	-- fixin basegame bugs woooooooo
@@ -32,16 +30,14 @@ function CustomHealthAPI.Mod:PreventSumptoriumReloadOnRecallBugCallback(shouldSa
 end
 
 function CustomHealthAPI.Helper.AddSumptoriumPreSpawnCallback()
-	CustomHealthAPI.PersistentData.OriginalAddCallback(CustomHealthAPI.Mod, ModCallbacks.MC_PRE_ENTITY_SPAWN, CustomHealthAPI.Mod.SumptoriumPreSpawnCallback, -1)
+	Isaac.AddPriorityCallback(CustomHealthAPI.Mod, ModCallbacks.MC_PRE_ENTITY_SPAWN, CallbackPriority.IMPORTANT, CustomHealthAPI.Mod.SumptoriumPreSpawnCallback, -1)
 end
-CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_PRE_ENTITY_SPAWN] = CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_PRE_ENTITY_SPAWN] or {}
-table.insert(CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_PRE_ENTITY_SPAWN], CustomHealthAPI.Helper.AddSumptoriumPreSpawnCallback)
+table.insert(CustomHealthAPI.CallbacksToAdd, CustomHealthAPI.Helper.AddSumptoriumPreSpawnCallback)
 
 function CustomHealthAPI.Helper.RemoveSumptoriumPreSpawnCallback()
 	CustomHealthAPI.Mod:RemoveCallback(ModCallbacks.MC_PRE_ENTITY_SPAWN, CustomHealthAPI.Mod.SumptoriumPreSpawnCallback)
 end
-CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_PRE_ENTITY_SPAWN] = CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_PRE_ENTITY_SPAWN] or {}
-table.insert(CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_PRE_ENTITY_SPAWN], CustomHealthAPI.Helper.RemoveSumptoriumPreSpawnCallback)
+table.insert(CustomHealthAPI.CallbacksToRemove, CustomHealthAPI.Helper.RemoveSumptoriumPreSpawnCallback)
 
 local keyOfNextOverlapClotSpawned = nil
 function CustomHealthAPI.Mod:SumptoriumPreSpawnCallback(typ, var, subt, pos, vel, spawner, seed)
@@ -190,18 +186,14 @@ function CustomHealthAPI.Mod:SumptoriumPreSpawnCallback(typ, var, subt, pos, vel
 end
 
 function CustomHealthAPI.Helper.AddSumptoriumInitCallback()
-	CustomHealthAPI.PersistentData.OriginalAddCallback(CustomHealthAPI.Mod, ModCallbacks.MC_FAMILIAR_INIT, CustomHealthAPI.Mod.SumptoriumInitCallback, FamiliarVariant.BLOOD_BABY)
+	Isaac.AddCallback(CustomHealthAPI.Mod, ModCallbacks.MC_FAMILIAR_INIT, CustomHealthAPI.Mod.SumptoriumInitCallback, FamiliarVariant.BLOOD_BABY)
 end
-CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_FAMILIAR_INIT] = CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_FAMILIAR_INIT] or {}
-CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_FAMILIAR_INIT][FamiliarVariant.BLOOD_BABY] = CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_FAMILIAR_INIT][FamiliarVariant.BLOOD_BABY] or {}
-table.insert(CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_FAMILIAR_INIT][FamiliarVariant.BLOOD_BABY], CustomHealthAPI.Helper.AddSumptoriumInitCallback)
+table.insert(CustomHealthAPI.CallbacksToAdd, CustomHealthAPI.Helper.AddSumptoriumInitCallback)
 
 function CustomHealthAPI.Helper.RemoveSumptoriumInitCallback()
 	CustomHealthAPI.Mod:RemoveCallback(ModCallbacks.MC_FAMILIAR_INIT, CustomHealthAPI.Mod.SumptoriumInitCallback)
 end
-CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_FAMILIAR_INIT] = CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_FAMILIAR_INIT] or {}
-CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_FAMILIAR_INIT][FamiliarVariant.BLOOD_BABY] = CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_FAMILIAR_INIT][FamiliarVariant.BLOOD_BABY] or {}
-table.insert(CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_FAMILIAR_INIT][FamiliarVariant.BLOOD_BABY], CustomHealthAPI.Helper.RemoveSumptoriumInitCallback)
+table.insert(CustomHealthAPI.CallbacksToRemove, CustomHealthAPI.Helper.RemoveSumptoriumInitCallback)
 
 function CustomHealthAPI.Mod:SumptoriumInitCallback(fam)
 	local key = CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[fam.SubType]
@@ -225,18 +217,14 @@ function CustomHealthAPI.Mod:SumptoriumInitCallback(fam)
 end
 
 function CustomHealthAPI.Helper.AddSumptoriumUpdateCallback()
-	CustomHealthAPI.PersistentData.OriginalAddCallback(CustomHealthAPI.Mod, ModCallbacks.MC_FAMILIAR_UPDATE, CustomHealthAPI.Mod.SumptoriumUpdateCallback, FamiliarVariant.BLOOD_BABY)
+	Isaac.AddCallback(CustomHealthAPI.Mod, ModCallbacks.MC_FAMILIAR_UPDATE, CustomHealthAPI.Mod.SumptoriumUpdateCallback, FamiliarVariant.BLOOD_BABY)
 end
-CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_FAMILIAR_UPDATE] = CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_FAMILIAR_UPDATE] or {}
-CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_FAMILIAR_UPDATE][FamiliarVariant.BLOOD_BABY] = CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_FAMILIAR_UPDATE][FamiliarVariant.BLOOD_BABY] or {}
-table.insert(CustomHealthAPI.OtherCallbacksToAdd[ModCallbacks.MC_FAMILIAR_UPDATE][FamiliarVariant.BLOOD_BABY], CustomHealthAPI.Helper.AddSumptoriumUpdateCallback)
+table.insert(CustomHealthAPI.CallbacksToAdd, CustomHealthAPI.Helper.AddSumptoriumUpdateCallback)
 
 function CustomHealthAPI.Helper.RemoveSumptoriumUpdateCallback()
 	CustomHealthAPI.Mod:RemoveCallback(ModCallbacks.MC_FAMILIAR_UPDATE, CustomHealthAPI.Mod.SumptoriumUpdateCallback)
 end
-CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_FAMILIAR_UPDATE] = CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_FAMILIAR_UPDATE] or {}
-CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_FAMILIAR_UPDATE][FamiliarVariant.BLOOD_BABY] = CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_FAMILIAR_UPDATE][FamiliarVariant.BLOOD_BABY] or {}
-table.insert(CustomHealthAPI.OtherCallbacksToRemove[ModCallbacks.MC_FAMILIAR_UPDATE][FamiliarVariant.BLOOD_BABY], CustomHealthAPI.Helper.RemoveSumptoriumUpdateCallback)
+table.insert(CustomHealthAPI.CallbacksToRemove, CustomHealthAPI.Helper.RemoveSumptoriumUpdateCallback)
 
 function CustomHealthAPI.Mod:SumptoriumUpdateCallback(fam)
 	if CustomHealthAPI.PersistentData.SumptoriumSubTypeToKey[fam.SubType] ~= nil then

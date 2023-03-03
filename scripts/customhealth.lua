@@ -279,7 +279,7 @@ mod:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pickup)
             elseif roll < baseChance * 2 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_CURDLED)
             elseif roll < baseChance * 3 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_SAVAGE)
             elseif roll < baseChance * 4 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_HARLOT)
-            elseif roll < baseChance * 5 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_DECEIVER)
+            elseif roll < baseChance * 5 and not game:GetRoom():IsClear() then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_DECEIVER)
             elseif roll < baseChance * 6 and game:GetNumPlayers() == 1 then taintedMorph(pickup, mod.CustomPickups.TaintedHearts.HEART_ENIGMA) end
 
         elseif subtype == HeartSubType.HEART_SOUL then
@@ -410,13 +410,16 @@ CustomHealthAPI.Library.RegisterSoulHealth(
     "HEART_MISER",
     {
         AnimationFilename = "gfx/ui/ui_taintedhearts.anm2",
-        AnimationName = {"MiserHeartHalf", "MiserHeartFull"},
+        --AnimationName = {"MiserHeartHalf", "MiserHeartFull"},
+        AnimationName = {
+            "MiserHeartFull"
+        },
         SortOrder = 150,
         AddPriority = 175,
         HealFlashRO = 245/255,
         HealFlashGO = 240/255,
         HealFlashBO = 66/255,
-        MaxHP = 2,
+        MaxHP = 1,
         PrioritizeHealing = true,
         PickupEntities = {
             {ID = EntityType.ENTITY_PICKUP, Var = PickupVariant.PICKUP_HEART, Sub = mod.CustomPickups.TaintedHearts.HEART_MISER}
@@ -435,15 +438,6 @@ CustomHealthAPI.Library.RegisterSoulHealth(
     }
 )
 
-CustomHealthAPI.Library.AddCallback("RepentancePlus", CustomHealthAPI.Enums.Callbacks.POST_HEALTH_DAMAGED, 0, function(player, flags, key, hpDamaged, wasDepleted, wasLastDamaged)
-	if key == "HEART_MISER" then
-		if wasDepleted then
-			player:UseActiveItem(CollectibleType.COLLECTIBLE_D6, UseFlag.USE_NOANIM)
-            sfx:Play(SoundEffect.SOUND_ULTRA_GREED_COIN_DESTROY)
-		end
-	end
-end)
-
 mod:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, function(_, pickup)
     if pickup.Price <= 0 then return end
 
@@ -452,8 +446,23 @@ mod:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, function(_, pickup)
         local m = CustomHealthAPI.Library.GetHPOfKey(player, "HEART_MISER")
 
         if m > 0 then
-            pickup.Price = math.max(1, math.floor(pickup.Price * (1 - 0.1 * ((m + 1) // 2))))
+            pickup.Price = math.max(1, math.floor(pickup.Price * (1 - 0.175 * ((m + 1) // 2))))
             pickup.AutoUpdatePrice = false
+        end
+    end
+end)
+
+mod:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, function(_)
+    for i = 0, game:GetNumPlayers() - 1 do
+		local player = Isaac.GetPlayer(i)
+
+        if CustomHealthAPI.Library.GetHPOfKey(player, "HEART_MISER") > 0 then
+            for _ = 1, CustomHealthAPI.Library.GetHPOfKey(player, "HEART_MISER") do
+                player:ThrowBlueSpider(
+                    player.Position,
+                    player.Position + Vector.FromAngle(rng:RandomFloat() * 360) * 6
+                )
+            end
         end
     end
 end)
@@ -512,11 +521,11 @@ mod:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, function(_, npc)
 		local player = Isaac.GetPlayer(i)
 
         if CustomHealthAPI.Library.GetHPOfKey(player, "HEART_DAUNTLESS") == 1
-        or CustomHealthAPI.Library.GetHPOfKey(player, "HEART_DAUNTLESS") > 2 then
+        or CustomHealthAPI.Library.GetHPOfKey(player, "HEART_DAUNTLESS") == 3 then
 			local angle = rng:RandomInt(360)
             local roll = rng:RandomFloat()
 
-			if roll < 0.2 then
+			if roll < 0.2 and #Isaac.FindByType(5, PickupVariant.PICKUP_HEART, mod.CustomPickups.TaintedHearts.HEART_DAUNTLESS_HALF) == 0 then
 				local fadingHeart = Isaac.Spawn(5, PickupVariant.PICKUP_HEART, mod.CustomPickups.TaintedHearts.HEART_DAUNTLESS_HALF, npc.Position, Vector.FromAngle(angle) * 12.5, player)
                 fadingHeart:GetData().isFading = true
                 fadingHeart:GetData().fadeTimeout = 45
@@ -548,7 +557,7 @@ end, PickupVariant.PICKUP_HEART)
 CustomHealthAPI.Library.RegisterRedHealth(
     "HEART_SOILED",
     {
-            AnimationFilenames = {
+        AnimationFilenames = {
             EMPTY_HEART = "gfx/ui/ui_taintedhearts.anm2",
             BONE_HEART = "gfx/ui/ui_taintedhearts.anm2",
         },
@@ -589,19 +598,18 @@ mod:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, function(_)
             rng:SetSeed(player.InitSeed + Random(), 1)
 
             for _ = 1, CustomHealthAPI.Library.GetHPOfKey(player, "HEART_SOILED") do
-                -- normal dips (subtypes 0-14, so 14/45 ~ 30% to spawn any dip)
-                local randomDip = rng:RandomInt(70)
+                -- Normal dips (subtypes 0-14, so 15/100 ~ 15% to spawn any dip)
+                local randomDip = rng:RandomInt(100)
                 if randomDip < 15 then
                     Isaac.Spawn(3, FamiliarVariant.DIP, randomDip, player.Position, Vector.Zero, player)
                 end
 
-                -- Fiend Folio special dips (12% chance to spawn one)
-                if FiendFolio and rng:RandomFloat() < 0.12 then
+                -- Fiend Folio special dips (10% chance to spawn one)
+                if FiendFolio and rng:RandomFloat() < 0.1 then
                     local FFDips = {
                         666,    -- drop
                         667,    -- cursed
                         668,    -- bee
-                        669,    -- platinum
                         670,    -- spider
                         671     -- evil
                     }
@@ -822,17 +830,17 @@ mod:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, function(_, tookDamage, amount,
 end)
 
 
-----------------
--- ENIGMA HEARTS
---[[
-    While not technically being overlay hearts,
-    they'd still use FF's save manager, for convenience purposes.
-]]
+--------------------------------------------------------------------
+-- ENIGMA & BROKEN HEARTS
+    -- While not technically being overlay hearts,
+    -- they'd still use FF's save manager, for convenience purposes.
 
-local EnigmaRenderPos = Vector(122, 22)
+local enigmaHeartRenderPos = Vector(48, 32)
 local enigmaSprite = Sprite()
 enigmaSprite:Load("gfx/ui/ui_taintedhearts.anm2", true)
 enigmaSprite:SetFrame("EnigmaHeart", 0)
+local enigmaFont = Font()
+enigmaFont:Load('font/pftempestasevencondensed.fnt')
 
 local function GetEnigmaHearts(player)
     return player:GetData().CustomHealthAPISavedata and player:GetData().CustomHealthAPISavedata.NumEnigmaHearts or 0
@@ -849,13 +857,112 @@ mod:AddCallback(ModCallbacks.MC_POST_RENDER, function(_)
     local hudOffset = Options.HUDOffset
 
     if GetEnigmaHearts(mainPlayer) > 0 and game:GetHUD():IsVisible() then
-        enigmaSprite:Render(EnigmaRenderPos + Vector(20, 12) * hudOffset, Vector.Zero, Vector.Zero)
-        Isaac.RenderScaledText('x' .. tostring(GetEnigmaHearts(mainPlayer)),
-            EnigmaRenderPos.X + 20 * hudOffset, EnigmaRenderPos.Y - 4 + 12 * hudOffset,
-            0.9, 0.9, 0.75, 0.75, 0.75, 1
+        enigmaSprite:Render(enigmaHeartRenderPos + Vector(20, 12) * hudOffset, Vector.Zero, Vector.Zero)
+        enigmaFont:DrawString(
+            'x' .. tostring(GetEnigmaHearts(mainPlayer)),
+            enigmaHeartRenderPos.X + 20 * hudOffset,
+            enigmaHeartRenderPos.Y - 4 + 12 * hudOffset,
+            KColor(1, 1, 1, 1)
         )
     end
 end)
+
+--------------------------------------------------------------------
+
+local brokenHeartRenderPos = Vector(64, 32)
+local brokenSprite = Sprite()
+brokenSprite:Load("gfx/ui/ui_taintedhearts.anm2", true)
+brokenSprite:SetFrame("BrokenHeart", 0)
+local brokenFont = Font()
+brokenFont:Load('font/pftempestasevencondensed.fnt')
+
+local START_BREAKING_DISTANCE = 45
+local HELPER_SPRITE_RENDER_OFFSET = Vector(0, -75)
+
+local function GetBrokenHearts(player)
+    return player:GetData().CustomHealthAPISavedata and player:GetData().CustomHealthAPISavedata.NumBrokenHearts or 0
+end
+mod.GetBrokenHearts = GetBrokenHearts
+
+local function SetBrokenHearts(player, amount)
+    player:GetData().CustomHealthAPISavedata.NumBrokenHearts = amount
+end
+mod.SetBrokenHearts = SetBrokenHearts
+
+mod:AddCallback(ModCallbacks.MC_POST_RENDER, function(_)
+    local mainPlayer = Isaac.GetPlayer(0)
+    local hudOffset = Options.HUDOffset
+
+    if GetBrokenHearts(mainPlayer) > 0 and game:GetHUD():IsVisible() then
+        brokenSprite:Render(brokenHeartRenderPos + Vector(20, 12) * hudOffset, Vector.Zero, Vector.Zero)
+        brokenFont:DrawString(
+            'x' .. tostring(GetBrokenHearts(mainPlayer)),
+            brokenHeartRenderPos.X + 20 * hudOffset,
+            brokenHeartRenderPos.Y - 4 + 12 * hudOffset,
+            KColor(1, 1, 1, 1)
+        )
+    end
+end)
+
+---@return Sprite
+local function getHelperSprite(c)
+    return c:GetData().effect:GetSprite()
+end
+
+mod:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, function(_, player)
+    if GetBrokenHearts(player) == 0 then
+        for _, e in pairs(Isaac.FindByType(1000, mod.HelperEffect.BROKEN_HEART_PEDESTAL_PRE_REROLL, 0)) do
+            e:Remove()
+        end
+        return
+    end
+
+    local closestCollectible
+    local closestDist = 1000
+    for _, c in pairs(Isaac.FindByType(5, 100)) do
+        if c.SubType ~= 0 then
+            if not c:GetData().effect then
+                local trueOffset = HELPER_SPRITE_RENDER_OFFSET / (c:ToPickup().Price == 0 and 1 or 1.5)
+                local effect = Isaac.Spawn(1000, mod.HelperEffect.BROKEN_HEART_PEDESTAL_PRE_REROLL, 0, c.Position + trueOffset, Vector.Zero, c)
+                effect:GetSprite():Play("Idle")
+                c:GetData().effect = effect
+            end
+
+            if c.Position:Distance(player.Position) >= START_BREAKING_DISTANCE
+            and getHelperSprite(c):IsPlaying('Breaking') then
+                getHelperSprite(c):Play('Idle')
+            end
+
+            if c.Position:Distance(player.Position) < closestDist then
+                closestDist = c.Position:Distance(player.Position)
+                closestCollectible = c
+            end
+        end
+    end
+
+    if closestDist < START_BREAKING_DISTANCE
+    and getHelperSprite(closestCollectible):IsPlaying('Idle') then
+        getHelperSprite(closestCollectible):Play('Breaking')
+    end
+
+    for _, e in pairs(Isaac.FindByType(1000, mod.HelperEffect.BROKEN_HEART_PEDESTAL_PRE_REROLL, 0)) do
+        local i = e.SpawnerEntity
+        if not i or not i:ToPickup() or i.SubType == 0 then
+            e:Remove()
+        elseif e:GetSprite():IsFinished('Breaking') then
+            SetBrokenHearts(player, GetBrokenHearts(player) - 1)
+            e:GetSprite():Play('Idle')
+            player:AddBrokenHearts(1)
+            sfx:Play(SoundEffect.SOUND_BONE_SNAP)
+
+            local pool = game:GetItemPool():GetPoolForRoom(game:GetRoom():GetType(), rng:GetSeed())
+            local id = game:GetItemPool():GetCollectible(pool, true, rng:GetSeed())
+            e.SpawnerEntity:ToPickup():Morph(5, 100, id, true, true, false)
+        end
+    end
+end)
+
+--------------------------------------------------------------------
 
 -------------
 -- SUMPTORIUM
@@ -951,15 +1058,33 @@ mod:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pickup)
             pickup.Velocity = (pickup:GetData().TargetPlayer.Position - pickup.Position):Normalized() * 2.25
         end
     elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_DECEIVER then
-        if #Isaac.FindInRadius(pickup.Position, 30, EntityPartition.PLAYER) > 0 then
-            rng:SetSeed(Random() + 1, 1)
-            local roll = (rng:RandomInt(3) + 2) * 10	-- 20, 30 or 40
+        if not pickup:GetSprite():IsPlaying('Appear')
+        and not pickup:GetData().attackTarget then
+            local enemies = {}
+            for _, e in pairs(Isaac.FindInRadius(pickup.Position, 500, EntityPartition.ENEMY)) do
+                if e:IsVulnerableEnemy() and e:IsActiveEnemy(false) then table.insert(enemies, e) end
+            end
 
-            Isaac.Spawn(5, 10, HeartSubType.HEART_HALF, pickup.Position, Vector.FromAngle(math.random(360)), pickup)
-            Isaac.Spawn(5, roll, 1, pickup.Position, Vector.FromAngle(math.random(360)), pickup)
-            Isaac.Spawn(1000, EffectVariant.POOF01, 0, pickup.Position, Vector.Zero, pickup)
-            pickup:Remove()
-            sfx:Play(SoundEffect.SOUND_BROWNIE_LAUGH)
+            if #enemies > 0 then
+                pickup:GetData().attackTarget = enemies[rng:RandomInt(#enemies) + 1]
+                pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ENEMIES
+            else
+                pickup:Remove()
+            end
+        elseif pickup:GetData().attackTarget then
+            ---@type Entity
+            local t = pickup:GetData().attackTarget
+            if t:IsDead() or not t:Exists() then
+                pickup:GetData().attackTarget = nil
+            end
+            local v = t.Position - pickup.Position
+            pickup.Velocity = v:Normalized() * 12
+            pickup:GetSprite().Rotation = v:GetAngleDegrees() + 90
+
+            if t.Position:Distance(pickup.Position) < 5 then
+                t:TakeDamage(t.MaxHitPoints * (t:IsBoss() and 0.05 or 0.75), 0, EntityRef(pickup), 0)
+                pickup:Remove()
+            end
         end
     elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_ENIGMA then
         -- Reset transparency
@@ -1016,10 +1141,9 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
 
         -- NON-UI HEARTS
         elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_BROKEN then
-			collider:AddMaxHearts(2)
-			collider:AddBrokenHearts(1)
-            if collider:GetBrokenHearts() >= 12 then
-                collider:Die()
+			SetBrokenHearts(collider, GetBrokenHearts(collider) + 1)
+            if collider:GetSubPlayer() then
+                SetBrokenHearts(collider:GetSubPlayer(), GetBrokenHearts(collider))
             end
 			sfx:Play(SoundEffect.SOUND_BONE_SNAP)
 
@@ -1086,6 +1210,7 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
 
 		elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_BENIGHTED then
 			if collider:CanPickBlackHearts() then
+                collider:AddHearts(-1)
 				collider:AddBlackHearts(2)
 				collider = collider:GetPlayerType() == PlayerType.PLAYER_THESOUL_B and collider:GetOtherTwin() or collider
 				collider:GetEffects():AddCollectibleEffect(mod.CustomCollectibles.HEART_BENIGHTED_NULL)
@@ -1120,16 +1245,11 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
 			sfx:Play(SoundEffect.SOUND_EDEN_GLITCH)
 
 		elseif pickup.SubType == mod.CustomPickups.TaintedHearts.HEART_HARLOT then
-			local heartsLeft = math.min(math.max(0, collider:GetEffectiveMaxHearts() - collider:GetHearts()), 2)
-
-			if collider:CanPickRedHearts()
-			or (collider:GetJarHearts() < 8 and collider:HasCollectible(CollectibleType.COLLECTIBLE_THE_JAR)) then
-				collider:AddHearts(2 * bowMultiplier)
-				collider:AddJarHearts(2 - heartsLeft)
-				local lep = Isaac.Spawn(3, FamiliarVariant.LEPROSY, 0, collider.Position, Vector.Zero, collider):ToFamiliar()
-                lep:GetSprite():ReplaceSpritesheet(0, "gfx/familiar/harlot_heart_leprosy.png")
-                lep:GetSprite():LoadGraphics()
+			if collider:CanPickRedHearts() then
+				collider:AddHearts(bowMultiplier)
 				sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES)
+                collider:GetEffects():AddCollectibleEffect(mod.CustomCollectibles.HARLOT_FETUS, false, 1)
+                collider:AddCacheFlags(CacheFlag.CACHE_FAMILIARS)
 			else
 				return pickup:IsShopItem()
 			end
@@ -1138,7 +1258,7 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
 			if (collider:GetNumKeys() > 0 or collider:HasGoldenKey())
             and (collider:CanPickSoulHearts() or collider:HasCollectible(mod.CustomCollectibles.THE_HOOD)) then
 				collider:AddSoulHearts(2)
-				collider:GetEffects():AddCollectibleEffect(mod.CustomCollectibles.ORBITAL_GHOSTS, false, 100)
+				collider:GetEffects():AddCollectibleEffect(mod.CustomCollectibles.ORBITAL_GHOSTS, false, 8)
                 collider:AddCacheFlags(CacheFlag.CACHE_FAMILIARS)
 				collider:AddKeys(collider:HasGoldenKey() and 0 or -1)
 				sfx:Play(SoundEffect.SOUND_HOLY)
@@ -1224,12 +1344,17 @@ mod:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, function(_, pickup, collid
     end
 end, PickupVariant.PICKUP_HEART)
 
+
+
 ----------------------------
 -- custom Dark Bum behaviour
 -- that allows him to
 -- pick up Hoarded Hearts
 ----------------------------
+---@param familiar EntityFamiliar
 mod:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, function(_, familiar)
+    if not (familiar.Variant == FamiliarVariant.DARK_BUM or familiar.Variant == FamiliarVariant.SUPER_BUM) then return end
+
     local roomHoardedHearts = {}
     for _, heart in pairs(Isaac.FindByType(5, 10, mod.CustomPickups.TaintedHearts.HEART_HOARDED)) do
         if heart:GetSprite():IsPlaying("Idle") then
@@ -1250,9 +1375,10 @@ mod:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, function(_, familiar)
         if familiar.Position:Distance(familiar:GetData().toGo.Position) < 5 then
             familiar:AddHearts(8)
             familiar:GetData().toGo:GetSprite():Play("Collect", true)
+            sfx:Play(SoundEffect.SOUND_BOSS2_BUBBLES)
             familiar:GetData().toGo.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
             familiar:GetData().toGo:Die()
             familiar:GetData().toGo = nil
         end
     end
-end, FamiliarVariant.DARK_BUM)
+end)

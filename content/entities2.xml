@@ -16,6 +16,9 @@
 <entity anm2path="1000.767_placard_effect_border.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Handicapped Placard Effect Border" numGridCollisionPoints="1" shadowSize="0" stageHP="0" variant="767">
     </entity>
 
+<entity anm2path="1000.788_broken_heart_above_pedestal.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Pedestal Broken Heart Helper" numGridCollisionPoints="1" shadowSize="0" stageHP="0" variant="788">
+    </entity>
+
     <!-- PICKUPS -->
 <entity anm2path="005.069.07_white_sack.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="White Sack" numGridCollisionPoints="24" shadowSize="18" stageHP="0" variant="69" subtype="7">
     </entity>
@@ -236,13 +239,13 @@
 <entity anm2path="003.219_spiritual_reserves_sun.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionInterval="2" collisionMass="3" collisionRadius="10" collisionRadiusXMulti="0.66" friction="1" id="3" name="Spiritual Reserves (Sun)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" variant="2113" subtype="1">
     </entity>
 	
-<entity anm2path="003.219_spiritual_reserves_moon.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionInterval="2" collisionMass="3" collisionRadius="10" collisionRadiusXMulti="0.66" friction="1" id="3" name="Spiritual Reserves (Moon)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" variant="2113" subtype="10">
+<entity anm2path="003.219_spiritual_reserves_moon.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionInterval="2" collisionMass="3" collisionRadius="10" collisionRadiusXMulti="0.66" friction="1" id="3" name="Spiritual Reserves (Moon)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" variant="2113" subtype="2">
     </entity>
 
-<entity anm2path="003.219_spiritual_reserves_fettered.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionInterval="2" collisionMass="3" collisionRadius="10" collisionRadiusXMulti="0.66" friction="1" id="3" name="Spiritual Reserves (Fettered)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" variant="2113" subtype="100">
+<entity anm2path="003.219_spiritual_reserves_fettered.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionInterval="2" collisionMass="3" collisionRadius="10" collisionRadiusXMulti="0.66" friction="1" id="3" name="Spiritual Reserves (Fettered)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" variant="2113" subtype="8">
     </entity>
 
-<entity anm2path="003.219_spiritual_reserves_moon.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionInterval="2" collisionMass="3" collisionRadius="10" collisionRadiusXMulti="0.66" friction="1" id="3" name="Spiritual Reserves (Permanent)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" variant="2113" subtype="1000">
+<entity anm2path="003.219_spiritual_reserves_moon.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionInterval="2" collisionMass="3" collisionRadius="10" collisionRadiusXMulti="0.66" friction="1" id="3" name="Spiritual Reserves (Permanent)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" variant="2113" subtype="16">
     </entity>
 
     <!-- 2114 IS NOW VACANT -->
@@ -286,7 +289,9 @@
 <entity anm2path="003.238.22_empty_clot.anm2" baseHP="15" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Blood Baby (Empty)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" tags="cansacrifice" variant="238" subtype="22" />
 
 <entity anm2path="003.238.23_zealot_clot.anm2" baseHP="15" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Blood Baby (Zealot)" numGridCollisionPoints="12" shadowSize="10" stageHP="0" tags="cansacrifice" variant="238" subtype="23" />
-	
+
+<entity anm2path="003.079.010_harlotfetus.anm2" baseHP="0" boss="0" champion="0" collisionDamage="3" collisionInterval="14" collisionMass="6" collisionRadius="13" friction="1" id="3" name="Harlot Fetus" numGridCollisionPoints="12" shadowSize="11" stageHP="0" variant="79" subtype="10" />
+
 <!-- TEAR VARIANTS -->
 
 <entity anm2path="002.120_ceremonial_blade_tear.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="8" friction="1" id="2" name="Ceremonial Dagger Tear" numGridCollisionPoints="8" shadowSize="7" stageHP="0" variant="120" />
