@@ -6,7 +6,7 @@ TornPageDesc = {}
 TornPageDesc["en_us"] = {
 	[-1] = "<Modded book, no effect>", --Modded books
 	[mod.CustomCollectibles.BOOK_OF_GENESIS] = "Gives you 4 options to choose from instead of 3",
-	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN] = "Doesn't require keys to be used",
+	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP] = "Doesn't require keys to be used",
 	[mod.CustomCollectibles.BOOK_OF_JUDGES] = "Doubles burning damage and duration",
 	[CollectibleType.COLLECTIBLE_NECRONOMICON] = "Spawns 3 locusts of death on use",
 	[CollectibleType.COLLECTIBLE_BIBLE] = "Removes a broken heart",
@@ -27,7 +27,7 @@ TornPageDesc["en_us"] = {
 TornPageDesc["ko_kr"] = {
 	[-1] = "<추가 효과 없음>", --Modded books
 	[mod.CustomCollectibles.BOOK_OF_GENESIS] = "3개가 아닌 4개의 선택지가 주어집니다.",
-	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN] = "열쇠 없이 사용할 수 있습니다.",
+	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP] = "열쇠 없이 사용할 수 있습니다.",
 	[mod.CustomCollectibles.BOOK_OF_JUDGES] = "화염 피해 및 지속 시간 2배.",
 	[CollectibleType.COLLECTIBLE_NECRONOMICON] = "죽음의 메뚜기 파리 3마리를 소환합니다.",
 	[CollectibleType.COLLECTIBLE_BIBLE] = "소지 불가능 하트 하나를 제거합니다.",
@@ -48,7 +48,7 @@ TornPageDesc["ko_kr"] = {
 TornPageDesc["zh_cn"] = {
 	[-1] = "<其他Mod的书，无效果>", --Modded books
 	[mod.CustomCollectibles.BOOK_OF_GENESIS] = "使用时获得4个选择而不是3个",
-	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN] = "不需要钥匙也可以使用",
+	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP] = "不需要钥匙也可以使用",
 	[mod.CustomCollectibles.BOOK_OF_JUDGES] = "双倍燃烧伤害和持续时间",
 	[CollectibleType.COLLECTIBLE_NECRONOMICON] = "使用时产生三只死亡蝗虫",
 	[CollectibleType.COLLECTIBLE_BIBLE] = "移除一颗碎心",
@@ -69,7 +69,7 @@ TornPageDesc["zh_cn"] = {
 TornPageDesc["ru"] = {
 	[-1] = "<Эффекта нет>", --Modded books
 	[mod.CustomCollectibles.BOOK_OF_GENESIS] = "Дает выбор из 4 предметов, вместо 3",
-	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN] = "Не нуждается в ключах для использования",
+	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP] = "Не нуждается в ключах для использования",
 	[mod.CustomCollectibles.BOOK_OF_JUDGES] = "Удваивает урон от горения и продолжительность",
 	[CollectibleType.COLLECTIBLE_NECRONOMICON] = "Призывает 3 саранчи смерти",
 	[CollectibleType.COLLECTIBLE_BIBLE] = "Убирает сломанное сердце",
@@ -90,7 +90,7 @@ TornPageDesc["ru"] = {
 TornPageDesc["spa"] = {
 	[-1] = "<Libro de mod, no tiene efecto>", --Modded books
 	[mod.CustomCollectibles.BOOK_OF_GENESIS] = "Te da a elegir 4 opciones en vez de 3",
-	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN] = "No necesitas llaves para usarlo",
+	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP] = "No necesitas llaves para usarlo",
 	[mod.CustomCollectibles.BOOK_OF_JUDGES] = "Duplica el daño de fuego y la duración",
 	[CollectibleType.COLLECTIBLE_NECRONOMICON] = "Genera 3 langostaas de Muerte",
 	[CollectibleType.COLLECTIBLE_BIBLE] = "{{BrokenHeart}} Remueve un corazón roto al usarlo",
@@ -111,7 +111,7 @@ TornPageDesc["spa"] = {
 TornPageDesc["fr"] = {
 	[-1] = "<Modded book, no effect>", --Modded books
 	[mod.CustomCollectibles.BOOK_OF_GENESIS] = "Permet de choisir entre 4 objets",
-	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN] = "Ne nécessite pas de clés pour être utilisé",
+	[mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP] = "Ne nécessite pas de clés pour être utilisé",
 	[mod.CustomCollectibles.BOOK_OF_JUDGES] = "Double les dégâts infligés et la durée des flammes",
 	[CollectibleType.COLLECTIBLE_NECRONOMICON] = "Invoque 3 locustes de Mort",
 	[CollectibleType.COLLECTIBLE_BIBLE] = "Retire un cœur brisé",
@@ -203,7 +203,7 @@ KeyTrinketsDesc["fr"] = {
 local function SpindownDiceCallback(descObj)
 	EID:appendToDescription(descObj, "#{{Collectible723}} : ")
 	local refID = descObj.ObjSubType
-	
+
 	for i = 1,EID.Config["SpindownDiceResults"] do
 		local spinnedID = EID:getSpindownResult(refID)
 		refID = spinnedID
@@ -219,7 +219,7 @@ local function SpindownDiceCallback(descObj)
 			break
 		end
 	end
-	
+
 	return descObj
 end
 
@@ -227,11 +227,11 @@ local function SpindownDiceShardCondition(descObj)
 	if descObj.ObjType ~= 5 or descObj.ObjVariant ~= PickupVariant.PICKUP_COLLECTIBLE then
 		return false
 	end
-	
+
 	if EID.player:GetCard(0) == mod.CustomConsumables.SPINDOWN_DICE_SHARD then
 		return true
 	end
-	
+
 	return false
 end
 EID:addDescriptionModifier("Spindown Dice Shard", SpindownDiceShardCondition, SpindownDiceCallback)
@@ -240,7 +240,7 @@ EID:addDescriptionModifier("Spindown Dice Shard", SpindownDiceShardCondition, Sp
 ------------------------------------
 local function RedRuneCallback(descObj)
 	EID:appendToDescription(descObj, "#{{Collectible706}} : " .. EID.descriptions[EID:getLanguage() or "en_us"].abyssSynergies[descObj.ObjSubType])
-	
+
 	return descObj
 end
 
@@ -248,12 +248,12 @@ local function RedRuneCondition(descObj)
 	if descObj.ObjType ~= 5 or descObj.ObjVariant ~= PickupVariant.PICKUP_COLLECTIBLE then
 		return false
 	end
-	
+
 	if EID.player:GetCard(0) == mod.CustomConsumables.RED_RUNE
 	and EID.descriptions[EID:getLanguage() or "en_us"].abyssSynergies[descObj.ObjSubType] then
 		return true
 	end
-	
+
 	return false
 end
 EID:addDescriptionModifier("Red Rune", RedRuneCondition, RedRuneCallback)
@@ -272,20 +272,20 @@ local function TornPageCallback(descObj)
 	else
 		EID:appendToDescription(descObj, refTables[-1])
 	end
-	
+
 	return descObj
 end
 
 local function TornPageCondition(descObj)
-	if descObj.ObjType ~= 5 or descObj.ObjVariant ~= PickupVariant.PICKUP_COLLECTIBLE 
+	if descObj.ObjType ~= 5 or descObj.ObjVariant ~= PickupVariant.PICKUP_COLLECTIBLE
 	or (Isaac.GetItemConfig():GetCollectible(descObj.ObjSubType).Tags & ItemConfig.TAG_BOOK ~= ItemConfig.TAG_BOOK) then
 		return false
 	end
-	
+
 	if EID.player:HasTrinket(mod.CustomTrinkets.TORN_PAGE) then
 		return true
 	end
-	
+
 	return false
 end
 EID:addDescriptionModifier("Torn Page", TornPageCondition, TornPageCallback)
@@ -299,7 +299,7 @@ local function KeyTrinketsCallback(descObj)
 	local refTables = KeyTrinketsDesc[lang] or KeyTrinketsDesc["en_us"]
 
 	if refTables[refID] then
-		EID:appendToDescription(descObj, "#{{Collectible" .. tostring(mod.CustomCollectibles.BOOK_OF_LEVIATHAN) .. "}} : ")
+		EID:appendToDescription(descObj, "#{{Collectible" .. tostring(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP) .. "}} : ")
 		EID:appendToDescription(descObj, refTables[refID])
 	end
 	return descObj
@@ -309,11 +309,11 @@ local function KeyTrinketsCondition(descObj)
 	if descObj.ObjType ~= 5 or descObj.ObjVariant ~= PickupVariant.PICKUP_TRINKET then
 		return false
 	end
-	
-	if EID.player:HasCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN) then
+
+	if EID.player:HasCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP) then
 		return true
 	end
-	
+
 	return false
 end
 EID:addDescriptionModifier("Key Trinkets for Book of Leviathan", KeyTrinketsCondition, KeyTrinketsCallback)
@@ -486,6 +486,10 @@ if true then
 	local DARK_REMNANTS_CARDFRONT = Sprite()
 	DARK_REMNANTS_CARDFRONT:Load("gfx/ui/eid_cardfronts.anm2", true)
 	EID:addIcon("Card"..mod.CustomConsumables.DARK_REMNANTS, "Dark Remnants", 0, 9, 9, 0.5, 1.5, DARK_REMNANTS_CARDFRONT)
+
+	local GOLDEN_CARD_CARDFRONT = Sprite()
+	GOLDEN_CARD_CARDFRONT:Load("gfx/ui/eid_cardfront.anm2", true)
+	EID:addIcon("Card"..mod.CustomConsumables.GOLDEN_CARD, "Golden Card", 0, 9, 9, 0.5, 1.5, GOLDEN_CARD_CARDFRONT)
 end
 
 -- adding metadata for Placebo, Blank Card and Clear Rune mimicking --
@@ -503,6 +507,7 @@ if true then
 	EID:addCardMetadata(mod.CustomConsumables.DEMON_FORM, 12, false)
 	EID:addCardMetadata(mod.CustomConsumables.VALENTINES_CARD, 6, false)
 	EID:addCardMetadata(mod.CustomConsumables.CURSED_CARD, 2, false)
+	EID:addCardMetadata(mod.CustomConsumables.GOLDEN_CARD, 6, false)
 
 	EID:addCardMetadata(mod.CustomConsumables.CANINE_OF_WRATH, 6, true)
 	EID:addCardMetadata(mod.CustomConsumables.MASK_OF_ENVY, 4, true)
@@ -564,7 +569,7 @@ end
 
 -- Enlish EID (by Mr. SeemsGood)
 if true then
-	EID:addCollectible(mod.CustomCollectibles.ORDINARY_LIFE, "{{ArrowUp}} Tears up #{{TreasureRoom}} Spawns an additional Mom and Dad related item in Treasure rooms alongside the presented items; only one item can be taken")	
+	EID:addCollectible(mod.CustomCollectibles.ORDINARY_LIFE, "{{ArrowUp}} Tears up #{{TreasureRoom}} Spawns an additional Mom and Dad related item in Treasure rooms alongside the presented items; only one item can be taken")
 	EID:addCollectible(mod.CustomCollectibles.COOKIE_CUTTER, "{{Heart}} Gives you one heart container and one broken heart #{{Heart}} Heals you for 2 full red hearts")
 	EID:addCollectible(mod.CustomCollectibles.SINNERS_HEART, "{{BlackHeart}} +2 black hearts #{{ArrowUp}} Damage +2 then x1.5 #{{ArrowUp}} Grants +2 range and -0.2 shotspeed #Grants spectral and piercing tears")
 	EID:addCollectible(mod.CustomCollectibles.RUBIKS_CUBE, "After each use, has a 5% (100% on 20-th use) chance to be 'solved', removed from the player and be replaced with a Magic Cube item")
@@ -578,13 +583,13 @@ if true then
 	EID:addCollectible(mod.CustomCollectibles.BLACK_DOLL, "Upon entering a new room, all enemies will be grouped into pairs randomly. Dealing damage to an enemy will deal 60% of that damage to another enemy in the pair")
 	EID:addCollectible(mod.CustomCollectibles.BIRD_OF_HOPE, "Upon dying you turn into invincible ghost and a bird flies out of room center in a random direction. Catching the bird in 5 seconds will save you and get you back to your death spot, otherwise you will die #{{Warning}} Every time you die, the bird will fly faster and faster, making it harder to catch her")
 	EID:addCollectible(mod.CustomCollectibles.ENRAGED_SOUL, "Double tap shooting button to launch a ghost familiar in the direction you are firing #The ghost will latch onto the first enemy it collides with, dealing damage over time for 7 seconds or until that enemy is killed #{{Collectible66}} Has a 7 seconds cooldown")
-	EID:addCollectible(mod.CustomCollectibles.CEREMONIAL_BLADE, "When shooting, 7.5% chance to launch a piercing dagger that does no damage, but inflicts bleed on enemies #{{BleedingOut}} All enemies that die while bleeding will drop Sacrificial Blood Consumable that gives you temporary DMG up")
-	EID:addCollectible(mod.CustomCollectibles.CEILING_WITH_THE_STARS, "{{Collectible712}} Grants you two Lemegeton wisps at the beginning of each floor and when sleeping in bed")
+	EID:addCollectible(mod.CustomCollectibles.CEREMONIAL_BLADE, "When shooting, 7.5% chance to launch a piercing dagger that does no damage, but inflicts bleed on enemies #{{BleedingOut}} Bleeding enemies have a chance to drop a special consumable on death")
+	EID:addCollectible(mod.CustomCollectibles.CEILING_WITH_THE_STARS, "{{Collectible712}} Grants you 2 Lemegeton wisps at the beginning of each floor and when sleeping in bed")
 	EID:addCollectible(mod.CustomCollectibles.QUASAR, "{{Collectible712}} Consumes all item pedestals in the room and gives you 3 Lemegeton wisps for each item consumed")
 	EID:addCollectible(mod.CustomCollectibles.TWO_PLUS_ONE, "{{Coin}} Every third shop item on the current floor will cost 1 penny")
 	EID:addCollectible(mod.CustomCollectibles.RED_MAP, "{{UltraSecretRoom}} Reveals location of Ultra Secret Room #{{Card78}} Any trinket left in a boss or treasure room will turn into Cracked Key, unless this is your first visit in such room")
 	EID:addCollectible(mod.CustomCollectibles.CHEESE_GRATER, "{{ArrowUp}} Removes one red heart container and gives you x" .. tostring(mod.CustomStatups.Damage.CHEESE_GRATER_MUL) .. " damage increase and 3 Minisaacs")
-	EID:addCollectible(mod.CustomCollectibles.DNA_REDACTOR, "{{Pill}} Pills now have additional effects based on their color")
+	EID:addCollectible(mod.CustomCollectibles.DNA_REDACTOR, "{{Pill}} When taking a pill, one of these events can happen: #High chance - gain effect of one body-related item for one floor #Low chance - gain one random stat up and one random stat down #{{Warning}}Very low chance - change character")
 	EID:addCollectible(mod.CustomCollectibles.TOWER_OF_BABEL, "Destroys all obstacles in the current room and applies confusion to enemies in small radius around you #Also blows the doors open and opens secret room entrances")
 	EID:addCollectible(mod.CustomCollectibles.BLESS_OF_THE_DEAD, "Prevents curses from appearing for the rest of the run #{{ArrowUp}} Preventing a curse grants you x" .. tostring(mod.CustomStatups.Damage.BLESS_OF_THE_DEAD_MUL) .. " damage increase")
 	EID:addCollectible(mod.CustomCollectibles.TANK_BOYS, "Spawns 2 Toy Tanks that roam around the room and attack enemies that are in their line of sight #Green tank: rapidly shoots bullets at enemies from a further distance and moves more quickly #Red tank: shoots rockets at enemies at a close range, moves slower")
@@ -595,28 +600,28 @@ if true then
 	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_GENESIS, "Removes a random item and spawns 3 items of the same quality #Only one item can be taken")
 	EID:addCollectible(mod.CustomCollectibles.SCALPEL, "{{Heart}} Consumes one red heart but permanently makes Isaac shoot more tears in random directions #These tears deal 65% of your damage and have all your tear flags")
 	EID:addCollectible(mod.CustomCollectibles.KEEPERS_PENNY, "Spawns a golden penny upon entering a new floor #{{Shop}} Shops will now sell 1-4 additional items that are drawn from shop, treasure or boss itempools #If the shop is a Greed fight, it instead spawns 3-4 items when the miniboss dies")
-	EID:addCollectible(mod.CustomCollectibles.NERVE_PINCH, "Double tap to trigger a nerve pinch #{{ArrowDown}} You take fake damage and gain a permanent " .. tostring(mod.CustomStatups.Speed.NERVE_PINCH) .. " speed down when that happens #{{ArrowUp}} However, there is an 80% chance to activate your active item for free, even if it's uncharged")
+	EID:addCollectible(mod.CustomCollectibles.NERVE_PINCH, "Double tap to trigger a nerve pinch #{{ArrowDown}} You take fake damage and gain a permanent " .. tostring(mod.CustomStatups.Speed.NERVE_PINCH) .. " speed down when that happens #{{ArrowUp}} However, there is an 80% chance to activate your active item for free, even if it's uncharged #{[Warning}} You can pinch your nerve randomly by walking too much, without triggering an active item!")
 	EID:addCollectible(mod.CustomCollectibles.BLOOD_VESSELS[1], "Taking damage doesn't actually hurt the player, instead filling the blood vessel #This can be repeated 6 times until the vessel is full #Once it's full, using it or taking damage will empty it and deal 3 and 3.5 hearts of damage to the player, respectively #{{Warning}} The Vessel cannot be easily swapped if it's not empty!")
 	EID:addCollectible(mod.CustomCollectibles.SIBLING_RIVALRY, "Orbital that switches between 2 different states every 15 seconds: #Two orbitals that quickly rotate around Isaac #One orbital that rotates slower and closer to Isaac, and periodically shoots teeth in random directions and spawns blood creep underneath it #All orbitals block enemy shots and do contact damage")
 	EID:addCollectible(mod.CustomCollectibles.RED_KING, "After defeating a boss, red crawlspace will appear in a middle of a room #{{BossRoom}} Entering the crawlspace brings you to another bossfight of high difficulty #Victory rewards you two items from Ultra secret room pool to choose from")
 	EID:addCollectible(mod.CustomCollectibles.STARGAZERS_HAT, "Summons the Stargazer beggar #{{SoulHeart}} Can only be charged with soul hearts, similarly to {{Collectible585}} #Can only be used once per floor")
-	EID:addCollectible(mod.CustomCollectibles.BOTTOMLESS_BAG, "Upon use, gain invincibility, hold up the bag and suck up all nearby projectiles for 4 seconds #Hold shooting button to release sucked projecties as homing tears in a matching direction")
+	EID:addCollectible(mod.CustomCollectibles.BOTTOMLESS_BAG, "Upon use, become invincible to projectiles, hold the Bag up and start sucking all nearby projectiles for 3 seconds #When the effect ends, all sucked projectiles are released as homing tears in your firing direction")
 	EID:addCollectible(mod.CustomCollectibles.CROSS_OF_CHAOS, "Enemies that come close to you become crippled; your tears can also cripple them #Crippled enemies lose their speed overtime, and die afer 12 seconds of losing it #When crippled enemies die, they release a fountain of slowing black tears")
 	EID:addCollectible(mod.CustomCollectibles.REJECTION, "On use, consume all your follower familiars and throw them as big piercing poisonous gut ball in your firing direction #Damage formula:#5 + 3.75 * your damage * (no. familiars + 1) #Passively grants a familiar that doesn't shoot tears, but deals 2.5 contact damage to enemies")
 	EID:addCollectible(mod.CustomCollectibles.AUCTION_GAVEL, "Spawns an item from the room's pool for sale #Its price will change rougly 5 times a second #The price is random, but generally increases over time until it reaches {{Coin}}99 #If you leave and re-enter the room, the item disappears")
 	EID:addCollectible(mod.CustomCollectibles.SOUL_BOND, "Chain yourself to a random enemy with an astral chain and freeze them #The chain deals heavy contact damage to enemies #{{Warning}} Going too far away from chained enemy will break the chain #{{SoulHeart}} Chained enemies have a 33% chance to drop a soul heart when killed #Can chain bosses too for 5 seconds")
 	EID:addCollectible(mod.CustomCollectibles.ANGELS_WINGS, "{{ArrowUp}} +0.3 Shot Speed up #Your tears are replaced with piercing feathers that deal more damage the more they travel #Double tap to perform one of Dogma related attacks #{{Collectible66}} Has a 6 seconds cooldown")
 	EID:addCollectible(mod.CustomCollectibles.HAND_ME_DOWNS, "{{ArrowUp}} +0.2 Speed up #After your run ends, 3 random items from your inventory are spawned on the floor where it ended. They can be collected on the next run by getting to the same floor")
-	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN, "#{{Key}} +2 keys on pickup #Requires a key to 'unlock' and use it #Upon use, cripples all enemies in the room #Crippled enemies lose their speed overtime, and die afer 12 seconds of losing it #Has special synergies with key trinkets #{{Warning}} Will change forms after several uses!")
-	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_UNCHAINED, "{{Heart}} Takes Isaac's red health instead of keys on use #{{Warning}} Will change forms after several uses!")
-	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_OPEN, "Can be used freely #Instantly kills all enemies in a room instead of crippling them")
+	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP, "#{{Key}} +2 keys on pickup #Requires a key to 'unlock' and use it #Upon use, cripples all enemies in the room #Crippled enemies lose their speed overtime, and die afer 12 seconds of losing it #Has special synergies with key trinkets #{{Warning}} Will change states after several uses!")
+	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_UNCHAINED, "{{Heart}} Same effect as {{Collectible" .. tostring(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP) .. "}}, but requires red health to be used #{{Warning}} Will change states after several uses!")
+	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_OPEN, "Same effect as {{Collectible" .. tostring(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP) .. "}}, but can be used freely")
 	EID:addCollectible(mod.CustomCollectibles.FRIENDLY_SACK, "After each 3rd completed room, spawns a random weak familiar (such as Dip, Blood clot, fly etc.) #If boss room is a room where Friendly Sack would pay out, it spawns a random charmed monster instead")
 	EID:addCollectible(mod.CustomCollectibles.MAGIC_MARKER, "{{Card}} Drops a random tarot card when picked up #{{Card}} On use, transform held tarot card by increasing its number by 1 (or reducing for reversed tarots)")
 	EID:addCollectible(mod.CustomCollectibles.ULTRA_FLESH_KID, "Familiar that chases enemies and deals contact damage #Has 3 stages, collects red hearts to evolve #{{HalfHeart}} A total of 15 hearts needs to be collected to evolve")
-	EID:addCollectible(mod.CustomCollectibles.VAULT_OF_HAVOC, "Passively stores killed enemies; can be used as soon as 12 enemies are stored #{{MiniBoss}} Upon use, brings you into a special room with 12 most recently killed enemies; clearing the room spawns a reward based on total HP of spawned enemies")
+	EID:addCollectible(mod.CustomCollectibles.VAULT_OF_HAVOC, "Passively stores killed enemies and can be used if 12 enemies are stored #{{MiniBoss}} Upon use, brings you into a special room with 12 most recently killed enemies; clearing the room spawns a reward based on total HP of spawned enemies")
 	EID:addCollectible(mod.CustomCollectibles.PURE_SOUL, "{{MiniBoss}} All sin minibosses have a 100% chance to drop their respective {{ColorRed}}Sin's Jewel{{CR}} #A ghost can spawn in {{SecretRoom}}Secret or {{SuperSecretRoom}}Super Secret room that will disappear and spawn a random sin miniboss when approached #The ghost will also spawn in the doorway that leads to a miniboss room, alarming you of what miniboss is inside")
 	EID:addCollectible(mod.CustomCollectibles.HANDICAPPED_PLACARD, "Places a handicapped placard on the ground #{{Weakness}} Every enemy inside the placard's area of effect is weakened and spawns bone spurs on death")
-	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_JUDGES, "While in active room, beams of light will strike at random positions marked by crosshairs #Beams hurt enemies and inflict burn on them, but they hurt players too #On use, cancels the effect for the current room")
+	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_JUDGES, "In uncleared rooms, lightbeams will strike at random positions marked by crosshairs #Lightbeams damage enemies and inflict burn, but damage players too #Spawns two friendly orbital ghost familiars when entering a new floor #On use, sacrifice one orbital ghost (if you have any) and cancel lightbeams for the current room")
 	EID:addCollectible(mod.CustomCollectibles.BIRTH_CERTIFICATE, "{{Warning}} ONE-TIME USE #Consumes all your currently held trinkets #Teleports you into a special area that contains many trinkets, along with some other pickups #You can choose as many trinkets as you can hold #Teleports you out of the area afterwards")
 	EID:addCollectible(mod.CustomCollectibles.HELICOPTER_BOYS, "Spawns 2 Toy Helicopters that fly around the room and attack enemies that are in their line of sight #Green: very rapidly shoots weak bullets at enemies and moves more quickly #Red: summons airstrikes at enemies' positions, moves slower")
 	EID:addCollectible(mod.CustomCollectibles.THE_HOOD, "{{SoulHeart}} Triples the chance to turn a Soul heart into a Fettered heart #Fettered hearts can now be picked up even at full soul health #Fettered ghosts gain homing tears")
@@ -652,7 +657,7 @@ if true then
 
 	EID:addCard(mod.CustomConsumables.SPINDOWN_DICE_SHARD, "{{Collectible723}} Invokes the effect of Spindown Dice")
 	EID:addCard(mod.CustomConsumables.RED_RUNE, "{{Collectible706}} Damages all enemies in a room, turns item pedestals into red locusts and turns pickups into random locusts with a 50% chance")
-	EID:addCard(mod.CustomConsumables.NEEDLE_AND_THREAD, "{{BrokenHeart}} If you have any broken hearts, removes one and replaces it with a heart container")
+	EID:addCard(mod.CustomConsumables.NEEDLE_AND_THREAD, "Grants one Dauntless heart #{{BrokenHeart}} If you have broken hearts, removes one and grants an additional Dauntless heart")
 	EID:addCard(mod.CustomConsumables.QUEEN_OF_DIAMONDS, "{{Coin}} Spawns 1-12 random coins #These can be nickels or dimes")
 	EID:addCard(mod.CustomConsumables.KING_OF_SPADES, "Lose all your keys and spawn a proportional number of pickups #Can spawn a trinket or an item with a certain chance that grows with the amount of keys and reaches 100% at 9 and 21 keys, respectively #{{GoldenKey}} Removes Golden key as well")
 	EID:addCard(mod.CustomConsumables.KING_OF_CLUBS, "Lose all your bombs and spawn a proportional number of pickups #Can spawn a trinket or an item with a certain chance that grows with the amount of bombs and reaches 100% at 9 and 21 bombs, respectively #{{GoldenBomb}} Removes Golden bomb as well")
@@ -672,7 +677,7 @@ if true then
 	EID:addCard(mod.CustomConsumables.SACRIFICIAL_BLOOD, "{{ArrowUp}} Gives +1.25 DMG up that depletes over the span of 25 seconds #{{Collectible216}} Heals you for one heart if you have Ceremonial Robes")
 	EID:addCard(mod.CustomConsumables.LIBRARY_CARD, "{{Library}} Activates a random book effect")
 	EID:addCard(mod.CustomConsumables.FLY_PAPER, "{{Collectible693}} Spawns 8 fly orbitals")
-	EID:addCard(mod.CustomConsumables.MOMS_ID, "Drops knives from above on all enemies, dealing 2x your damage")
+	EID:addCard(mod.CustomConsumables.MOMS_ID, "Drops knives from above on all enemies, dealing 2x Isaac's tear damage")
 	EID:addCard(mod.CustomConsumables.FUNERAL_SERVICES, "{{DirtyChest}} Spawns an Old Chest")
 	EID:addCard(mod.CustomConsumables.ANTIMATERIAL_CARD, "Can be thrown similarly to Chaos Card #If the card touches an enemy, that enemy is erased for the rest of the run")
 	EID:addCard(mod.CustomConsumables.FIEND_FIRE, "Sacrifice your consumables for mass room destruction #3-20 total: enemies take 15 damage and burn for 4 seconds #20-40 total: the initital damage, the burning damage and burning duration are doubled; destroys obstacles around you #40+ total: the burning damage and burning duration are quadrupled; produces a Mama Mega explosion")
@@ -683,6 +688,7 @@ if true then
 	EID:addCard(mod.CustomConsumables.CURSED_CARD, "For the current room, every hit you would take is negated #{{BrokenHeart}} Instead, it gives you a broken heart and a permanent tears boost")
 	EID:addCard(mod.CustomConsumables.FUNERAL_SERVICES_Q, "Spawns a Black Chest")
 	EID:addCard(mod.CustomConsumables.DARK_REMNANTS, "#{{BlackHeart}} +1 Black heart #Cripples all enemies in a room")
+	EID:addCard(mod.CustomConsumables.GOLDEN_CARD, "Activates a random tarot card on use #{{Warning}} Has a 15% chance to disappear #Can't use {{Card46}} Suicide King, {{Card48}} ? Card, {{Card80}} Wild Card or {{Card53}} Ancient Recall")
 
 	EID:addCard(mod.CustomConsumables.CROWN_OF_GREED , "{{Luck}} Spawns 1-2 golden pennies and grants -1 luck for each penny spawned")
 	EID:addCard(mod.CustomConsumables.FLOWER_OF_LUST, "Allows you to restart the room and guarantees a better room clear reward")
@@ -721,14 +727,14 @@ if true then
 	EID:assignTransformation("collectible", mod.CustomCollectibles.CHERUBIM, "4,10")
 	EID:assignTransformation("collectible", mod.CustomCollectibles.BOOK_OF_GENESIS, "12")
 	EID:assignTransformation("collectible", mod.CustomCollectibles.CROSS_OF_CHAOS, "9")
-	EID:assignTransformation("collectible", mod.CustomCollectibles.BOOK_OF_LEVIATHAN, "9, 12")
+	EID:assignTransformation("collectible", mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP, "9,12")
 	EID:assignTransformation("collectible", mod.CustomCollectibles.BOOK_OF_JUDGES, "12")
 	EID:assignTransformation("collectible", mod.CustomCollectibles.SPIRITUAL_AMENDS, "10")
 end
 
 -- EID Spanish (by Kotry)
 if true then
-	EID:addCollectible(mod.CustomCollectibles.ORDINARY_LIFE, "{{ArrowUp}}{{Tears}}Más lágrimas #Genera un objeto relacionado a Mamá o Papá en la {{TreasureRoom}}Sala del tesoro junto al objeto regular; sólo puedes tomar uno", "Vida ordinaria", "spa")	
+	EID:addCollectible(mod.CustomCollectibles.ORDINARY_LIFE, "{{ArrowUp}}{{Tears}}Más lágrimas #Genera un objeto relacionado a Mamá o Papá en la {{TreasureRoom}}Sala del tesoro junto al objeto regular; sólo puedes tomar uno", "Vida ordinaria", "spa")
 	EID:addCollectible(mod.CustomCollectibles.COOKIE_CUTTER, "Te otorga un {{Heart}}un contenedor de corazón y un corazón roto#{{Warning}}¡Tener 12 corazones te matará!", "Cortador de Galletas", "spa")
 	EID:addCollectible(mod.CustomCollectibles.SINNERS_HEART, "{{ArrowUp}}+2 de daño, multiplicador de daño x1.5#{{ArrowDown}}baja la velocidad de tiro#lágrimas teledirigidas", "Corazón de los Pecadores", "spa")
 	EID:addCollectible(mod.CustomCollectibles.RUBIKS_CUBE, "Tras cada uso, hay un 5% (100% en el uso 20) de probabilidad de 'resolverlo', cuando esto ocurre, se le remueve al jugador y es reemplazado con un Cubo Mágico", "Cubo de Rubik", "spa")
@@ -770,7 +776,7 @@ if true then
 	EID:addCollectible(mod.CustomCollectibles.SOUL_BOND, "Usando una cadena astral, serás encadenado a un enemigo y este se congelará#La cadena hace demasiado daño por contaco a los enemigos#Alejarse demasiado de un enemigo encadenado romperá la cadena#{{SoulHeart}}Los enemigos encadenados tienen un 33% de posibilidad de soltar un corazón de alma al morir", "Lazo del alma", "spa")
 	EID:addCollectible(mod.CustomCollectibles.ANGELS_WINGS, "{{ArrowUp}}{{Shotspeed}}Vel. de tiro +0.3#Tus lágrimas serán reemplazadas por plumas penetrantes, harán más daño mientras más viajenthat deal more damage#Presionar el botón de disparo 2 veces realizará un ataque similar al de Dogma#Tiene un tiempo de recarga de 6 segundos", "Alas de Ángel", "spa")
 	EID:addCollectible(mod.CustomCollectibles.HAND_ME_DOWNS, "{{ArrowUp}}{{Speed}}Velocidad +0.2#Al terminar la partida, 3 objetos aleatorios del inventario serán generados en el piso donde terminó. Podrán ser tomados en la siguiente partida yendo hacia ese mismo piso", "Herencia", "spa")
-	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN, "Al usarlo, todos los enemigos serán lisiados#Los enemigos lisiados perderán su velocidad progesivamente, acabarán muriendo 12 segundos después de perderla#Necesita una llave para 'desbloquearlo' y usarlo, no hace nada sin llaves#Posee sinergias especiales con trinkets relativos a llaver", "El libro de Leviatán", "spa")
+	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP, "Al usarlo, todos los enemigos serán lisiados#Los enemigos lisiados perderán su velocidad progesivamente, acabarán muriendo 12 segundos después de perderla#Necesita una llave para 'desbloquearlo' y usarlo, no hace nada sin llaves#Posee sinergias especiales con trinkets relativos a llaver", "El libro de Leviatán", "spa")
 	EID:addCollectible(mod.CustomCollectibles.FRIENDLY_SACK, "Después de cada 3 habitaciones completadas, se generará un familiar debil (como un Dip, Blood clot, moscas, etc.)#Si esl efecto del Saco amistoso se activa en una {{BossRoom}}sala del jefe, aparecerá un monstruo encantado en su lugar", "Saco amistoso", "spa")
 	EID:addCollectible(mod.CustomCollectibles.MAGIC_MARKER, "{{Card}}Se genera una carta del tarot#Tras usarlo, cambiará tu carta sumándole un 1 a su número (Restará 1 para las cartas reversas)", "Plumón Mágico", "spa")
     EID:addCollectible(mod.CustomCollectibles.ULTRA_FLESH_KID, "Familiar que persigue y ataca a los enemigos#Posee 3 fases, conseguir {{Heart}}corazones rojos hará que evolucione#{{Heart}}Se necesitan 15 corazones en total para hacerlo evolucionar", "Chico Ultra-carnoso", "spa")
@@ -850,7 +856,7 @@ end
 
 -- EID Russian (by Laraz and Mr. SeemsGood)
 if true then
-	EID:addCollectible(mod.CustomCollectibles.ORDINARY_LIFE, "{{ArrowUp}}Повышает скорострельность #Создает дополнительный предмет, связанный с матерью/отцом, в сокровищницах; можно взять только один предмет", "Обычная Жизнь", "ru")	
+	EID:addCollectible(mod.CustomCollectibles.ORDINARY_LIFE, "{{ArrowUp}}Повышает скорострельность #Создает дополнительный предмет, связанный с матерью/отцом, в сокровищницах; можно взять только один предмет", "Обычная Жизнь", "ru")
 	EID:addCollectible(mod.CustomCollectibles.COOKIE_CUTTER, "При использовании дает один {{Heart}}контейнер сердца и одно сломанное сердце #{{Warning}}При 12 сломанных сердец вы умрете!", "Формочка для Печенья", "ru")
 	EID:addCollectible(mod.CustomCollectibles.SINNERS_HEART, "+2 черных сердца #{{ArrowUp}}Дает +2 к урону и умножает на 1.5 #{{ArrowUp}}Дает +2 к дальности и -0.2 к скорости слезы #Дает спектральные и пронзающие слезы", "Сердце Грешника", "ru")
 	EID:addCollectible(mod.CustomCollectibles.RUBIKS_CUBE, "После каждого использования, имеет 5%(100% на 20-ом использовании) шанс собраться, забирает у игрока этот предмет и заменяет его Магическим Кубом", "Кубик Рубика", "ru")
@@ -892,8 +898,8 @@ if true then
 	EID:addCollectible(mod.CustomCollectibles.SOUL_BOND, "Приковывайте себя к случайному врагу астральной цепью и замораживайте их # Цепь наносит сильный контактный урон врагам # Если вы отойдете слишком далеко от прикованного врага, цепь разорвется #Прикованные враги имеют 33% шанс уронить синее сердце при смерти", "Связь Душ", "ru")
 	EID:addCollectible(mod.CustomCollectibles.ANGELS_WINGS, "{{ArrowUp}}+0,3 к скорости выстрела  #Ваши слезы заменяются пронзающими перьями, которые наносят больше урона, чем больше они пролетают #Двойное нажатие на кнопку выстрела, чтобы использовать одну из атак Догмы #Имеет 6 секунд перезарядки", "Ангельские Крылья", "ru")
 	EID:addCollectible(mod.CustomCollectibles.HAND_ME_DOWNS, "{{ArrowUp}}+0.2 к скорости #После того, как ваш забег закончится, 3 случайных предмета из вашего инвентаря появятся на этаже, где он закончился. Их можно собрать на следующем забеге, добравшись до того же этажа", "Подержанные Вещи", "ru")
-	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN, "+2 ключа #При использовании ослабляет всех врагов в комнате #Ослабленные враги теряют свою скорость со временем и умирают через 12 секунд после ее потери #Нужен ключ для использования", "Книга Левиафана", "ru")
-	EID:addCollectible(mod.CustomCollectibles.FRIENDLY_SACK, "После каждой 3-й пройденной комнаты появляется случайный слабый спутник (дип, блебик, синии мухи и т.д.). #Если комната босса - это комната, где Дружеский мешок спавнит спутника, вместо этого появляется случайный зачарованный монстр", "Мешок с Друзьями", "ru")	
+	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP, "+2 ключа #При использовании ослабляет всех врагов в комнате #Ослабленные враги теряют свою скорость со временем и умирают через 12 секунд после ее потери #Нужен ключ для использования", "Книга Левиафана", "ru")
+	EID:addCollectible(mod.CustomCollectibles.FRIENDLY_SACK, "После каждой 3-й пройденной комнаты появляется случайный слабый спутник (дип, блебик, синии мухи и т.д.). #Если комната босса - это комната, где Дружеский мешок спавнит спутника, вместо этого появляется случайный зачарованный монстр", "Мешок с Друзьями", "ru")
 	EID:addCollectible(mod.CustomCollectibles.MAGIC_MARKER, "Создает случайную карту таро #При использовании, превращает вашу карту, увеличивая ее номер на 1(или уменьшая на 1 для перевернутых карт)", "Магический Маркер", "ru")
 	EID:addCollectible(mod.CustomCollectibles.ULTRA_FLESH_KID, "Спутник который гонится за врагами и наносит им контактный урон #Имеет три стадии, собирает красные сердца чтобы улучшаться #Нужно 15 красных сердец для улучшения", "Ультра Телесный Ребенок", "ru")
 	EID:addCollectible(mod.CustomCollectibles.VAULT_OF_HAVOC, "Пассивно хранит убитых врагов; Можно использовать только если сохранено 12 врагов #При использовании, отправляет вас в специальную комнату с сохраненными врагами; При зачистке комнаты, вы получаете награду основанную на общем количестве HP врагов", "Хранилище Хаоса", "ru")
@@ -901,7 +907,7 @@ if true then
 	EID:addCollectible(mod.CustomCollectibles.HANDICAPPED_PLACARD, "Помещает Плакат для Инвалидов на землю #Враги в зоне действия плаката ослабляется и порождает кости при смерти #Площадь становится больше, чем больше урона вы получаете в комнате", "Плакат для Инвалидов", "ru")
 	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_JUDGES, "Пассивно создает мишени на полу при входе в новую комнату #Каждые 3 секунды лучи света будут поражать мишени #Лучи наносят урон врагам и накладывает горение, но {{Warning}}они также наносят урон игроку #Использование книги отменяет вызов лучей для текущей комнаты", "Книга Судей", "ru")
 	EID:addCollectible(mod.CustomCollectibles.BIRTH_CERTIFICATE, "{{Warning}} Одноразовый! #При использовании, поглощает все удерживаемые брелки и телепортирует вас в комнату, в которой находится 188 брелоков, и несколько других расходников #Только один брелок может быть взять; вскоре после этого, вас телепортирует обратно в стартовую комнату текущего этажа", "Сертификат о рождении", "ru")
-	
+
 	EID:addTrinket(mod.CustomTrinkets.BASEMENT_KEY, "{{ChestRoom}}Золотые Сундуки имеют 25% шанс стать Старым Сундуком", "Ключ от Подвала", "ru")
 	EID:addTrinket(mod.CustomTrinkets.KEY_TO_THE_HEART, "У каждого врага есть шанс создать Кожанный Сундук после смерти #Кожанные Сундуки могут содержать 1-4 {{Heart}}сердца/{{Pill}}таблетки или случайный предмет, связанный с телом", "Ключ к Сердцу", "ru")
 	EID:addTrinket(mod.CustomTrinkets.JUDAS_KISS, "Враги, прикасающиеся к вам, будут атакованы другими врагами (похожий на эффект {{Collectible618}}Тухлого Помидора)", "Поцелуй Иуды", "ru")
@@ -921,7 +927,7 @@ if true then
 	EID:addTrinket(mod.CustomTrinkets.BABY_SHOES, "Уменьшает врагов на 20% #Также работает на боссах", "Детские Ботиночки", "ru")
 	EID:addTrinket(mod.CustomTrinkets.KEY_KNIFE, "С шансом 5% активирует Темные Искусства когда вы получаете урон #Увеличивает шанс пояяления Черных Сундуков", "Нож Ключ", "ru")
 	EID:addTrinket(mod.CustomTrinkets.SHATTERED_STONE, "Шанс призвать случайную саранчу при подбирании монет, бомб или ключей", "Расколотый Камень", "ru")
-	
+
 	EID:addCard(mod.CustomConsumables.SPINDOWN_DICE_SHARD, "Активирует эффект {{Collectible723}}Кубика с Вычетом", "Осколок Кубика с Вычетом", "ru")
 	EID:addCard(mod.CustomConsumables.RED_RUNE, "Наносит урон всем врагам в комнате, превращает все пьедесталы с предметами в красную саранчу и превращает пикапы в случайную саранчу с вероятностью 50%", "Красная Руна", "ru")
 	EID:addCard(mod.CustomConsumables.NEEDLE_AND_THREAD, "Убирает одно Сломанное Сердце и дает один {{Heart}}Контейнер Сердца", "Игла и Нитка", "ru")
@@ -953,7 +959,7 @@ if true then
 	EID:addCard(mod.CustomConsumables.SPIRITUAL_RESERVES, "Создает двух призрачных орбитальных спутников, которые блокируют вражеские выстрелы и стреляют призрачными слезами #После блокирования трех выстрелов призрак умирает и оставляет за собой половину сердца души", "Духовные Резервы", "ru")
 	EID:addCard(mod.CustomConsumables.MIRRORED_LANDSCAPE, "Ваш активный предмет перемещается в карманный слот #Если у вас уже есть предмет в карманном слоте, создает его копию на пьедестле", "Зеркальный Ландшафт", "ru")
 	EID:addCard(mod.CustomConsumables.CURSED_CARD, "Каждый урон, который вы получите в этой комнате, будет отменен; вместо этого вы получаете сломанное сердце и перманентное повышение скорострельности", "Проклятая Карта", "ru")
-	
+
 	EID:addCard(mod.CustomConsumables.CROWN_OF_GREED , "Призывает 1-2 золотых пенни и дает {{ArrowDown}}-1 к удаче за каждый призванный пенни", "Корона Алчности", "ru")
 	EID:addCard(mod.CustomConsumables.FLOWER_OF_LUST, "Перезапускает комнату и вы получаете улучшенную награду после ее прохождения", "Цветок Похоти", "ru")
 	EID:addCard(mod.CustomConsumables.ACID_OF_SLOTH, "Замедляет всех врагов на 50% и заставляет их оставлять после себя облака ядовитого газа", "Кислота Лени", "ru")
@@ -961,7 +967,7 @@ if true then
 	EID:addCard(mod.CustomConsumables.APPLE_OF_PRIDE, "Дает большую прибавку ко всем статам пока вы не получите урон", "Яблоко Гордыни", "ru")
 	EID:addCard(mod.CustomConsumables.CANINE_OF_WRATH, "Все враги в комнате взрывается нанося 15 урона #{{Warning}}Взрывы наносят урон игроку #Если враг умирает от взрыва вы получаете временную прибавку к урону", "Клык Гнева", "ru")
 	EID:addCard(mod.CustomConsumables.MASK_OF_ENVY, "Превращает все ваши контейнеры сердца в костянные сердца наполненные гнилыми сердцами", "Маска Зависти", "ru")
-	
+
 	EID:addPill(mod.CustomPills.ESTROGEN_UP, "Превращает все ваши {{Heart}}сердца в блебиков #Оставляет вас по крайней мере с одним красным сердцем, не убирает сердца души/черные сердца", "Эстроген", "ru")
 	EID:addPill(mod.CustomPills.LAXATIVE, "Заставляет вас стрелять кукурузой сзади в течение 3 секунд", "Слабительное", "ru")
 	EID:addPill(mod.CustomPills.PHANTOM_PAINS, "Вы получаете фальшивый урон и получаете его снова через 15 и 30 секунд", "Фантомная Боль", "ru")
@@ -989,7 +995,7 @@ end
 
 -- Korean EID (by 미카)
 if true then
-	EID:addCollectible(mod.CustomCollectibles.ORDINARY_LIFE, "↑ {{TearsSmall}}눈물 딜레이 x0.8 #{{TreasureRoom}} 보물방에 엄마/아빠 관련 아이템이 한개 더 추가되며 하나를 선택하면 나머지는 사라집니다.", "평범한 삶", "ko_kr")	
+	EID:addCollectible(mod.CustomCollectibles.ORDINARY_LIFE, "↑ {{TearsSmall}}눈물 딜레이 x0.8 #{{TreasureRoom}} 보물방에 엄마/아빠 관련 아이템이 한개 더 추가되며 하나를 선택하면 나머지는 사라집니다.", "평범한 삶", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.COOKIE_CUTTER, "#사용 시 {{Heart}}최대 체력 +1, {{Heart}}빨간하트 +2, {{BrokenHeart}}부서진하트 +1 #{{Warning}} 모든 체력이 부서진하트로 채워지면 사망합니다.", "쿠키 커터", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.SINNERS_HEART, "↑ {{BlackHeart}}블랙하트 +2 #↑ {{DamageSmall}}공격력 +2 #↑ {{DamageSmall}}공격력 배율 x1.5 #↑ {{RangeSmall}}사거리 +2 #↓ {{ShotspeedSmall}}탄속 -0.2 #눈물이 적과 지형을 관통합니다.", "죄인의 심장", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.RUBIKS_CUBE, "사용시 5% (20회 사용시 100%)의 확률로 퍼즐을 풀고 {{Collectible"..mod.CustomCollectibles.MAGIC_CUBE.."}}Magic Cube 아이템으로 교체됩니다.", "루빅큐브", "ko_kr")
@@ -1032,10 +1038,10 @@ if true then
 	EID:addCollectible(mod.CustomCollectibles.SOUL_BOND, "주변의 적 하나와 캐릭터를 체인으로 서로 묶은 후 얼립니다. #체인에 닿은 적은 매우 큰 피해를 입습니다. #!!! 묶인 적과 캐릭터의 간격이 너무 멀면 체인이 부서집니다. #묶인 적 처치 시 33%의 확률로 소울하트를 드랍합니다.#!!! 보스는 5초 후에 체인이 풀립니다.", "영혼의 끈", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.ANGELS_WINGS, "↑ {{ShotspeedSmall}}탄속 +0.3 #눈물 대신 멀어질수록 공격력이 증가하며 적을 관통하는 깃털을 발사합니다. #{{Throwable}} 눈물 발사키를 두번 연속 누르면 Dogma 보스 관련 공격 하나를 랜덤으로 전개합니다.#{{TimerSmall}} (쿨타임 6초)", "천사의 날개", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.HAND_ME_DOWNS, "↑ {{SpeedSmall}}이동속도 +0.2 #게임오버 시 캐릭터가 소지한 아이템 중 3개를 해당 스테이지에 드랍합니다.#다음 게임에서 해당 스테이지 진입시, 전 게임에서 드랍한 아이템을 획득할 수 있습니다.", "물려받은 물건", "ko_kr")
-	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN, "↑ {{Key}}열쇠 +2#!!! 아이템 사용에 열쇠 필요:#사용 시 방 안의 모든 적을 무력화시킵니다.#무력화된 적은 이동속도가 매우 느려지며 12초 이후 처치됩니다. #열쇠 관련 장신구와의 시너지가 있습니다.", "레비아탄의 책", "ko_kr")
+	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP, "↑ {{Key}}열쇠 +2#!!! 아이템 사용에 열쇠 필요:#사용 시 방 안의 모든 적을 무력화시킵니다.#무력화된 적은 이동속도가 매우 느려지며 12초 이후 처치됩니다. #열쇠 관련 장신구와의 시너지가 있습니다.", "레비아탄의 책", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_UNCHAINED, "!!! 아이템 사용에 {{Heart}}빨간하트 필요:#사용 시 방 안의 모든 적을 무력화시킵니다.#무력화된 적은 이동속도가 매우 느려지며 12초 이후 처치됩니다. #열쇠 관련 장신구와의 시너지가 있습니다.", "레비아탄의 책", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_OPEN, "사용 시 그 방의 적을 즉사시킵니다.", "레비아탄의 책", "ko_kr")
-	EID:addCollectible(mod.CustomCollectibles.FRIENDLY_SACK, "방을 3개 클리어할 때마다 약한 패밀리어를 소환합니다(Dip, Blood clot, fly 등) #3번쨰 방이 보스방인 경우 아군 적을 대신 소환합니다.", "친구 자루", "ko_kr")	
+	EID:addCollectible(mod.CustomCollectibles.FRIENDLY_SACK, "방을 3개 클리어할 때마다 약한 패밀리어를 소환합니다(Dip, Blood clot, fly 등) #3번쨰 방이 보스방인 경우 아군 적을 대신 소환합니다.", "친구 자루", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.MAGIC_MARKER, "{{Card}} 획득 시 타로 카드를 하나 드랍합니다.#사용시, 현재 들고 있는 타로 타입의 카드 번호를 1씩 증가합니다.#{{Blank}} (역방향의 경우 1씩 감소)", "마법의 마커", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.ULTRA_FLESH_KID, "적을 따라다니며 접촉한 적에게 피해를 줍니다.#빨간 하트를 일정량 모을 시 최대 3단계까지 진화할 수 있습니다.#최대 진화까지 총 하트 15개가 필요합니다.", "살코기 아이", "ko_kr")
 	EID:addCollectible(mod.CustomCollectibles.VAULT_OF_HAVOC, "적 처치 시 금고에 적이 저장됩니다(최대 12)#사용 시, 최근에 처치한 적 12마리와 특수한 미니보스방에서 전투를 합니다.#해당 미니보스방 클리어 시 해당 방에서 전투한 적들의 총합 최대 체력에 비례한 보상을 받습니다.", "파괴의 금고", "ko_kr")
@@ -1204,10 +1210,10 @@ if true then
 	EID:addCollectible(mod.CustomCollectibles.SOUL_BOND, "用星界锁链将自己锁在随机敌人身上并将其禁锢 #锁链会对敌人造成接触伤害 #{{Warning}} 离被锁链锁住的敌人太远会导致锁链断掉 #被锁链锁住的敌人击杀后有33%的几率掉落{{SoulHeart}} 魂心", "灵魂锁链", "zh_cn")
 	EID:addCollectible(mod.CustomCollectibles.ANGELS_WINGS, "{{ArrowUp}} +0.3弹速 #角色的眼泪被穿透羽毛取代，距离越远，造成的伤害越高 #双击会发射类似教条的攻击方式之一（循环触发） {{Blank}}{{Collectible66}} 6秒冷却时间", "天使之翼", "zh_cn")
 	EID:addCollectible(mod.CustomCollectibles.HAND_ME_DOWNS, "{{ArrowUp}} +0.2移速 #当目前该局游戏结束时（死亡或胜利），你拥有的3个随机道具（包括主动）会在结束的地上生成 #它们可以在下一局时通过到达同一楼层来获取", "递给我", "zh_cn")
-	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN, "{{Key}} +2 钥匙 #需要一个钥匙来“解锁”和使用它 #使用后，使房间内的所有敌人瘫痪 #瘫痪的敌人会失去速度，并在失去速度12秒后死亡 #每次使用消耗一把钥匙，如果没有钥匙则没有效果 #与钥匙相关的饰品有特殊的协同作用 #{{Warning}} 在使用几次后会改变形态", "《利维坦》", "zh_cn")	
+	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP, "{{Key}} +2 钥匙 #需要一个钥匙来“解锁”和使用它 #使用后，使房间内的所有敌人瘫痪 #瘫痪的敌人会失去速度，并在失去速度12秒后死亡 #每次使用消耗一把钥匙，如果没有钥匙则没有效果 #与钥匙相关的饰品有特殊的协同作用 #{{Warning}} 在使用几次后会改变形态", "《利维坦》", "zh_cn")
 	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_UNCHAINED, "{{Heart}} 使用时消耗红心而不再是消耗钥匙 #{{Warning}} 在使用几次后会改变形态", "《利维坦》-受缚状态", "zh_cn")
 	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_OPEN, "可以被自由使用 #清除掉本房间的所有敌人而不是使它们瘫痪", "《利维坦》-展开状态", "zh_cn")
-	EID:addCollectible(mod.CustomCollectibles.FRIENDLY_SACK, "每清理三个房间，生成一个弱跟班（如：蓝苍蝇，小屎等） #如果三个房间中包含Boss房，则会生成一个较强的跟班", "友好的麻袋", "zh_cn")	
+	EID:addCollectible(mod.CustomCollectibles.FRIENDLY_SACK, "每清理三个房间，生成一个弱跟班（如：蓝苍蝇，小屎等） #如果三个房间中包含Boss房，则会生成一个较强的跟班", "友好的麻袋", "zh_cn")
 	EID:addCollectible(mod.CustomCollectibles.MAGIC_MARKER, "拾取后掉落一张{{Card}} 卡牌 #使用后，变换当前卡牌（正位牌为卡牌编号+1，逆位牌为卡牌编号-1）", "魔法标记", "zh_cn")
 	EID:addCollectible(mod.CustomCollectibles.ULTRA_FLESH_KID, "追击敌人并造成接触伤害的跟班，类似于水蛭 #有3个阶段，每收集7.5颗{{Heart}} 红心进化一次", "究极食肉小子！", "zh_cn")
 	EID:addCollectible(mod.CustomCollectibles.VAULT_OF_HAVOC, "被动存储12个击杀后的敌人，存储12个敌人后可以使用 #{{MiniBoss}} 使用后，传送到特殊房间，里面有你最近杀死的12个敌人，击杀它们会基于所有敌人的总生命值给予奖励", "浩劫穹顶", "zh_cn")
@@ -1222,11 +1228,11 @@ if true then
 	EID:addCollectible(mod.CustomCollectibles.WE_NEED_TO_GO_SIDEWAYS, "在每个隐藏房中生成一个特殊的土块 #{{Key}} 如果在其他房间使用，可将房间中的所有钥匙埋入地下 #{{Card78}} 如果在该土块上使用，可将所有埋入地下的钥匙挖出变为红钥匙碎片", "我们需要走到另一面", "zh_cn")
 	EID:addCollectible(mod.CustomCollectibles.DEAD_WEIGHT, "可被投掷的被遗忘者的身体 #如果击中墙壁，会向上发射骨头 #阻挡敌人的投射物", "死亡重量", "zh_cn")
 	EID:addCollectible(mod.CustomCollectibles.KEEPERS_ANNOYING_FLY, "飞行环绕物 #吸收敌人的投射物和玩家的眼泪 #在当前房间内吸收的眼泪越多，对敌人造成的接触伤害越大", "苍蝇守门员", "zh_cn")
-                 
+
 	EID:addTrinket(mod.CustomTrinkets.BASEMENT_KEY,"{{DirtyChest}} 持有时，每个金宝箱都有 25% 的几率被旧宝箱取代","地下室钥匙","zh_cn")
 	EID:addTrinket(mod.CustomTrinkets.KEY_TO_THE_HEART,"持有时，刺箱子和拟态箱子会被替换成猩红之箱 #有概率发射出血色钥匙之泪，如果击杀了敌人将会掉落临时的红心","心之钥","zh_cn")
 	EID:addTrinket(mod.CustomTrinkets.JUDAS_KISS,"{{Bait}} 接触到你的敌人会成为其他敌人的攻击目标（类似烂番茄效果）","犹大之吻","zh_cn")
-	EID:addTrinket(mod.CustomTrinkets.TRICK_PENNY,"{{LuckSmall}} 消耗硬币，炸弹或者钥匙进行开锁，给乞丐捐钱或者开箱子时有 17 %概率不消耗","厚硬币","zh_cn")	
+	EID:addTrinket(mod.CustomTrinkets.TRICK_PENNY,"{{LuckSmall}} 消耗硬币，炸弹或者钥匙进行开锁，给乞丐捐钱或者开箱子时有 17 %概率不消耗","厚硬币","zh_cn")
 	EID:addTrinket(mod.CustomTrinkets.SLEIGHT_OF_HAND,"{{Coin}} 生成硬币时，每个硬币都有20%概率进行升级 #普通硬币->双倍硬币->粘币->五块钱硬币->十块钱硬币->幸运币->金金币","出千妙手","zh_cn")
 	EID:addTrinket(mod.CustomTrinkets.GREEDS_HEART,"给予你一个{{EmptyCoinHeart}} 空的硬币心 #通过拾取硬币补充，优先其他心消耗","贪婪之心","zh_cn")
 	EID:addTrinket(mod.CustomTrinkets.ANGELS_CROWN,"{{TreasureRoom}} 宝箱房将出售天使房道具 #从雕像中复活的天使不再掉落钥匙碎片","天使之冠","zh_cn")
@@ -1247,7 +1253,7 @@ if true then
 	EID:addTrinket(mod.CustomTrinkets.HEAVENLY_KEYS, "打开MEGA撒旦之门，无论你是否有钥匙部件 #{{Collectible585}} 无论是否进行了恶魔交易都会提高白玉香膏盒的产出", "天堂之钥", "zh_cn")
 	EID:addTrinket(mod.CustomTrinkets.JEWEL_DIADEM, "移除使用罪孽之石的负面影响", "罪石王冠", "zh_cn")
 
-                 
+
 	EID:addCard(mod.CustomConsumables.SPINDOWN_DICE_SHARD,"{{Collectible723}} 触发D-1骰子效果", "D-1碎片", "zh_cn")
 	EID:addCard(mod.CustomConsumables.RED_RUNE, "{{Collectible706}} 对房间内的所有敌人造成伤害，50%几率将道具底座转化为红色蝗虫，将掉落物转化为随机蝗虫", "红色符文", "zh_cn")
 	EID:addCard(mod.CustomConsumables.NEEDLE_AND_THREAD,"移除一颗{{BrokenHeart}} 碎心并给予一个{{Heart}} 心之容器", "针线包", "zh_cn")
@@ -1281,7 +1287,7 @@ if true then
 	EID:addCard(mod.CustomConsumables.CURSED_CARD, "使用后，当前房间原本应该受到的伤害都会转换为获得一颗{{BrokenHeart}} 碎心和永久的射速提升{{ArrowUp}} ", "诅咒卡", "zh_cn")
 	EID:addCard(mod.CustomConsumables.FUNERAL_SERVICES_Q, "生成一个黑箱子", "丧葬服务Q", "zh_cn")
 	EID:addCard(mod.CustomConsumables.DARK_REMNANTS, "#{{BlackHeart}} +1 黑心 #使房间内的所有敌人残废", "残存的黑暗", "zh_cn")
-                 
+
 	EID:addCard(mod.CustomConsumables.CROWN_OF_GREED , "{{Luck}} 使用后在当前房间生成1-2个金金币，但是每拾取一次金币幸运{{ArrowDown}} -1", "贪婪之冠", "zh_cn")
 	EID:addCard(mod.CustomConsumables.FLOWER_OF_LUST, "使用后可以重新清理房间，并获得更好的奖励", "欲望之花", "zh_cn")
 	EID:addCard(mod.CustomConsumables.ACID_OF_SLOTH, "使用后，房间中的每个敌人都会永久减速50%，但每2秒会留下毒气云，持续4秒", "懒惰之酸", "zh_cn")
@@ -1289,14 +1295,14 @@ if true then
 	EID:addCard(mod.CustomConsumables.APPLE_OF_PRIDE, "获得大量属性提升{{ArrowUp}} #受到伤害后效果消失", "傲慢之果", "zh_cn")
 	EID:addCard(mod.CustomConsumables.CANINE_OF_WRATH, "房间里每个敌人都会爆炸，造成15点伤害 #{{Warning}} 角色会受到敌人爆炸伤害 #每个死于爆炸的敌人都会给予角色短暂的{{ArrowUp}} +1.25伤害提升", "愤怒之犬", "zh_cn")
 	EID:addCard(mod.CustomConsumables.MASK_OF_ENVY, "将所有心之容器转化为{{RottenBoneHeart}} 充满腐心的骨心", "嫉妒面具", "zh_cn")
-	
+
 	EID:addPill(mod.CustomPills.ESTROGEN_UP,"{{Trinket176}} 只保留1颗红心，将其余红心扣除，不影响魂心/黑心", "雌激素上升", "zh_cn")
 	EID:addPill(mod.CustomPills.LAXATIVE,"让你从背后射出玉米眼泪，持续3秒", "泻药", "zh_cn")
 	EID:addPill(mod.CustomPills.PHANTOM_PAINS,"使用后造成一次假受伤（钝刀片效果） #每过15-30秒就会再受到一次假伤害", "幻痛", "zh_cn")
 	EID:addPill(mod.CustomPills.YUCK,"生成1个{{RottenHeart}} 腐心 #30秒内每捡起一颗红心都会产生蓝苍蝇", "呸！", "zh_cn")
-	EID:addPill(mod.CustomPills.YUM,"生成2-5个{{HalfHeart}} 半红心 #30秒内每捡起一颗红心都会给予永久属性上升{{ArrowUp}} ", "嗯！", "zh_cn")	
+	EID:addPill(mod.CustomPills.YUM,"生成2-5个{{HalfHeart}} 半红心 #30秒内每捡起一颗红心都会给予永久属性上升{{ArrowUp}} ", "嗯！", "zh_cn")
 	EID:addPill(mod.CustomPills.SUPPOSITORY, "将你当前持有的主动物品掉落下来成为基座物品", "栓剂", "zh_cn")
-                
+
 	--[EID:addEntity(5, 10, 84, "神伤者的心", "拾取后，给予角色1个{{Heart}} 心之容器和1个碎心", "zh_cn")
 	--EID:addEntity(5, 10, 85, "无畏者之心", "拾取后，最末尾的心会被银边环绕 #如果被银边环绕的心只有半颗，则角色杀死敌人时有20%的概率掉率迅速消失的半颗心", "zh_cn")
 	--EID:addEntity(5, 10, 86, "囤积者之心", "拾取后，恢复4颗红心", "zh_cn")
@@ -1318,7 +1324,7 @@ end
 
 -- French EID (by biobak)
 if true then
-	EID:addCollectible(mod.CustomCollectibles.ORDINARY_LIFE, "↑ Débit augmenté#Permet à Isaac de choisir entre un objet aléatoire et un objet de Papa ou Maman dans les {{TreasureRoom}} salles du trésor", "Vie Ordinaire", "fr")	
+	EID:addCollectible(mod.CustomCollectibles.ORDINARY_LIFE, "↑ Débit augmenté#Permet à Isaac de choisir entre un objet aléatoire et un objet de Papa ou Maman dans les {{TreasureRoom}} salles du trésor", "Vie Ordinaire", "fr")
 	EID:addCollectible(mod.CustomCollectibles.COOKIE_CUTTER, "{{Heart}} +1 Réceptacle de cœur#{{BrokenHeart}} +1 cœur brisé#Soigne 2 cœurs rouges", "Moule à Biscuits", "fr")
 	EID:addCollectible(mod.CustomCollectibles.SINNERS_HEART, "{{BlackHeart}} +2 cœurs noirs #↑ Dégâts {{ColorLime}}+2 x1.5#↑ Portée {{ColorLime}}+2#↓ Vitesse des tirs {{ColorError}}-0.2#Larmes spectrales#Larmes transperçantes", "Cœur de Pécheur", "fr")
 	EID:addCollectible(mod.CustomCollectibles.RUBIKS_CUBE, "Chaque utilisation du Rubik's Cube a 5% de chances de le résoudre#Le Rubik's Cube sera forcément résolu à la 20ème utilisation#Résoudre le Rubik's Cube le remplace par un Magic Cube", "Rubik's Cube", "fr")
@@ -1361,7 +1367,7 @@ if true then
 	EID:addCollectible(mod.CustomCollectibles.SOUL_BOND, "Enchaîne Isaac a un ennemi aléatoire#La chaîne inflige de lourds dégâts de contact#Tuer un ennemi enchaîné a 33% de chances de faire apparaître un cœur d'âme#Trop s'éloigner de l'ennemi enchaîné brise la chaîne", "Lien Spirituel", "fr")
 	EID:addCollectible(mod.CustomCollectibles.ANGELS_WINGS, "↑ Vitesse des tirs {{ColorLime}}+0.3#Larmes transperçantes#Les larmes d'Isaac infligent davantage de dégâts selon la distance qu'elles parcourent#Un double appui sur une touche de tir déclenche une attaque spéciale parmi trois", "Ailes Angéliques", "fr")
 	EID:addCollectible(mod.CustomCollectibles.HAND_ME_DOWNS, "↑ Vitesse {{ColorLime}}+0.2#Mourir dépose 3 des objets d'Isaac sur le sol#Ces objets peuvent être récupérés au même étage dans la partie suivante", "Héritage", "fr")
-	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN, "{{Key}} +2 clés#{{Blank}}#Retire une clé à chaque utilisation#Estropie tous les ennemis de la salle#Les ennemis estropiés ralentissent progressivement et meurent en une fontaine de larmes ralentissantes après 12 secondes#Synergise avec les babioles de clés", "Livre du Léviathan", "fr")
+	EID:addCollectible(mod.CustomCollectibles.BOOK_OF_LEVIATHAN_CHAINED_UP, "{{Key}} +2 clés#{{Blank}}#Retire une clé à chaque utilisation#Estropie tous les ennemis de la salle#Les ennemis estropiés ralentissent progressivement et meurent en une fontaine de larmes ralentissantes après 12 secondes#Synergise avec les babioles de clés", "Livre du Léviathan", "fr")
 	EID:addCollectible(mod.CustomCollectibles.FRIENDLY_SACK, "Terminer 3 salles invoque un familier faible#Si la 3ème salle terminée est une salle de boss, invoque un ennemi allié", "Sac de Potes", "fr")
 	EID:addCollectible(mod.CustomCollectibles.MAGIC_MARKER, "Fait apparaître une carte#Utiliser l'objet rejoue les cartes de tarot en augmentant leur ID interne de 1#Diminue l'ID interne des cartes inversées", "Feutre Magique", "fr")
 	EID:addCollectible(mod.CustomCollectibles.ULTRA_FLESH_KID, "Pourchasse les ennemis et inflige des dégâts de contact#Peut évoluer 3 fois en ramassant des cœurs#Doit ramasser 15 cœurs pour évoluer complètement", "Super Viande Garçon", "fr")
